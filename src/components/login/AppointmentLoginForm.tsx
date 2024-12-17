@@ -24,7 +24,7 @@ const AppointmentLoginForm = () => {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    await logIn(formData, "/engagements");
+    await logIn(formData, "/dashboard");
   }
 
   return (

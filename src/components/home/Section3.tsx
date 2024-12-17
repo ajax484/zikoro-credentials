@@ -31,9 +31,8 @@ export default function Section3() {
             </div>
             <p className="text-xl mt-3 font-semibold ">Issue Certificates</p>
             <p className="text-base mt-3 font-medium ">
-              Import your recipients’ data and assign{" "}
-              certificates to them with a few
-              clicks.
+              Import your recipients’ data and assign certificates to them with
+              a few clicks.
             </p>
           </div>
 

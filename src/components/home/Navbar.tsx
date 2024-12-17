@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import bPreview from "@/public/otherPreviewB.png";
 import sPreview from "@/public/OtherTopPrevS.png";
-import logo from "@/public/Logo.png";
+import logo from "@/public/logo.png";
 
 const Navbar = () => {
   const router = useRouter();
