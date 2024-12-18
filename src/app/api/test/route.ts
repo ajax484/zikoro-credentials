@@ -7,9 +7,10 @@ export async function GET(req: NextRequest) {
     if (req.method === "GET") {
         try {
             const { data, error } = await supabase
-                .from("contactForm")
+                .from("users")
                 .select("*")
-                .order("created_at", { ascending: false }); // Order by created_at in descending order
+                .order("created_at", { ascending: true }); 
+                // Order by created_at in descending order
 
 
             if (error) throw error;

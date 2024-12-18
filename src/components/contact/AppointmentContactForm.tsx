@@ -6,7 +6,7 @@ import { useContactUs } from "@/hooks/services/contactUs";
 import confirm from "@/public/appointments/bookingsMessage.png";
 const AppointmentContactForm = () => {
   const [mailSent, setMailSent] = useState<boolean>(false);
-  const root = "engagements";
+  const root = "credentials";
   const { submitForm } = useContactUs();
 
   const [formData, setFormData] = useState({
