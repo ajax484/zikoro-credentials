@@ -15,7 +15,13 @@ export default function Section2() {
       <div className=" flex flex-col lg:flex-row gap-4 mt-[90px] ">
         {/* 1st div */}
         <div className="bg-white rounded-lg p-[10px]">
-          <Image alt="" src={sec1} height={249} width={249} />
+          <Image
+            alt=""
+            src={sec1}
+            height={249}
+            width={249}
+            className="w-full lg:w-[249px] h-[249px]"
+          />
           <div className="mt-5 text-center">
             <p className=" text-base font-semibold ">Customizable Templates</p>
             <p className="mt-[10px] text-[14px]">
@@ -27,7 +33,13 @@ export default function Section2() {
 
         {/* 2nd div */}
         <div className="bg-white rounded-lg p-[10px]">
-          <Image alt="" src={sec2} height={249} width={249} />
+          <Image
+            alt=""
+            src={sec2}
+            height={249}
+            width={249}
+            className="w-full lg:w-[249px] h-[249px]"
+          />
           <div className="mt-5 text-center">
             <p className=" text-base font-semibold ">Customizable Templates</p>
             <p className="mt-[10px] text-[14px]">
@@ -39,7 +51,13 @@ export default function Section2() {
 
         {/* 3rd div */}
         <div className="bg-white rounded-lg p-[10px]">
-          <Image alt="" src={sec3} height={249} width={249} />
+          <Image
+            alt=""
+            src={sec3}
+            height={249}
+            width={249}
+            className="w-full lg:w-[249px] h-[249px]"
+          />
           <div className="mt-5 text-center">
             <p className=" text-base font-semibold ">Customizable Templates</p>
             <p className="mt-[10px] text-[14px]">
@@ -51,7 +69,13 @@ export default function Section2() {
 
         {/* 4th div */}
         <div className="bg-white rounded-lg p-[10px]">
-          <Image alt="" src={sec4} height={249} width={249} />
+          <Image
+            alt=""
+            src={sec4}
+            height={249}
+            width={249}
+            className="w-full lg:w-[249px] h-[249px]"
+          />
           <div className="mt-5 text-center">
             <p className=" text-base font-semibold ">Customizable Templates</p>
             <p className="mt-[10px] text-[14px]">

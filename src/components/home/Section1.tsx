@@ -38,9 +38,7 @@ export default function Section1() {
               width={1128}
               className="w-full lg:w-[970px] xl:w-[1128px] "
             />
-            <div className="absolute -top-2 -right-2 h-4 w-4 bg-blue-500 blur-lg opacity-60"></div>
-            {/* Green Shadow at Bottom-Left */}
-            <div className="absolute -bottom-2 -left-2 h-4 w-4 bg-green-500 blur-lg opacity-60"></div>
+         
           </div>
         </div>
       </div>
