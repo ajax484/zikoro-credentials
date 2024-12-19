@@ -1,7 +1,10 @@
+"use client"
 import Image from "next/image";
 import whiteScreen from "@/public/bigScreen.png";
+import { useRouter } from "next/navigation";
 
 export default function Section1() {
+  const router = useRouter();
   return (
     <>
       {/* big screen */}
@@ -20,7 +23,7 @@ export default function Section1() {
           {/* button */}
           <div className="flex justify-center">
             <div>
-              <button className="mt-6 font-semibold rounded-[10px] py-2 px-4 text-[14px] text-medium text-white bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end">
+              <button className="mt-6 font-semibold rounded-[10px] py-2 px-4 text-[14px] text-medium text-white bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end" onClick={()=> router.push('/signup')}>
                 Get Started For Free
               </button>
               <p className="text-center text-[12px] text-[#55555] mt-2">

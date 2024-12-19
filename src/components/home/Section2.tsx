@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import sec1 from "@/public/section2a.png";
 import sec2 from "@/public/section2b.png";

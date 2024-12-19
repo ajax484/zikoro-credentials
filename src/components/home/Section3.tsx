@@ -1,6 +1,10 @@
+"use client";
 import { CredentialSec1, CredentialSec2, CredentialSec3 } from "@/constants";
+import { useRouter } from "next/navigation";
 
 export default function Section3() {
+  const router = useRouter();
+
   return (
     <div className="mt-[80px] flex justify-center text-white bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end max-w-full 2xl:max-w-[1128px] mx-auto">
       <div className=" py-[42px] px-[18px]">
@@ -52,7 +56,10 @@ export default function Section3() {
         {/* button */}
         <div>
           <div className="flex justify-center mt-[34px]">
-            <button className=" font-semibold rounded-[10px] py-2 px-4 text-[14px] text-medium text-indigo-600 bg-white">
+            <button
+              className=" font-semibold rounded-[10px] py-2 px-4 text-[14px] text-medium text-indigo-600 bg-white"
+              onClick={() => router.push("/signup")}
+            >
               Start creating now
             </button>
           </div>
