@@ -6,9 +6,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: "Zikoro - Seamless Appointment Scheduling & Booking Platform",
+  title: "Zikoro - Credentials",
   description:
-    "Zikoro is your trusted platform for effortless appointment scheduling and booking. We streamline the process for event organizers, tutors, and clients, enabling easy management and coordination of appointments and events.",
+    "Secure and Verifiable Digital Credentials for Achievements. Create, manage and share digital certificates and badges in 5 minutes",
 };
 
 export default function RootLayout({

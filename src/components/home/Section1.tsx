@@ -27,7 +27,7 @@ export default function Section1() {
                 Get Started For Free
               </button>
               <p className="text-center text-[12px] text-[#55555] mt-2">
-                No credit required
+                No credit card required
               </p>
             </div>
           </div>
