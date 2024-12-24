@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 // import { exportComponentAsPNG } from "react-component-export-image";
 import { replaceSpecialText, replaceURIVariable } from "@/utils/helpers";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { fabric } from "fabric";
 import {
   FacebookIcon,
