@@ -24,7 +24,7 @@ const Home = () => {
     data: certificates,
     isLoading: certificatesIsLoading,
     error,
-  } = useGetData<TCertificate[]>(`/certificates?userId=${user.id}`, true, []);
+  } = useGetData<TCertificate[]>(`/certificates?userId=${user?.id}`, true, []);
 
   console.log(certificates);
 
