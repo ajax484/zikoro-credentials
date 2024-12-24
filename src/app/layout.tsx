@@ -12,16 +12,16 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: "website",
-    url: "/logo.png",
+    url: "https://credentials.zikoro.com/logo.png",
     title: "Zikoro - Credentials",
     description:
       "Secure and Verifiable Digital Credentials for Achievements. Create, manage and share digital certificates and badges in 5 minutes",
     images: [
       {
-        url: "/logo.png",
+        url: "https://credentials.zikoro.com/logo.png",
         width: 115,
         height: 40,
-        alt: "",
+        alt: "Zikoro - Credentials",
       },
     ],
   },
