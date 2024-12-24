@@ -9,6 +9,27 @@ export const metadata: Metadata = {
   title: "Zikoro - Credentials",
   description:
     "Secure and Verifiable Digital Credentials for Achievements. Create, manage and share digital certificates and badges in 5 minutes",
+
+  openGraph: {
+    type: "website",
+    url: "/logo.png",
+    title: "Zikoro - Credentials",
+    description:
+      "Secure and Verifiable Digital Credentials for Achievements. Create, manage and share digital certificates and badges in 5 minutes",
+    images: [
+      {
+        url: "/logo.png",
+        width: 115,
+        height: 40,
+        alt: "",
+      },
+    ],
+  },
+
+  // Additional SEO fields (optional)
+  keywords:
+    "Digital certificates, badges, verifiable credentials, skill recognition, secure certificates, Blockchain credentials, education certificates, digital learning badges, skills validation, employee recognition, training badges, corporate certificates, professional achievements, trust badges, validated achievements, shareable  badges, shareable certificates",
+  robots: "index, follow",
 };
 
 export default function RootLayout({
