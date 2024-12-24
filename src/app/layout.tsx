@@ -3,6 +3,7 @@ import { montserrat } from "../utils/fonts";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Zikoro - Seamless Appointment Scheduling & Booking Platform",
@@ -17,8 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.className}  antialiased`}>
+      <body className={`${montserrat.className} antialiased`}>
         <ToastContainer />
+        <Toaster />
         {children}
       </body>
     </html>
