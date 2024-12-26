@@ -76,7 +76,8 @@ export interface CertificateRecipient {
   id: number;
   created_at: string;
   certificateId?: string | null;
-  recipientName?: string | null;
+  recipientFirstName?: string | null;
+  recipientLastName?: string | null;
   recipientEmail?: string | null;
   status?: issueActions | null;
   statusDetails?: { action: issueActions; date: string } | null;

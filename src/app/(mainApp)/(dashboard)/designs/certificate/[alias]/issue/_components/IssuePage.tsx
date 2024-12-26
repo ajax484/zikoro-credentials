@@ -19,8 +19,19 @@ const IssuePage = ({ alias }: { alias: string }) => {
 
   if (isLoading) return <div>Loading...</div>;
 
+  const updateRecipients = (recipients: []) => {
+    setRecipients(recipients);
+  };
+
   if (page === 0) {
-    return <RecipientsPage certificate={certificate} updatePage={updatePage} />;
+    return (
+      <RecipientsPage
+        certificate={certificate}
+        updatePage={updatePage}
+        recipients={recipients}
+        updateRecipients={updateRecipients}
+      />
+    );
   }
 
   if (page === 1) {

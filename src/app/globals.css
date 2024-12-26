@@ -2,13 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .gradient-text {
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
 }
-
 
 @layer base {
   :root {
@@ -65,4 +63,46 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
+}
+
+.quill {
+  width: 100%;
+  /* border-radius: 8px; */
+  margin-bottom: 3rem;
+}
+
+.quill .ql-editor {
+  height: 100%;
+}
+
+.quill > .ql-container > .ql-editor.ql-blank::before {
+  color: #d4d4d4;
+}
+
+.ql-container.ql-snow {
+  border: 1px solid #f3f3f3 !important;
+  height: 400px;
+  border-top: none;
+  font-size: 14px;
+  border-radius: 0px 0px 8px 8px;
+}
+
+.ql-toolbar.ql-snow {
+  border-radius: 8px 8px 0px 0px;
+  border: 1px solid #f3f3f3 !important;
+  background: linear-gradient(to right, #001fcc19 0%, #9d00ff19 100%);
+}
+
+.ql-editor.ql-blank::before {
+  color: rgba(0, 0, 0, 0.6);
+  content: attr(data-placeholder);
+  font-size: 14px;
+  left: 15px;
+  pointer-events: none;
+  position: absolute;
+  right: 15px;
+}
+
+.ql-container.ql-snow .ql-editor {
+  border: 1px solid #001fcc19 !important;
 }
