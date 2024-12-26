@@ -60,6 +60,7 @@ const Issue = ({
   certificateIssuees,
   updatePage,
   page,
+  
 }: {
   certificate: TCertificate;
   certificateIssuees: CertificateRecipient[];

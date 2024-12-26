@@ -96,7 +96,7 @@ export function createHash(data: string): string {
   const hash = crypto.createHash("sha256");
   hash.update(data);
   const fullHash = hash.digest("hex");
-  return fullHash.substring(0, 8);
+  return fullHash.substring(0, 12);
 }
 
 export function getProperty<T>(obj: T, key: keyof T): any {

@@ -24,14 +24,18 @@ const recipientSchema = z.object({
 const RecipientsPage = ({
   certificate,
   updatePage,
+  recipients: mainRecipients,
+  updateRecipients,
 }: {
   certificate: TCertificate;
   updatePage: (page: number) => void;
+  recipients: [];
+  updateRecipients: (recipients: []) => void;
 }) => {
   const form = useForm<z.infer<typeof recipientSchema>>({
     resolver: zodResolver(recipientSchema),
     defaultValues: {
-      recipients: [
+      recipients: mainRecipients || [
         {
           firstName: "John",
           lastName: "Doe",
@@ -67,6 +71,7 @@ const RecipientsPage = ({
 
   const onSubmit = (data: z.infer<typeof recipientSchema>) => {
     console.log(data);
+    updateRecipients(data.recipients);
     updatePage(1);
   };
 
