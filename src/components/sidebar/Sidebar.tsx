@@ -9,6 +9,7 @@ import Workspace from "@/public/icons/ic_twotone-admin-panel-settings.svg";
 import Gift from "@/public/icons/ph_gift-duotone.svg";
 import Support from "@/public/icons/ic_twotone-contact-support.svg";
 import Star from "@/public/icons/ph_star-duotone.svg";
+import Assign from "@/public/icons/clarity_certificate-solid-alerted (1).svg";
 import profile from "@/public/profile_1.png";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
@@ -40,6 +41,11 @@ const navlinks: Navlinks[] = [
     name: "Workspace",
     href: "/workspace",
     Icon: Workspace,
+  },
+  {
+    name: "Assign",
+    href: "/assign",
+    Icon: Assign,
   },
 ];
 
@@ -101,7 +107,9 @@ const Sidebar = () => {
                 )}
               >
                 {Icon && <Image src={Icon} width={20} height={20} alt="" />}
-                <span className="group-hover:block hidden text-sm delay-300 transition-all">{name}</span>
+                <span className="group-hover:block hidden text-sm delay-300 transition-all">
+                  {name}
+                </span>
               </Link>
             </li>
           ))}
@@ -123,7 +131,9 @@ const Sidebar = () => {
                 )}
               >
                 {Icon && <Image src={Icon} width={20} height={20} alt="" />}
-                <span className="group-hover:block hidden text-sm delay-300 transition-all">{name}</span>
+                <span className="group-hover:block hidden text-sm delay-300 transition-all">
+                  {name}
+                </span>
               </Link>
             </li>
           ))}

@@ -6,11 +6,15 @@ import { CertificateRecipient } from "@/types/certificates";
 
 export const issueesColumns: ColumnDef<CertificateRecipient>[] = [
   {
-    accessorKey: "name",
-    header: "Name",
+    accessorKey: "recipientFirstName",
+    header: "First Name",
   },
   {
-    accessorKey: "email",
+    accessorKey: "recipientLastName",
+    header: "Last Name",
+  },
+  {
+    accessorKey: "recipientEmail",
     header: "Email",
   },
   {
@@ -19,7 +23,7 @@ export const issueesColumns: ColumnDef<CertificateRecipient>[] = [
     cell: ({ getValue }) => {
       const date = getValue() as Date;
       //full date
-      return format(date, "MMMM do, yyyy");
+      return date;
     },
   },
   {
