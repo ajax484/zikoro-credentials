@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { TCertificate } from "@/types/certificates";
+import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash } from "lucide-react";
 import React from "react";
@@ -29,7 +29,7 @@ const RecipientsPage = ({
 }: {
   certificate: TCertificate;
   updatePage: (page: number) => void;
-  recipients: [];
+  recipients: CertificateRecipient[];
   updateRecipients: (recipients: []) => void;
 }) => {
   const form = useForm<z.infer<typeof recipientSchema>>({
