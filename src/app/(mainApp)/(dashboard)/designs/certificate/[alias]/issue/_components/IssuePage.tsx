@@ -35,7 +35,13 @@ const IssuePage = ({ alias }: { alias: string }) => {
   }
 
   if (page === 1) {
-    return <SendEmail certificate={certificate} updatePage={updatePage} />;
+    return (
+      <SendEmail
+        certificate={certificate}
+        updatePage={updatePage}
+        recipients={recipients}
+      />
+    );
   }
 };
 

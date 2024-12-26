@@ -16,21 +16,23 @@ import TextEditor from "@/components/textEditor/Editor";
 import { useMutateData } from "@/hooks/services/request";
 
 const sendEmailSchema = z.object({
-  body: z.string().email("Enter a valid email address"),
+  body: z.string().nonempty("Enter a valid body"),
   subject: z.string().nonempty("Subject is required"),
   senderName: z.string().nonempty("Sender name is required"),
-  replyTo: z.string().email("Enter a valid email address"),
+  replyTo: z.string().optional(),
 });
 
 const SendEmail = ({
   certificate,
   updatePage,
+  recipients,
 }: {
   certificate: TCertificate;
   updatePage: (page: number) => void;
+  recipients: [];
 }) => {
   const { mutateData, isLoading } = useMutateData(
-    `/api/v1/certificates/${certificate.id}/send`
+    `/certificates/${certificate.certificateAlias}/recipients`
   );
   const form = useForm<z.infer<typeof sendEmailSchema>>({
     resolver: zodResolver(sendEmailSchema),
@@ -54,11 +56,20 @@ const SendEmail = ({
   const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
     console.log(data);
     await mutateData({
-      certificateGroupId: certificate.id,
-      ...data,
-      action: "release",
+      payload: {
+        certificateGroupId: certificate.id,
+        ...data,
+        action: "release",
+        recipients: recipients.map((recipient) => ({
+          recipientFirstName: recipient.firstName,
+          recipientLastName: recipient.lastName,
+          recipientEmail: recipient.email,
+        })),
+      },
     });
   };
+
+  console.log(form.formState.errors);
 
   return (
     <Form {...form}>
