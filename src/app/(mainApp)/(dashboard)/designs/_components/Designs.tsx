@@ -183,7 +183,10 @@ const Designs = () => {
                         </Link>
                         <Link
                           className="text-gray-50 hover:text-basePrimary"
-                          href={"/"}
+                          href={
+                            "/designs/certificate/" +
+                            certificate.certificateAlias
+                          }
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
