@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { TCertificate } from "@/types/certificates";
+import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -29,7 +29,7 @@ const SendEmail = ({
 }: {
   certificate: TCertificate;
   updatePage: (page: number) => void;
-  recipients: [];
+  recipients: CertificateRecipient[];
 }) => {
   const { mutateData, isLoading } = useMutateData(
     `/certificates/${certificate.certificateAlias}/recipients`
