@@ -1,4 +1,3 @@
-import { TAttendee } from "@/types/attendee";
 import { Event } from "./events";
 import { TOrganization } from "./organization";
 
@@ -30,13 +29,14 @@ export interface TCertificate {
   id?: number;
   created_at?: Date;
   eventAlias: string;
-  title: string;
+  name: string;
   settings: TCertificateSettings;
   event?: Event;
   lastEdited: Date;
   previewUrl: string;
   certificateHash: Record<string, any>;
   certificateAlias?: string;
+  JSON: Record<string, any>;
 }
 
 export interface TCertificateSettings {
@@ -58,7 +58,6 @@ export type TFullCertificate = TAttendeeCertificate & {
   originalCertificate: TCertificate & {
     event: Event & { organization: TOrganization };
   };
-  attendee: TAttendee;
 };
 
 export interface CertificateTemplate {
@@ -70,4 +69,17 @@ export interface CertificateTemplate {
   category: string;
   figmaName: string;
   colour: string;
+}
+
+export type issueActions = "issued" | "awaiting response" | "email opened" | "revoked";
+export interface CertificateRecipient {
+  id: number;
+  created_at: string;
+  certificateId?: string | null;
+  recipientName?: string | null;
+  recipientEmail?: string | null;
+  status?: issueActions | null;
+  statusDetails?: { action: issueActions; date: string } | null;
+  profilePicture?: string | null;
+  metadata?: Record<string, any> | null;
 }

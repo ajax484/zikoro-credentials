@@ -54,8 +54,7 @@ export const useGetData = <TData>(
   useEffect(() => {
     console.log("endpoint changed");
     fetchInitial && getData();
-    // }, [endpoint]);
-  }, []);
+  }, [endpoint]);
 
   return {
     data,
@@ -173,11 +172,9 @@ export const useDeleteRequest = <T>(endpoint: string) => {
   return { deleteData, isLoading };
 };
 
-
-
 type UseFetchResult<TFetchData> = {
   data: TFetchData;
-  getData: (param:string) => Promise<TFetchData | undefined>;
+  getData: (param: string) => Promise<TFetchData | undefined>;
 } & RequestStatus;
 
 export const useFetchData = <TFetchData>(
@@ -189,20 +186,20 @@ export const useFetchData = <TFetchData>(
   const [isLoading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
-  const getData = async (param:string) => {
+  const getData = async (param: string) => {
     setLoading(true);
 
     try {
       const { data: responseData, status } = await getRequest<TFetchData>({
-        endpoint:`${endpoint}/${param}`,
+        endpoint: `${endpoint}/${param}`,
       });
 
       if (status !== 200) {
         throw new Error("Failed to fetch data");
       }
       setData(responseData.data);
-      
-     // console.log(responseData.data);
+
+      // console.log(responseData.data);
       return responseData.data;
     } catch (error) {
       setError(true);
@@ -210,8 +207,6 @@ export const useFetchData = <TFetchData>(
       setLoading(false);
     }
   };
-
-
 
   return {
     data,

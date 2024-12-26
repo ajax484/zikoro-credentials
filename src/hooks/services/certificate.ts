@@ -1,6 +1,4 @@
 "use client";
-
-import { TAttendee } from "@/types/attendee";
 import {
   CertificateTemplate,
   TAttendeeCertificate,
