@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { zodResolver } from "@hookform/resolvers/zod";
