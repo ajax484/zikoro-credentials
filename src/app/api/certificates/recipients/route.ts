@@ -44,3 +44,5 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     );
   }
 }
+
+export const dynamic = "force-dynamic";
