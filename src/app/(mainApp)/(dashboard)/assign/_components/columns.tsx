@@ -39,16 +39,18 @@ export const issueesColumns: ColumnDef<CertificateRecipient>[] = [
               //icon
               status === "issued" ? (
                 <MailSend className="size-6" />
-              ) : status === "awaiting response" ? (
-                <Timer className="size-6" />
               ) : status === "email opened" ? (
                 <MailOpen className="size-6" />
               ) : status === "revoked" ? (
                 <X className="size-6" />
-              ) : null
+              ) : (
+                <Timer className="size-6" />
+              )
             }
           </div>
-          <span className="text-xs">{status}</span>
+          <span className="text-xs capitalize">
+            {status ?? "Awaiting Response"}
+          </span>
         </div>
       );
     },
