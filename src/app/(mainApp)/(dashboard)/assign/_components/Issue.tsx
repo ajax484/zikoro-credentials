@@ -6,7 +6,7 @@ import useSearch from "@/hooks/common/useSearch";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { TFilter } from "@/types/filter";
 import { extractUniqueTypes } from "@/utils/helpers";
-import { PenLine, Send, Trash } from "lucide-react";
+import { Send, Trash } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { PiExport } from "react-icons/pi";
 import { issueesColumns } from "./columns";
@@ -17,13 +17,13 @@ import Image from "next/image";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FileExcel, PencilSquare } from "styled-icons/bootstrap";
+import { cn } from "@/lib/utils";
+import GradientBorderSelect from "@/components/CustomSelect/GradientSelectBorder";
 import Link from "next/link";
 
 const issueesFilter: TFilter<CertificateRecipient>[] = [
@@ -94,7 +94,7 @@ const Issue = ({
     setSearchTerm,
   } = useSearch<CertificateRecipient>({
     data: filteredData || [],
-    accessorKey: ["recipientName", "recipientEmail"],
+    accessorKey: ["recipientFirstName", "recipientLastName", "recipientEmail"],
   });
 
   useEffect(() => {
@@ -111,7 +111,16 @@ const Issue = ({
 
   //   }, [isLoading]);
 
-  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedOption, setSelectedOption] = useState("manual");
+
+  const [selectedCertificate, setSelectedCertificate] = useState<
+    string | undefined
+  >();
+
+  const updateSelectedCertificate = (certificateAlias: string) => {
+    setSelectedCertificate(certificateAlias);
+    console.log("Selected Certificate:", certificateAlias);
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(event.target.value);
@@ -135,7 +144,10 @@ const Issue = ({
             <div className="grid grid-cols-3 gap-4">
               <label
                 htmlFor="manual"
-                className="border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md"
+                className={cn(
+                  "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
+                  selectedOption === "manual" && "border-basePrimary"
+                )}
               >
                 <input
                   type="radio"
@@ -158,7 +170,10 @@ const Issue = ({
               </label>
               <label
                 htmlFor="spreadsheet"
-                className="border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md"
+                className={cn(
+                  "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
+                  selectedOption === "spreadsheet" && "border-basePrimary"
+                )}
               >
                 <input
                   type="radio"
@@ -182,7 +197,10 @@ const Issue = ({
                 </div>
               </label>
               <label
-                className="border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md"
+                className={cn(
+                  "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
+                  selectedOption === "event" && "border-basePrimary"
+                )}
                 htmlFor="event"
               >
                 <input
@@ -205,13 +223,24 @@ const Issue = ({
                 </div>
               </label>
             </div>
+            <GradientBorderSelect
+              placeholder="Select Category"
+              value={selectedCertificate || ""}
+              onChange={(value: string) => updateSelectedCertificate(value)}
+              options={certificates.map(({ certificateAlias, name }) => ({
+                label: name,
+                value: certificateAlias || "",
+              }))}
+            />
             <DialogFooter>
-              {/* <Link
-                href={`/designs/certificate/${certificate.certificateAlias}/issue/`}
-                className="bg-basePrimary text-white py-2 px-4 rounded-md"
-              >
-                Add recipients
-              </Link> */}
+              {selectedCertificate && (
+                <Link
+                  href={`/designs/certificate/${selectedCertificate}/issue/`}
+                  className="bg-basePrimary text-white py-2 px-4 rounded-md"
+                >
+                  Add recipients
+                </Link>
+              )}
             </DialogFooter>
           </DialogContent>
         </Dialog>

@@ -15,7 +15,7 @@ import GradientBorderSelect from "@/components/CustomSelect/GradientSelectBorder
 import { Button } from "@/components/custom/Button";
 
 const Designs = () => {
-  const { user, setUser } = useUserStore();
+  const { user } = useUserStore();
 
   const {
     data: certificates,

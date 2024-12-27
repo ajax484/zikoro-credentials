@@ -22,7 +22,7 @@ const GradientBorderSelect = ({
 }: GradientBorderSelectProps) => {
   return (
     <div className="p-[3px] [background:_linear-gradient(90deg,_#001FCC_0%,_#9D00FF_100%);] rounded-md">
-      <Select>
+      <Select value={value} onValueChange={onChange}>
         <SelectTrigger className="w-full rounded-md bg-white text-xs font-medium">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>

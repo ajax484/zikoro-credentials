@@ -18,12 +18,12 @@ export const issueesColumns: ColumnDef<CertificateRecipient>[] = [
     header: "Email",
   },
   {
-    accessorKey: "dateIssued",
+    accessorKey: "created_at",
     header: "Date Issued",
     cell: ({ getValue }) => {
       const date = getValue() as Date;
       //full date
-      return date;
+      return format(date, "MMMM do, yyyy");
     },
   },
   {
