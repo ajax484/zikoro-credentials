@@ -5,6 +5,8 @@ import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  Row,
+  RowSelectionState,
   Table as TableProps,
   useReactTable,
 } from "@tanstack/react-table";
@@ -17,7 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
-import { useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData> {
@@ -30,6 +32,8 @@ interface DataTableProps<TData> {
   totalDocs: number;
   isFetching: boolean;
   onClick?: (row: TData) => void;
+  setRowSelection?: Dispatch<SetStateAction<RowSelectionState>>;
+  rowSelection?: RowSelectionState;
 }
 
 export function DataTable<TData>({
@@ -42,6 +46,8 @@ export function DataTable<TData>({
   totalDocs = 1,
   isFetching,
   onClick,
+  setRowSelection,
+  rowSelection,
 }: DataTableProps<TData>) {
   useEffect(() => {
     refetch();
@@ -52,6 +58,10 @@ export function DataTable<TData>({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onRowSelectionChange: setRowSelection,
+    state: { rowSelection },
+    getRowId: (row) => (row?.id ? row?.id.toString() : ""),
+    enableRowSelection: true,
   });
 
   return (
@@ -64,7 +74,7 @@ export function DataTable<TData>({
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
-                      className="!text-black !text-center py-4 !font-medium"
+                      className="!text-black py-4 !font-medium"
                       key={header.id}
                     >
                       {header.isPlaceholder
@@ -84,7 +94,7 @@ export function DataTable<TData>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24"
                 >
                   Loading...
                 </TableCell>
@@ -92,16 +102,16 @@ export function DataTable<TData>({
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  className={cn(
-                    "bg-white",
-                    onClick && "cursor-pointer"
-                  )}
+                  className={cn("bg-white", onClick && "cursor-pointer")}
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   onClick={() => onClick(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="text-center py-4 font-medium text-sm text-gray-700">
+                    <TableCell
+                      key={cell.id}
+                      className="py-4 font-medium text-sm text-gray-700"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

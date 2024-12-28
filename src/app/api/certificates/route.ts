@@ -8,13 +8,11 @@ export async function GET(req: NextRequest) {
   if (req.method === "GET") {
     try {
       const { searchParams } = new URL(req.url);
-      const eventId = searchParams.get("eventId");
-      const userId = searchParams.get("userId");
+      const workspaceAlias = searchParams.get("workspaceAlias");
 
       const query = supabase.from("certificate").select("*, events!inner(*)");
 
-      if (eventId) query.eq("eventId", eventId);
-      if (userId) query.eq("events.createdBy", userId);
+      if (workspaceAlias) query.eq("workspaceAlias", workspaceAlias);
 
       const { data, error, status } = await query;
 

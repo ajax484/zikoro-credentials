@@ -1,6 +1,9 @@
 import { TAttendeeBadge, TBadge } from "@/types";
 import { TAttendee } from "@/types/attendee";
-import { TAttendeeCertificate } from "@/types/certificates";
+import {
+  CertificateRecipient,
+  TAttendeeCertificate,
+} from "@/types/certificates";
 import { Event } from "@/types/events";
 import { TOrganization } from "@/types/organization";
 import * as crypto from "crypto";
@@ -217,8 +220,7 @@ export function base64ToFile(base64Data: string, fileName: string): File {
 
 type Context = {
   asset: TAttendeeCertificate | TAttendeeBadge;
-  attendee: TAttendee;
-  event: Event;
+  recipient: CertificateRecipient;
   organization: TOrganization;
 };
 
@@ -241,35 +243,24 @@ export function replaceSpecialText(input: string, context: Context): string {
   return input.replaceAll(/#{(.*?)#}/g, (match, value) => {
     switch (value.trim()) {
       case "first_name":
-        return context.attendee.firstName;
+        return context.recipient.recipientFirstName;
       case "last_name":
-        return context.attendee.lastName;
-      case "attendee_email":
-        return context.attendee.email;
-      case "attendee_job":
-        return context.attendee.jobTitle || "";
-      case "attendee_position":
-        return context.attendee.organization || "";
-      case "attendee_id":
-        return String(context.attendee.id);
-      case "event_name":
-        return context.event.eventTitle;
-      case "city":
-        return context.event.eventCity || "";
-      case "country":
-        return context.event.eventCountry || "";
-      case "start_date":
-        return context.event.startDateTime || "";
-      case "end_date":
-        return context.event.endDateTime || "";
+        return context.recipient.recipientLastName;
+      case "recipient_email":
+        return context.recipient.recipientEmail;
+      case "certificate_id":
+        return context.recipient.certificateId;
+      case "certificate_link":
+        return (
+          "www.zikoro-credentials.com/credentials/verify/certificate/" +
+          context.recipient.certificateId
+        );
       case "organization_name":
         return context.organization.organizationName;
       case "organisation_logo":
         return context.organization.organizationLogo || "";
-      case "certificateId":
-        return context.asset?.certificateId || "";
       default:
-        return match; // Return the original string if no matching value found
+        return match;
     }
   });
 }

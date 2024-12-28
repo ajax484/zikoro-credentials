@@ -24,7 +24,8 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import GradientBorderSelect from "@/components/CustomSelect/GradientSelectBorder";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { RowSelectionState } from "@tanstack/react-table";
 
 const issueesFilter: TFilter<CertificateRecipient>[] = [
   {
@@ -82,6 +83,8 @@ const Issue = ({
 }) => {
   console.log(certificates);
 
+  const router = useRouter();
+
   const { filteredData, filters, selectedFilters, applyFilter, setOptions } =
     useFilter<CertificateRecipient>({
       data: certificateIssuees,
@@ -117,6 +120,12 @@ const Issue = ({
     string | undefined
   >();
 
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+  console.log(rowSelection);
+
+  const [selectedType, setSelectedType] = useState<string | undefined>();
+
   const updateSelectedCertificate = (certificateAlias: string) => {
     setSelectedCertificate(certificateAlias);
     console.log("Selected Certificate:", certificateAlias);
@@ -125,12 +134,69 @@ const Issue = ({
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(event.target.value);
     console.log("Selected Option:", event.target.value);
+    router.push(`/assign`);
   };
+
+  const selectType = () => {
+    if (selectedOption === "manual") {
+      router.push(`/designs/certificate/${selectedCertificate}/issue/`);
+    } else {
+      setSelectedType(selectedOption);
+    }
+  };
+
+  // disabled={
+  //   filteredData.filter(({ id }) => rowSelection[id])
+  //     .length === 0
+  // }
 
   return (
     <section className="space-y-4">
       <div className="flex items-end justify-between">
-        <div />
+        <div className="flex gap-2 items-center">
+          <button
+            className={cn(
+              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+                ? "border-gray-600 text-gray-600"
+                : "border-red-600  text-red-600"
+            )}
+            disabled={
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+            }
+          >
+            <Trash className="size-4" />
+            <span>Recall</span>
+          </button>
+          <button
+            className={cn(
+              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+                ? "border-gray-600 text-gray-600"
+                : "border-basePrimary text-basePrimary"
+            )}
+            disabled={
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+            }
+          >
+            <PiExport className="size-4" />
+            <span>Export</span>
+          </button>
+          <button
+            className={cn(
+              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+                ? "border-gray-600 text-gray-600"
+                : "border-basePrimary text-basePrimary"
+            )}
+            disabled={
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+            }
+          >
+            <Send className="size-4" />
+            <span>Resend</span>
+          </button>
+        </div>
         <Dialog>
           <DialogTrigger>
             <Button className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 w-fit text-sm">
@@ -234,35 +300,15 @@ const Issue = ({
             />
             <DialogFooter>
               {selectedCertificate && (
-                <Link
-                  href={`/designs/certificate/${selectedCertificate}/issue/`}
-                  className="bg-basePrimary text-white py-2 px-4 rounded-md"
-                >
+                <Button className="bg-basePrimary text-white rounded-md">
                   Add recipients
-                </Link>
+                </Button>
               )}
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
-      <div className="flex items-end justify-between">
-        <div />
-        <div className="flex gap-2 items-center">
-          <button className="border-red-600 border rounded-xl text-red-600 flex items-center gap-2 bg-white px-4 py-2 text-sm">
-            <Trash className="size-4" />
-            <span>Recall</span>
-          </button>
-          <button className="border-basePrimary border rounded-xl text-basePrimary flex items-center gap-2 bg-white px-4 py-2 text-sm">
-            <PiExport className="size-4" />
-            <span>Export</span>
-          </button>
-          <button className="border-basePrimary border rounded-xl text-basePrimary flex items-center gap-2 bg-white px-4 py-2 text-sm">
-            <Send className="size-4" />
-            <span>Resend</span>
-          </button>
-        </div>
-      </div>
-      <div className="flex justify-center">
+      <div className="flex justify-center items-end">
         <input
           type="text"
           placeholder="Search"
@@ -270,15 +316,15 @@ const Issue = ({
           onInput={(event) => setSearchTerm(event.currentTarget.value)}
           className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 w-1/3 border-b focus-visible:outline-none"
         />
+        <Filter
+          className={`space-y-4 w-1/3 mx-auto hide-scrollbar`}
+          filters={filters.sort(
+            (a, b) => (a.order || Infinity) - (b.order || Infinity)
+          )}
+          applyFilter={applyFilter}
+          selectedFilters={selectedFilters}
+        />
       </div>
-      <Filter
-        className={`space-y-4 w-1/3 mx-auto hide-scrollbar`}
-        filters={filters.sort(
-          (a, b) => (a.order || Infinity) - (b.order || Infinity)
-        )}
-        applyFilter={applyFilter}
-        selectedFilters={selectedFilters}
-      />
       <DataTable<CertificateRecipient>
         columns={issueesColumns}
         data={filteredIssuees}
@@ -289,6 +335,8 @@ const Issue = ({
         totalDocs={1}
         isFetching={false}
         onClick={() => {}}
+        rowSelection={rowSelection}
+        setRowSelection={setRowSelection}
       />
     </section>
   );

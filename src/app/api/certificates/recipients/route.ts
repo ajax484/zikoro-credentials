@@ -9,7 +9,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
       const supabase = createRouteHandlerClient({ cookies });
       const { data, error } = await supabase
         .from("certificateRecipients")
-        .select("*");
+        .select("*, certificate(*)");
 
       console.log(data, "recipients");
 
