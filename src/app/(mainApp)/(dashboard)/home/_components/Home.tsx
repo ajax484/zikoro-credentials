@@ -29,7 +29,7 @@ const Home = () => {
     isLoading: certificatesIsLoading,
     error,
   } = useGetData<TCertificate[]>(
-    `/certificates?workspaceAlias=${organization?.organizationAlias}`,
+    `/certificates?workspaceId=${organization?.id}`,
     true,
     []
   );
@@ -48,7 +48,7 @@ const Home = () => {
     if (!data) return;
     global?.window &&
       window.open(
-        `/credentials/create/${data.certificateAlias}?type=certificate`
+        `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${organization.id}`
       );
   };
 

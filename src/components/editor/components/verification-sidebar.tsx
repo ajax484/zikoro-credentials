@@ -62,27 +62,11 @@ export const VerificationSidebar = ({
             className="w-full"
             onClick={() =>
               editor?.addText(
-                "https://www.zikoro.com/credentials/certificate/verify/#{certificateId#}"
+                "https://www.zikoro-credentials.com/credentials/certificate/verify/#{certificateId#}"
               )
             }
           >
             Add a Verification URL
-          </Button>
-          {/* <Button
-            className="w-full"
-            onClick={() =>
-              editor?.addQRCode(
-                "www.zikoro.com/credentials/certificate/verify/#{certificateId#}"
-              )
-            }
-          >
-            Add a QR Code
-          </Button> */}
-          <Button
-            className="w-full"
-            onClick={() => editor?.addText("#{city#} #{country#}")}
-          >
-            Add a location
           </Button>
           <Button
             className="w-full"

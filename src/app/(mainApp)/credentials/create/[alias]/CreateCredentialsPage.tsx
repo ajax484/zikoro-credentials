@@ -10,12 +10,12 @@ import React, { useEffect, useState } from "react";
 
 const CreateCredentialsPage = ({
   alias,
-  organizationId,
+  workspaceId,
   eventAlias,
   type,
 }: {
   alias: string;
-  organizationId: string;
+  workspaceId: string;
   eventAlias: string;
   type: "badge" | "certificate";
 }) => {
@@ -87,8 +87,7 @@ const CreateCredentialsPage = ({
       initialData={data?.JSON}
       name={name}
       setName={setName}
-      organizationId={organizationId}
-      eventAlias={eventAlias}
+      workspaceId={workspaceId}
       save={saveCredentialsFn}
       isSaving={saving}
       isError={error}

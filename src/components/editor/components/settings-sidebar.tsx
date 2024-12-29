@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Event } from "@/types";
 
 import {
   Dialog,
@@ -27,7 +26,6 @@ interface SettingsSidebarProps {
   editor: Editor | undefined;
   activeTool: ActiveTool;
   onChangeActiveTool: (tool: ActiveTool) => void;
-  event: Event;
   onChangeSettings: (settings: any) => void;
   settings: any;
   saveSettings: () => void;
@@ -38,7 +36,6 @@ export const SettingsSidebar = ({
   editor,
   activeTool,
   onChangeActiveTool,
-  event,
   onChangeSettings,
   settings,
   saveSettings,
@@ -108,9 +105,9 @@ export const SettingsSidebar = ({
                 Issue date
               </Label>
               <Input
-                placeholder="Enter event title"
+                placeholder="Enter issue date"
                 type="datetime-local"
-                defaultValue={event?.endDateTime}
+                defaultValue={settings.publishOn}
                 value={settings.publishOn}
                 className="placeholder:text-sm h-12 inline-block focus:border-gray-500 placeholder:text-gray-200 text-gray-700 accent-basePrimary"
                 onInput={(e) =>

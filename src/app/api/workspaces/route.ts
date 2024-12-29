@@ -3,23 +3,31 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  
+  const { searchParams } = new URL(req.url);
+  const userEmail = searchParams.get("userEmail");
   const supabase = createRouteHandlerClient({ cookies });
 
   if (req.method === "GET") {
     try {
-      const { data, error } = await supabase
-        .from("events")
-        .select("*, organization!inner(*)")
-        .eq("published", true)
-        .neq("eventVisibility", "Private") // Filter out Private events
-        .gte("startDateTime", new Date().toISOString()) // Filter non-expired events
+      const { data: organizations, error } = await supabase
+        .from("organization")
+        .select("*");
+
+      console.log(userEmail);
+
+      const filteredOrganizations = organizations?.filter((organization) => {
+        return organization.teamMembers?.some(
+          ({ userEmail: email }) => email === userEmail
+        );
+      });
+
+      console.log(filteredOrganizations);
 
       if (error) throw error;
 
       return NextResponse.json(
         {
-          data,
+          data: filteredOrganizations,
         },
         {
           status: 200,

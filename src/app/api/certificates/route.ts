@@ -10,7 +10,9 @@ export async function GET(req: NextRequest) {
       const { searchParams } = new URL(req.url);
       const workspaceAlias = searchParams.get("workspaceAlias");
 
-      const query = supabase.from("certificate").select("*, events!inner(*)");
+      console.log(workspaceAlias);
+
+      const query = supabase.from("certificate").select("*");
 
       if (workspaceAlias) query.eq("workspaceAlias", workspaceAlias);
 

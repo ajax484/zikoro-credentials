@@ -26,19 +26,17 @@ import { RemoveBgSidebar } from "@/components/editor/components/remove-bg-sideba
 import { SettingsSidebar } from "@/components/editor/components/settings-sidebar";
 import { BackgroundSidebar } from "./background-sidebar";
 import { VerificationSidebar } from "./verification-sidebar";
-import { Event } from "@/types";
+
 import { QRCodeSidebar } from "./qrcode-sidebar";
 
 interface EditorProps {
   initialData: ResponseType["data"];
   name: string;
   setName: (name: string) => void;
-  organizationId: string;
-  eventAlias: string;
+  workspaceId: string;
   save: (values: { json: string; height: number; width: number }) => void;
   isSaving: boolean;
   isError: boolean;
-  event: Event;
   settings: any;
   setSettings: (settings: any) => void;
   type: "certificate" | "badge";
@@ -48,12 +46,10 @@ export const Editor = ({
   initialData,
   name,
   setName,
-  organizationId,
-  eventAlias,
+  workspaceId,
   save,
   isSaving,
   isError,
-  event,
   settings,
   setSettings,
   type,
@@ -136,7 +132,6 @@ export const Editor = ({
         name={name}
         isSaving={isSaving}
         isError={isError}
-        eventAlias={eventAlias}
         type={type}
       />
       <div className="absolute top-[68px] flex h-[calc(100%-68px)] w-full">
@@ -193,13 +188,13 @@ export const Editor = ({
           editor={editor}
           activeTool={activeTool}
           onChangeActiveTool={onChangeActiveTool}
-          organizationId={organizationId}
+          organizationId={workspaceId}
         />
         <ImageSidebar
           editor={editor}
           activeTool={activeTool}
           onChangeActiveTool={onChangeActiveTool}
-          organizationId={organizationId}
+          organizationId={workspaceId}
         />
         {/* <TemplateSidebar
           editor={editor}
@@ -230,7 +225,6 @@ export const Editor = ({
           editor={editor}
           activeTool={activeTool}
           onChangeActiveTool={onChangeActiveTool}
-          event={event}
           onChangeSettings={(value: any) => {
             setSettings((prev) => ({ ...prev, ...value }));
           }}

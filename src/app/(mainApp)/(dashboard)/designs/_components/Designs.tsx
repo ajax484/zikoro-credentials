@@ -4,24 +4,48 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import { useGetData } from "@/hooks/services/request";
 import { TCertificate } from "@/types/certificates";
-import useUserStore from "@/store/globalUserStore";
 import Link from "next/link";
 import Email from "@/public/icons/mdi_email-sent.svg";
 import Calendar from "@/public/icons/duo-icons_calendar.svg";
 import Solar from "@/public/icons/solar_pen-new-square-bold-duotone.svg";
 import { format } from "date-fns";
 import useSearch from "@/hooks/common/useSearch";
-import GradientBorderSelect from "@/components/CustomSelect/GradientSelectBorder";
-import { Button } from "@/components/custom/Button";
+import useOrganizationStore from "@/store/globalOrganizationStore";
+import SelectOrganization from "@/components/SelectOrganization/SelectOrganization";
+import { toast } from "react-toastify";
+import { useCreateCertificate } from "@/hooks";
+import { Button } from "@/components/ui/button";
 
 const Designs = () => {
-  const { user } = useUserStore();
+  const { organization, setOrganization } = useOrganizationStore();
+
+  const { createCertificate, isLoading: certificateIsCreating } =
+    useCreateCertificate();
+
+  const createCertificateFn = async () => {
+    if (!organization) return toast.error("Please select an organization");
+    const data = await createCertificate({
+      payload: { workspaceAlias: organization.organizationAlias },
+    });
+
+    if (!data) return;
+    global?.window &&
+      window.open(
+        `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${organization.id}`
+      );
+  };
+
+  console.log(organization);
 
   const {
     data: certificates,
     isLoading: certificatesIsLoading,
     error,
-  } = useGetData<TCertificate[]>(`/certificates?userId=${user?.id}`, true, []);
+  } = useGetData<TCertificate[]>(
+    `/certificates?workspaceAlias=${organization?.organizationAlias}`,
+    true,
+    []
+  );
 
   const {
     searchTerm,
@@ -34,25 +58,7 @@ const Designs = () => {
 
   return (
     <div>
-      <div className="flex flex-col gap-1">
-        <span className="text-xs text-gray-600">Workspace:</span>
-        <div className="flex items-center gap-4">
-          <GradientBorderSelect
-            placeholder="Select Category"
-            value="announcements"
-            onChange={(value) => console.log(value)}
-            options={["announcements", "reminders", "marketing"].map(
-              (category) => ({
-                label: category,
-                value: category,
-              })
-            )}
-          />
-          <Button className="bg-basePrimary gap-x-2 py-1 text-gray-50 font-medium flex items-center justify-center rounded-lg w-fit text-xs">
-            New Workspace
-          </Button>
-        </div>
-      </div>
+      <SelectOrganization />
       <div className="bg-basePrimary/10 text-[#1F1F1F] px-1 py-4 rounded-xl space-y-2 border w-1/2 mx-auto my-6">
         <div className="mb-4 space-y-2">
           <h3 className="text-lg text-gray-700 font-semibold py-2 text-center">
@@ -92,7 +98,7 @@ const Designs = () => {
           You need credits to issue credentials.
         </p>
         <Link
-          href={"/"}
+          href={"/tokens/buy"}
           className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize"
         >
           Buy more credits
@@ -132,9 +138,10 @@ const Designs = () => {
               <div>Loading...</div>
             ) : (
               <>
-                <Link
-                  href={"/"}
-                  className="rounded-md border bg-white flex flex-col items-center justify-center gap-2"
+                <button
+                  onClick={createCertificateFn}
+                  disabled={certificateIsCreating}
+                  className="rounded-md border bg-white flex flex-col items-center justify-center gap-2 min-h-[250px]"
                 >
                   <Image
                     src={Solar}
@@ -144,7 +151,7 @@ const Designs = () => {
                     className="rounded-full"
                   />
                   <span className="text-sm text-basePrimary">Create New</span>
-                </Link>
+                </button>
                 {filteredCertificates?.map((certificate) => (
                   <div
                     key={certificate.id}
