@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import { paymentConfig } from "@/hooks/common/usePayStackPayment";
 import { useMutateData } from "@/hooks/services/request";

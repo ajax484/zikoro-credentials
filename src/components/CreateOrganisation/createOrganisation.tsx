@@ -667,14 +667,6 @@ export function CreateOrganization({
                   </InputOffsetLabel>
                 )}
               />
-              <InputOffsetLabel label="Subscription Plan">
-                <Input
-                  value={"free"}
-                  readOnly
-                  type="text"
-                  className="placeholder:text-sm h-11 text-zinv-700"
-                />
-              </InputOffsetLabel>
             </div>
 
             <div className="w-full hidden flex-col items-start justify-start gap-y-2">

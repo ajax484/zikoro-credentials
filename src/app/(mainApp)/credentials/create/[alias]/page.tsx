@@ -1,6 +1,11 @@
 import React from "react";
 import CreateCredentialsPage from "./CreateCredentialsPage";
 
+export const metadata = {
+  title: "Credentials - Create",
+  description: "Create Credentials",
+};
+
 const page = ({
   params,
   searchParams,
