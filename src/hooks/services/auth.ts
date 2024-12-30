@@ -1,7 +1,7 @@
 "use client";
 
 import { loginSchema, onboardingSchema } from "@/schemas/auth";
-import { useState, } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
@@ -23,8 +23,9 @@ export function useRegistration() {
         email: values.email,
         password: values.password,
         options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback/${values?.email
-            }/${new Date().toISOString()}`,
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback/${
+            values?.email
+          }/${new Date().toISOString()}`,
         },
       });
 
@@ -51,7 +52,6 @@ export function useRegistration() {
   };
 }
 
-
 export function useLogin() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -77,7 +77,7 @@ export function useLogin() {
         router.push(redirectTo ?? "/dashboard");
         setLoading(false);
       } else {
-        toast.error('Incorrect Details');
+        toast.error("Incorrect Details");
         setLoading(false);
       }
     } catch (error) {
@@ -117,7 +117,7 @@ export const useSetLoggedInUser = () => {
       .eq("userEmail", email)
       .single();
     if (error) {
-       console.log({error});
+      console.log({ error });
       // window.open(
       //   `/onboarding?email=${email}&createdAt=${new Date().toISOString()}`,
       //   "_self"
@@ -131,7 +131,6 @@ export const useSetLoggedInUser = () => {
 
   return { setLoggedInUser };
 };
-
 
 export function useForgotPassword() {
   const [loading, setLoading] = useState(false);
@@ -224,7 +223,11 @@ export function useVerifyCode() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  async function verifyCode(email: string, credit: string, type: string | null) {
+  async function verifyCode(
+    email: string,
+    credit: string,
+    type: string | null
+  ) {
     try {
       setLoading(true);
       const { data, error } = await supabase.auth.verifyOtp({
@@ -241,7 +244,8 @@ export function useVerifyCode() {
         router.push(`${window.location.origin}/update-password`);
       } else {
         router.push(
-          `${window.location.origin
+          `${
+            window.location.origin
           }/onboarding?email=${email}&createdAt=${new Date().toISOString()}`
         );
       }
@@ -258,7 +262,6 @@ export function useVerifyCode() {
   };
 }
 
-
 export const getUser = async (email: string | null) => {
   if (!email) return;
   const { data: user, error } = await supabase
@@ -268,10 +271,11 @@ export const getUser = async (email: string | null) => {
     .single();
   if (error) {
     //  console.log({error});
-    window.open(
-      `/onboarding?email=${email}&createdAt=${new Date().toISOString()}`,
-      "_self"
-    );
+    if (typeof window !== "undefined")
+      window.open(
+        `/onboarding?email=${email}&createdAt=${new Date().toISOString()}`,
+        "_self"
+      );
     return;
   }
   // console.log(user);
@@ -290,14 +294,14 @@ export function useOnboarding() {
     createdAt: string | null;
   };
   type FormData = {
-    referralCode: string,
+    referralCode: string;
     referredBy: string;
-    phoneNumber: string,
-    city: string,
-    country: string,
-    firstName: string,
-    lastName: string,
-    industry: string,
+    phoneNumber: string;
+    city: string;
+    country: string;
+    firstName: string;
+    lastName: string;
+    industry: string;
   };
 
   async function registration(
@@ -336,5 +340,3 @@ export function useOnboarding() {
     loading,
   };
 }
-
-

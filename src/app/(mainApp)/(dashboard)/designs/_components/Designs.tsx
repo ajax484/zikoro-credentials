@@ -30,10 +30,12 @@ const Designs = () => {
     });
 
     if (!data) return;
-    global?.window &&
+
+    if (typeof window !== "undefined") {
       window.open(
         `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${organization.id}`
       );
+    }
   };
 
   console.log(organization);
