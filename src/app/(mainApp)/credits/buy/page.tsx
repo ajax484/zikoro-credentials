@@ -1,8 +1,8 @@
 import BuyCreditPage from "./_components/BuyCreditPage";
 
 export const metadata = {
-  title: "Credentials - Subscribe",
-  description: "Subscribe to a plan",
+  title: "Credentials - Buy Credits",
+  description: "Purchase credits",
 };
 
 const page = () => {

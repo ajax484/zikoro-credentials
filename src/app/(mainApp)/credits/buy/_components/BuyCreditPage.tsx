@@ -5,6 +5,10 @@ import Checkout from "./Checkout";
 import Details from "./Details";
 import AddPoints from "./AddPoints";
 import { TOrganization } from "@/types/organization";
+import { useGetData } from "@/hooks/services/request";
+import { CredentialCurrencyConverter, CredentialsToken } from "@/types/token";
+import useUserStore from "@/store/globalUserStore";
+import useOrganizationStore from "@/store/globalOrganizationStore";
 
 export const metadata = {
   title: "Credentials - Subscribe",
@@ -12,7 +16,9 @@ export const metadata = {
 };
 
 const BuyCreditPage = () => {
+  const { user } = useUserStore();
   const [step, setStep] = useState<number>(1);
+  const [selectedCurrency, setSelectedCurrency] = useState<string>("NGN");
   const [credits, setCredits] = useState<{
     bronze: number;
     silver: number;
@@ -23,13 +29,11 @@ const BuyCreditPage = () => {
     gold: 0,
   });
 
-  const [workspace, setWorkspace] = useState<TOrganization | null>(null);
+  const { organization: currentWorkspace } = useOrganizationStore();
 
-  const prices = {
-    bronze: 5000,
-    silver: 7500,
-    gold: 10000,
-  };
+  const [workspace, setWorkspace] = useState<TOrganization | null>(
+    currentWorkspace
+  );
 
   const updateCredits = (credit: string, value: number) => {
     setCredits((prev) => ({
@@ -37,6 +41,8 @@ const BuyCreditPage = () => {
       [credit]: value,
     }));
   };
+
+  const updateCurrency = (currency: string) => setSelectedCurrency(currency);
 
   const handleNext = () => {
     setStep(step + 1);
@@ -47,15 +53,41 @@ const BuyCreditPage = () => {
     setWorkspace(organization);
   };
 
+  const { data: currencyConversion, isLoading: currencyConversionIsLoading } =
+    useGetData<CredentialCurrencyConverter[]>("/tokens/pricing", true, []);
+
+  const { data: tokens, isLoading: tokensIsLoading } = useGetData<
+    CredentialsToken[]
+  >("/tokens", true, []);
+
+  const {
+    data: workspaces,
+    isLoading: workspacesIsLoading,
+    error: workspacesError,
+  } = useGetData<TOrganization[]>(
+    `/workspaces?userEmail=${user?.userEmail}`,
+    true,
+    []
+  );
+
+  console.log(currencyConversion, tokens);
+
+  if (workspacesIsLoading || currencyConversionIsLoading || tokensIsLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <section className="flex flex-col items-center pt-12 w-1/2 mx-auto gap-6 space-y-12">
-      <Timeline step={step} handleNext={handleNext} />
+      <Timeline step={step} setStep={(step) => setStep(step)} />
       {step === 1 && (
         <AddPoints
           handleNext={handleNext}
-          prices={prices}
           credits={credits}
           updateCredits={updateCredits}
+          tokens={tokens}
+          currencyConversion={currencyConversion}
+          selectedCurrency={selectedCurrency}
+          updateCurrency={updateCurrency}
         />
       )}
       {step === 2 && (
@@ -63,13 +95,15 @@ const BuyCreditPage = () => {
           handleNext={handleNext}
           workspace={workspace}
           handleWorkspaceChange={handleWorkspaceChange}
+          workspaces={workspaces}
         />
       )}
       {step === 3 && (
         <Checkout
-          handleNext={handleNext}
           credits={credits}
-          prices={prices}
+          tokens={tokens}
+          currencyConversion={currencyConversion}
+          selectedCurrency={selectedCurrency}
           workspace={workspace}
         />
       )}
@@ -79,15 +113,18 @@ const BuyCreditPage = () => {
 
 const Timeline = ({
   step,
-  handleNext,
+  setStep,
 }: {
   step: number;
-  handleNext: () => void;
+  setStep: (step: number) => void;
 }) => {
   return (
     <div className="space-y-2 w-1/3 mx-auto">
       <div className="flex justify-between items-center w-full">
-        <div
+        <button
+          aria-label="First step"
+          disabled={step === 0}
+          onClick={() => setStep(1)}
           className={cn(
             "rounded-full size-5 border-2 flex items-center justify-center",
             step > 0 ? "border-basePrimary" : "border-gray-300"
@@ -99,14 +136,17 @@ const Timeline = ({
               step > 0 ? "" : "opacity-0"
             )}
           />
-        </div>
+        </button>
         <div
           className={cn(
             "h-[2px] flex-1",
             step > 1 ? "bg-gray-500" : "bg-gray-300"
           )}
         />
-        <div
+        <button
+          aria-label="Second step"
+          disabled={step < 2}
+          onClick={() => setStep(2)}
           className={cn(
             "rounded-full size-5 border-2 flex items-center justify-center",
             step > 1 ? "border-basePrimary" : "border-gray-300"
@@ -118,14 +158,17 @@ const Timeline = ({
               step > 1 ? "" : "opacity-0"
             )}
           />
-        </div>
+        </button>
         <div
           className={cn(
             "h-[2px] flex-1",
             step > 2 ? "bg-gray-500" : "bg-gray-300"
           )}
         />
-        <div
+        <button
+          aria-label="Third step"
+          disabled={step < 3}
+          onClick={() => setStep(3)}
           className={cn(
             "rounded-full size-5 border-2 flex items-center justify-center",
             step > 2 ? "border-basePrimary" : "border-gray-300"
@@ -137,10 +180,10 @@ const Timeline = ({
               step > 2 ? "" : "opacity-0"
             )}
           />
-        </div>
+        </button>
       </div>
       <div className="flex justify-between items-center text-xs">
-        <span>Add credits</span>
+        <span>Buy Credits</span>
         <span>Details</span>
         <span>checkout</span>
       </div>

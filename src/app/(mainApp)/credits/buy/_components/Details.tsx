@@ -7,32 +7,22 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import useUserStore from "@/store/globalUserStore";
-import { useGetData } from "@/hooks/services/request";
 import { TOrganization } from "@/types/organization";
 import { Button } from "@/components/ui/button";
+import useOrganizationStore from "@/store/globalOrganizationStore";
 
 const Details = ({
   workspace,
   handleWorkspaceChange,
   handleNext,
+  workspaces,
 }: {
   workspace: TOrganization | null;
   handleWorkspaceChange: (organization: TOrganization | null) => void;
   handleNext: () => void;
+  workspaces: TOrganization[];
 }) => {
-  const { user } = useUserStore();
-
-  const {
-    data: workspaces,
-    isLoading: workspacesIsLoading,
-    error: workspacesError,
-  } = useGetData<TOrganization[]>(
-    `/workspaces?userEmail=${user?.userEmail}`,
-    true,
-    []
-  );
-
+  console.log();
   console.log(workspace?.id);
 
   return (
@@ -40,7 +30,7 @@ const Details = ({
       <div className="flex flex-col gap-2 w-full">
         <label className="font-medium text-gray-700">Workspace</label>
         <Select
-          value={String(workspace?.id) || ""}
+          value={String(workspace?.id)}
           onValueChange={(id) =>
             handleWorkspaceChange(
               workspaces.find((workspace) => String(workspace.id) === id) ||
@@ -62,7 +52,7 @@ const Details = ({
       </div>
 
       <Button
-        disabled={workspacesIsLoading || !workspace}
+        disabled={!workspace}
         onClick={handleNext}
         className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-8 w-fit mx-auto"
       >

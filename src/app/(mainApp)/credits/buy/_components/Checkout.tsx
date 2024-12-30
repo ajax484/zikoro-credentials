@@ -1,17 +1,25 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import { paymentConfig } from "@/hooks/common/usePayStackPayment";
 import { useMutateData } from "@/hooks/services/request";
+import useUserStore from "@/store/globalUserStore";
 import { TOrganization } from "@/types/organization";
-import { generateAlphanumericHash } from "@/utils/helpers";
+import { CredentialCurrencyConverter, CredentialsToken } from "@/types/token";
+import {
+  applyCredentialsDiscount,
+  generateAlphanumericHash,
+} from "@/utils/helpers";
 import { Lock } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { PaystackButton } from "react-paystack";
 
 const Checkout = ({
   workspace,
   credits,
-  prices,
+  tokens,
+  currencyConversion,
+  selectedCurrency,
 }: {
   workspace: TOrganization | null;
   credits: {
@@ -19,50 +27,71 @@ const Checkout = ({
     silver: number;
     gold: number;
   };
-  prices: {
-    bronze: number;
-    silver: number;
-    gold: number;
-  };
+  tokens: CredentialsToken[];
+  currencyConversion: CredentialCurrencyConverter[];
+  selectedCurrency: string;
 }) => {
+  const { user } = useUserStore();
   const { mutateData, isLoading: mutateLoading } = useMutateData(
     `/workspaces/credits/buy`
   );
 
+  const router = useRouter();
+
+  const currentCurrency = currencyConversion.find(
+    ({ currency }) => currency === selectedCurrency
+  ) || { amount: 0, currency: "" };
+
+  const bronzeToken = tokens.find(({ id }) => id === 1) || { amount: 0 };
+  const silverToken = tokens.find(({ id }) => id === 2) || { amount: 0 };
+  const goldToken = tokens.find(({ id }) => id === 3) || { amount: 0 };
+
   const total =
-    credits.bronze * prices.bronze +
-    credits.silver * prices.silver +
-    credits.gold * prices.gold;
+    applyCredentialsDiscount(
+      credits.gold,
+      currentCurrency?.amount * goldToken?.amount
+    ) +
+    applyCredentialsDiscount(
+      credits.silver,
+      currentCurrency?.amount * silverToken?.amount
+    );
 
   const config = paymentConfig({
-    reference: workspace?.organizationAlias + "-" + generateAlphanumericHash(12),
-    email: workspace?.eventContactEmail,
+    reference:
+      workspace?.organizationAlias + "-" + generateAlphanumericHash(12),
+    email: user?.userEmail,
     amount: total,
-    currency: "NGN",
+    currency: currentCurrency.currency,
   });
 
-  const handleSuccess = async (reference: any) => {
+  const handleSuccess = async (info: any) => {
+    console.log(info);
     await mutateData({
       payload: {
         credits: {
           bronze: {
             amount: credits.bronze,
-            price: prices.bronze,
+            price: currentCurrency.amount * bronzeToken.amount,
           },
           silver: {
             amount: credits.silver,
-            price: prices.silver,
+            price: currentCurrency.amount * silverToken.amount,
           },
           gold: {
             amount: credits.gold,
-            price: prices.gold,
+            price: currentCurrency.amount * goldToken.amount,
           },
         },
         workspaceId: workspace?.id,
-        email: workspace?.eventContactEmail,
-        name: workspace?.organizationName,
+        email: user?.userEmail,
+        name: user?.firstName,
+        workspaceName: workspace?.organizationName,
+        reference: info.reference,
+        currency: currentCurrency.currency,
       },
     });
+
+    router.push("/designs");
   };
 
   const componentProps: any = {
@@ -86,34 +115,44 @@ const Checkout = ({
         </div>
         <div className="flex justify-between items-center">
           <span className="text-gray-700">Email</span>
-          <span className="text-gray-700">{workspace?.eventContactEmail}</span>
+          <span className="text-gray-700">{user?.userEmail}</span>
         </div>
 
         <div className="flex justify-between items-center">
           <span className="text-gray-700">Bronze</span>
           <span className="text-gray-700">
-            NGN{credits.bronze * prices.bronze}
+            {selectedCurrency}
+            {applyCredentialsDiscount(
+              credits.bronze,
+              currentCurrency?.amount * bronzeToken?.amount
+            ).toLocaleString()}
           </span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-gray-700">Silver</span>
           <span className="text-gray-700">
-            NGN{credits.silver * prices.silver}
+            {selectedCurrency}
+            {applyCredentialsDiscount(
+              credits.silver,
+              currentCurrency?.amount * silverToken?.amount
+            ).toLocaleString()}
           </span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-gray-700">Gold</span>
-          <span className="text-gray-700">NGN{credits.gold * prices.gold}</span>
+          <span className="text-gray-700">
+            {selectedCurrency}
+            {applyCredentialsDiscount(
+              credits.gold,
+              currentCurrency?.amount * goldToken?.amount
+            ).toLocaleString()}
+          </span>
         </div>
         <div className="flex justify-between items-center font-bold">
           <span className="text-gray-700">Total</span>
           <span className="text-gray-700">
-            NGN
-            {Number(
-              credits.bronze * prices.bronze +
-                credits.silver * prices.silver +
-                credits.gold * prices.gold
-            ).toLocaleString()}
+            {selectedCurrency}
+            {Number(total).toLocaleString()}
           </span>
         </div>
       </div>

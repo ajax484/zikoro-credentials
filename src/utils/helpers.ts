@@ -275,3 +275,29 @@ export function generateAlias(): string {
 
   return alias;
 }
+
+export function applyCredentialsDiscount(
+  quantity: number,
+  price: number
+): number {
+  const amount = quantity * price;
+
+  switch (true) {
+    case quantity > 499 && quantity < 1000:
+      return amount * 0.6;
+    case quantity > 999 && quantity < 2500:
+      return amount * 0.55;
+    case quantity > 2499 && quantity < 5000:
+      return amount * 0.5;
+    case quantity > 4999 && quantity < 10000:
+      return amount * 0.45;
+    case quantity > 9999 && quantity < 25000:
+      return amount * 0.4;
+    case quantity > 24999 && quantity < 50000:
+      return amount * 0.35;
+    case quantity > 49999:
+      return amount * 0.3;
+    default:
+      return amount;
+  }
+}
