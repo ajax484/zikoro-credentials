@@ -1,12 +1,11 @@
-import { TAttendeeBadge, TBadge } from "@/types";
-import { TAttendee } from "@/types/attendee";
+import { TAttendeeBadge } from "@/types";
 import {
   CertificateRecipient,
   TAttendeeCertificate,
 } from "@/types/certificates";
-import { Event } from "@/types/events";
 import { TOrganization } from "@/types/organization";
 import * as crypto from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 export function rgbaToHex(rgba: string): string {
   const match = rgba.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)$/);
@@ -269,4 +268,10 @@ export function maskAccountNumber(accountNumber: string): string {
   const visibleDigits = accountNumber.slice(-4); // Get the last 4 digits
   const maskedDigits = accountNumber.slice(0, -4).replace(/\d/g, "*"); // Replace all other digits with '*'
   return `${maskedDigits}${visibleDigits}`;
+}
+
+export function generateAlias(): string {
+  const alias = uuidv4().replace(/-/g, "").substring(0, 20);
+
+  return alias;
 }

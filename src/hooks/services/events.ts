@@ -33,6 +33,7 @@ import { generateAlphanumericHash } from "@/utils/helpers";
 import { Reward } from "@/types";
 import { useGetData } from "@/hooks/services/request";
 import useOrganizationStore from "@/store/globalOrganizationStore";
+import { TOrganization } from "@/types/organization";
 
 const supabase = createClientComponentClient();
 
@@ -211,34 +212,39 @@ export function useCreateOrganisation() {
   const [loading, setLoading] = useState(false);
 
   async function organisation(
-    values: Partial<z.infer<typeof organizationSchema>>, exp?:string
+    values: Partial<z.infer<typeof organizationSchema>>,
+    exp?: string
   ) {
     setLoading(true);
     const { firstName, lastName, userEmail, ...restData } = values;
     try {
-      const { error, status } = await supabase.from("organization").upsert([
-        {
-          ...restData,
-          organizationOwner: userData?.userEmail,
-          organizationOwnerId: userData?.id,
-          subscriptionExpiryDate: exp || null,
-          teamMembers: [
-            {
-              userId: userData?.id,
-              userFirstName: userData?.firstName,
-              userLastName: userData?.lastName,
-              userEmail: userData?.userEmail,
-              userRole: "owner",
-            },
-          ],
-        },
-      ]);
+      const { data, error, status } = await supabase
+        .from("organization")
+        .upsert([
+          {
+            ...restData,
+            organizationOwner: userData?.userEmail,
+            organizationOwnerId: userData?.id,
+            subscriptionExpiryDate: exp || null,
+            teamMembers: [
+              {
+                userId: userData?.id,
+                userFirstName: userData?.firstName,
+                userLastName: userData?.lastName,
+                userEmail: userData?.userEmail,
+                userRole: "owner",
+              },
+            ],
+          },
+        ])
+        .select("*")
+        .maybeSingle();
 
       if (error) {
         toast.error(error.message);
 
         setLoading(false);
-        return;
+        return data as unknown as TOrganization;
       }
 
       if (status === 201 || status === 200) {
@@ -1375,7 +1381,7 @@ export function useVerifyUserAccess(eventId: string) {
       setIsLoading(false);
       // console.log("attendee", isPresent);
     }
-  }, [eventAttendees, loading,  user]);
+  }, [eventAttendees, loading, user]);
 
   return {
     attendeeId,

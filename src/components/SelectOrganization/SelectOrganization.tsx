@@ -6,6 +6,9 @@ import useOrganizationStore from "@/store/globalOrganizationStore";
 import { TOrganization } from "@/types/organization";
 import { PlusCircle } from "lucide-react";
 import { Button } from "../ui/button";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import { DialogContent } from "@radix-ui/react-dialog";
+import { CreateOrganization } from "../CreateOrganisation/createOrganisation";
 
 const SelectOrganization = () => {
   const { user } = useUserStore();
@@ -29,6 +32,8 @@ const SelectOrganization = () => {
     );
   };
 
+  const [dialogIsOpen, setDialogIsOpen] = React.useState<boolean>(false);
+
   return (
     <div className="flex flex-col gap-1">
       <span className="text-xs text-gray-600">Workspace:</span>
@@ -44,10 +49,16 @@ const SelectOrganization = () => {
             value: String(id),
           }))}
         />
-        <Button className="bg-basePrimary gap-x-2 py-1 text-gray-50 font-medium flex items-center justify-center rounded-lg w-fit text-xs">
+        <Button
+          onClick={() => setDialogIsOpen(true)}
+          className="bg-basePrimary gap-x-2 py-1 text-gray-50 font-medium flex items-center justify-center rounded-lg w-fit text-xs"
+        >
           <span>New Workspace</span>
           <PlusCircle className="w-4 h-4" />
         </Button>
+        {dialogIsOpen && (
+          <CreateOrganization close={() => setDialogIsOpen(false)} />
+        )}
       </div>
     </div>
   );

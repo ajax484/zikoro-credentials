@@ -224,12 +224,12 @@ export function useVerifyCode() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  async function verifyCode(email: string, token: string, type: string | null) {
+  async function verifyCode(email: string, credit: string, type: string | null) {
     try {
       setLoading(true);
       const { data, error } = await supabase.auth.verifyOtp({
         email,
-        token,
+        credit,
         type: "email",
       });
 

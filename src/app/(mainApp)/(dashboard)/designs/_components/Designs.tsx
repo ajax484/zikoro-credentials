@@ -15,6 +15,7 @@ import SelectOrganization from "@/components/SelectOrganization/SelectOrganizati
 import { toast } from "react-toastify";
 import { useCreateCertificate } from "@/hooks";
 import { Button } from "@/components/ui/button";
+import { CredentialsWorkspaceToken } from "@/types/token";
 
 const Designs = () => {
   const { organization, setOrganization } = useOrganizationStore();
@@ -46,6 +47,12 @@ const Designs = () => {
     true,
     []
   );
+
+  const { data: credits, isLoading: creditsIsLoading } = useGetData<
+    CredentialsWorkspaceToken[]
+  >(`/workspaces/${organization?.id}/credits`, true, []);
+
+  console.log(credits);
 
   const {
     searchTerm,
@@ -98,7 +105,7 @@ const Designs = () => {
           You need credits to issue credentials.
         </p>
         <Link
-          href={"/tokens/buy"}
+          href={"/credits/buy"}
           className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize"
         >
           Buy more credits

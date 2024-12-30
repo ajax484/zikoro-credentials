@@ -1,4 +1,4 @@
-import React from "react";
+import BuyCreditPage from "./_components/BuyCreditPage";
 
 export const metadata = {
   title: "Credentials - Subscribe",
@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 const page = () => {
-  return <div>page</div>;
+  return <BuyCreditPage />;
 };
 
 export default page;
