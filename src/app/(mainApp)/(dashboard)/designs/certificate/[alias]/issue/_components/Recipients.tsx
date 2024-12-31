@@ -1,9 +1,8 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CertificateRecipient, TCertificate } from "@/types/certificates";
+import { TCertificate } from "@/types/certificates";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash } from "lucide-react";
 import React from "react";
@@ -14,12 +13,14 @@ import { z } from "zod";
 const recipientSchema = z.object({
   recipients: z.array(
     z.object({
-      firstName: z.string().nonempty("First name is required"),
-      lastName: z.string().nonempty("Last name is required"),
-      email: z.string().email("Enter a valid email address"),
+      recipientFirstName: z.string().nonempty("First name is required"),
+      recipientLastName: z.string().nonempty("Last name is required"),
+      recipientEmail: z.string().email("Enter a valid Email address"),
     })
   ),
 });
+
+export type RecipientType = z.infer<typeof recipientSchema>["recipients"];
 
 const RecipientsPage = ({
   certificate,
@@ -29,17 +30,17 @@ const RecipientsPage = ({
 }: {
   certificate: TCertificate;
   updatePage: (page: number) => void;
-  recipients: CertificateRecipient[];
-  updateRecipients: (recipients: []) => void;
+  recipients: RecipientType;
+  updateRecipients: (recipients: RecipientType) => void;
 }) => {
   const form = useForm<z.infer<typeof recipientSchema>>({
     resolver: zodResolver(recipientSchema),
     defaultValues: {
       recipients: mainRecipients || [
         {
-          firstName: "John",
-          lastName: "Doe",
-          email: "johndoe@example.com",
+          recipientFirstName: "John",
+          recipientLastName: "Doe",
+          recipientEmail: "johndoe@example.com",
         },
       ],
     },
@@ -50,13 +51,17 @@ const RecipientsPage = ({
   const addRecipient = () => {
     form.setValue("recipients", [
       ...recipients,
-      { firstName: "", lastName: "", email: "" },
+      { recipientFirstName: "", recipientLastName: "", recipientEmail: "" },
     ]);
   };
 
   const updateRecipient = (
     index: number,
-    data: { firstName: string; lastName: string; email: string }
+    data: {
+      recipientFirstName: string;
+      recipientLastName: string;
+      recipientEmail: string;
+    }
   ) => {
     const newRecipients = [...recipients];
     newRecipients[index] = data;
@@ -101,11 +106,11 @@ const RecipientsPage = ({
                   <FormControl>
                     <Input
                       placeholder="First Name"
-                      value={recipient.firstName}
+                      value={recipient.recipientFirstName}
                       onChange={(e) =>
                         updateRecipient(index, {
                           ...recipient,
-                          firstName: e.target.value,
+                          recipientFirstName: e.target.value,
                         })
                       }
                     />
@@ -113,24 +118,24 @@ const RecipientsPage = ({
                   <FormControl>
                     <Input
                       placeholder="Last Name"
-                      value={recipient.lastName}
+                      value={recipient.recipientLastName}
                       onChange={(e) =>
                         updateRecipient(index, {
                           ...recipient,
-                          lastName: e.target.value,
+                          recipientLastName: e.target.value,
                         })
                       }
                     />
                   </FormControl>
                   <FormControl>
                     <Input
-                      type="email"
-                      placeholder="Email"
-                      value={recipient.email}
+                      type="recipientEmail"
+                      placeholder="recipientEmail"
+                      value={recipient.recipientEmail}
                       onChange={(e) =>
                         updateRecipient(index, {
                           ...recipient,
-                          email: e.target.value,
+                          recipientEmail: e.target.value,
                         })
                       }
                     />

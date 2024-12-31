@@ -81,8 +81,6 @@ const Issue = ({
   updatePage: (page: number) => void;
   page: number;
 }) => {
-  console.log(certificates);
-
   const router = useRouter();
 
   const { filteredData, filters, selectedFilters, applyFilter, setOptions } =
@@ -124,24 +122,24 @@ const Issue = ({
 
   console.log(rowSelection);
 
-  const [selectedType, setSelectedType] = useState<string | undefined>();
-
   const updateSelectedCertificate = (certificateAlias: string) => {
     setSelectedCertificate(certificateAlias);
     console.log("Selected Certificate:", certificateAlias);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedOption(event.target.value);
+    setSelectedOption(event.currentTarget.value);
     console.log("Selected Option:", event.target.value);
-    router.push(`/assign`);
+    // router.push(`/assign`);
   };
 
   const selectType = () => {
     if (selectedOption === "manual") {
       router.push(`/designs/certificate/${selectedCertificate}/issue/`);
-    } else {
-      setSelectedType(selectedOption);
+    } else if (selectedOption === "spreadsheet") {
+      router.push(`/assign/certificate/${selectedCertificate}/excel/`);
+    } else if (selectedOption === "event") {
+      router.push(`/assign/certificate/${selectedCertificate}/fromEvent/`);
     }
   };
 
@@ -290,7 +288,7 @@ const Issue = ({
               </label>
             </div>
             <GradientBorderSelect
-              placeholder="Select Category"
+              placeholder="Select Credential"
               value={selectedCertificate || ""}
               onChange={(value: string) => updateSelectedCertificate(value)}
               options={certificates.map(({ certificateAlias, name }) => ({
@@ -300,7 +298,10 @@ const Issue = ({
             />
             <DialogFooter>
               {selectedCertificate && (
-                <Button className="bg-basePrimary text-white rounded-md">
+                <Button
+                  onClick={selectType}
+                  className="bg-basePrimary text-white rounded-md"
+                >
                   Add recipients
                 </Button>
               )}

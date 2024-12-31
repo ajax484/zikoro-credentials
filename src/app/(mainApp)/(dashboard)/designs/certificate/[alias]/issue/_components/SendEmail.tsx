@@ -15,6 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import TextEditor from "@/components/textEditor/Editor";
 import { useMutateData } from "@/hooks/services/request";
+import { RecipientType } from "./Recipients";
+import { useRouter } from "next/navigation";
 
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
@@ -30,8 +32,9 @@ const SendEmail = ({
 }: {
   certificate: TCertificate;
   updatePage: (page: number) => void;
-  recipients: CertificateRecipient[];
+  recipients: RecipientType;
 }) => {
+  const router = useRouter();
   const { mutateData, isLoading } = useMutateData(
     `/certificates/${certificate.certificateAlias}/recipients`
   );
@@ -39,13 +42,13 @@ const SendEmail = ({
     resolver: zodResolver(sendEmailSchema),
     defaultValues: {
       body: `
-      Dear #{recipientFirstName#},
+      Dear #{recipientFirstName#},\n
 
-        Great news, your certificate is ready for download. Access it now through this link: View Certificate
+        Great news, your certificate is ready for download. Access it now through this link: View Certificate\n
 
-        Congratulations!
+        Congratulations!\n
 
-        Best,
+        Best,\n
 
         Team.`,
       subject: "Your certificate is ready for download",
@@ -61,13 +64,10 @@ const SendEmail = ({
         certificateGroupId: certificate.id,
         ...data,
         action: "release",
-        recipients: recipients.map((recipient) => ({
-          recipientFirstName: recipient.firstName,
-          recipientLastName: recipient.lastName,
-          recipientEmail: recipient.email,
-        })),
+        recipients,
       },
     });
+    router.push("/assign");
   };
 
   return (

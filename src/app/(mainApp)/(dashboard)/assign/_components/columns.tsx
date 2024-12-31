@@ -123,7 +123,7 @@ export const issueesColumns: ColumnDef<
       //     "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg"
       // );
 
-      console.log(newState);
+      // console.log(newState);
 
       const { init, editor } = useEditor({
         defaultState: newState,
