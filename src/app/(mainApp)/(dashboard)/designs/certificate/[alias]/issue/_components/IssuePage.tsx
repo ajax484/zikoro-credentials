@@ -1,17 +1,26 @@
 "use client";
-import React, { useState } from "react";
-import RecipientsPage from "./Recipients";
+import React, { useEffect, useState } from "react";
+import RecipientsPage, { RecipientType } from "./Recipients";
 import { useGetData } from "@/hooks/services/request";
-import { CertificateRecipient, TCertificate } from "@/types/certificates";
+import { TCertificate } from "@/types/certificates";
 import SendEmail from "./SendEmail";
+import { useRecipientsStore } from "@/store/globalRecipientsStore";
 
-const IssuePage = ({ alias }: { alias: string }) => {
+const IssuePage = ({ alias, from }: { alias: string; from: string }) => {
   const [page, setPage] = useState<number>(0);
-  const [recipients, setRecipients] = useState<CertificateRecipient[]>([]);
+  const [recipients, setRecipients] = useState<RecipientType>([]);
   const { data: certificate, isLoading } = useGetData<TCertificate>(
     `/certificates/${alias}`,
     true
   );
+
+  const { recipients: importedRecipients } = useRecipientsStore();
+
+  useEffect(() => {
+    if (from) {
+      setRecipients(importedRecipients);
+    }
+  }, []);
 
   const updatePage = (page: number) => {
     setPage(page);
@@ -19,7 +28,7 @@ const IssuePage = ({ alias }: { alias: string }) => {
 
   if (isLoading) return <div>Loading...</div>;
 
-  const updateRecipients = (recipients: CertificateRecipient[]) => {
+  const updateRecipients = (recipients: RecipientType) => {
     setRecipients(recipients);
   };
 

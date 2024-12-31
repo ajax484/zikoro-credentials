@@ -15,8 +15,14 @@ export const generateMetadata = async ({
   };
 };
 
-const page = ({ params }: { params: { alias: string } }) => {
-  return <IssuePage alias={params.alias} />;
+const page = ({
+  params,
+  searchParams,
+}: {
+  params: { alias: string };
+  searchParams: { from: string };
+}) => {
+  return <IssuePage alias={params.alias} from={searchParams.from} />;
 };
 
 export default page;

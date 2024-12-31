@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { createHash } from "@/utils/helpers";
+import { createHash, replaceSpecialText } from "@/utils/helpers";
 import { CertificateRecipient } from "@/types/certificates";
 
 export async function GET(req: NextApiRequest, res: NextApiResponse) {
@@ -98,20 +98,20 @@ export async function POST(
       throw new Error("Invalid action specified.");
     }
 
-    const { data: certificateData, error } = await query;
+    const { data: recipientData, error } = await query;
 
     if (error) throw error;
 
     if (action === "release") {
       // Sending emails using ZeptoMail
-      for (const certificate of certificateData) {
+      for (const recipient of recipientData) {
         const { recipientEmail, recipientFirstName, recipientLastName } =
-          certificate;
+          recipient;
         try {
           const { SendMailClient } = require("zeptomail");
           const client = new SendMailClient({
             url: process.env.NEXT_PUBLIC_ZEPTO_URL,
-            token: process.env.NEXT_PUBLIC_ZEPTO_TOKEN,
+            token: process.env.NEXT_PUBLIC_ZEPTO_CREDIT,
           });
 
           await client.sendMail({
@@ -128,7 +128,10 @@ export async function POST(
               },
             ],
             subject,
-            htmlbody: body,
+            htmlbody: replaceSpecialText(body, {
+              recipient: recipient,
+              organization: {},
+            }),
           });
         } catch (emailError) {
           console.error(

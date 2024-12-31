@@ -106,3 +106,13 @@
 .ql-container.ql-snow .ql-editor {
   border: 1px solid #001fcc19 !important;
 }
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}

@@ -11,22 +11,46 @@ import Email from "@/public/icons/mdi_email-sent.svg";
 import Calendar from "@/public/icons/duo-icons_calendar.svg";
 import { format } from "date-fns";
 import Link from "next/link";
+import { useCreateCertificate } from "@/hooks";
+import { toast } from "react-toastify";
+import useOrganizationStore from "@/store/globalOrganizationStore";
 
 const Home = () => {
   const { user, setUser } = useUserStore();
+  const { organization } = useOrganizationStore();
   // const router = useRouter();
 
   // if (!user) return router.push("/login");
 
-  console.log(user);
+  console.log(organization);
 
   const {
     data: certificates,
     isLoading: certificatesIsLoading,
     error,
-  } = useGetData<TCertificate[]>(`/certificates?userId=${user?.id}`, true, []);
+  } = useGetData<TCertificate[]>(
+    `/certificates?workspaceId=${organization?.id}`,
+    true,
+    []
+  );
 
   console.log(certificates);
+
+  const { createCertificate, isLoading: certificateIsCreating } =
+    useCreateCertificate();
+
+  const createCertificateFn = async () => {
+    if (!organization) return toast.error("Please select an organization");
+    const data = await createCertificate({
+      payload: { workspaceAlias: organization.organizationAlias },
+    });
+
+    if (!data) return;
+    if (typeof window !== "undefined")
+      window.open(
+        `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${organization.id}`
+      );
+  };
 
   return (
     <section className="space-y-4">
@@ -42,7 +66,11 @@ const Home = () => {
       <div className="grid gap-4">
         <div className="space-y-6">
           <div className="flex items-center gap-6">
-            <div className="rounded flex-1 flex flex-col items-center justify-center px-2 py-12 bg-white border">
+            <button
+              onClick={createCertificateFn}
+              disabled={certificateIsCreating}
+              className="rounded flex-1 flex flex-col items-center justify-center px-2 py-12 bg-white border"
+            >
               <Image
                 src={Certificate}
                 alt={"certificate"}
@@ -51,8 +79,11 @@ const Home = () => {
                 className="rounded-full"
               />
               <p className="font-medium text-sm">Create new certificate</p>
-            </div>
-            <div className="rounded flex-1 flex flex-col items-center justify-center px-2 py-12 bg-white border">
+            </button>
+            <button
+              className="rounded flex-1 flex flex-col items-center justify-center px-2 py-12 bg-white border"
+              disabled
+            >
               <Image
                 src={Badge}
                 alt={"badge certificate"}
@@ -60,8 +91,9 @@ const Home = () => {
                 height={30}
                 className="rounded-full"
               />
-              <p className="font-medium text-sm">Create new event badge</p>
-            </div>
+              <p className="font-medium text-sm">Create new badge</p>
+              <small className="text-xs text-gray-600">Coming soon</small>
+            </button>
           </div>
 
           <div className="border rounded-md bg-white">

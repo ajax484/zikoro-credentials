@@ -6,7 +6,7 @@ import useSearch from "@/hooks/common/useSearch";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { TFilter } from "@/types/filter";
 import { extractUniqueTypes } from "@/utils/helpers";
-import { PenLine, Send, Trash } from "lucide-react";
+import { Send, Trash } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { PiExport } from "react-icons/pi";
 import { issueesColumns } from "./columns";
@@ -17,14 +17,15 @@ import Image from "next/image";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FileExcel, PencilSquare } from "styled-icons/bootstrap";
-import Link from "next/link";
+import { cn } from "@/lib/utils";
+import GradientBorderSelect from "@/components/CustomSelect/GradientSelectBorder";
+import { useRouter } from "next/navigation";
+import { RowSelectionState } from "@tanstack/react-table";
 
 const issueesFilter: TFilter<CertificateRecipient>[] = [
   {
@@ -80,7 +81,7 @@ const Issue = ({
   updatePage: (page: number) => void;
   page: number;
 }) => {
-  console.log(certificates);
+  const router = useRouter();
 
   const { filteredData, filters, selectedFilters, applyFilter, setOptions } =
     useFilter<CertificateRecipient>({
@@ -94,7 +95,7 @@ const Issue = ({
     setSearchTerm,
   } = useSearch<CertificateRecipient>({
     data: filteredData || [],
-    accessorKey: ["recipientName", "recipientEmail"],
+    accessorKey: ["recipientFirstName", "recipientLastName", "recipientEmail"],
   });
 
   useEffect(() => {
@@ -111,17 +112,89 @@ const Issue = ({
 
   //   }, [isLoading]);
 
-  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedOption, setSelectedOption] = useState("manual");
+
+  const [selectedCertificate, setSelectedCertificate] = useState<
+    string | undefined
+  >();
+
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+  console.log(rowSelection);
+
+  const updateSelectedCertificate = (certificateAlias: string) => {
+    setSelectedCertificate(certificateAlias);
+    console.log("Selected Certificate:", certificateAlias);
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedOption(event.target.value);
+    setSelectedOption(event.currentTarget.value);
     console.log("Selected Option:", event.target.value);
+    // router.push(`/assign`);
   };
+
+  const selectType = () => {
+    if (selectedOption === "manual") {
+      router.push(`/designs/certificate/${selectedCertificate}/issue/`);
+    } else if (selectedOption === "spreadsheet") {
+      router.push(`/assign/certificate/${selectedCertificate}/excel/`);
+    } else if (selectedOption === "event") {
+      router.push(`/assign/certificate/${selectedCertificate}/fromEvent/`);
+    }
+  };
+
+  // disabled={
+  //   filteredData.filter(({ id }) => rowSelection[id])
+  //     .length === 0
+  // }
 
   return (
     <section className="space-y-4">
       <div className="flex items-end justify-between">
-        <div />
+        <div className="flex gap-2 items-center">
+          <button
+            className={cn(
+              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+                ? "border-gray-600 text-gray-600"
+                : "border-red-600  text-red-600"
+            )}
+            disabled={
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+            }
+          >
+            <Trash className="size-4" />
+            <span>Recall</span>
+          </button>
+          <button
+            className={cn(
+              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+                ? "border-gray-600 text-gray-600"
+                : "border-basePrimary text-basePrimary"
+            )}
+            disabled={
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+            }
+          >
+            <PiExport className="size-4" />
+            <span>Export</span>
+          </button>
+          <button
+            className={cn(
+              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+                ? "border-gray-600 text-gray-600"
+                : "border-basePrimary text-basePrimary"
+            )}
+            disabled={
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+            }
+          >
+            <Send className="size-4" />
+            <span>Resend</span>
+          </button>
+        </div>
         <Dialog>
           <DialogTrigger>
             <Button className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 w-fit text-sm">
@@ -135,7 +208,10 @@ const Issue = ({
             <div className="grid grid-cols-3 gap-4">
               <label
                 htmlFor="manual"
-                className="border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md"
+                className={cn(
+                  "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
+                  selectedOption === "manual" && "border-basePrimary"
+                )}
               >
                 <input
                   type="radio"
@@ -158,7 +234,10 @@ const Issue = ({
               </label>
               <label
                 htmlFor="spreadsheet"
-                className="border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md"
+                className={cn(
+                  "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
+                  selectedOption === "spreadsheet" && "border-basePrimary"
+                )}
               >
                 <input
                   type="radio"
@@ -182,7 +261,10 @@ const Issue = ({
                 </div>
               </label>
               <label
-                className="border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md"
+                className={cn(
+                  "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
+                  selectedOption === "event" && "border-basePrimary"
+                )}
                 htmlFor="event"
               >
                 <input
@@ -205,35 +287,29 @@ const Issue = ({
                 </div>
               </label>
             </div>
+            <GradientBorderSelect
+              placeholder="Select Credential"
+              value={selectedCertificate || ""}
+              onChange={(value: string) => updateSelectedCertificate(value)}
+              options={certificates.map(({ certificateAlias, name }) => ({
+                label: name,
+                value: certificateAlias || "",
+              }))}
+            />
             <DialogFooter>
-              {/* <Link
-                href={`/designs/certificate/${certificate.certificateAlias}/issue/`}
-                className="bg-basePrimary text-white py-2 px-4 rounded-md"
-              >
-                Add recipients
-              </Link> */}
+              {selectedCertificate && (
+                <Button
+                  onClick={selectType}
+                  className="bg-basePrimary text-white rounded-md"
+                >
+                  Add recipients
+                </Button>
+              )}
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
-      <div className="flex items-end justify-between">
-        <div />
-        <div className="flex gap-2 items-center">
-          <button className="border-red-600 border rounded-xl text-red-600 flex items-center gap-2 bg-white px-4 py-2 text-sm">
-            <Trash className="size-4" />
-            <span>Recall</span>
-          </button>
-          <button className="border-basePrimary border rounded-xl text-basePrimary flex items-center gap-2 bg-white px-4 py-2 text-sm">
-            <PiExport className="size-4" />
-            <span>Export</span>
-          </button>
-          <button className="border-basePrimary border rounded-xl text-basePrimary flex items-center gap-2 bg-white px-4 py-2 text-sm">
-            <Send className="size-4" />
-            <span>Resend</span>
-          </button>
-        </div>
-      </div>
-      <div className="flex justify-center">
+      <div className="flex justify-center items-end">
         <input
           type="text"
           placeholder="Search"
@@ -241,15 +317,15 @@ const Issue = ({
           onInput={(event) => setSearchTerm(event.currentTarget.value)}
           className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 w-1/3 border-b focus-visible:outline-none"
         />
+        <Filter
+          className={`space-y-4 w-1/3 mx-auto hide-scrollbar`}
+          filters={filters.sort(
+            (a, b) => (a.order || Infinity) - (b.order || Infinity)
+          )}
+          applyFilter={applyFilter}
+          selectedFilters={selectedFilters}
+        />
       </div>
-      <Filter
-        className={`space-y-4 w-1/3 mx-auto hide-scrollbar`}
-        filters={filters.sort(
-          (a, b) => (a.order || Infinity) - (b.order || Infinity)
-        )}
-        applyFilter={applyFilter}
-        selectedFilters={selectedFilters}
-      />
       <DataTable<CertificateRecipient>
         columns={issueesColumns}
         data={filteredIssuees}
@@ -260,6 +336,8 @@ const Issue = ({
         totalDocs={1}
         isFetching={false}
         onClick={() => {}}
+        rowSelection={rowSelection}
+        setRowSelection={setRowSelection}
       />
     </section>
   );

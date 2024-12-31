@@ -66,7 +66,7 @@ export const useGetUserTeamOrganizations = ({
 
     try {
       const { data, status } = await getRequest<TOrganization[]>({
-        endpoint: `organization/user/${userEmail}`,
+        endpoint: `workspaces/user/${userEmail}`,
       });
 
       console.log(data);
@@ -108,7 +108,7 @@ export const useGetOrganization = ({
 
     try {
       const { data, status } = await getRequest<TOrganization>({
-        endpoint: `organization/${organizationId}`,
+        endpoint: `workspaces/${organizationId}`,
       });
 
       if (status === 200) {
@@ -156,7 +156,7 @@ export const useUpdateOrganization = ({
     });
     try {
       const { data, status } = await postRequest({
-        endpoint: `organization/${organizationId}`,
+        endpoint: `workspaces/${organizationId}`,
         payload,
       });
 

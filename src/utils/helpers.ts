@@ -1,9 +1,11 @@
-import { TAttendeeBadge, TBadge } from "@/types";
-import { TAttendee } from "@/types/attendee";
-import { TAttendeeCertificate } from "@/types/certificates";
-import { Event } from "@/types/events";
+import { TAttendeeBadge } from "@/types";
+import {
+  CertificateRecipient,
+  TAttendeeCertificate,
+} from "@/types/certificates";
 import { TOrganization } from "@/types/organization";
 import * as crypto from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 export function rgbaToHex(rgba: string): string {
   const match = rgba.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)$/);
@@ -217,8 +219,7 @@ export function base64ToFile(base64Data: string, fileName: string): File {
 
 type Context = {
   asset: TAttendeeCertificate | TAttendeeBadge;
-  attendee: TAttendee;
-  event: Event;
+  recipient: CertificateRecipient;
   organization: TOrganization;
 };
 
@@ -241,35 +242,24 @@ export function replaceSpecialText(input: string, context: Context): string {
   return input.replaceAll(/#{(.*?)#}/g, (match, value) => {
     switch (value.trim()) {
       case "first_name":
-        return context.attendee.firstName;
+        return context.recipient.recipientFirstName;
       case "last_name":
-        return context.attendee.lastName;
-      case "attendee_email":
-        return context.attendee.email;
-      case "attendee_job":
-        return context.attendee.jobTitle || "";
-      case "attendee_position":
-        return context.attendee.organization || "";
-      case "attendee_id":
-        return String(context.attendee.id);
-      case "event_name":
-        return context.event.eventTitle;
-      case "city":
-        return context.event.eventCity || "";
-      case "country":
-        return context.event.eventCountry || "";
-      case "start_date":
-        return context.event.startDateTime || "";
-      case "end_date":
-        return context.event.endDateTime || "";
+        return context.recipient.recipientLastName;
+      case "recipient_email":
+        return context.recipient.recipientEmail;
+      case "certificate_id":
+        return context.recipient.certificateId;
+      case "certificate_link":
+        return (
+          "www.zikoro-credentials.com/credentials/verify/certificate/" +
+          context.recipient.certificateId
+        );
       case "organization_name":
         return context.organization.organizationName;
       case "organisation_logo":
         return context.organization.organizationLogo || "";
-      case "certificateId":
-        return context.asset?.certificateId || "";
       default:
-        return match; // Return the original string if no matching value found
+        return match;
     }
   });
 }
@@ -278,4 +268,36 @@ export function maskAccountNumber(accountNumber: string): string {
   const visibleDigits = accountNumber.slice(-4); // Get the last 4 digits
   const maskedDigits = accountNumber.slice(0, -4).replace(/\d/g, "*"); // Replace all other digits with '*'
   return `${maskedDigits}${visibleDigits}`;
+}
+
+export function generateAlias(): string {
+  const alias = uuidv4().replace(/-/g, "").substring(0, 20);
+
+  return alias;
+}
+
+export function applyCredentialsDiscount(
+  quantity: number,
+  price: number
+): number {
+  const amount = quantity * price;
+
+  switch (true) {
+    case quantity > 499 && quantity < 1000:
+      return amount * 0.6;
+    case quantity > 999 && quantity < 2500:
+      return amount * 0.55;
+    case quantity > 2499 && quantity < 5000:
+      return amount * 0.5;
+    case quantity > 4999 && quantity < 10000:
+      return amount * 0.45;
+    case quantity > 9999 && quantity < 25000:
+      return amount * 0.4;
+    case quantity > 24999 && quantity < 50000:
+      return amount * 0.35;
+    case quantity > 49999:
+      return amount * 0.3;
+    default:
+      return amount;
+  }
 }

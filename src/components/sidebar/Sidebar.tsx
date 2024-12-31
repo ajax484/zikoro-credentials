@@ -33,6 +33,11 @@ const navlinks: Navlinks[] = [
     Icon: Design,
   },
   {
+    name: "Assign",
+    href: "/assign",
+    Icon: Assign,
+  },
+  {
     name: "Analytics",
     href: "/analytics",
     Icon: Analytics,
@@ -41,11 +46,6 @@ const navlinks: Navlinks[] = [
     name: "Workspace",
     href: "/workspace",
     Icon: Workspace,
-  },
-  {
-    name: "Assign",
-    href: "/assign",
-    Icon: Assign,
   },
 ];
 

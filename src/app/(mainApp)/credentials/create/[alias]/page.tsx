@@ -1,18 +1,27 @@
 import React from "react";
 import CreateCredentialsPage from "./CreateCredentialsPage";
 
+export const metadata = {
+  title: "Credentials - Create",
+  description: "Create Credentials",
+};
+
 const page = ({
   params,
   searchParams,
 }: {
   params: { alias: string };
-  searchParams: { orgId: string; eventAlias: string; type: string };
+  searchParams: {
+    workspaceId: string;
+    eventAlias: string;
+    type: "certificate" | "badge";
+  };
 }) => {
   console.log(params);
   return (
     <CreateCredentialsPage
       alias={params.alias}
-      organizationId={searchParams.orgId}
+      workspaceId={searchParams.workspaceId}
       eventAlias={searchParams.eventAlias}
       type={searchParams.type}
     />

@@ -114,10 +114,14 @@ export const QuillToolbar = () => {
           defaultValue="variable"
         >
           {[
-            "recipientFirstName",
-            "recipientLastName",
-            "recipientFullName",
-            "certificateName",
+            "first_name",
+            "last_name",
+            "recipient_email",
+            "certificate_name",
+            "certificate_id",
+            "certificate_link",
+            "organization_name",
+            "organisation_logo",
           ].map((variable) => (
             <option
               key={variable}

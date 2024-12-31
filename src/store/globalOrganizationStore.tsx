@@ -1,6 +1,6 @@
+import { TOrganization } from "@/types/organization";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { TOrganization } from "@/types";
 
 // Define the organization state interface
 interface organizationState {

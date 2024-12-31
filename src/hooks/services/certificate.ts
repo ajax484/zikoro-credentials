@@ -58,7 +58,7 @@ export const useCreateCertificate = () => {
   const createCertificate = async ({
     payload,
   }: {
-    payload: { eventId: string };
+    payload: { workspaceAlias: string };
   }) => {
     setLoading(true);
     toast({
@@ -150,7 +150,7 @@ export const useGetCertificate = ({
     getCertificate();
   }, [alias]);
 
-  return { data:certificate, isLoading, error, getCertificate };
+  return { data: certificate, isLoading, error, getCertificate };
 };
 
 export const useGetCertificates = ({
