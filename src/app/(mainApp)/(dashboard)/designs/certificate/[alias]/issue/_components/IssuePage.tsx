@@ -17,7 +17,7 @@ const IssuePage = ({ alias, from }: { alias: string; from: string }) => {
   const { recipients: importedRecipients } = useRecipientsStore();
 
   useEffect(() => {
-    if (from === "excel") {
+    if (from) {
       setRecipients(importedRecipients);
     }
   }, []);

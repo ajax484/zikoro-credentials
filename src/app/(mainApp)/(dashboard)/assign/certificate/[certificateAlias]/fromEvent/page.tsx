@@ -1,4 +1,5 @@
 import React from "react";
+import FromEvent from "./_components/FromEvent";
 
 export const generateMetadata = async () => {
   return {
@@ -7,8 +8,8 @@ export const generateMetadata = async () => {
   };
 };
 
-const page = () => {
-  return <div>page</div>;
+const page = ({ params }: { params: { certificateAlias: string } }) => {
+  return <FromEvent certificateAlias={params.certificateAlias} />;
 };
 
 export default page;

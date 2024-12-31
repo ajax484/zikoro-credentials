@@ -69,6 +69,8 @@ const AssignExcelPage = ({
     });
   };
 
+  if(!certificateIsLoading) return <div>Loading...</div>
+
   return (
     <section className="space-y-12">
       <div className="flex items-center justify-between">
@@ -188,9 +190,9 @@ const Timeline = ({
         </button>
       </div>
       <div className="flex justify-between items-center text-xs">
-        <span>Buy Credits</span>
-        <span>Details</span>
-        <span>checkout</span>
+        <span>Upload</span>
+        <span>Map Recipients</span>
+        <span>Preview</span>
       </div>
     </div>
   );
