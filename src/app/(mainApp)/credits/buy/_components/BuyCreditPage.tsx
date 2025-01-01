@@ -10,11 +10,6 @@ import { CredentialCurrencyConverter, CredentialsToken } from "@/types/token";
 import useUserStore from "@/store/globalUserStore";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 
-export const metadata = {
-  title: "Credentials - Subscribe",
-  description: "Subscribe to a plan",
-};
-
 const BuyCreditPage = () => {
   const { user } = useUserStore();
   const [step, setStep] = useState<number>(1);

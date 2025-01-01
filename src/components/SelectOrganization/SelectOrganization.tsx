@@ -1,3 +1,4 @@
+"use client";
 import { useGetData } from "@/hooks/services/request";
 import useUserStore from "@/store/globalUserStore";
 import React from "react";
