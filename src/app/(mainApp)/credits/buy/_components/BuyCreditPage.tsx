@@ -1,7 +1,11 @@
 "use client";
 import { cn } from "@/lib/utils";
 import React, { useState } from "react";
-import Checkout from "./Checkout";
+import dynamic from "next/dynamic";
+const Checkout = dynamic(
+  () => import("./Checkout").then((module) => module.default),
+  { ssr: false }
+) as any;
 import Details from "./Details";
 import AddPoints from "./AddPoints";
 import { TOrganization } from "@/types/organization";

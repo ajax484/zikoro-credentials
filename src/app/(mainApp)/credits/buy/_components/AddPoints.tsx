@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Check, X } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 import {
   Select,
   SelectTrigger,
@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { CredentialCurrencyConverter, CredentialsToken } from "@/types/token";
 import { applyCredentialsDiscount } from "@/utils/helpers";
-import { parse } from "path";
 
 const AddPoints = ({
   credits,

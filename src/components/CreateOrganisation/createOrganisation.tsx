@@ -21,8 +21,6 @@ import { generateAlias } from "@/utils/helpers";
 import { ReactSelect } from "../CustomSelect/customSelect";
 import { Lock } from "lucide-react";
 
-const orgType = ["Private", "Business"];
-
 type TPricingPlan = {
   amount: number | null;
   created_at: string;
