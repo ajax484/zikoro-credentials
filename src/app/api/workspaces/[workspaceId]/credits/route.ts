@@ -1,24 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import { generateAlphanumericHash } from "@/utils/helpers";
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  { params: { workspaceId } }: { params: { workspaceId: number } }
+) {
   const supabase = createRouteHandlerClient({ cookies });
   if (req.method === "GET") {
     try {
-      const { searchParams } = new URL(req.url);
-      const workspaceId = searchParams.get("workspaceId");
-
-      console.log(workspaceId);
-
       const query = supabase.from("credentialsWorkspaceToken").select("*");
 
       if (workspaceId) query.eq("workspaceId", workspaceId);
 
-      
       const { data, error, status } = await query;
-
 
       console.log(data, "tokens");
 

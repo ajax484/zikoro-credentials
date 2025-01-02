@@ -1,6 +1,6 @@
 "use client";
 import useUserStore from "@/store/globalUserStore";
-import React from "react";
+import React, { useState } from "react";
 import Badge from "@/public/icons/iconamoon_certificate-badge-duotone.svg";
 import Certificate from "@/public/icons/ph_certificate-duotone.svg";
 import Image from "next/image";
@@ -14,10 +14,161 @@ import Link from "next/link";
 import { useCreateCertificate } from "@/hooks";
 import { toast } from "react-toastify";
 import useOrganizationStore from "@/store/globalOrganizationStore";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { TOrganization } from "@/types/organization";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { LoaderAlt } from "styled-icons/boxicons-regular";
+import { CreateOrganization } from "@/components/CreateOrganisation/createOrganisation";
+import { PlusCircle } from "lucide-react";
+
+const CreateCertificateDialog = ({
+  open,
+  setOpen,
+  createCertificateFn,
+  certificateIsCreating,
+  setDialogIsOpen,
+  workspaces,
+  workspacesIsLoading,
+}: {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  createCertificateFn: ({
+    name,
+    workspace,
+  }: {
+    name: string;
+    workspace: TOrganization;
+  }) => void;
+  certificateIsCreating: boolean;
+  setDialogIsOpen: (open: boolean) => void;
+  workspaces: TOrganization[];
+  workspacesIsLoading: boolean;
+}) => {
+  const { organization, setOrganization } = useOrganizationStore();
+
+  const [workspace, setWorkspace] = useState<TOrganization | null>(
+    organization
+  );
+
+  const [name, setName] = useState<string>("Untitled Certificate");
+
+  const updateWorkspace = (workspace: TOrganization | null) => {
+    setWorkspace(workspace);
+    setOrganization(workspace);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <button className="rounded flex-1 flex flex-col items-center justify-center px-2 py-12 bg-white border">
+          <Image
+            src={Certificate}
+            alt={"certificate"}
+            width={30}
+            height={30}
+            className="rounded-full"
+          />
+          <p className="font-medium text-sm">Create new certificate</p>
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-[50%]">
+        <DialogHeader>
+          <DialogTitle>Create Certificate</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-6">
+          <div className="flex flex-col gap-2 w-full">
+            <label className="font-medium text-gray-700">
+              Certificate Name
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter certificate name"
+              className=" placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+              onInput={(e) => setName(e.currentTarget.value)}
+              value={name}
+            />
+          </div>
+          <div className="flex flex-col gap-2 w-full">
+            <label className="font-medium text-gray-700">Workspace</label>
+            <div className="flex items-center gap-4">
+              <Select
+                disabled={workspacesIsLoading}
+                value={String(workspace?.id)}
+                onValueChange={(value) =>
+                  updateWorkspace(
+                    workspaces?.find(({ id }) => id === parseInt(value))
+                  )
+                }
+              >
+                <SelectTrigger className="w-full rounded-md bg-white font-medium">
+                  <SelectValue placeholder={"Select workspace"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {workspaces?.map(({ id, organizationName }) => (
+                    <SelectItem value={String(id)} key={id}>
+                      {organizationName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={() => setDialogIsOpen(true)}
+                className="bg-basePrimary gap-x-2 py-1 text-gray-50 font-medium flex items-center justify-center rounded-lg w-fit text-xs"
+              >
+                <span>New Workspace</span>
+                <PlusCircle className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button
+            onClick={() => {
+              workspace && createCertificateFn({ name, workspace });
+              setOpen(false);
+            }}
+            disabled={certificateIsCreating || name === "" || !workspace}
+            className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-md text-gray-50 font-medium"
+          >
+            {certificateIsCreating && (
+              <LoaderAlt size={22} className="animate-spin" />
+            )}
+            <span>Create Certificate</span>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const Home = () => {
   const { user, setUser } = useUserStore();
-  const { organization } = useOrganizationStore();
+  const { organization, setOrganization } = useOrganizationStore();
+
+  const {
+    data: workspaces,
+    isLoading: workspacesIsLoading,
+    getData: refetchWorkspaces,
+  } = useGetData<TOrganization[]>(
+    `/workspaces?userEmail=${user?.userEmail}`,
+    true,
+    []
+  );
   // const router = useRouter();
 
   // if (!user) return router.push("/login");
@@ -34,23 +185,31 @@ const Home = () => {
     []
   );
 
-  console.log(certificates);
-
   const { createCertificate, isLoading: certificateIsCreating } =
     useCreateCertificate();
 
-  const createCertificateFn = async () => {
+  const createCertificateFn = async ({
+    name,
+    workspace,
+  }: {
+    name: string;
+    workspace: TOrganization;
+  }) => {
     if (!organization) return toast.error("Please select an organization");
     const data = await createCertificate({
-      payload: { workspaceAlias: organization.organizationAlias },
+      payload: { workspaceAlias: workspace.organizationAlias, name },
     });
 
     if (!data) return;
     if (typeof window !== "undefined")
       window.open(
-        `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${organization.id}`
+        `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${workspace.id}`
       );
   };
+
+  const [open, setOpen] = useState(false);
+
+  const [dialogIsOpen, setDialogIsOpen] = useState<boolean>(false);
 
   return (
     <section className="space-y-4">
@@ -66,20 +225,18 @@ const Home = () => {
       <div className="grid gap-4">
         <div className="space-y-6">
           <div className="flex items-center gap-6">
-            <button
-              onClick={createCertificateFn}
-              disabled={certificateIsCreating}
-              className="rounded flex-1 flex flex-col items-center justify-center px-2 py-12 bg-white border"
-            >
-              <Image
-                src={Certificate}
-                alt={"certificate"}
-                width={30}
-                height={30}
-                className="rounded-full"
-              />
-              <p className="font-medium text-sm">Create new certificate</p>
-            </button>
+            <CreateCertificateDialog
+              open={open}
+              setOpen={setOpen}
+              createCertificateFn={createCertificateFn}
+              certificateIsCreating={certificateIsCreating}
+              setDialogIsOpen={() => {
+                setOpen(false);
+                setDialogIsOpen(true);
+              }}
+              workspaces={workspaces}
+              workspacesIsLoading={workspacesIsLoading}
+            />
             <button
               className="rounded flex-1 flex flex-col items-center justify-center px-2 py-12 bg-white border"
               disabled
@@ -183,6 +340,15 @@ const Home = () => {
           </div>
         </div>
       </div>
+      {dialogIsOpen && (
+        <CreateOrganization
+          refetch={refetchWorkspaces}
+          close={() => {
+            setDialogIsOpen(false);
+            setOpen(true);
+          }}
+        />
+      )}
     </section>
   );
 };

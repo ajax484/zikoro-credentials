@@ -58,7 +58,7 @@ export const useCreateCertificate = () => {
   const createCertificate = async ({
     payload,
   }: {
-    payload: { workspaceAlias: string };
+    payload: { workspaceAlias: string; name: string };
   }) => {
     setLoading(true);
     toast({

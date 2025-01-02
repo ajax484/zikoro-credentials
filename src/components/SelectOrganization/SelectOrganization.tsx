@@ -58,7 +58,10 @@ const SelectOrganization = () => {
           <PlusCircle className="w-4 h-4" />
         </Button>
         {dialogIsOpen && (
-          <CreateOrganization close={() => setDialogIsOpen(false)} />
+          <CreateOrganization
+            close={() => setDialogIsOpen(false)}
+            allowRedirect={true}
+          />
         )}
       </div>
     </div>

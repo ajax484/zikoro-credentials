@@ -139,8 +139,9 @@ const Designs = () => {
           <TabsTrigger
             className="w-full data-[state=active]:bg-blue-700 data-[state=active]:text-white"
             value="badges"
+            disabled
           >
-            Badges
+            Badges (coming soon)
           </TabsTrigger>
         </TabsList>
         <TabsContent value="certificates">

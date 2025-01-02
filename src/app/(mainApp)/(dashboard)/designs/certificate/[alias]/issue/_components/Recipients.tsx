@@ -96,7 +96,7 @@ const RecipientsPage = ({
           Add recipients to receive certificates
         </h3>
 
-        <div className="space-y-6 border bg-white p-6 rounded-md">
+        <div className="space-y-6 p-6 rounded-md">
           {recipients.map((recipient, index) => (
             <FormField
               key={index}

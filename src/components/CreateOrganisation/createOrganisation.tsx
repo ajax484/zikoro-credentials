@@ -18,8 +18,9 @@ import { Form, FormField } from "../ui/form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { generateAlias } from "@/utils/helpers";
-import { ReactSelect } from "../CustomSelect/customSelect";
 import { Lock } from "lucide-react";
+import { Checkbox } from "../ui/checkbox";
+import { useRouter } from "next/navigation";
 
 type TPricingPlan = {
   amount: number | null;
@@ -51,10 +52,13 @@ type TZikoroDiscount = {
 export function CreateOrganization({
   close,
   refetch,
+  allowRedirect = false,
 }: {
   refetch?: () => Promise<any>;
   close: () => void;
+  allowRedirect?: boolean;
 }) {
+  const router = useRouter();
   const { data: pricing } = useGetData<TPricingPlan[]>("/pricing");
   const { data: zikoroDiscounts } =
     useGetData<TZikoroDiscount[]>("/pricing/discount");
@@ -78,7 +82,7 @@ export function CreateOrganization({
       userEmail: user?.userEmail,
       firstName: user?.firstName,
       lastName: user?.lastName,
-      organizationType: "",
+      organizationType: "Private",
     },
   });
   const [isDiscount, setIsDiscount] = useState(false);
@@ -125,6 +129,9 @@ export function CreateOrganization({
   async function onSubmit(values: z.infer<typeof organizationSchema>) {
     await organisation(values);
     if (refetch) refetch();
+    if (allowRedirect && buyCredits) {
+      router.push("/credits/buy");
+    }
     close();
   }
 
@@ -147,6 +154,8 @@ export function CreateOrganization({
       return;
     }
   }
+
+  const [buyCredits, setBuyCredits] = useState(false);
 
   return (
     <div
@@ -226,7 +235,7 @@ export function CreateOrganization({
                   </InputOffsetLabel>
                 )}
               />
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="organizationType"
                 render={({ field }) => (
@@ -244,7 +253,7 @@ export function CreateOrganization({
                     />
                   </InputOffsetLabel>
                 )}
-              />
+              /> */}
             </div>
 
             <div className="w-full hidden flex-col items-start justify-start gap-y-2">
@@ -303,7 +312,7 @@ export function CreateOrganization({
             </div>
 
             <div className="w-full pt-4 flex flex-col items-start justify-start gap-y-3">
-              <button
+              {/* <button
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -340,8 +349,20 @@ export function CreateOrganization({
                 >
                   {"" ? "Verifying..." : "Redeem"}
                 </Button>
-              </div>
+              </div> */}
 
+              {allowRedirect && (
+                <div className="flex items-center justify-center gap-2">
+                  <Checkbox
+                    checked={buyCredits}
+                    onCheckedChange={(value) => setBuyCredits(value)}
+                    className="data-[state=checked]:bg-basePrimary"
+                  />
+                  <label className="text-xs font-bold text-gray-700">
+                    Buy Credits After Creating Workspace
+                  </label>
+                </div>
+              )}
               <div className="w-full flex items-center justify-center">
                 <Button
                   type="submit"
