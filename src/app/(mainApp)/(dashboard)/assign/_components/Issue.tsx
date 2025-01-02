@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import GradientBorderSelect from "@/components/CustomSelect/GradientSelectBorder";
 import { useRouter } from "next/navigation";
 import { RowSelectionState } from "@tanstack/react-table";
+import Link from "next/link";
 
 const issueesFilter: TFilter<CertificateRecipient>[] = [
   {
@@ -195,119 +196,127 @@ const Issue = ({
             <span>Resend</span>
           </button>
         </div>
-        <Dialog>
-          <DialogTrigger>
-            <Button className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 w-fit text-sm">
-              Assign Credential
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-[50%]">
-            <DialogHeader>
-              <DialogTitle>How would you like to add recipients?</DialogTitle>
-            </DialogHeader>
-            <div className="grid grid-cols-3 gap-4">
-              <label
-                htmlFor="manual"
-                className={cn(
-                  "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
-                  selectedOption === "manual" && "border-basePrimary"
-                )}
-              >
-                <input
-                  type="radio"
-                  id="manual"
-                  name="options"
-                  value="manual"
-                  checked={selectedOption === "manual"}
-                  onChange={handleChange}
-                />
-                <div className="my-auto flex gap-2 flex-col items-center w-full">
-                  <Image
-                    src={penPaper}
-                    width={40}
-                    height={40}
-                    alt="excel"
-                    className="cursor-pointer"
-                  />
-                  <span>Add Manually</span>
-                </div>
-              </label>
-              <label
-                htmlFor="spreadsheet"
-                className={cn(
-                  "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
-                  selectedOption === "spreadsheet" && "border-basePrimary"
-                )}
-              >
-                <input
-                  type="radio"
-                  id="spreadsheet"
-                  name="recipientType"
-                  value="spreadsheet"
-                  checked={selectedOption === "spreadsheet"}
-                  onChange={handleChange}
-                />
-                <div className="my-auto flex gap-2 flex-col items-center w-full">
-                  <Image
-                    src={excel}
-                    width={40}
-                    height={40}
-                    alt="excel"
-                    className="cursor-pointer"
-                  />
-                  <span className="text-center">
-                    Upload using a spreadsheet
-                  </span>
-                </div>
-              </label>
-              <label
-                className={cn(
-                  "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
-                  selectedOption === "event" && "border-basePrimary"
-                )}
-                htmlFor="event"
-              >
-                <input
-                  type="radio"
-                  id="event"
-                  name="recipientType"
-                  value="event"
-                  checked={selectedOption === "event"}
-                  onChange={handleChange}
-                />
-                <div className="my-auto flex gap-2 flex-col items-center w-full">
-                  <Image
-                    src={logo}
-                    width={40}
-                    height={40}
-                    alt="logo"
-                    className="cursor-pointer"
-                  />
-                  <span>Add from Zikoro event</span>
-                </div>
-              </label>
-            </div>
-            <GradientBorderSelect
-              placeholder="Select Credential"
-              value={selectedCertificate || ""}
-              onChange={(value: string) => updateSelectedCertificate(value)}
-              options={certificates.map(({ certificateAlias, name }) => ({
-                label: name,
-                value: certificateAlias || "",
-              }))}
-            />
-            <DialogFooter>
-              {selectedCertificate && (
-                <Button
-                  onClick={selectType}
-                  className="bg-basePrimary text-white rounded-md"
+        <div className="flex items-center justify-center gap-2">
+          <Link
+            href={"/credits/buy"}
+            className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize text-sm"
+          >
+            Buy more credits
+          </Link>
+          <Dialog>
+            <DialogTrigger>
+              <Button className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 w-fit text-sm">
+                Assign Credential
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-[50%]">
+              <DialogHeader>
+                <DialogTitle>How would you like to add recipients?</DialogTitle>
+              </DialogHeader>
+              <div className="grid grid-cols-3 gap-4">
+                <label
+                  htmlFor="manual"
+                  className={cn(
+                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
+                    selectedOption === "manual" && "border-basePrimary"
+                  )}
                 >
-                  Add recipients
-                </Button>
-              )}
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                  <input
+                    type="radio"
+                    id="manual"
+                    name="options"
+                    value="manual"
+                    checked={selectedOption === "manual"}
+                    onChange={handleChange}
+                  />
+                  <div className="my-auto flex gap-2 flex-col items-center w-full">
+                    <Image
+                      src={penPaper}
+                      width={40}
+                      height={40}
+                      alt="excel"
+                      className="cursor-pointer"
+                    />
+                    <span>Add Manually</span>
+                  </div>
+                </label>
+                <label
+                  htmlFor="spreadsheet"
+                  className={cn(
+                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
+                    selectedOption === "spreadsheet" && "border-basePrimary"
+                  )}
+                >
+                  <input
+                    type="radio"
+                    id="spreadsheet"
+                    name="recipientType"
+                    value="spreadsheet"
+                    checked={selectedOption === "spreadsheet"}
+                    onChange={handleChange}
+                  />
+                  <div className="my-auto flex gap-2 flex-col items-center w-full">
+                    <Image
+                      src={excel}
+                      width={40}
+                      height={40}
+                      alt="excel"
+                      className="cursor-pointer"
+                    />
+                    <span className="text-center">
+                      Upload using a spreadsheet
+                    </span>
+                  </div>
+                </label>
+                <label
+                  className={cn(
+                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
+                    selectedOption === "event" && "border-basePrimary"
+                  )}
+                  htmlFor="event"
+                >
+                  <input
+                    type="radio"
+                    id="event"
+                    name="recipientType"
+                    value="event"
+                    checked={selectedOption === "event"}
+                    onChange={handleChange}
+                  />
+                  <div className="my-auto flex gap-2 flex-col items-center w-full">
+                    <Image
+                      src={logo}
+                      width={40}
+                      height={40}
+                      alt="logo"
+                      className="cursor-pointer"
+                    />
+                    <span>Add from Zikoro event</span>
+                  </div>
+                </label>
+              </div>
+              <GradientBorderSelect
+                placeholder="Select Credential"
+                value={selectedCertificate || ""}
+                onChange={(value: string) => updateSelectedCertificate(value)}
+                options={certificates.map(({ certificateAlias, name }) => ({
+                  label: name,
+                  value: certificateAlias || "",
+                }))}
+              />
+              <DialogFooter>
+                {selectedCertificate && (
+                  <Button
+                    onClick={selectType}
+                    className="bg-basePrimary text-white rounded-md"
+                  >
+                    Add recipients
+                  </Button>
+                )}
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
       <div className="flex justify-center items-end">
         <input

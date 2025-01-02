@@ -4,12 +4,13 @@ import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import React, { useState } from "react";
 import Issue from "./Issue";
 import useUserStore from "@/store/globalUserStore";
+import useOrganizationStore from "@/store/globalOrganizationStore";
 
 const RecipientsPage = () => {
-  const { user } = useUserStore();
+  const { organization, setOrganization } = useOrganizationStore();
 
   const { data: certificates, isLoading } = useGetData<TCertificate[]>(
-    `/certificates?userId=${user?.id}`,
+    `/certificates?workspaceAlias=${organization?.organizationAlias}`,
     true,
     []
   );

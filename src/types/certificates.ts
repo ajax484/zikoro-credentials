@@ -37,6 +37,7 @@ export interface TCertificate {
   certificateHash: Record<string, any>;
   certificateAlias?: string;
   JSON: Record<string, any>;
+  workspaceAlias: string;
 }
 
 export interface TCertificateSettings {
@@ -71,7 +72,11 @@ export interface CertificateTemplate {
   colour: string;
 }
 
-export type issueActions = "issued" | "awaiting response" | "email opened" | "revoked";
+export type issueActions =
+  | "issued"
+  | "awaiting response"
+  | "email opened"
+  | "revoked";
 export interface CertificateRecipient {
   id: number;
   created_at: string;

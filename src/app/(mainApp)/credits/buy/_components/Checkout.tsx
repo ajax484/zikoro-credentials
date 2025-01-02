@@ -54,6 +54,10 @@ const Checkout = ({
     applyCredentialsDiscount(
       credits.silver,
       currentCurrency?.amount * silverToken?.amount
+    ) +
+    applyCredentialsDiscount(
+      credits.bronze,
+      currentCurrency?.amount * bronzeToken?.amount
     );
 
   const config = paymentConfig({
