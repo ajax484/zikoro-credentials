@@ -204,7 +204,7 @@ const Home = () => {
 
     if (!data) return;
     if (typeof window !== "undefined")
-      router.push(s
+      router.push(
         `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${workspace.id}`
       );
   };
@@ -286,9 +286,9 @@ const Home = () => {
                         className="rounded-lg border border-gray-200 bg-white"
                       >
                         <div className="h-[150px] w-full bg-gray-200 relative">
-                          {certificate?.cerificateUrl && (
+                          {certificate?.previewUrl && (
                             <Image
-                              src={certificate?.cerificateUrl ?? ""}
+                              src={certificate?.previewUrl ?? ""}
                               alt={certificate.name}
                               objectFit="cover"
                               layout="fill"
@@ -328,7 +328,7 @@ const Home = () => {
                     ))}
                   </div>
                   <Link
-                    href={"/"}
+                    href={"/designs"}
                     className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit text-sm"
                   >
                     See all

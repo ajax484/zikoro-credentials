@@ -1,12 +1,12 @@
 "use client";
-import { useGetData } from "@/hooks/services/request";
+import { useGetData, useGetPaginatedData } from "@/hooks/services/request";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import React, { useState } from "react";
 import Issue from "./Issue";
 import useUserStore from "@/store/globalUserStore";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 
-const RecipientsPage = () => {
+const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
   const { organization, setOrganization } = useOrganizationStore();
 
   const { data: certificates, isLoading } = useGetData<TCertificate[]>(
@@ -15,33 +15,40 @@ const RecipientsPage = () => {
     []
   );
 
-  const [page, setPage] = useState<number>(1);
+  const searchParams = new URLSearchParams({
+    workspaceAlias: organization?.organizationAlias || "",
+  });
+
+  const {
+    data: certificateIssuees,
+    isLoading: certificateIssueesIsLoading,
+    total,
+    totalPages,
+    pagination,
+    setPagination,
+  } = useGetPaginatedData<CertificateRecipient & { certificate: TCertificate }>(
+    `/certificates/recipients`,
+    searchParams
+  );
 
   const updatePage = (page: number) => {
-    setPage(page);
+    setPagination({ page, limit: 10 });
   };
-
-  const { data: certificateIssuees, isLoading: certificateIssueesIsLoading } =
-    useGetData<CertificateRecipient[]>(
-      `/certificates/recipients?page=${page}`,
-      true,
-      []
-    );
 
   console.log(certificateIssuees);
 
   return (
     <section>
-      {certificateIssueesIsLoading ? (
-        <div>Loading...</div>
-      ) : (
-        <Issue
-          certificates={certificates}
-          certificateIssuees={certificateIssuees}
-          updatePage={updatePage}
-          page={page}
-        />
-      )}
+      <Issue
+        certificateAlias={certificateAlias}
+        certificates={certificates}
+        certificateIssuees={certificateIssuees}
+        updatePage={updatePage}
+        total={total}
+        totalPages={totalPages}
+        pagination={pagination}
+        isLoading={certificateIssueesIsLoading}
+      />
     </section>
   );
 };

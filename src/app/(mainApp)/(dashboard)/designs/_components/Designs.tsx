@@ -182,9 +182,9 @@ const Designs = () => {
                     className="rounded-lg border border-gray-200 bg-white group"
                   >
                     <div className="h-[250px] w-full bg-gray-200 relative">
-                      {certificate?.cerificateUrl && (
+                      {certificate?.previewUrl && (
                         <Image
-                          src={certificate?.cerificateUrl ?? ""}
+                          src={certificate?.previewUrl ?? ""}
                           alt={certificate.name}
                           objectFit="cover"
                           layout="fill"
@@ -198,7 +198,6 @@ const Designs = () => {
                             certificate.certificateAlias +
                             "?type=certificate"
                           }
-                          target={"_blank"}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -215,7 +214,7 @@ const Designs = () => {
                         <Link
                           className="text-gray-50 hover:text-basePrimary"
                           href={
-                            "/designs/certificate/" +
+                            "/assign?certificateAlias=" +
                             certificate.certificateAlias
                           }
                         >

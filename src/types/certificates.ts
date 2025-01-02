@@ -33,7 +33,7 @@ export interface TCertificate {
   settings: TCertificateSettings;
   event?: Event;
   lastEdited: Date;
-  previewUrl: string;
+  previewUrl?: string;
   certificateHash: Record<string, any>;
   certificateAlias?: string;
   JSON: Record<string, any>;
@@ -80,12 +80,12 @@ export type issueActions =
 export interface CertificateRecipient {
   id: number;
   created_at: string;
-  certificateId?: string | null;
-  recipientFirstName?: string | null;
-  recipientLastName?: string | null;
-  recipientEmail?: string | null;
-  status?: issueActions | null;
-  statusDetails?: { action: issueActions; date: string } | null;
+  certificateId: string | null;
+  recipientFirstName: string;
+  recipientLastName: string;
+  recipientEmail: string;
+  status: issueActions;
+  statusDetails: { action: issueActions; date: string } | null;
   profilePicture?: string | null;
   metadata?: Record<string, any> | null;
 }

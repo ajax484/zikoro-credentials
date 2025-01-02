@@ -21,6 +21,83 @@ type usePostResult<TData, TReturnData = any> = {
   }) => Promise<TReturnData | undefined>;
 } & RequestStatus;
 
+export interface Pagination {
+  page: number;
+  limit: number;
+}
+
+interface PaginationResponse<TData> {
+  data: TData;
+  total: number;
+  totalPages: number;
+}
+
+type UseGetPaginatedResult<TData> = {
+  data: TData[];
+  total: number;
+  totalPages: number;
+  pagination: Pagination;
+  setPagination: React.Dispatch<React.SetStateAction<Pagination>>;
+  getData: () => Promise<TData | undefined>;
+} & RequestStatus;
+
+export const useGetPaginatedData = <TData>(
+  endpoint: string,
+  searchParams: URLSearchParams = new URLSearchParams(),
+  initialPagination: Pagination = { page: 1, limit: 10 }
+): UseGetPaginatedResult<TData> => {
+  const [data, setData] = useState<TData[]>([]);
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [total, setTotal] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [pagination, setPagination] = useState<Pagination>(initialPagination);
+
+  const getData = async () => {
+    setLoading(true);
+
+    try {
+      const params = new URLSearchParams(searchParams);
+      params.set("page", pagination.page.toString());
+      params.set("limit", pagination.limit.toString());
+
+      const { data: responseData, status } = await getRequest<
+        PaginationResponse<TData[]>
+      >({
+        endpoint: `${endpoint}?${params.toString()}`,
+      });
+
+      if (status !== 200) {
+        throw new Error("Failed to fetch data");
+      }
+
+      setData(responseData.data.data);
+      setTotal(responseData.data.total);
+      setTotalPages(responseData.data.totalPages);
+      return responseData.data.data;
+    } catch (error) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, [endpoint, pagination]);
+
+  return {
+    data,
+    total,
+    totalPages,
+    pagination,
+    setPagination,
+    isLoading,
+    error,
+    getData,
+  };
+};
+
 export const useGetData = <TData>(
   endpoint: string,
   fetchInitial: boolean = true,

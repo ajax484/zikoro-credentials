@@ -87,7 +87,11 @@ const RecipientsPage = ({
           <h1 className="text-3xl font-semibold text-gray-800">
             {certificate?.name}
           </h1>
-          <Button className="bg-basePrimary text-white" type="submit">
+          <Button
+            className="bg-basePrimary text-white"
+            type="submit"
+            disabled={recipients.length === 0}
+          >
             Issue to Recipients
           </Button>
         </div>

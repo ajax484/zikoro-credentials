@@ -28,13 +28,17 @@ import { BackgroundSidebar } from "./background-sidebar";
 import { VerificationSidebar } from "./verification-sidebar";
 
 import { QRCodeSidebar } from "./qrcode-sidebar";
+import { base64ToFile, uploadFile } from "@/utils/helpers";
 
 interface EditorProps {
   initialData: ResponseType["data"];
   name: string;
   setName: (name: string) => void;
   workspaceId: string;
-  save: (values: { json: string; height: number; width: number }) => void;
+  save: (
+    values: { json: string; height: number; width: number },
+    url: string
+  ) => void;
   isSaving: boolean;
   isError: boolean;
   settings: any;
@@ -58,9 +62,18 @@ export const Editor = ({
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSave = useCallback(
-    debounce((values: { json: string; height: number; width: number }) => {
-      save(values);
-    }, 1500),
+    debounce(
+      async (values: { json: string; height: number; width: number }) => {
+        const imageURL = editor?.generateLink();
+        if (!imageURL) return;
+        base64ToFile(imageURL, name + ".png");
+        const { url, error } = await uploadFile(imageURL, "image");
+        if (error) return;
+        if (!url) return;
+        save(values, url);
+      },
+      1500
+    ),
     [save]
   );
 

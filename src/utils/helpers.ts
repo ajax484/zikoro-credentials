@@ -217,6 +217,25 @@ export function base64ToFile(base64Data: string, fileName: string): File {
   return new File([blob], fileName, { type: "image/png" });
 }
 
+export function dataUrlToFile(dataUrl, fileName) {
+  // Split the Data URL into the metadata and the base64 data
+  const [metadata, base64Data] = dataUrl.split(",");
+  const mimeType = metadata.match(/:(.*?);/)[1]; // Extract the MIME type
+  const binaryData = atob(base64Data); // Decode the base64 data
+  const dataArray = new Uint8Array(binaryData.length);
+
+  // Convert the binary string to an array of bytes
+  for (let i = 0; i < binaryData.length; i++) {
+    dataArray[i] = binaryData.charCodeAt(i);
+  }
+
+  // Create a Blob from the byte array
+  const blob = new Blob([dataArray], { type: mimeType });
+
+  // Return a File object
+  return new File([blob], fileName, { type: mimeType });
+}
+
 type Context = {
   asset: TAttendeeCertificate | TAttendeeBadge;
   recipient: CertificateRecipient;

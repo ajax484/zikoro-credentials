@@ -108,7 +108,7 @@ export const issueesColumns: ColumnDef<
 
       let newState = JSON.parse(
         replaceURIVariable(
-          replaceSpecialText(JSON.stringify(certificate.JSON?.json || {}), {
+          replaceSpecialText(JSON.stringify(certificate?.JSON?.json || {}), {
             asset: certificate,
             recipient: row.original,
             organization,
@@ -127,8 +127,8 @@ export const issueesColumns: ColumnDef<
 
       const { init, editor } = useEditor({
         defaultState: newState,
-        defaultWidth: certificate.JSON?.width ?? 900,
-        defaultHeight: certificate.JSON?.height ?? 1200,
+        defaultWidth: certificate?.JSON?.width ?? 900,
+        defaultHeight: certificate?.JSON?.height ?? 1200,
       });
 
       return (

@@ -34,17 +34,21 @@ const CreateCredentialsPage = ({
     certificateAlias: alias,
   });
 
-  const saveCredentialsFn = async (values: {
-    json: string;
-    height: number;
-    width: number;
-  }) => {
+  const saveCredentialsFn = async (
+    values: {
+      json: string;
+      height: number;
+      width: number;
+    },
+    url: string
+  ) => {
     const data = await saveCertificate({
       payload: {
         certificateAlias: alias,
         name,
         JSON: values,
         certificateSettings: settings,
+        previewUrl: url,
       },
     });
   };

@@ -16,6 +16,8 @@ const FromEvent = ({ certificateAlias }: { certificateAlias: string }) => {
   const { data: certificate, isLoading: certificateIsLoading } =
     useGetData<TCertificate>(`/certificates/${certificateAlias}`, true, null);
 
+  console.log(certificate, certificateIsLoading);
+
   const [step, setStep] = useState<number>(1);
 
   const { organization } = useOrganizationStore();
@@ -43,14 +45,14 @@ const FromEvent = ({ certificateAlias }: { certificateAlias: string }) => {
           Send <b>{certificate?.name}</b> to recipients
         </h1>
         <Button
-          onClick={() => router.push(`/designs/certificate`)}
+          onClick={() => router.push(`/designs`)}
           className="bg-basePrimary text-white"
           type="button"
         >
           Back
         </Button>
       </div>
-      <section className="flex flex-col items-center pt-12 w-full py-8 border mx-auto gap-6 space-y-12 bg-white">
+      <section className="flex flex-col items-center pt-12 w-full py-8 mx-auto gap-6 space-y-12">
         <Timeline step={step} setStep={(step) => setStep(step)} />
         {step === 1 && (
           <ConnectEvent
@@ -61,10 +63,12 @@ const FromEvent = ({ certificateAlias }: { certificateAlias: string }) => {
             setStep={setStep}
           />
         )}
-        {step === 2 && <SelectAttendee
-        selectedEvent={selectedEvent}
-        certificateAlias={certificateAlias}
-        />}
+        {step === 2 && (
+          <SelectAttendee
+            selectedEvent={selectedEvent}
+            certificateAlias={certificateAlias}
+          />
+        )}
       </section>
     </section>
   );

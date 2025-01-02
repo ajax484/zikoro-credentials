@@ -36,7 +36,7 @@ const SendEmail = ({
 }) => {
   const router = useRouter();
   const { mutateData, isLoading } = useMutateData(
-    `/certificates/${certificate.certificateAlias}/recipients`
+    `/certificates/${certificate.certificateAlias}/recipients/release`
   );
   const form = useForm<z.infer<typeof sendEmailSchema>>({
     resolver: zodResolver(sendEmailSchema),
@@ -57,7 +57,7 @@ const SendEmail = ({
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
+const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
     console.log(data);
     await mutateData({
       payload: {
@@ -65,6 +65,7 @@ const SendEmail = ({
         ...data,
         action: "release",
         recipients,
+        status: "awaiting response",
       },
     });
     router.push("/assign");

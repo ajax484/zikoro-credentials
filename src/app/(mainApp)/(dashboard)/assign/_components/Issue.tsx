@@ -27,8 +27,11 @@ import GradientBorderSelect from "@/components/CustomSelect/GradientSelectBorder
 import { useRouter } from "next/navigation";
 import { RowSelectionState } from "@tanstack/react-table";
 import Link from "next/link";
+import { Pagination, useMutateData } from "@/hooks/services/request";
 
-const issueesFilter: TFilter<CertificateRecipient>[] = [
+const issueesFilter: TFilter<
+  CertificateRecipient & { certificate: TCertificate }
+>[] = [
   {
     label: "Issue Date",
     type: "dateRange",
@@ -75,17 +78,25 @@ const Issue = ({
   certificates,
   certificateIssuees,
   updatePage,
-  page,
+  total,
+  totalPages,
+  pagination,
+  isLoading,
+  certificateAlias,
 }: {
   certificates: TCertificate[];
-  certificateIssuees: CertificateRecipient[];
+  certificateIssuees: (CertificateRecipient & { certificate: TCertificate })[];
+  total: number;
+  totalPages: number;
+  pagination: Pagination;
   updatePage: (page: number) => void;
-  page: number;
+  isLoading: boolean;
+  certificateAlias: string;
 }) => {
   const router = useRouter();
 
   const { filteredData, filters, selectedFilters, applyFilter, setOptions } =
-    useFilter<CertificateRecipient>({
+    useFilter<CertificateRecipient & { certificate: TCertificate }>({
       data: certificateIssuees,
       dataFilters: issueesFilter,
     });
@@ -94,9 +105,15 @@ const Issue = ({
     searchTerm,
     searchedData: filteredIssuees,
     setSearchTerm,
-  } = useSearch<CertificateRecipient>({
+  } = useSearch<CertificateRecipient & { certificate: TCertificate }>({
     data: filteredData || [],
-    accessorKey: ["recipientFirstName", "recipientLastName", "recipientEmail"],
+    accessorKey: [
+      "recipientFirstName",
+      "recipientLastName",
+      "recipientEmail",
+      "status",
+      "certificate.name",
+    ],
   });
 
   useEffect(() => {
@@ -117,7 +134,7 @@ const Issue = ({
 
   const [selectedCertificate, setSelectedCertificate] = useState<
     string | undefined
-  >();
+  >(certificateAlias);
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
@@ -144,10 +161,19 @@ const Issue = ({
     }
   };
 
-  // disabled={
-  //   filteredData.filter(({ id }) => rowSelection[id])
-  //     .length === 0
-  // }
+  const { mutateData: recallCertificates, isLoading: isLoadingRecall } =
+    useMutateData(`/certificates/recipients/recall`);
+
+  const recallCertificatesFn = async () => {
+    await recallCertificates({
+      payload: {
+        ids: filteredIssuees
+          .filter(({ id }) => rowSelection[id])
+          .map(({ id }) => id),
+      },
+    });
+    updatePage(1);
+  };
 
   return (
     <section className="space-y-4">
@@ -163,6 +189,7 @@ const Issue = ({
             disabled={
               filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
             }
+            onClick={recallCertificatesFn}
           >
             <Trash className="size-4" />
             <span>Recall</span>
@@ -203,7 +230,7 @@ const Issue = ({
           >
             Buy more credits
           </Link>
-          <Dialog>
+          <Dialog defaultOpen={!!certificateAlias}>
             <DialogTrigger>
               <Button className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 w-fit text-sm">
                 Assign Credential
@@ -335,15 +362,15 @@ const Issue = ({
           selectedFilters={selectedFilters}
         />
       </div>
-      <DataTable<CertificateRecipient>
+      <DataTable<CertificateRecipient & { certificate: TCertificate }>
         columns={issueesColumns}
         data={filteredIssuees}
-        currentPage={page}
+        currentPage={pagination.page}
         setCurrentPage={updatePage}
-        limit={10}
+        limit={pagination.limit}
         refetch={() => {}}
-        totalDocs={1}
-        isFetching={false}
+        totalDocs={total}
+        isFetching={isLoading}
         onClick={() => {}}
         rowSelection={rowSelection}
         setRowSelection={setRowSelection}

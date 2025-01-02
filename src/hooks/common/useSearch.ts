@@ -1,30 +1,31 @@
 "use client";
 import React, { useState, useMemo } from "react";
 
-// Utility type to extract keys of T that have string values
 type StringKeys<T> = {
-  [K in keyof T]: T[K] extends string ? K : never;
+  [K in keyof T]: T[K] extends string | string[] ? K : never;
 }[keyof T];
-
-// Interface for the hook's props
 interface UseSearchProps<T> {
   data: T[];
-  accessorKey: StringKeys<T>[];
+  accessorKey: (StringKeys<T> | string)[];
 }
 
-// Custom hook
+const getNestedValue = (obj: any, path: string): any => {
+  return path
+    .split(".")
+    .reduce((acc, key) => (acc ? acc[key] : undefined), obj);
+};
+
 const useSearch = <T>({ data, accessorKey }: UseSearchProps<T>) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  // Memoize the searchedData calculation for performance optimization
   const searchedData = useMemo(() => {
     console.log(searchTerm);
     return data.filter((item) =>
       accessorKey.some((key) => {
-        if (!searchTerm) return true; // If searchTerm is empty, include all items
+        if (!searchTerm) return true;
 
-        const value = item[key];
-        if (!value) return false; // If the value is undefined or null, exclude the item
+        const value = getNestedValue(item, key);
+        if (!value) return false;
 
         if (typeof value === "string") {
           return value.toLowerCase().includes(searchTerm.toLowerCase());
