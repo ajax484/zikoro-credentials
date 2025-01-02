@@ -453,6 +453,10 @@ const AddPoints = ({
           applyCredentialsDiscount(
             credits.silver,
             currentCurrency?.amount * silverToken?.amount
+          ) +
+          applyCredentialsDiscount(
+            credits.bronze,
+            currentCurrency?.amount * bronzeToken?.amount
           )
         ).toLocaleString()}
       </Button>

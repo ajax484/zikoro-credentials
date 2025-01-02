@@ -35,6 +35,7 @@ import { Button } from "@/components/ui/button";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { CreateOrganization } from "@/components/CreateOrganisation/createOrganisation";
 import { PlusCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const CreateCertificateDialog = ({
   open,
@@ -159,6 +160,7 @@ const CreateCertificateDialog = ({
 const Home = () => {
   const { user, setUser } = useUserStore();
   const { organization, setOrganization } = useOrganizationStore();
+  const router = useRouter();
 
   const {
     data: workspaces,
@@ -202,7 +204,7 @@ const Home = () => {
 
     if (!data) return;
     if (typeof window !== "undefined")
-      window.open(
+      router.push(s
         `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${workspace.id}`
       );
   };

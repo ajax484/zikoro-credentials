@@ -16,8 +16,10 @@ import { toast } from "react-toastify";
 import { useCreateCertificate } from "@/hooks";
 import { Button } from "@/components/ui/button";
 import { CredentialsWorkspaceToken } from "@/types/token";
+import { useRouter } from "next/navigation";
 
 const Designs = () => {
+  const router = useRouter();
   const { organization, setOrganization } = useOrganizationStore();
 
   const { createCertificate, isLoading: certificateIsCreating } =
@@ -32,7 +34,7 @@ const Designs = () => {
     if (!data) return;
 
     if (typeof window !== "undefined") {
-      window.open(
+      router.push(
         `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${organization.id}`
       );
     }
