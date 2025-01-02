@@ -13,22 +13,23 @@ import { useEffect, useRef, useState } from "react";
 import { replaceSpecialText, replaceURIVariable } from "@/utils/helpers";
 import { toast } from "@/hooks/use-toast";
 import { fabric } from "fabric";
-import {
-  FacebookIcon,
-  LinkedinIcon,
-  TwitterIcon,
-} from "@/constants";
-import { LinkedinShareButton } from "next-share"; 
+import { FacebookIcon, LinkedinIcon, LinkedinShareButton, TwitterIcon } from "next-share";
 import { useEditor } from "@/components/editor/hooks/use-editor";
-import { TAttendeeCertificate } from "@/types";
 import { Button } from "@/components/ui/button";
+import { useGetData } from "@/hooks/services/request";
+import { CertificateRecipient, TCertificate } from "@/types/certificates";
+import { TOrganization } from "@/types/organization";
 
 // import { ShareSocial } from "react-share-social";
 
 const CertificateView = ({
   certificate,
 }: {
-  certificate: TAttendeeCertificate;
+  certificate: CertificateRecipient & {
+    originalCertificate: TCertificate & {
+      workspace: TOrganization;
+    };
+  };
 }) => {
   const initialData = certificate?.originalCertificate.JSON;
 
@@ -41,22 +42,24 @@ const CertificateView = ({
 
   let newState = JSON.parse(
     replaceURIVariable(
-      replaceSpecialText(JSON.stringify(initialData?.json || {}), {
-        asset: certificate,
-        attendee: certificate?.attendee,
-        event: certificate?.originalCertificate.event,
-        organization: certificate?.originalCertificate.event.organization,
-      }),
-      certificate?.certificateId
+      replaceSpecialText(
+        JSON.stringify(certificate?.originalCertificate.JSON?.json || {}),
+        {
+          asset: certificate,
+          recipient: certificate,
+          organization: certificate.originalCertificate.workspace,
+        }
+      ),
+      certificate.certificateId || ""
     )
   );
 
   // Find placeholder in newState and replace with profile picture in the string
-  newState = newState.replaceAll(
-    "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
-    certificate?.attendee?.profilePicture?.trim() ||
-      "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg"
-  );
+  // newState = newState.replaceAll(
+  //   "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
+  //   certificate?.attendee?.profilePicture?.trim() ||
+  //     "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg"
+  // );
 
   console.log(newState);
 
@@ -96,7 +99,7 @@ const CertificateView = ({
     };
   }, []);
 
-  const shareText = `Excited to share my ${certificate?.CertificateName} certificate from ${certificate?.originalCertificate.event.eventTitle} with you! Check it out here: ${window.location.href}`;
+  const shareText = `Excited to share my ${certificate?.originalCertificate.name} certificate with you! Check it out here: ${window.location.href}`;
 
   return (
     <div className="flex-[60%] flex flex-col-reverse md:flex-col items-center gap-4 px-8">
@@ -109,10 +112,10 @@ const CertificateView = ({
                 height: initialData?.height ?? 1200,
               },
               `${
-                certificate?.attendee.firstName +
+                certificate?.recipientFirstName +
                 "_" +
-                certificate?.attendee.lastName
-              }_${certificate?.CertificateName}.pdf`
+                certificate?.recipientLastName
+              }_${certificate?.originalCertificate.name}.pdf`
             )
           }
           className="bg-basePrimary"
@@ -157,7 +160,7 @@ const CertificateView = ({
             {isShareDropDown && (
               <ActionModal
                 close={toggleShareDropDown}
-                url={certificate?.certificateURL}
+                url={window.location.href}
                 shareText={shareText}
               />
             )}
@@ -179,10 +182,10 @@ const CertificateView = ({
                     height: initialData?.height ?? 1200,
                   },
                   `${
-                    certificate?.attendee.firstName +
+                    certificate?.recipientFirstName +
                     "_" +
-                    certificate?.attendee.lastName
-                  }_${certificate?.CertificateName}.pdf`
+                    certificate?.recipientLastName
+                  }_${certificate?.originalCertificate.name}.pdf`
                 )
               }
             >
@@ -222,7 +225,7 @@ const CertificateView = ({
             {isShareDropDown && (
               <ActionModal
                 close={toggleShareDropDown}
-                url={certificate?.certificateURL}
+                url={window.location.href}
                 shareText={shareText}
               />
             )}
@@ -271,12 +274,13 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
 
   const { certificateId } = params;
 
-  const {
-    attendeeCertificate: certificate,
-    isLoading,
-    error,
-    verifyAttendeeCertificate,
-  } = useVerifyAttendeeCertificate({ certificateId });
+  const { data: certificate, isLoading } = useGetData<
+    CertificateRecipient & {
+      originalCertificate: TCertificate & {
+        workspace: TOrganization;
+      };
+    }
+  >(`/certificates/verify/${certificateId}`);
 
   console.log(certificate, certificateId);
 
@@ -335,9 +339,9 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
                 <span className="font-medium text-gray-700">
                   Awarded to:{" "}
                   <b className="capitalize">
-                    {certificate?.attendee.firstName +
+                    {certificate.recipientLastName +
                       " " +
-                      certificate?.attendee.lastName}
+                      certificate.recipientFirstName}
                   </b>
                 </span>
                 <span className="font-medium text-gray-700">
@@ -353,13 +357,13 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
                   Issuing organization:{" "}
                   <b>
                     {
-                      certificate?.originalCertificate?.event?.organization
+                      certificate?.originalCertificate?.workspace
                         ?.organizationName
                     }{" "}
                   </b>
                 </span>
                 <h1 className="text-lg md:text-xl text-gray-900 font-medium uppercase">
-                  {certificate?.CertificateName}
+                  {certificate?.originalCertificate?.name}
                 </h1>
               </div>
             </div>

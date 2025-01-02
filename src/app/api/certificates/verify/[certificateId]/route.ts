@@ -13,9 +13,9 @@ export async function GET(
 
       // .select("*")
       const { data, error, status } = await supabase
-        .from("attendeeCertificates")
+        .from("certificateRecipients")
         .select(
-          "*, certificate!inner(*, event:events!inner(organization:organization!inner(*))), attendee:attendees!inner(*)"
+          "*, originalCertificate:certificate!inner(*, workspace:organization!inner(*))"
         )
         .eq("certificateId", certificateId)
         .maybeSingle();

@@ -136,7 +136,7 @@ export async function POST(
 
               let client = new SendMailClient({
                 url: process.env.NEXT_PUBLIC_ZEPTO_URL,
-                token: process.env.NEXT_PUBLIC_ZEPTO_CREDIT,
+                token: process.env.NEXT_PUBLIC_ZEPTO_TOKEN,
               });
 
               const resp = await client.sendMail({

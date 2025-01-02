@@ -5,7 +5,7 @@ import { useFilter } from "@/hooks";
 import useSearch from "@/hooks/common/useSearch";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { TFilter } from "@/types/filter";
-import { extractUniqueTypes } from "@/utils/helpers";
+import { convertCamelToNormal, extractUniqueTypes } from "@/utils/helpers";
 import { Send, Trash } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { PiExport } from "react-icons/pi";
@@ -28,6 +28,9 @@ import { useRouter } from "next/navigation";
 import { RowSelectionState } from "@tanstack/react-table";
 import Link from "next/link";
 import { Pagination, useMutateData } from "@/hooks/services/request";
+import * as XLSX from "xlsx";
+import useOrganizationStore from "@/store/globalOrganizationStore";
+import { format } from "date-fns";
 
 const issueesFilter: TFilter<
   CertificateRecipient & { certificate: TCertificate }
@@ -94,6 +97,8 @@ const Issue = ({
   certificateAlias: string;
 }) => {
   const router = useRouter();
+
+  const { organization } = useOrganizationStore();
 
   const { filteredData, filters, selectedFilters, applyFilter, setOptions } =
     useFilter<CertificateRecipient & { certificate: TCertificate }>({
@@ -164,6 +169,9 @@ const Issue = ({
   const { mutateData: recallCertificates, isLoading: isLoadingRecall } =
     useMutateData(`/certificates/recipients/recall`);
 
+  const { mutateData: resendCertificates, isLoading: isLoadingResend } =
+    useMutateData(`/certificates/recipients/resend`);
+
   const recallCertificatesFn = async () => {
     await recallCertificates({
       payload: {
@@ -173,6 +181,74 @@ const Issue = ({
       },
     });
     updatePage(1);
+  };
+
+  const resendCertificatesFn = async () => {
+    await resendCertificates({
+      payload: {
+        recipients: filteredIssuees
+          .filter(({ id }) => rowSelection[id])
+          .map(({ id, statusDetails }) => ({
+            id,
+            statusDetails,
+          })),
+      },
+    });
+    updatePage(1);
+  };
+
+  const exportRecipients = () => {
+    const omittedFields: (keyof (CertificateRecipient & {
+      certificate: TCertificate;
+    }))[] = ["certificateId", "certificateGroupId", "id", "statusDetails"];
+
+    const normalizedData = convertCamelToNormal<
+      CertificateRecipient & {
+        certificate: TCertificate;
+      }
+    >(
+      filteredIssuees.map((obj) =>
+        Object.keys(obj).reduce(
+          (newObj, key) => {
+            if (
+              !omittedFields.includes(
+                key as keyof (CertificateRecipient & {
+                  certificate: TCertificate;
+                })
+              )
+            ) {
+              (newObj as any)[key] =
+                key === "created_at"
+                  ? obj[key]
+                    ? format(new Date(obj[key]), "MM/dd/yyyy")
+                    : "N/A"
+                  : key === "certificate"
+                  ? obj[key].name
+                  : (obj as any)[key];
+            }
+            return newObj;
+          },
+          {} as Partial<
+            CertificateRecipient & {
+              certificate: TCertificate;
+            }
+          >
+        )
+      ) as (CertificateRecipient & {
+        certificate: TCertificate;
+      })[],
+      " "
+    );
+
+    const worksheet = XLSX.utils.json_to_sheet(normalizedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.writeFile(
+      workbook,
+      `credentials_recipients_${
+        organization?.organizationName
+      }_${new Date().toISOString()}.xlsx`
+    );
   };
 
   return (
@@ -204,6 +280,7 @@ const Issue = ({
             disabled={
               filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
             }
+            onClick={exportRecipients}
           >
             <PiExport className="size-4" />
             <span>Export</span>
@@ -218,6 +295,7 @@ const Issue = ({
             disabled={
               filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
             }
+            onClick={resendCertificatesFn}
           >
             <Send className="size-4" />
             <span>Resend</span>

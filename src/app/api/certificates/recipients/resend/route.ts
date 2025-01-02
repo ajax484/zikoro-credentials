@@ -1,7 +1,6 @@
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { createHash, replaceSpecialText } from "@/utils/helpers";
 
 export async function POST(
   req: NextRequest,
@@ -15,24 +14,7 @@ export async function POST(
 
   try {
     const bodyParams = await req.json();
-    const {
-      certificateGroupId,
-      recipients,
-      subject,
-      body,
-      action,
-      senderName,
-      status,
-    } = bodyParams;
-
-    console.log(
-      certificateGroupId,
-      recipients,
-      subject,
-      body,
-      action,
-      senderName
-    );
+    const { recipients } = bodyParams;
 
     let query;
 
@@ -40,18 +22,13 @@ export async function POST(
       .from("certificateRecipients")
       .upsert(
         recipients.map((recipient: any) => {
-          const certificateId = createHash(
-            JSON.stringify({ certificateGroupId, ...recipient })
-          );
-
           return {
-            certificateGroupId,
-            certificateId,
             ...recipient,
-            status,
+            status: "email resent",
             statusDetails: [
+              ...recipient.statusDetails,
               {
-                action,
+                action: "email resent",
                 date: new Date().toISOString(),
               },
             ],
@@ -59,7 +36,7 @@ export async function POST(
         }),
         { onConflict: "id" }
       )
-      .select("*");
+      .select("*, certificate!inner(*)");
 
     const { data: recipientData, error } = await query;
 
@@ -67,8 +44,12 @@ export async function POST(
 
     // Sending emails using ZeptoMail
     for (const recipient of recipientData) {
-      const { recipientEmail, recipientFirstName, recipientLastName } =
-        recipient;
+      const {
+        recipientEmail,
+        recipientFirstName,
+        recipientLastName,
+        certificate: { name: certificateName },
+      } = recipient;
       try {
         const { SendMailClient } = require("zeptomail");
         const client = new SendMailClient({
@@ -79,7 +60,7 @@ export async function POST(
         await client.sendMail({
           from: {
             address: process.env.NEXT_PUBLIC_EMAIL,
-            name: senderName,
+            name: "Zikoro",
           },
           to: [
             {
@@ -89,11 +70,15 @@ export async function POST(
               },
             },
           ],
-          subject,
-          htmlbody: replaceSpecialText(body, {
-            recipient: recipient,
-            organization: {},
-          }),
+          subject: `Resending ${certificateName}`,
+          htmlbody: `
+          Hi ${recipientFirstName},\n\n
+
+          Your certificate is ready for download. Access it now through this link: https://zikoro-credentials.com/credentials/verify/certificate/${recipient.certificateId}\n
+
+          Best,\n
+          Zikoro Team
+          `,
         });
       } catch (emailError) {
         console.error(`Error sending email to ${recipientEmail}:`, emailError);
@@ -103,9 +88,7 @@ export async function POST(
     return NextResponse.json(
       {
         data: {
-          msg: `Certificates ${action}${
-            action === "release" ? "d" : "ed"
-          } successfully`,
+          msg: `Certificates resent successfully`,
         },
       },
       { status: 201 }

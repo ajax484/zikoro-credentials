@@ -20,9 +20,6 @@ import { FontSidebar } from "@/components/editor/components/font-sidebar";
 import { ImageSidebar } from "@/components/editor/components/image-sidebar";
 import { FilterSidebar } from "@/components/editor/components/filter-sidebar";
 import { DrawSidebar } from "@/components/editor/components/draw-sidebar";
-
-import { TemplateSidebar } from "@/components/editor/components/template-sidebar";
-import { RemoveBgSidebar } from "@/components/editor/components/remove-bg-sidebar";
 import { SettingsSidebar } from "@/components/editor/components/settings-sidebar";
 import { BackgroundSidebar } from "./background-sidebar";
 import { VerificationSidebar } from "./verification-sidebar";

@@ -76,7 +76,8 @@ export type issueActions =
   | "issued"
   | "awaiting response"
   | "email opened"
-  | "revoked";
+  | "revoked"
+  | "email resent";
 export interface CertificateRecipient {
   id: number;
   created_at: string;
@@ -88,4 +89,5 @@ export interface CertificateRecipient {
   statusDetails: { action: issueActions; date: string } | null;
   profilePicture?: string | null;
   metadata?: Record<string, any> | null;
+  certificateGroupId: number;
 }

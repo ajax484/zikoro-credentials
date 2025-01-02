@@ -8,6 +8,8 @@ import Link from "next/link";
 import { replaceSpecialText, replaceURIVariable } from "@/utils/helpers";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { useEditor } from "@/components/editor/hooks/use-editor";
+import { useEffect, useRef } from "react";
+import { fabric } from "fabric";
 
 export const issueesColumns: ColumnDef<
   CertificateRecipient & { certificate: TCertificate }
@@ -113,7 +115,7 @@ export const issueesColumns: ColumnDef<
             recipient: row.original,
             organization,
           }),
-          row.original.certificateId
+          row.original.certificateId || ""
         )
       );
 
@@ -123,13 +125,34 @@ export const issueesColumns: ColumnDef<
       //     "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg"
       // );
 
-      // console.log(newState);
+      console.log(newState);
 
       const { init, editor } = useEditor({
         defaultState: newState,
         defaultWidth: certificate?.JSON?.width ?? 900,
         defaultHeight: certificate?.JSON?.height ?? 1200,
       });
+
+      console.log(editor);
+
+      const canvasRef = useRef(null);
+      const containerRef = useRef<HTMLDivElement>(null);
+
+      useEffect(() => {
+        const canvas = new fabric.Canvas(canvasRef.current, {
+          controlsAboveOverlay: true,
+          preserveObjectStacking: true,
+        });
+
+        init({
+          initialCanvas: canvas,
+          initialContainer: containerRef.current!,
+        });
+
+        return () => {
+          canvas.dispose();
+        };
+      }, [init]);
 
       return (
         <div className="flex items-center gap-2 justify-center">
@@ -145,6 +168,12 @@ export const issueesColumns: ColumnDef<
             className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center"
           >
             <Download className="size-6" />
+            <div
+              className="h-[calc(100%-124px)] flex-1 bg-muted hidden"
+              ref={containerRef}
+            >
+              <canvas ref={canvasRef} />
+            </div>
           </button>
         </div>
       );
