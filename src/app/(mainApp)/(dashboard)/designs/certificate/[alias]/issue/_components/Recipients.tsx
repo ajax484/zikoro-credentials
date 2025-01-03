@@ -198,7 +198,13 @@ const RecipientsPage = ({
             />
           ))}
 
-          <button onClick={addRecipient} className="text-basePrimary text-sm">
+          <button
+            disabled={
+              creditBalance.bronze < recipients.length || creditsIsLoading
+            }
+            onClick={addRecipient}
+            className="text-basePrimary text-sm"
+          >
             Add new recipient
           </button>
         </div>
