@@ -106,7 +106,7 @@ const Sidebar = () => {
                 aria-disabled={disabled}
                 onClick={close}
                 prefetch={false}
-                href={href}
+                href={disabled ? {} : href}
                 target={href === "/live-events" ? "_blank" : ""}
                 className={cn(
                   "text-gray-800 p-3 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit",
@@ -136,10 +136,9 @@ const Sidebar = () => {
           {navlinks2.map(({ name, href, Icon, disabled }) => (
             <li key={name} className="w-full">
               <Link
-                aria-disabled={disabled}
                 onClick={close}
                 prefetch={false}
-                href={href}
+                href={disabled ? {} : href}
                 target={href === "/live-events" ? "_blank" : ""}
                 className={cn(
                   "p-3 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit",

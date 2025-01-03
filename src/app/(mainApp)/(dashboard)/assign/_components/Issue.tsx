@@ -27,10 +27,15 @@ import GradientBorderSelect from "@/components/CustomSelect/GradientSelectBorder
 import { useRouter } from "next/navigation";
 import { RowSelectionState } from "@tanstack/react-table";
 import Link from "next/link";
-import { Pagination, useMutateData } from "@/hooks/services/request";
+import {
+  Pagination,
+  useGetData,
+  useMutateData,
+} from "@/hooks/services/request";
 import * as XLSX from "xlsx";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { format } from "date-fns";
+import { CredentialsWorkspaceToken } from "@/types/token";
 
 const issueesFilter: TFilter<
   CertificateRecipient & { certificate: TCertificate }
@@ -251,6 +256,22 @@ const Issue = ({
     );
   };
 
+  const { data: credits, isLoading: creditsIsLoading } = useGetData<
+    CredentialsWorkspaceToken[]
+  >(`/workspaces/${organization?.id}/credits`, []);
+
+  const creditBalance = {
+    bronze: credits
+      .filter((v) => v.tokenId === 1)
+      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+    silver: credits
+      .filter((v) => v.tokenId === 2)
+      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+    gold: credits
+      .filter((v) => v.tokenId === 3)
+      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+  };
+
   return (
     <section className="space-y-4">
       <div className="flex items-end justify-between">
@@ -400,6 +421,15 @@ const Issue = ({
                   </div>
                 </label>
               </div>
+              <div className="flex flex-col items-center gap-2 text-xs text-gray-600">
+                <span>
+                  Assigning certificate costs <b>1 bronze token</b> per
+                  recipient
+                </span>
+                <span>
+                  You have <b>{creditBalance.bronze}</b> bronze tokens
+                </span>
+              </div>
               <GradientBorderSelect
                 placeholder="Select Credential"
                 value={selectedCertificate || ""}
@@ -409,6 +439,7 @@ const Issue = ({
                   value: certificateAlias || "",
                 }))}
               />
+
               <DialogFooter>
                 {selectedCertificate && (
                   <Button
