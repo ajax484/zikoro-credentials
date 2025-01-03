@@ -51,6 +51,26 @@ export async function POST(req: NextRequest) {
       throw new Error(`Database insertion error: ${error.message}`);
     }
 
+    const { data: tokens, error: creditsError } = await supabase
+      .from("credentialsWorkspaceToken")
+      .select("*")
+      .eq("workspaceId", workspaceId)
+      .gte("expiryDate", new Date().toISOString())
+      .order("expiryDate", { ascending: true })
+      .order("tokenId", { ascending: true });
+
+    if (creditsError) {
+      throw new Error(`Failed to fetch tokens: ${creditsError.message}`);
+    }
+
+    const balance: {
+      [key: string]: number;
+    } = {
+      bronze: tokens.reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+      silver: tokens.reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+      gold: tokens.reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+    };
+
     const { error: logError } = await supabase
       .from("credentialTokenUsageHistory")
       .insert(
@@ -59,15 +79,16 @@ export async function POST(req: NextRequest) {
           .map((type) => ({
             workspaceAlias,
             tokenId: type === "bronze" ? 1 : type === "silver" ? 2 : 3,
-            CreditAmount: credits[type].price * credits[type].amount,
+            creditAmount: credits[type].amount,
             transactionReferenceId: reference,
             activityBy: activityBy,
             activity: "credit",
-            creditBalance: credits[type].price * credits[type].amount,
+            creditBalance: balance[type] + credits[type].amount,
           }))
       );
 
     if (logError) {
+      console.log(logError);
       throw new Error(`Failed to insert usage logs: ${logError.message}`);
     }
 

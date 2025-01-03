@@ -45,8 +45,10 @@ export async function POST(
       {
         amountToCharge: recipients.length,
         credentialId: certificateGroupId,
-        createdBy,
+        activityBy: createdBy,
         workspaceId,
+        workspaceAlias,
+        recipientDetails: recipients,
       }
     );
 

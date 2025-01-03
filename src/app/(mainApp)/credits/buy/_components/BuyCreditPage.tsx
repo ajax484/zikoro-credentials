@@ -64,7 +64,7 @@ const BuyCreditPage = () => {
     isLoading: workspacesIsLoading,
     error: workspacesError,
   } = useGetData<TOrganization[]>(
-    `/workspaces?userEmail=${user?.userEmail}`,
+    `/workspaces?userEmail=${user?.userEmail || "ubahyusuf484@gmail.com"}`,
     []
   );
 

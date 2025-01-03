@@ -92,4 +92,5 @@ export interface CertificateRecipient {
   profilePicture?: string | null;
   metadata?: Record<string, any> | null;
   certificateGroupId: number;
+  recipientAlias: string;
 }

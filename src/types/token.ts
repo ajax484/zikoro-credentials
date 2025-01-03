@@ -32,7 +32,7 @@ export interface CredentialTokenUsageHistory {
   credentialId?: number | null;
   tokenId?: number | null;
   creditAmount: number;
-  recientDetails?: Record<string, any> | null; // json
+  recipientDetails?: Record<string, any> | null; // json
   activityBy: number;
   activity: string;
   creditBalance: number;

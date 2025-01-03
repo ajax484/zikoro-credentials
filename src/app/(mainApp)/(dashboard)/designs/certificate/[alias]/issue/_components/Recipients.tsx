@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { TCertificate } from "@/types/certificates";
+import { generateAlias } from "@/utils/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash } from "lucide-react";
 import React from "react";
@@ -76,7 +77,12 @@ const RecipientsPage = ({
 
   const onSubmit = (data: z.infer<typeof recipientSchema>) => {
     console.log(data);
-    updateRecipients(data.recipients);
+    updateRecipients(
+      data.recipients.map((recipient) => ({
+        recipientAlias: generateAlias(),
+        ...recipient,
+      }))
+    );
     updatePage(1);
   };
 

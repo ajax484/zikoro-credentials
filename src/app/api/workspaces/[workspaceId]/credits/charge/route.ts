@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
+import axios from "axios";
 
 export async function POST(
   req: NextRequest,
@@ -32,12 +33,18 @@ export async function POST(
     let remainingCharge = amountToCharge;
     const logs = [];
 
+    const balance = {
+      bronze: tokens.reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+      silver: tokens.reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+      gold: tokens.reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+    };
+
     for (const token of tokens) {
       if (remainingCharge <= 0) break;
 
-      const balance = token.CreditPurchased;
-      const amountCharged = Math.min(balance, remainingCharge);
-      const newBalance = balance - amountCharged;
+      const amountCharged = Math.min(balance.bronze, remainingCharge);
+      const newBalance = balance.bronze - amountCharged;
+      balance.bronze = newBalance;
 
       const { error: updateError } = await supabase
         .from("credentialsWorkspaceToken")
@@ -51,13 +58,14 @@ export async function POST(
       }
 
       logs.push({
-        workspaceAlias: token.workspaceAlias,
+        workspaceAlias,
         credentialId,
         tokenId: token.tokenId,
         creditAmount: amountCharged,
         activityBy,
         activity: "debit",
         creditBalance: newBalance,
+        recipientDetails: payload?.recipientDetails,
       });
 
       remainingCharge -= amountCharged;
