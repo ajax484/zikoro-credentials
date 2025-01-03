@@ -19,6 +19,7 @@ type Navlinks = {
   name: string;
   href: string;
   Icon: string;
+  disabled?: boolean;
 };
 
 const navlinks: Navlinks[] = [
@@ -41,11 +42,13 @@ const navlinks: Navlinks[] = [
     name: "Analytics",
     href: "/analytics",
     Icon: Analytics,
+    disabled: true,
   },
   {
     name: "Workspace",
     href: "/workspace",
     Icon: Workspace,
+    disabled: true,
   },
 ];
 
@@ -54,16 +57,19 @@ const navlinks2: Navlinks[] = [
     name: "Refer & Earn",
     href: "/refer",
     Icon: Gift,
+    disabled: true,
   },
   {
     name: "Support",
     href: "/support",
     Icon: Support,
+    disabled: true,
   },
   {
     name: "Feedback",
     href: "/feedback",
     Icon: Star,
+    disabled: true,
   },
 ];
 
@@ -94,9 +100,10 @@ const Sidebar = () => {
 
       <nav className="my-6">
         <ul className="flex flex-col gap-y-2">
-          {navlinks.map(({ name, href, Icon }) => (
+          {navlinks.map(({ name, href, Icon, disabled }) => (
             <li key={name} className="w-full">
               <Link
+                aria-disabled={disabled}
                 onClick={close}
                 prefetch={false}
                 href={href}
@@ -106,7 +113,15 @@ const Sidebar = () => {
                   href === pathname && " bg-basePrimary/10 text-[#1F1F1F]"
                 )}
               >
-                {Icon && <Image src={Icon} width={20} height={20} alt="" />}
+                {Icon && (
+                  <Image
+                    src={Icon}
+                    width={20}
+                    height={20}
+                    alt={name}
+                    className={cn(disabled && "grayscale")}
+                  />
+                )}
                 <span className="group-hover:block hidden text-sm delay-300 transition-all">
                   {name}
                 </span>
@@ -118,9 +133,10 @@ const Sidebar = () => {
 
       <nav className="border-y py-4">
         <ul className="flex flex-col gap-y-4">
-          {navlinks2.map(({ name, href, Icon }) => (
+          {navlinks2.map(({ name, href, Icon, disabled }) => (
             <li key={name} className="w-full">
               <Link
+                aria-disabled={disabled}
                 onClick={close}
                 prefetch={false}
                 href={href}
@@ -130,7 +146,15 @@ const Sidebar = () => {
                   href === pathname && " bg-basePrimary/10 text-[#1F1F1F]"
                 )}
               >
-                {Icon && <Image src={Icon} width={20} height={20} alt="" />}
+                {Icon && (
+                  <Image
+                    src={Icon}
+                    width={20}
+                    height={20}
+                    alt={name}
+                    className={cn(disabled && "grayscale")}
+                  />
+                )}
                 <span className="group-hover:block hidden text-sm delay-300 transition-all">
                   {name}
                 </span>
