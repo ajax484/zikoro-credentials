@@ -100,8 +100,8 @@ export const useGetPaginatedData = <TData>(
 
 export const useGetData = <TData>(
   endpoint: string,
-  fetchInitial: boolean = true,
-  defaultValue: any = null
+  defaultValue: any = null,
+  cancelInitialFetch: boolean = false
 ): UseGetResult<TData> => {
   const [data, setData] = useState<TData>(defaultValue);
   const [isLoading, setLoading] = useState<boolean>(false);
@@ -129,8 +129,9 @@ export const useGetData = <TData>(
   };
 
   useEffect(() => {
-    console.log("endpoint changed");
-    fetchInitial && getData();
+    console.log("endpoint changed", endpoint);
+    if (cancelInitialFetch) return;
+    getData();
   }, [endpoint]);
 
   return {

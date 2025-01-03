@@ -11,7 +11,7 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
 
   const { data: certificates, isLoading } = useGetData<TCertificate[]>(
     `/certificates?workspaceAlias=${organization?.organizationAlias}`,
-    true,
+
     []
   );
 

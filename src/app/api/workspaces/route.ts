@@ -3,12 +3,13 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const userEmail = searchParams.get("userEmail");
   const supabase = createRouteHandlerClient({ cookies });
 
   if (req.method === "GET") {
     try {
+      const { searchParams } = new URL(req.url);
+      const userEmail = searchParams.get("userEmail");
+
       const { data: organizations, error } = await supabase
         .from("organization")
         .select("*");

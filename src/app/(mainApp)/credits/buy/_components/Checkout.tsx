@@ -92,6 +92,8 @@ const Checkout = ({
         workspaceName: workspace?.organizationName,
         reference: info.reference,
         currency: currentCurrency.currency,
+        workspaceAlias: workspace?.organizationAlias,
+        activityBy: user?.id,
       },
     });
 

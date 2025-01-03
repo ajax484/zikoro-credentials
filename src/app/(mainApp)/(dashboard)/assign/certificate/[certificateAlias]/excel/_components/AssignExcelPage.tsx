@@ -16,7 +16,7 @@ const AssignExcelPage = ({
 }) => {
   const router = useRouter();
   const { data: certificate, isLoading: certificateIsLoading } =
-    useGetData<TCertificate>(`/certificates/${certificateAlias}`, true, null);
+    useGetData<TCertificate>(`/certificates/${certificateAlias}`);
 
   console.log(certificate);
 
@@ -69,7 +69,7 @@ const AssignExcelPage = ({
     });
   };
 
-  if(certificateIsLoading) return <div>Loading...</div>
+  if (certificateIsLoading) return <div>Loading...</div>;
 
   return (
     <section className="space-y-12">

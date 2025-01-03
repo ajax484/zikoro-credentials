@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import { useGetData } from "@/hooks/services/request";
@@ -17,27 +17,195 @@ import { useCreateCertificate } from "@/hooks";
 import { Button } from "@/components/ui/button";
 import { CredentialsWorkspaceToken } from "@/types/token";
 import { useRouter } from "next/navigation";
+import { TOrganization } from "@/types/organization";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { PlusCircle } from "lucide-react";
+import { LoaderAlt } from "styled-icons/boxicons-regular";
+import { CreateOrganization } from "@/components/CreateOrganisation/createOrganisation";
+import useUserStore from "@/store/globalUserStore";
+
+const CreateCertificateDialog = ({
+  open,
+  setOpen,
+  createCertificateFn,
+  certificateIsCreating,
+  setDialogIsOpen,
+  workspaces,
+  workspacesIsLoading,
+}: {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  createCertificateFn: ({
+    name,
+    workspace,
+  }: {
+    name: string;
+    workspace: TOrganization;
+  }) => void;
+  certificateIsCreating: boolean;
+  setDialogIsOpen: (open: boolean) => void;
+  workspaces: TOrganization[];
+  workspacesIsLoading: boolean;
+}) => {
+  const { organization, setOrganization } = useOrganizationStore();
+
+  const [workspace, setWorkspace] = useState<TOrganization | null>(
+    organization
+  );
+
+  const [name, setName] = useState<string>("Untitled Certificate");
+
+  const updateWorkspace = (workspace: TOrganization | null) => {
+    setWorkspace(workspace);
+    setOrganization(workspace);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <button
+          disabled={certificateIsCreating}
+          className="rounded-md border bg-white flex flex-col items-center justify-center gap-2 min-h-[250px]"
+        >
+          <Image
+            src={Solar}
+            alt={"solar"}
+            width={30}
+            height={30}
+            className="rounded-full"
+          />
+          <span className="text-sm text-basePrimary">Create New</span>
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-[50%]">
+        <DialogHeader>
+          <DialogTitle>Create Certificate</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-6">
+          <div className="flex flex-col gap-2 w-full">
+            <label className="font-medium text-gray-700">
+              Certificate Name
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter certificate name"
+              className=" placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+              onInput={(e) => setName(e.currentTarget.value)}
+              value={name}
+            />
+          </div>
+          <div className="flex flex-col gap-2 w-full">
+            <label className="font-medium text-gray-700">Workspace</label>
+            <div className="flex items-center gap-4">
+              <Select
+                disabled={workspacesIsLoading}
+                value={String(workspace?.id)}
+                onValueChange={(value) =>
+                  updateWorkspace(
+                    workspaces?.find(({ id }) => id === parseInt(value))
+                  )
+                }
+              >
+                <SelectTrigger className="w-full rounded-md bg-white font-medium">
+                  <SelectValue placeholder={"Select workspace"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {workspaces?.map(({ id, organizationName }) => (
+                    <SelectItem value={String(id)} key={id}>
+                      {organizationName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={() => setDialogIsOpen(true)}
+                className="bg-basePrimary gap-x-2 py-1 text-gray-50 font-medium flex items-center justify-center rounded-lg w-fit text-xs"
+              >
+                <span>New Workspace</span>
+                <PlusCircle className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button
+            onClick={() => {
+              workspace && createCertificateFn({ name, workspace });
+              setOpen(false);
+            }}
+            disabled={certificateIsCreating || name === "" || !workspace}
+            className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-md text-gray-50 font-medium"
+          >
+            {certificateIsCreating && (
+              <LoaderAlt size={22} className="animate-spin" />
+            )}
+            <span>Create Certificate</span>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const Designs = () => {
-  const router = useRouter();
+  const { user, setUser } = useUserStore();
   const { organization, setOrganization } = useOrganizationStore();
+  const router = useRouter();
+
+  const {
+    data: workspaces,
+    isLoading: workspacesIsLoading,
+    getData: refetchWorkspaces,
+  } = useGetData<TOrganization[]>(
+    `/workspaces?userEmail=${user?.userEmail}`,
+    []
+  );
 
   const { createCertificate, isLoading: certificateIsCreating } =
     useCreateCertificate();
 
-  const createCertificateFn = async () => {
+  const createCertificateFn = async ({
+    name,
+    workspace,
+  }: {
+    name: string;
+    workspace: TOrganization;
+  }) => {
     if (!organization) return toast.error("Please select an organization");
+
+    if (creditBalance.bronze === 0) return toast.error("Insufficient credits");
+
+    if (user?.id === undefined)
+      return toast.error("Please login to create certificates");
+
     const data = await createCertificate({
-      payload: { workspaceAlias: organization.organizationAlias },
+      payload: {
+        workspaceAlias: workspace.organizationAlias,
+        name,
+        createdBy: user?.id,
+      },
     });
 
     if (!data) return;
 
-    if (typeof window !== "undefined") {
-      router.push(
-        `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${organization.id}`
-      );
-    }
+    router.push(
+      `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${workspace.id}`
+    );
   };
 
   console.log(organization);
@@ -48,13 +216,12 @@ const Designs = () => {
     error,
   } = useGetData<TCertificate[]>(
     `/certificates?workspaceAlias=${organization?.organizationAlias}`,
-    true,
     []
   );
 
   const { data: credits, isLoading: creditsIsLoading } = useGetData<
     CredentialsWorkspaceToken[]
-  >(`/workspaces/${organization?.id}/credits`, true, []);
+  >(`/workspaces/${organization?.id}/credits`, []);
 
   console.log(credits);
 
@@ -66,6 +233,22 @@ const Designs = () => {
     data: certificates || [],
     accessorKey: ["name"],
   });
+
+  const [open, setOpen] = useState(false);
+
+  const [dialogIsOpen, setDialogIsOpen] = useState<boolean>(false);
+
+  const creditBalance = {
+    bronze: credits
+      .filter((v) => v.tokenId === 1)
+      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+    silver: credits
+      .filter((v) => v.tokenId === 2)
+      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+    gold: credits
+      .filter((v) => v.tokenId === 3)
+      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+  };
 
   return (
     <div>
@@ -82,11 +265,7 @@ const Designs = () => {
                 <div className="rounded-full p-0.5 [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]">
                   <div className="rounded-full size-5 [box-shadow:_0px_8px_12px_0px_#C2AF9B66;] [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]" />
                 </div>
-                <span className="font-semibold">
-                  {credits
-                    .filter((v) => v.tokenId === 1)
-                    .reduce((acc, curr) => acc + curr.CreditPurchased, 0)}
-                </span>
+                <span className="font-semibold">{creditBalance.bronze}</span>
               </div>
             </div>
             <div>
@@ -95,11 +274,7 @@ const Designs = () => {
                 <div className="rounded-full p-0.5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1));]">
                   <div className="rounded-full size-5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1));]" />
                 </div>
-                <span className="font-semibold">
-                  {credits
-                    .filter((v) => v.tokenId === 2)
-                    .reduce((acc, curr) => acc + curr.CreditPurchased, 0)}
-                </span>
+                <span className="font-semibold">{creditBalance.silver}</span>
               </div>
             </div>
             <div>
@@ -108,11 +283,7 @@ const Designs = () => {
                 <div className="rounded-full p-0.5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%);]">
                   <div className="rounded-full size-5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%);]" />
                 </div>
-                <span className="font-semibold">
-                  {credits
-                    .filter((v) => v.tokenId === 3)
-                    .reduce((acc, curr) => acc + curr.CreditPurchased, 0)}
-                </span>
+                <span className="font-semibold">{creditBalance.gold}</span>
               </div>
             </div>
           </div>
@@ -162,20 +333,18 @@ const Designs = () => {
               <div>Loading...</div>
             ) : (
               <>
-                <button
-                  onClick={createCertificateFn}
-                  disabled={certificateIsCreating}
-                  className="rounded-md border bg-white flex flex-col items-center justify-center gap-2 min-h-[250px]"
-                >
-                  <Image
-                    src={Solar}
-                    alt={"solar"}
-                    width={30}
-                    height={30}
-                    className="rounded-full"
-                  />
-                  <span className="text-sm text-basePrimary">Create New</span>
-                </button>
+                <CreateCertificateDialog
+                  open={open}
+                  setOpen={setOpen}
+                  createCertificateFn={createCertificateFn}
+                  certificateIsCreating={certificateIsCreating}
+                  setDialogIsOpen={() => {
+                    setOpen(false);
+                    setDialogIsOpen(true);
+                  }}
+                  workspaces={workspaces}
+                  workspacesIsLoading={workspacesIsLoading}
+                />
                 {filteredCertificates?.map((certificate) => (
                   <div
                     key={certificate.id}
@@ -245,7 +414,9 @@ const Designs = () => {
                             height={20}
                             className="rounded-full"
                           />
-                          <p className="text-xs text-gray-600">40</p>
+                          <p className="text-xs text-gray-600">
+                            {certificate?.recipientCount}
+                          </p>
                         </div>
                         <div className="flex items-center gap-1">
                           <Image
@@ -269,6 +440,15 @@ const Designs = () => {
         </TabsContent>
         <TabsContent value="badges">Change your password here.</TabsContent>
       </Tabs>
+      {dialogIsOpen && (
+        <CreateOrganization
+          refetch={refetchWorkspaces}
+          close={() => {
+            setDialogIsOpen(false);
+            setOpen(true);
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -14,9 +14,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import TextEditor from "@/components/textEditor/Editor";
-import { useMutateData } from "@/hooks/services/request";
+import { useGetData, useMutateData } from "@/hooks/services/request";
 import { RecipientType } from "./Recipients";
 import { useRouter } from "next/navigation";
+import useUserStore from "@/store/globalUserStore";
+import { CredentialsWorkspaceToken } from "@/types/token";
+import useOrganizationStore from "@/store/globalOrganizationStore";
+import { toast } from "react-toastify";
 
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
@@ -34,6 +38,8 @@ const SendEmail = ({
   updatePage: (page: number) => void;
   recipients: RecipientType;
 }) => {
+  const { user } = useUserStore();
+  const { organization } = useOrganizationStore();
   const router = useRouter();
   const { mutateData, isLoading } = useMutateData(
     `/certificates/${certificate.certificateAlias}/recipients/release`
@@ -57,8 +63,26 @@ const SendEmail = ({
     },
   });
 
-const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
-    console.log(data);
+  const { data: credits, isLoading: creditsIsLoading } = useGetData<
+    CredentialsWorkspaceToken[]
+  >(`/workspaces/${organization?.id}/credits`, []);
+
+  const creditBalance = {
+    bronze: credits
+      .filter((v) => v.tokenId === 1)
+      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+    silver: credits
+      .filter((v) => v.tokenId === 2)
+      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+    gold: credits
+      .filter((v) => v.tokenId === 3)
+      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+  };
+
+  const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
+    if (creditBalance.bronze === 0 || creditBalance.bronze < recipients.length)
+      return toast.error("Insufficient credits");
+
     await mutateData({
       payload: {
         certificateGroupId: certificate.id,
@@ -66,6 +90,9 @@ const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
         action: "release",
         recipients,
         status: "awaiting response",
+        createdBy: user?.id,
+        workspaceAlias: organization?.organizationAlias,
+        workspaceId: organization?.id,
       },
     });
     router.push("/assign");
@@ -167,7 +194,7 @@ const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
             type="submit"
             disabled={isLoading}
           >
-            Send email
+            Send email ({recipients.length} bronze credits)
           </Button>
         </div>
       </form>

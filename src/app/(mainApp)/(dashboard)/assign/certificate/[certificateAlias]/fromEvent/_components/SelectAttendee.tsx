@@ -24,7 +24,7 @@ const SelectAttendee = ({
     TAttendee[]
   >(
     `workspaces/${selectedEvent.organisationId}/events/${selectedEvent.eventAlias}/attendees`,
-    true,
+    
     []
   );
 

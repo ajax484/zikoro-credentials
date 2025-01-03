@@ -2,6 +2,7 @@ import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash, replaceSpecialText } from "@/utils/helpers";
+import axios from "axios";
 
 export async function POST(
   req: NextRequest,
@@ -23,6 +24,9 @@ export async function POST(
       action,
       senderName,
       status,
+      createdBy,
+      workspaceAlias,
+      workspaceId,
     } = bodyParams;
 
     console.log(
@@ -33,6 +37,24 @@ export async function POST(
       action,
       senderName
     );
+
+    const response = await axios.post(
+      `${
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+      }/api/workspaces/${workspaceAlias}/credits/charge`,
+      {
+        amountToCharge: recipients.length,
+        credentialId: certificateGroupId,
+        createdBy,
+        workspaceId,
+      }
+    );
+
+    console.log(response.status);
+
+    if (response.status !== 201) {
+      throw new Error("Failed to charge tokens");
+    }
 
     let query;
 

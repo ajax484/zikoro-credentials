@@ -27,7 +27,7 @@ export interface TCertificateDetails {
 }
 export interface TCertificate {
   id?: number;
-  created_at?: Date;
+  created_at: Date;
   eventAlias: string;
   name: string;
   settings: TCertificateSettings;
@@ -38,6 +38,8 @@ export interface TCertificate {
   certificateAlias?: string;
   JSON: Record<string, any>;
   workspaceAlias: string;
+  recipientCount: number;
+  createdBy: number;
 }
 
 export interface TCertificateSettings {

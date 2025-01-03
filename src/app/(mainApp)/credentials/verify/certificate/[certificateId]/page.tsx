@@ -5,7 +5,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { useVerifyAttendeeCertificate } from "@/hooks";
 import { formatDateToHumanReadable } from "@/utils/date";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";

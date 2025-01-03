@@ -31,11 +31,11 @@ const ConnectEvent = ({
   const { user } = useUserStore();
   const { data: workspaces, isLoading: workspacesIsLoading } = useGetData<
     TOrganization[]
-  >(`/workspaces?userEmail=${user?.userEmail}`, true, []);
+  >(`/workspaces?userEmail=${user?.userEmail}`, false, []);
 
   const { data: events, isLoading: eventsIsLoading } = useGetData<Event[]>(
     `/workspaces/${workspace?.id}/events`,
-    true,
+    
     []
   );
 

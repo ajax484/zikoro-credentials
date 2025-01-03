@@ -21,7 +21,6 @@ const SelectOrganization = () => {
     error: workspacesError,
   } = useGetData<TOrganization[]>(
     `/workspaces?userEmail=${user?.userEmail}`,
-    true,
     []
   );
 

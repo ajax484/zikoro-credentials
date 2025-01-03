@@ -1,12 +1,12 @@
 export type CredentialsWorkspaceToken = {
   id: number;
   created_at: string;
-  workspaceId?: number | null;
-  tokenId?: number | null;
-  currency?: string;
-  amountPaid?: number;
-  CreditPurchased?: number;
-  expiryDate?: string | null;
+  workspaceId: number;
+  tokenId: number;
+  currency: string;
+  amountPaid: number;
+  CreditPurchased: number;
+  expiryDate: string;
   discountCode?: string | null;
   discountValue?: number | null;
 };
@@ -24,3 +24,17 @@ export type CredentialsToken = {
   name?: string | null;
   amount?: number | null;
 };
+
+export interface CredentialTokenUsageHistory {
+  id: number;
+  createdAt: Date;
+  workspaceAlias: string;
+  credentialId?: number | null;
+  tokenId?: number | null;
+  creditAmount: number;
+  recientDetails?: Record<string, any> | null; // json
+  activityBy: number;
+  activity: string;
+  creditBalance: number;
+  transactionReferenceId: string | null;
+}

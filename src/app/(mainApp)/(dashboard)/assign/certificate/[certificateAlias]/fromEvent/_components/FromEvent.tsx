@@ -14,7 +14,7 @@ import SelectAttendee from "./SelectAttendee";
 const FromEvent = ({ certificateAlias }: { certificateAlias: string }) => {
   const router = useRouter();
   const { data: certificate, isLoading: certificateIsLoading } =
-    useGetData<TCertificate>(`/certificates/${certificateAlias}`, true, null);
+    useGetData<TCertificate>(`/certificates/${certificateAlias}`, null);
 
   console.log(certificate, certificateIsLoading);
 

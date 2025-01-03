@@ -4,7 +4,7 @@ import {TAttendee} from "@/types";
 
 // Optional: You can use the following line to enforce strict typing
 export type TUser = z.infer<typeof UserSchema> & {
-  id: bigint;
+  id: number;
   referralCode: string;
 };
 

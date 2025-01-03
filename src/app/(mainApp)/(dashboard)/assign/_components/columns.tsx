@@ -110,7 +110,7 @@ export const issueesColumns: ColumnDef<
 
       let newState = JSON.parse(
         replaceURIVariable(
-          replaceSpecialText(JSON.stringify(certificate?.JSON?.json || {}), {
+          replaceSpecialText(JSON.stringify(certificate?.JSON?.json || ""), {
             asset: certificate,
             recipient: row.original,
             organization,

@@ -13,6 +13,8 @@ export async function POST(req: NextRequest) {
     workspaceName,
     currency,
     reference,
+    workspaceAlias,
+    activityBy,
   } = await req.json();
 
   if (!workspaceId || !credits || !email || !name) {
@@ -33,7 +35,7 @@ export async function POST(req: NextRequest) {
       workspaceId,
       tokenId: type === "bronze" ? 1 : type === "silver" ? 2 : 3,
       amountPaid: credits[type].price * credits[type].amount,
-      CreditPurchased: credits[type].price,
+      CreditPurchased: credits[type].amount,
       expiryDate: addYears(new Date(), 1),
       currency,
       paymentReference: reference,
@@ -47,6 +49,26 @@ export async function POST(req: NextRequest) {
     if (error) {
       console.log(error, status);
       throw new Error(`Database insertion error: ${error.message}`);
+    }
+
+    const { error: logError } = await supabase
+      .from("credentialTokenUsageHistory")
+      .insert(
+        creditTypes
+          .filter((type) => credits[type] && credits[type].amount > 0)
+          .map((type) => ({
+            workspaceAlias,
+            tokenId: type === "bronze" ? 1 : type === "silver" ? 2 : 3,
+            CreditAmount: credits[type].price * credits[type].amount,
+            transactionReferenceId: reference,
+            activityBy: activityBy,
+            activity: "credit",
+            creditBalance: credits[type].price * credits[type].amount,
+          }))
+      );
+
+    if (logError) {
+      throw new Error(`Failed to insert usage logs: ${logError.message}`);
     }
 
     // Prepare email content

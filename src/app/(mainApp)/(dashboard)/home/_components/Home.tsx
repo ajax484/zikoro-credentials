@@ -168,7 +168,7 @@ const Home = () => {
     getData: refetchWorkspaces,
   } = useGetData<TOrganization[]>(
     `/workspaces?userEmail=${user?.userEmail}`,
-    true,
+    
     []
   );
   // const router = useRouter();
@@ -183,7 +183,7 @@ const Home = () => {
     error,
   } = useGetData<TCertificate[]>(
     `/certificates?workspaceId=${organization?.id}`,
-    true,
+    
     []
   );
 
@@ -199,14 +199,18 @@ const Home = () => {
   }) => {
     if (!organization) return toast.error("Please select an organization");
     const data = await createCertificate({
-      payload: { workspaceAlias: workspace.organizationAlias, name },
+      payload: {
+        workspaceAlias: workspace.organizationAlias,
+        name,
+        createdBy: user?.id,
+      },
     });
 
     if (!data) return;
-    if (typeof window !== "undefined")
-      router.push(
-        `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${workspace.id}`
-      );
+
+    router.push(
+      `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${workspace.id}`
+    );
   };
 
   const [open, setOpen] = useState(false);

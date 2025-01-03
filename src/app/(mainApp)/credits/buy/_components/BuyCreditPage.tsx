@@ -53,11 +53,11 @@ const BuyCreditPage = () => {
   };
 
   const { data: currencyConversion, isLoading: currencyConversionIsLoading } =
-    useGetData<CredentialCurrencyConverter[]>("/tokens/pricing", true, []);
+    useGetData<CredentialCurrencyConverter[]>("/tokens/pricing", []);
 
   const { data: tokens, isLoading: tokensIsLoading } = useGetData<
     CredentialsToken[]
-  >("/tokens", true, []);
+  >("/tokens", []);
 
   const {
     data: workspaces,
@@ -65,9 +65,12 @@ const BuyCreditPage = () => {
     error: workspacesError,
   } = useGetData<TOrganization[]>(
     `/workspaces?userEmail=${user?.userEmail}`,
-    true,
     []
   );
+
+  console.log(user?.userEmail);
+
+  console.log(workspaces);
 
   console.log(currencyConversion, tokens);
 
