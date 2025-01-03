@@ -66,9 +66,15 @@ export async function POST(req: NextRequest) {
     const balance: {
       [key: string]: number;
     } = {
-      bronze: tokens.reduce((acc, curr) => acc + curr.CreditPurchased, 0),
-      silver: tokens.reduce((acc, curr) => acc + curr.CreditPurchased, 0),
-      gold: tokens.reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+      bronze: tokens
+        .filter(({ id }) => id === 1)
+        .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+      silver: tokens
+        .filter(({ id }) => id === 2)
+        .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+      gold: tokens
+        .filter(({ id }) => id === 3)
+        .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
     };
 
     const { error: logError } = await supabase
