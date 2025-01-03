@@ -259,7 +259,7 @@ const Home = () => {
             </button>
           </div>
 
-          <div className="border rounded-md bg-white">
+          {/* <div className="border rounded-md bg-white">
             <h2 className="text-sm text-gray-700 font-medium text-center py-2 border-b">
               My designs
             </h2>
@@ -343,7 +343,7 @@ const Home = () => {
                 </TabsContent>
               </Tabs>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       {dialogIsOpen && (
