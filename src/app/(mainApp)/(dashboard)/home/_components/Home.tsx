@@ -168,7 +168,7 @@ const Home = () => {
     getData: refetchWorkspaces,
   } = useGetData<TOrganization[]>(
     `/workspaces?userEmail=${user?.userEmail}`,
-    
+
     []
   );
   // const router = useRouter();
@@ -182,8 +182,8 @@ const Home = () => {
     isLoading: certificatesIsLoading,
     error,
   } = useGetData<TCertificate[]>(
-    `/certificates?workspaceId=${organization?.id}`,
-    
+    `/certificates?workspaceAlias=${organization?.organizationAlias}`,
+
     []
   );
 
