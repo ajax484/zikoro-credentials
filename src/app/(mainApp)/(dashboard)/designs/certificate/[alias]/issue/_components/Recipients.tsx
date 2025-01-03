@@ -2,10 +2,14 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useGetData } from "@/hooks/services/request";
+import useOrganizationStore from "@/store/globalOrganizationStore";
 import { TCertificate } from "@/types/certificates";
+import { CredentialsWorkspaceToken } from "@/types/token";
 import { generateAlias } from "@/utils/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -46,6 +50,24 @@ const RecipientsPage = ({
       ],
     },
   });
+
+  const { organization } = useOrganizationStore();
+
+  const { data: credits, isLoading: creditsIsLoading } = useGetData<
+    CredentialsWorkspaceToken[]
+  >(`/workspaces/${organization?.id}/credits`, []);
+
+  const creditBalance = {
+    bronze: credits
+      .filter((v) => v.tokenId === 1)
+      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+    silver: credits
+      .filter((v) => v.tokenId === 2)
+      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+    gold: credits
+      .filter((v) => v.tokenId === 3)
+      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+  };
 
   const recipients = form.watch("recipients");
 
@@ -103,7 +125,20 @@ const RecipientsPage = ({
         </div>
 
         <h3 className="text-sm font-medium text-gray-700 text-center">
-          Add recipients to receive certificates
+          {recipients.length} Recipients will receive this Credential. Your
+          Bronze Credit balance is {creditBalance.bronze}.{" "}
+          {creditBalance.bronze < recipients.length && (
+            <span>
+              You do not have sufficient credits to issue this credential to the
+              recipients.{" "}
+              <Link
+                href="/credits/buy"
+                className="text-basePrimary underline underline-offset-1"
+              >
+                Buy more credits
+              </Link>
+            </span>
+          )}{" "}
         </h3>
 
         <div className="space-y-6 p-6 rounded-md">
