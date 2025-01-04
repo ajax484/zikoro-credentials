@@ -41,6 +41,7 @@ interface EditorProps {
   settings: any;
   setSettings: (settings: any) => void;
   type: "certificate" | "badge";
+  alias: string;
 }
 
 export const Editor = ({
@@ -54,6 +55,7 @@ export const Editor = ({
   settings,
   setSettings,
   type,
+  alias,
 }: EditorProps) => {
   // const { mutate } = useUpdateProject(initialData.id);
 
@@ -131,6 +133,7 @@ export const Editor = ({
   return (
     <div className="flex h-full flex-col">
       <Navbar
+        alias={alias}
         id={initialData?.id ?? 1}
         editor={editor}
         activeTool={activeTool}

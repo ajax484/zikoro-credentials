@@ -99,6 +99,7 @@ const CreateCredentialsPage = ({
       settings={settings}
       setSettings={setSettings}
       type={type}
+      alias={alias}
     />
   );
 };

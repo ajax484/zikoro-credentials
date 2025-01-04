@@ -289,7 +289,7 @@ const Issue = ({
             onClick={recallCertificatesFn}
           >
             <Trash className="size-4" />
-            <span>Recall</span>
+            <span>Revoke</span>
           </button>
           <button
             className={cn(
