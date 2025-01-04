@@ -35,15 +35,17 @@ export async function POST(
 
     const balance = {
       bronze: tokens
-        .filter(({ id }) => id === 1)
+        .filter(({ tokenId }) => tokenId === 1)
         .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
       silver: tokens
-        .filter(({ id }) => id === 2)
+        .filter(({ tokenId }) => tokenId === 2)
         .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
       gold: tokens
-        .filter(({ id }) => id === 3)
+        .filter(({ tokenId }) => tokenId === 3)
         .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
     };
+
+    console.log(balance);
 
     for (const token of tokens) {
       if (remainingCharge <= 0) break;
