@@ -90,7 +90,7 @@ export const issueesColumns: ColumnDef<
             }
           </div>
           <span className="text-xs capitalize">
-            {status ?? "Awaiting Response"}
+            {status ?? "email sent"}
           </span>
         </div>
       );

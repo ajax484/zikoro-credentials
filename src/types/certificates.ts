@@ -76,7 +76,7 @@ export interface CertificateTemplate {
 
 export type issueActions =
   | "issued"
-  | "awaiting response"
+  | "email sent"
   | "email opened"
   | "revoked"
   | "email resent";

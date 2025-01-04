@@ -89,7 +89,7 @@ const SendEmail = ({
         ...data,
         action: "release",
         recipients,
-        status: "awaiting response",
+        status: "email sent",
         createdBy: user?.id,
         workspaceAlias: organization?.organizationAlias,
         workspaceId: organization?.id,
