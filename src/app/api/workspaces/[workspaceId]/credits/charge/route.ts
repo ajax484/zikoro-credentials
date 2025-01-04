@@ -18,9 +18,9 @@ export async function POST(
       .from("credentialsWorkspaceToken")
       .select("*")
       .eq("workspaceId", workspaceId)
+      .eq("tokenId", 1)
       .gte("expiryDate", new Date().toISOString())
-      .order("expiryDate", { ascending: true })
-      .order("tokenId", { ascending: true });
+      .order("expiryDate", { ascending: true });
 
     if (creditsError) {
       throw new Error(`Failed to fetch tokens: ${creditsError.message}`);
