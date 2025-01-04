@@ -39,9 +39,7 @@ export async function POST(
     );
 
     const response = await axios.post(
-      `${
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
-      }/api/workspaces/${workspaceAlias}/credits/charge`,
+      `${req.nextUrl.origin}/api/workspaces/${workspaceAlias}/credits/charge`,
       {
         amountToCharge: recipients.length,
         credentialId: certificateGroupId,
