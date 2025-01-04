@@ -104,8 +104,8 @@ export async function POST(
   }
 }
 
-function generateTransactionReference(): string {
-  return `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-}
+// function generateTransactionReference(): string {
+//   return `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+// }
 
 export const dynamic = "force-dynamic";
