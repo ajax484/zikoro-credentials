@@ -85,13 +85,11 @@ export const issueesColumns: ColumnDef<
               ) : status === "revoked" ? (
                 <X className="size-6" />
               ) : (
-                <Timer className="size-6" />
+                <MailSend className="size-6" />
               )
             }
           </div>
-          <span className="text-xs capitalize">
-            {status ?? "email sent"}
-          </span>
+          <span className="text-xs capitalize">{status ?? "email sent"}</span>
         </div>
       );
     },
