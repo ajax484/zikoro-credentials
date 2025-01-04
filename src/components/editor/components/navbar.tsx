@@ -85,52 +85,6 @@ export const Navbar = ({
         <span>Back</span>
       </button>
       <div className="flex h-full w-full items-center gap-x-1">
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <Button size="sm" variant="ghost">
-              Actions
-              <ChevronDown className="ml-2 size-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="min-w-60">
-            <DropdownMenuItem
-              onClick={() => openFilePicker()}
-              className="flex items-center gap-x-2"
-            >
-              <CiFileOn className="size-8" />
-              <div>
-                <p>Open</p>
-                <p className="text-xs text-muted-foreground">
-                  Open a JSON file
-                </p>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link
-                href={"/assign?certificateAlias=" + alias}
-                className="flex items-center gap-x-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="32"
-                  viewBox="0 0 256 256"
-                >
-                  <path
-                    fill="#000000"
-                    d="M128 136a8 8 0 0 1-8 8H72a8 8 0 0 1 0-16h48a8 8 0 0 1 8 8m-8-40H72a8 8 0 0 0 0 16h48a8 8 0 0 0 0-16m112 65.47V224a8 8 0 0 1-12 7l-24-13.74L172 231a8 8 0 0 1-12-7v-24H40a16 16 0 0 1-16-16V56a16 16 0 0 1 16-16h176a16 16 0 0 1 16 16v30.53a51.88 51.88 0 0 1 0 74.94M160 184v-22.53A52 52 0 0 1 216 76V56H40v128Zm56-12a51.88 51.88 0 0 1-40 0v38.22l16-9.16a8 8 0 0 1 7.94 0l16 9.16Zm16-48a36 36 0 1 0-36 36a36 36 0 0 0 36-36"
-                  />
-                </svg>
-                <div>
-                  <p>Assign</p>
-                  <p className="text-xs text-muted-foreground">
-                    Assign to recipients
-                  </p>
-                </div>
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
         <Separator orientation="vertical" className="mx-2" />
         <Hint label="Select" side="bottom" sideOffset={10}>
           <Button
@@ -188,7 +142,7 @@ export const Navbar = ({
           onInput={(e) => setName(e.currentTarget.value)}
         />
         <div className="ml-auto flex items-center gap-x-4">
-          <DropdownMenu modal={false}>
+          {/* <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button size="sm" variant="ghost">
                 Export
@@ -208,7 +162,7 @@ export const Navbar = ({
                   </p>
                 </div>
               </DropdownMenuItem>
-              {/* <DropdownMenuItem
+              <DropdownMenuItem
                 className="flex items-center gap-x-2"
                 onClick={() => editor?.savePng()}
               >
@@ -243,7 +197,66 @@ export const Navbar = ({
                     Best for editing in vector software
                   </p>
                 </div>
-              </DropdownMenuItem> */}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu> */}
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button size="sm" variant="ghost">
+                Actions
+                <ChevronDown className="ml-2 size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-60">
+              <DropdownMenuItem
+                onClick={() => openFilePicker()}
+                className="flex items-center gap-x-2"
+              >
+                <CiFileOn className="size-8" />
+                <div>
+                  <p>Import</p>
+                  <p className="text-xs text-muted-foreground">
+                    Import a JSON file
+                  </p>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="flex items-center gap-x-2"
+                onClick={() => editor?.saveJson()}
+              >
+                <Download className="size-8" />
+
+                <div>
+                  <p>Export</p>
+                  <p className="text-xs text-muted-foreground">
+                    Save for later editing
+                  </p>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link
+                  href={"/assign?certificateAlias=" + alias}
+                  className="flex items-center gap-x-2"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 256 256"
+                  >
+                    <path
+                      fill="#000000"
+                      d="M128 136a8 8 0 0 1-8 8H72a8 8 0 0 1 0-16h48a8 8 0 0 1 8 8m-8-40H72a8 8 0 0 0 0 16h48a8 8 0 0 0 0-16m112 65.47V224a8 8 0 0 1-12 7l-24-13.74L172 231a8 8 0 0 1-12-7v-24H40a16 16 0 0 1-16-16V56a16 16 0 0 1 16-16h176a16 16 0 0 1 16 16v30.53a51.88 51.88 0 0 1 0 74.94M160 184v-22.53A52 52 0 0 1 216 76V56H40v128Zm56-12a51.88 51.88 0 0 1-40 0v38.22l16-9.16a8 8 0 0 1 7.94 0l16 9.16Zm16-48a36 36 0 1 0-36 36a36 36 0 0 0 36-36"
+                    />
+                  </svg>
+                  <div>
+                    <p>Assign</p>
+                    <p className="text-xs text-muted-foreground">
+                      Assign to recipients
+                    </p>
+                  </div>
+                </Link>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           {/* <UserButton /> */}
