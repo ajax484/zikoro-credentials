@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "styled-icons/bootstrap";
 import { ThreeLineCircle, XCircle } from "@/constants/icons";
 import { useRouter } from "next/navigation";
@@ -13,15 +13,32 @@ import logo from "@/public/logo.png";
 const Navbar = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [isPreviewOn, setIsPreviewOn] = useState<boolean>(false);
   const [isPreviewShowing, setIsPreviewShowing] = useState<boolean>(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <div className="py-6 px-3 md:px-6 relative ">
-      <div className=" bg-white flex items-center lg:max-w-[970px] xl:max-w-[1165px] py-3 px-3 md:px-6 lg:px-[36px] rounded-[64px] justify-between mx-auto ">
+      <div className={`flex items-center lg:max-w-[980px] xl:max-w-[1300px] py-3 px-3 md:px-6 lg:px-[36px] rounded-[64px] justify-between mx-auto ${isScrolled ? "bg-white" : "bg-transparent"
+        }`}>
         <Image
           src={logo}
           width={115}
@@ -32,7 +49,8 @@ const Navbar = () => {
         />
 
         <div className="gap-x-8 hidden lg:flex ">
-          <p className="text-base font-medium cursor-pointer">Verify</p>
+          <p className="text-base font-medium cursor-pointer" onClick={() => router.push("/verify")}
+          >Verify</p>
 
           <p className="text-base font-medium cursor-pointer">Templates</p>
           <p
@@ -79,7 +97,7 @@ const Navbar = () => {
       {isOpen && (
         <div className="bg-violet-100 flex-col absolute p-[30px] mt-3 w-full max-w-[92%] lg:hidden rounded-[8px]">
           <ul className="">
-            <li className="mt-5 font-medium ">Verify </li>
+            <li className="mt-5 font-medium" onClick={() => router.push("/verify")}>Verify </li>
             <li className="mt-5 font-medium ">Templates </li>
             <li
               className="font-medium mt-5"

@@ -12,7 +12,7 @@ export default function Footer() {
   const [isPreviewUp, setIsPreviewUp] = useState<boolean>(false);
 
   return (
-    <div className="mt-[186px] bg-gradient-to-tr from-custom-bg-gradient-start to-custom-bg-gradient-end max-w-full mx-auto relative  border-t-[1px] border-dotted border-violet-500">
+    <div className=" bg-gradient-to-tr from-custom-bg-gradient-start to-custom-bg-gradient-end max-w-full mx-auto relative  border-t-[1px] border-dotted border-violet-500">
       {/* small screens Preview */}
       {isPreviewUp && (
         <div
