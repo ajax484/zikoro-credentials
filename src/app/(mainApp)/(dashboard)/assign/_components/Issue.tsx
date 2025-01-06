@@ -288,6 +288,8 @@ const Issue = ({
 
   console.log(filteredIssuees);
 
+  const columns = issueesColumns(refetch);
+
   return (
     <section className="space-y-4">
       <div className="flex items-end justify-between">
@@ -530,7 +532,7 @@ const Issue = ({
         />
       </div>
       <DataTable<CertificateRecipient & { certificate: TCertificate }>
-        columns={issueesColumns(refetch)}
+        columns={columns}
         data={filteredIssuees}
         currentPage={pagination.page}
         setCurrentPage={updatePage}

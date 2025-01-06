@@ -62,7 +62,7 @@ export const VerificationSidebar = ({
             className="w-full"
             onClick={() =>
               editor?.addText(
-                "https://www.zikoro-credentials.com/credentials/certificate/verify/#{certificateId#}"
+                "https://www.credentials.zikoro.com/credentials/certificate/verify/#{certificateId#}"
               )
             }
           >

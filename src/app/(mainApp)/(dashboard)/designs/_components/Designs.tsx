@@ -457,7 +457,8 @@ const Designs = () => {
                           href={
                             "/credentials/create/" +
                             certificate.certificateAlias +
-                            "?type=certificate"
+                            "?type=certificate&workspaceId=" +
+                            organization?.id
                           }
                         >
                           <svg

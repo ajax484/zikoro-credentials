@@ -270,7 +270,7 @@ export function replaceSpecialText(input: string, context: Context): string {
         return context.recipient.certificateId;
       case "certificate_link":
         return (
-          "www.zikoro-credentials.com/credentials/verify/certificate/" +
+          "https://www.credentials.zikoro.com/credentials/verify/certificate/" +
           context.recipient.certificateId
         );
       case "organization_name":
