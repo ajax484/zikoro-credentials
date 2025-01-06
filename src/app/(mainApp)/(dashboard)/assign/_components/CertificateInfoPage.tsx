@@ -26,6 +26,7 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
     totalPages,
     pagination,
     setPagination,
+    getData
   } = useGetPaginatedData<CertificateRecipient & { certificate: TCertificate }>(
     `/certificates/recipients`,
     searchParams
@@ -44,6 +45,7 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
   return (
     <section>
       <Issue
+        refetch={getData}
         certificateAlias={certificateAlias}
         certificates={certificates}
         certificateIssuees={certificateIssuees}

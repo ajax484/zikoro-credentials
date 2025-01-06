@@ -10,10 +10,14 @@ import useOrganizationStore from "@/store/globalOrganizationStore";
 import { useEditor } from "@/components/editor/hooks/use-editor";
 import { useEffect, useRef } from "react";
 import { fabric } from "fabric";
+import { Switch } from "@/components/ui/switch";
+import { useMutateData } from "@/hooks/services/request";
 
-export const issueesColumns: ColumnDef<
+export const issueesColumns = (
+  refetch: () => void
+): (() => ColumnDef<
   CertificateRecipient & { certificate: TCertificate }
->[] = [
+>[]) => [
   {
     accessorKey: "select",
     header: ({ table }) => (
@@ -64,7 +68,6 @@ export const issueesColumns: ColumnDef<
     header: "Date Issued",
     cell: ({ getValue }) => {
       const date = getValue() as Date;
-      //full date
       return format(date, "MMMM do, yyyy");
     },
   },
@@ -73,21 +76,21 @@ export const issueesColumns: ColumnDef<
     header: () => <div className="text-center">Status</div>,
     cell: ({ getValue }) => {
       const status = getValue() as string;
+      const statusIcon =
+        status === "issued" ? (
+          <MailSend className="size-6" />
+        ) : status === "email opened" ? (
+          <MailOpen className="size-6" />
+        ) : status === "revoked" ? (
+          <X className="size-6" />
+        ) : (
+          <MailSend className="size-6" />
+        );
+
       return (
         <div className="flex items-center gap-2 w-2/3 mx-auto">
           <div className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center">
-            {
-              //icon
-              status === "issued" ? (
-                <MailSend className="size-6" />
-              ) : status === "email opened" ? (
-                <MailOpen className="size-6" />
-              ) : status === "revoked" ? (
-                <X className="size-6" />
-              ) : (
-                <MailSend className="size-6" />
-              )
-            }
+            {statusIcon}
           </div>
           <span className="text-xs capitalize">{status ?? "email sent"}</span>
         </div>
@@ -97,17 +100,32 @@ export const issueesColumns: ColumnDef<
   {
     accessorKey: "isValid",
     header: "Validity",
-    cell: ({ getValue }) => {
+    cell: ({ getValue, row }) => {
       const isValid = getValue() as boolean;
+
+      const { mutateData: recallCertificates, isLoading: isLoadingRecall } =
+        useMutateData(`/certificates/recipients/recall`);
+      const { mutateData: reIssueCertificates, isLoading: isLoadingReissue } =
+        useMutateData(`/certificates/recipients/reissue`);
+
+      const toggleCertificatesFn = async () => {
+        const toggleFn = isValid ? recallCertificates : reIssueCertificates;
+
+        await toggleFn({
+          payload: {
+            ids: [row.original.id],
+          },
+        });
+        await refetch();
+      };
+
       return (
-        <div className="flex items-center gap-2 w-2/3 mx-auto">
-          <div className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center">
-            {isValid ? <Check className="size-6" /> : <X className="size-6" />}
-          </div>
-          <span className="text-xs capitalize">
-            {isValid ? "Valid" : "Invalid"}
-          </span>
-        </div>
+        <Switch
+          onClick={toggleCertificatesFn}
+          checked={isValid}
+          disabled={isLoadingRecall || isLoadingReissue}
+          className="data-[state=unchecked]:bg-gray-200 data-[state=checked]:bg-basePrimary"
+        />
       );
     },
   },
@@ -118,12 +136,9 @@ export const issueesColumns: ColumnDef<
       const certificateId = getValue() as number;
       const certificate = row.original.certificate;
 
-      console.log(row.original);
-      console.log(certificate);
-
       const { organization } = useOrganizationStore();
 
-      let newState = JSON.parse(
+      const newState = JSON.parse(
         replaceURIVariable(
           replaceSpecialText(JSON.stringify(certificate?.JSON?.json || ""), {
             asset: certificate,
@@ -134,21 +149,11 @@ export const issueesColumns: ColumnDef<
         )
       );
 
-      // newState = newState.replaceAll(
-      //   "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
-      //   certificate?.attendee?.profilePicture?.trim() ||
-      //     "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg"
-      // );
-
-      console.log(newState);
-
       const { init, editor } = useEditor({
         defaultState: newState,
         defaultWidth: certificate?.JSON?.width ?? 900,
         defaultHeight: certificate?.JSON?.height ?? 1200,
       });
-
-      console.log(editor);
 
       const canvasRef = useRef(null);
       const containerRef = useRef<HTMLDivElement>(null);

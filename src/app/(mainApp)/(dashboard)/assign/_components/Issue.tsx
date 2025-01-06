@@ -93,6 +93,7 @@ const Issue = ({
   isLoading,
   certificateAlias,
   updateLimit,
+  refetch,
 }: {
   certificates: TCertificate[];
   certificateIssuees: (CertificateRecipient & { certificate: TCertificate })[];
@@ -103,6 +104,7 @@ const Issue = ({
   isLoading: boolean;
   certificateAlias: string;
   updateLimit: (limit: number) => void;
+  refetch: () => void;
 }) => {
   const router = useRouter();
 
@@ -528,7 +530,7 @@ const Issue = ({
         />
       </div>
       <DataTable<CertificateRecipient & { certificate: TCertificate }>
-        columns={issueesColumns}
+        columns={issueesColumns(refetch)}
         data={filteredIssuees}
         currentPage={pagination.page}
         setCurrentPage={updatePage}

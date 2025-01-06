@@ -180,7 +180,7 @@ const Pagination = ({
             }}
             className={`w-10 h-10 flex justify-center items-center text-xs font-medium transition-all border rounded-md ${
               index + 1 === currentPage
-                ? "bg-blue-600 text-white"
+                ? "bg-basePrimary text-white"
                 : "bg-white hover:bg-gray-50 text-gray-600"
             }`}
           >
