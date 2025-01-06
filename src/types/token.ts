@@ -6,6 +6,7 @@ export type CredentialsWorkspaceToken = {
   currency: string;
   amountPaid: number;
   CreditPurchased: number;
+  creditRemaining: number;
   expiryDate: string;
   discountCode?: string | null;
   discountValue?: number | null;

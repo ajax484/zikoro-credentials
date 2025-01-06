@@ -15,6 +15,8 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
       const page = parseInt(searchParams.get("page") || "1", 10);
       const limit = parseInt(searchParams.get("limit") || "10", 10);
 
+      console.log(page, limit)
+
       if (isNaN(page) || isNaN(limit)) {
         console.log("invalid pagination parameters");
         return NextResponse.json(

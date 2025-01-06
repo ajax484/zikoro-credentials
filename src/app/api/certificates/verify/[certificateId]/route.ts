@@ -18,6 +18,7 @@ export async function GET(
           "*, originalCertificate:certificate!inner(*, workspace:organization!inner(*))"
         )
         .eq("certificateId", certificateId)
+        .eq("isValid", true)
         .maybeSingle();
 
       console.log(data);

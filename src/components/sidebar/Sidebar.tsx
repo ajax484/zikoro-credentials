@@ -186,7 +186,7 @@ const Sidebar = () => {
             }, 2000);
           }
         }}
-        className="flex items-center h-fit gap-x-2"
+        className="flex items-center h-fit gap-x-2 p-3"
       >
         <LogOutIcon />
         <span className="text-[#EC2D30] group-hover:block hidden font-medium text-mobile sm:text-sm">

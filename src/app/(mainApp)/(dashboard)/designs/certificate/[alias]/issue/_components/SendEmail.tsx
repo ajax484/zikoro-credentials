@@ -70,13 +70,13 @@ const SendEmail = ({
   const creditBalance = {
     bronze: credits
       .filter((v) => v.tokenId === 1)
-      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
     silver: credits
       .filter((v) => v.tokenId === 2)
-      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
     gold: credits
       .filter((v) => v.tokenId === 3)
-      .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
   };
 
   const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {

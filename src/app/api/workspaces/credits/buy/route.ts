@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
       tokenId: type === "bronze" ? 1 : type === "silver" ? 2 : 3,
       amountPaid: credits[type].price * credits[type].amount,
       CreditPurchased: credits[type].amount,
+      creditRemaining: credits[type].amount,
       expiryDate: addYears(new Date(), 1),
       currency,
       paymentReference: reference,
@@ -67,14 +68,14 @@ export async function POST(req: NextRequest) {
       [key: string]: number;
     } = {
       bronze: tokens
-        .filter(({ id }) => id === 1)
-        .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+        .filter(({ tokenId }) => tokenId === 1)
+        .reduce((acc, curr) => acc + curr.creditRemaining, 0),
       silver: tokens
-        .filter(({ id }) => id === 2)
-        .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+        .filter(({ tokenId }) => tokenId === 2)
+        .reduce((acc, curr) => acc + curr.creditRemaining, 0),
       gold: tokens
-        .filter(({ id }) => id === 3)
-        .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+        .filter(({ tokenId }) => tokenId === 3)
+        .reduce((acc, curr) => acc + curr.creditRemaining, 0),
     };
 
     const { error: logError } = await supabase
@@ -89,7 +90,7 @@ export async function POST(req: NextRequest) {
             transactionReferenceId: reference,
             activityBy: activityBy,
             activity: "credit",
-            creditBalance: balance[type] + credits[type].amount,
+            creditBalance: balance[type],
           }))
       );
 

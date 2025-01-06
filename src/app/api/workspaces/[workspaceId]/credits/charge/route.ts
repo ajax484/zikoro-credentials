@@ -36,13 +36,13 @@ export async function POST(
     const balance = {
       bronze: tokens
         .filter(({ tokenId }) => tokenId === 1)
-        .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+        .reduce((acc, curr) => acc + curr.creditRemaining, 0),
       silver: tokens
         .filter(({ tokenId }) => tokenId === 2)
-        .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+        .reduce((acc, curr) => acc + curr.creditRemaining, 0),
       gold: tokens
         .filter(({ tokenId }) => tokenId === 3)
-        .reduce((acc, curr) => acc + curr.CreditPurchased, 0),
+        .reduce((acc, curr) => acc + curr.creditRemaining, 0),
     };
 
     console.log(balance);
@@ -50,13 +50,13 @@ export async function POST(
     for (const token of tokens) {
       if (remainingCharge <= 0) break;
 
-      const amountCharged = Math.min(balance.bronze, remainingCharge);
-      const newBalance = balance.bronze - amountCharged;
-      balance.bronze = newBalance;
+      const amountCharged = Math.min(token.creditRemaining, remainingCharge);
+      remainingCharge -= amountCharged;
+      const newBalance = token.creditRemaining - amountCharged;
 
       const { error: updateError } = await supabase
         .from("credentialsWorkspaceToken")
-        .update({ CreditPurchased: newBalance })
+        .update({ creditRemaining: newBalance })
         .eq("id", token.id);
 
       if (updateError) {
@@ -64,19 +64,6 @@ export async function POST(
           `Failed to update token balance for tokenId ${token.tokenId}: ${updateError.message}`
         );
       }
-
-      logs.push({
-        workspaceAlias,
-        credentialId,
-        tokenId: token.tokenId,
-        creditAmount: amountCharged,
-        activityBy,
-        activity: "debit",
-        creditBalance: newBalance,
-        recipientDetails: payload?.recipientDetails,
-      });
-
-      remainingCharge -= amountCharged;
     }
 
     if (remainingCharge > 0) {
@@ -85,7 +72,16 @@ export async function POST(
 
     const { error: logError } = await supabase
       .from("credentialTokenUsageHistory")
-      .insert(logs);
+      .insert({
+        workspaceAlias,
+        credentialId,
+        tokenId: 1,
+        creditAmount: amountToCharge,
+        activityBy,
+        activity: "debit",
+        creditBalance: balance.bronze - amountToCharge,
+        recipientDetails: payload?.recipientDetails,
+      });
 
     if (logError) {
       throw new Error(`Failed to insert usage logs: ${logError.message}`);
