@@ -225,14 +225,14 @@ export function useVerifyCode() {
 
   async function verifyCode(
     email: string,
-    credit: string,
+    token: string,
     type: string | null
   ) {
     try {
       setLoading(true);
       const { data, error } = await supabase.auth.verifyOtp({
         email,
-        credit,
+        token,
         type: "email",
       });
 
