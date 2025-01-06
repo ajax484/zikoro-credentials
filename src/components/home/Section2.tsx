@@ -13,7 +13,7 @@ export default function Section2() {
       </p>
 
       {/* section 2 */}
-      <div className=" flex flex-col lg:flex-row gap-4 mt-[90px] ">
+      <div className=" flex flex-col lg:flex-row gap-4 mt-[90px] min-w-[269px]">
         {/* 1st div */}
         <div className="bg-white rounded-lg p-[10px]">
           <Image
@@ -33,7 +33,7 @@ export default function Section2() {
         </div>
 
         {/* 2nd div */}
-        <div className="bg-white rounded-lg p-[10px]">
+        <div className="bg-white rounded-lg p-[10px] min-w-[269px]">
           <Image
             alt=""
             src={sec2}
@@ -42,16 +42,15 @@ export default function Section2() {
             className="w-full lg:w-[249px] h-[249px]"
           />
           <div className="mt-5 text-center">
-            <p className=" text-base font-semibold ">Customizable Templates</p>
+            <p className=" text-base font-semibold ">Instant Verification</p>
             <p className="mt-[10px] text-[14px]">
-              Design certificates and badges that align with your brand
-              identity.
+              Ensure authenticity with unique verification links.
             </p>
           </div>
         </div>
 
         {/* 3rd div */}
-        <div className="bg-white rounded-lg p-[10px]">
+        <div className="bg-white rounded-lg p-[10px] min-w-[269px]">
           <Image
             alt=""
             src={sec3}
@@ -60,16 +59,15 @@ export default function Section2() {
             className="w-full lg:w-[249px] h-[249px]"
           />
           <div className="mt-5 text-center">
-            <p className=" text-base font-semibold ">Customizable Templates</p>
+            <p className=" text-base font-semibold ">Global Accessibility</p>
             <p className="mt-[10px] text-[14px]">
-              Design certificates and badges that align with your brand
-              identity.
+              Recipients can showcase their achievements anywhere, anytime.
             </p>
           </div>
         </div>
 
         {/* 4th div */}
-        <div className="bg-white rounded-lg p-[10px]">
+        <div className="bg-white rounded-lg p-[10px] min-w-[269px]">
           <Image
             alt=""
             src={sec4}
@@ -78,10 +76,9 @@ export default function Section2() {
             className="w-full lg:w-[249px] h-[249px]"
           />
           <div className="mt-5 text-center">
-            <p className=" text-base font-semibold ">Customizable Templates</p>
+            <p className=" text-base font-semibold ">Increase Brand Visibility</p>
             <p className="mt-[10px] text-[14px]">
-              Design certificates and badges that align with your brand
-              identity.
+              Boost your brand's visibility with  every shared certificate or badge.
             </p>
           </div>
         </div>

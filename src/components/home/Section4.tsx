@@ -17,7 +17,7 @@ import Image from "next/image";
 export default function Section2() {
   return (
     <div>
-      <div className=" mt-[80px] lg:mt-[100px] max-w-full lg:max-w-[1128px] mx-auto">
+      <div className=" mt-[80px] lg:mt-[100px] max-w-full lg:max-w-[1128px] mx-auto px-[6px] lg:px-0">
         <p className="text-center text-2xl lg:text-[32px] font-semibold mb-3">
           Who Benefits from Our Platform?
         </p>
