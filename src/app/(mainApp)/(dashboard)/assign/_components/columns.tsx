@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { MailSend } from "styled-icons/boxicons-regular";
-import { Download, Eye, MailOpen, Timer, X } from "lucide-react";
+import { Check, Download, Eye, MailOpen, Timer, X } from "lucide-react";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
@@ -90,6 +90,23 @@ export const issueesColumns: ColumnDef<
             }
           </div>
           <span className="text-xs capitalize">{status ?? "email sent"}</span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "isValid",
+    header: "Validity",
+    cell: ({ getValue }) => {
+      const isValid = getValue() as boolean;
+      return (
+        <div className="flex items-center gap-2 w-2/3 mx-auto">
+          <div className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center">
+            {isValid ? <Check className="size-6" /> : <X className="size-6" />}
+          </div>
+          <span className="text-xs capitalize">
+            {isValid ? "Valid" : "Invalid"}
+          </span>
         </div>
       );
     },

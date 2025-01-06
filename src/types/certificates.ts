@@ -1,3 +1,4 @@
+import { isValid } from "date-fns";
 import { Event } from "./events";
 import { TOrganization } from "./organization";
 
@@ -35,11 +36,12 @@ export interface TCertificate {
   lastEdited: Date;
   previewUrl?: string;
   certificateHash: Record<string, any>;
-  certificateAlias?: string;
+  certificateAlias: string;
   JSON: Record<string, any>;
   workspaceAlias: string;
   recipientCount: number;
   createdBy: number;
+  isValid: boolean;
 }
 
 export interface TCertificateSettings {

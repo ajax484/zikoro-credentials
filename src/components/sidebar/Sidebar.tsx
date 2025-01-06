@@ -14,6 +14,7 @@ import profile from "@/public/profile_1.png";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import useUserStore from "@/store/globalUserStore";
+import { LogOutIcon } from "lucide-react";
 
 type Navlinks = {
   name: string;
@@ -175,6 +176,23 @@ const Sidebar = () => {
           {user?.firstName ?? "User"}
         </p>
       </div>
+
+      <button
+        onClick={() => {
+          if (typeof window !== "undefined") {
+            localStorage.clear();
+            setTimeout(() => {
+              window.open("/", "_self");
+            }, 2000);
+          }
+        }}
+        className="flex items-center h-fit gap-x-2"
+      >
+        <LogOutIcon />
+        <span className="text-[#EC2D30] group-hover:block hidden font-medium text-mobile sm:text-sm">
+          Log Out
+        </span>
+      </button>
     </div>
   );
 };

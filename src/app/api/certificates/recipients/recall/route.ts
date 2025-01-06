@@ -1,4 +1,5 @@
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { isValid } from "date-fns";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,7 +18,12 @@ export async function POST(req: NextRequest) {
 
     let query;
 
-    query = supabase.from("certificateRecipients").delete().in("id", ids);
+    query = supabase
+      .from("certificateRecipients")
+      .update({
+        isValid: false,
+      })
+      .in("id", ids);
 
     const { error } = await query;
 

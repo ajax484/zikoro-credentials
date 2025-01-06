@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 export async function GET(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
     try {
+      console.log("here");
       const supabase = createRouteHandlerClient({ cookies });
 
       const { searchParams } = new URL(req.url || "");

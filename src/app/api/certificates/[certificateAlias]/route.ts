@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import { generateAlphanumericHash } from "@/utils/helpers";
 
 export async function GET(
   req: NextRequest,
@@ -102,6 +101,8 @@ export async function DELETE(
         .from("certificate")
         .delete()
         .eq("certificateAlias", certificateAlias);
+
+        
 
       if (error) throw error;
 

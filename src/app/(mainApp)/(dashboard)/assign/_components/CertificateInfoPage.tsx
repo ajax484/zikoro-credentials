@@ -35,6 +35,10 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
     setPagination({ page, limit: 10 });
   };
 
+  const updateLimit = (limit: number) => {
+    setPagination({ page: 1, limit });
+  };
+
   console.log(certificateIssuees);
 
   return (
@@ -44,6 +48,7 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
         certificates={certificates}
         certificateIssuees={certificateIssuees}
         updatePage={updatePage}
+        updateLimit={updateLimit}
         total={total}
         totalPages={totalPages}
         pagination={pagination}
