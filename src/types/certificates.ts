@@ -95,4 +95,5 @@ export interface CertificateRecipient {
   metadata?: Record<string, any> | null;
   certificateGroupId: number;
   recipientAlias: string;
+  isValid: boolean;
 }

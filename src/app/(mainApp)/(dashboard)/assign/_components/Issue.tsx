@@ -177,11 +177,20 @@ const Issue = ({
   const { mutateData: recallCertificates, isLoading: isLoadingRecall } =
     useMutateData(`/certificates/recipients/recall`);
 
+  const { mutateData: reIssueCertificates, isLoading: isLoadingReissue } =
+    useMutateData(`/certificates/recipients/reissue`);
+
   const { mutateData: resendCertificates, isLoading: isLoadingResend } =
     useMutateData(`/certificates/recipients/resend`);
 
-  const recallCertificatesFn = async () => {
-    await recallCertificates({
+  const toggleCertificatesFn = async () => {
+    const toggleFn = filteredIssuees
+      .filter(({ id }) => rowSelection[id])
+      .every(({ isValid }) => isValid)
+      ? recallCertificates
+      : reIssueCertificates;
+
+    await toggleFn({
       payload: {
         ids: filteredIssuees
           .filter(({ id }) => rowSelection[id])
@@ -284,17 +293,41 @@ const Issue = ({
           <button
             className={cn(
               "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
+                0 ||
+                (!filteredIssuees
+                  .filter(({ id }) => rowSelection[id])
+                  .every(({ isValid }) => isValid) &&
+                  !filteredIssuees
+                    .filter(({ id }) => rowSelection[id])
+                    .every(({ isValid }) => !isValid)) ||
+                isLoadingRecall ||
+                isLoadingReissue
                 ? "border-gray-600 text-gray-600"
                 : "border-red-600  text-red-600"
             )}
             disabled={
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
+                0 ||
+              (!filteredIssuees
+                .filter(({ id }) => rowSelection[id])
+                .every(({ isValid }) => isValid) &&
+                !filteredIssuees
+                  .filter(({ id }) => rowSelection[id])
+                  .every(({ isValid }) => !isValid)) ||
+              isLoadingRecall ||
+              isLoadingReissue
             }
-            onClick={recallCertificatesFn}
+            onClick={toggleCertificatesFn}
           >
             <Trash className="size-4" />
-            <span>Revoke</span>
+            <span>
+              {filteredIssuees
+                .filter(({ id }) => rowSelection[id])
+                .every(({ isValid }) => isValid)
+                ? "Revoke"
+                : "Reissue"}
+            </span>
           </button>
           <button
             className={cn(
@@ -304,7 +337,10 @@ const Issue = ({
                 : "border-basePrimary text-basePrimary"
             )}
             disabled={
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
+                0 ||
+              isLoadingRecall ||
+              isLoadingReissue
             }
             onClick={exportRecipients}
           >
@@ -319,7 +355,10 @@ const Issue = ({
                 : "border-basePrimary text-basePrimary"
             )}
             disabled={
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
+                0 ||
+              isLoadingRecall ||
+              isLoadingReissue
             }
             onClick={resendCertificatesFn}
           >
@@ -336,7 +375,10 @@ const Issue = ({
           </Link>
           <Dialog defaultOpen={!!certificateAlias}>
             <DialogTrigger>
-              <Button className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 w-fit text-sm">
+              <Button
+                disabled={isLoadingRecall || isLoadingReissue}
+                className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 w-fit text-sm"
+              >
                 Assign Credential
               </Button>
             </DialogTrigger>

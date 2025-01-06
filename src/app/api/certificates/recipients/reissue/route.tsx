@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     query = supabase
       .from("certificateRecipients")
       .update({
-        isValid: false,
+        isValid: true,
       })
       .in("id", ids);
 
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         data: {
-          msg: `Certificates recalled successfully`,
+          msg: `Certificates reissued successfully`,
         },
       },
       { status: 201 }

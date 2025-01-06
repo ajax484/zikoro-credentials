@@ -169,6 +169,8 @@ export const issueesColumns: ColumnDef<
         };
       }, [init]);
 
+      if (!row.original?.isValid) return null;
+
       return (
         <div className="flex items-center gap-2 justify-center">
           <Link
