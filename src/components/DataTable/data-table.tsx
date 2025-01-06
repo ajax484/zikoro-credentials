@@ -53,15 +53,17 @@ export function DataTable<TData>({
     refetch();
   }, [currentPage]);
 
+  console.log(data);
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
     state: { rowSelection },
     getRowId: (row) => (row?.id ? row?.id.toString() : ""),
     enableRowSelection: true,
+    manualPagination: true,
   });
 
   return (
@@ -92,10 +94,7 @@ export function DataTable<TData>({
           <TableBody>
             {isFetching ? (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24"
-                >
+                <TableCell colSpan={columns.length} className="h-24">
                   Loading...
                 </TableCell>
               </TableRow>
@@ -137,6 +136,7 @@ export function DataTable<TData>({
         totalDocs={totalDocs}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        limit={limit}
       />
     </div>
   );
@@ -146,14 +146,16 @@ interface PaginationProps {
   totalDocs: number;
   currentPage: number;
   setCurrentPage: (page: number) => void;
+  limit: number;
 }
 
 const Pagination = ({
   totalDocs,
   currentPage,
   setCurrentPage,
+  limit,
 }: PaginationProps) => {
-  const totalPages = Math.ceil(totalDocs / 10); // Assuming 10 is your limit
+  const totalPages = Math.ceil(totalDocs / limit); // Assuming 10 is your limit
 
   return (
     <div className="mt-4 flex justify-center">

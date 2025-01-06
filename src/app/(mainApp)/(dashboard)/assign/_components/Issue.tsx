@@ -275,6 +275,8 @@ const Issue = ({
       .reduce((acc, curr) => acc + curr.creditRemaining, 0),
   };
 
+  console.log(filteredIssuees);
+
   return (
     <section className="space-y-4">
       <div className="flex items-end justify-between">
