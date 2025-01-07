@@ -25,3 +25,12 @@ export interface TUserAccess {
   attendeeId?: number;
   attendee?: TAttendee
 }
+
+export interface UserFeedback {
+  id: string;
+  comment: string;
+  ratings: number;
+  platform: string;
+  userId: number;
+  created_at: string;
+}

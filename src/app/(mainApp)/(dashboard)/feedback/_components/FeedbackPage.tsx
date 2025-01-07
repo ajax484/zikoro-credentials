@@ -11,7 +11,7 @@ export default function FeedBack() {
     setShowSuccess((prev) => !prev);
   }
   return (
-    <div className="w-full max-w-xl m-auto min-h-screen flex flex-col items-start justify-center gap-y-4 bg-white py-8 sm:py-10 px-4 sm:px-6">
+    <div className="w-full max-w-xl m-auto min-h-screen flex flex-col items-start justify-center gap-y-4 py-8 sm:py-10 px-4 sm:px-6">
       <Dialog open={!showSuccess} onOpenChange={onClose}>
         <DialogContent>
           <FeedBackComp close={onClose} />

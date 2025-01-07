@@ -12,6 +12,9 @@ import { Form, FormField, FormItem } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { DialogHeader } from "@/components/ui/dialog";
+import { UserFeedback } from "@/types/user";
+import { useMutateData } from "@/hooks/services/request";
+import useUserStore from "@/store/globalUserStore";
 
 const eventFeedBackSchema = z.object({
   comment: z.string().min(3, { message: "Comment is required" }),
@@ -37,17 +40,23 @@ export function EventFeedBack({ close }: { close: () => void }) {
 }
 
 export function FeedBackComp({ close }: { close: () => void }) {
-  //   const { loading, sendFeedback } = useEventFeedBack();
+  const { user } = useUserStore();
+  const { mutateData: sendFeedback, isLoading: loading } =
+    useMutateData<Omit<UserFeedback, "id" | "created_at">>(`/feedback`);
+
   const form = useForm<z.infer<typeof eventFeedBackSchema>>({
     resolver: zodResolver(eventFeedBackSchema),
   });
 
   async function onSubmit(values: z.infer<typeof eventFeedBackSchema>) {
+    if (!user) return;
     const payload = {
       comment: values.comment,
       ratings: Number(values.ratings),
+      platform: "zikoro-credentials",
+      userId: user?.id,
     };
-    // await sendFeedback(payload);
+    await sendFeedback({ payload });
     close();
   }
 
@@ -58,14 +67,14 @@ export function FeedBackComp({ close }: { close: () => void }) {
     <>
       <div className="w-full flex items-center justify-between">
         <DialogHeader>
-        <div className="flex flex-col items-start justify-start">
-          <h2 className="font-medium text-lg sm:text-xl">
-            Zikoro wants your feedback
-          </h2>
-          <p className="text-xs sm:text-sm">
-            Select a number and state your reason.
-          </p>
-        </div>
+          <div className="flex flex-col items-start justify-start">
+            <h2 className="font-medium text-lg sm:text-xl">
+              Zikoro wants your feedback
+            </h2>
+            <p className="text-xs sm:text-sm">
+              Select a number and state your reason.
+            </p>
+          </div>
         </DialogHeader>
       </div>
       <Form {...form}>
