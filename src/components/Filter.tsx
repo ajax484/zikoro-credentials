@@ -1,4 +1,3 @@
-import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import {
@@ -12,6 +11,8 @@ import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { FilterOptionsProps, FilterProps } from "@/types/filter";
 import React, { useEffect } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 
 function MultipleFilter<T>({
   filter,
@@ -58,6 +59,29 @@ function MultipleFilter<T>({
   );
 }
 
+type ValuePiece = Date | null;
+
+type Value = ValuePiece | [ValuePiece, ValuePiece];
+
+function DateSingleFilter<T>({
+  filter,
+  selectedFilters,
+  applyFilter,
+}: FilterOptionsProps<T>) {
+  const { type, accessor, onFilter, label: filterLabel } = filter;
+  const date = selectedFilters.find(({ key }) => key === accessor);
+
+  return (
+    <Calendar
+      onChange={(value) =>
+        applyFilter(accessor, filterLabel, value, onFilter, type)
+      }
+      value={date?.value}
+      className="rounded-md border"
+    />
+  );
+}
+
 function DateRangeFilter<T>({
   filter,
   selectedFilters,
@@ -68,11 +92,10 @@ function DateRangeFilter<T>({
 
   return (
     <Calendar
-      mode="range"
-      selected={date?.value}
-      onSelect={(value) =>
+      onChange={(value) =>
         applyFilter(accessor, filterLabel, value, onFilter, type)
       }
+      value={date?.value}
       className="rounded-md border"
     />
   );
@@ -236,6 +259,15 @@ function FilterOptions<T>({
     case "range":
       return (
         <RangeFilter
+          filter={filter}
+          selectedFilters={selectedFilters}
+          applyFilter={applyFilter}
+        />
+      );
+
+    case "dateSingle":
+      return (
+        <DateRangeFilter
           filter={filter}
           selectedFilters={selectedFilters}
           applyFilter={applyFilter}

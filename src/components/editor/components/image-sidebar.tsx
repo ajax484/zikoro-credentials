@@ -20,9 +20,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useRef, useState } from "react";
-import { uploadFile } from "@/utils/helpers";
+import { deleteCloudinaryImage, uploadFile } from "@/utils/helpers";
 import { Input } from "@/components/ui/input";
 import { useSearchParams } from "next/navigation";
+import { useGetData, useMutateData } from "@/hooks/services/request";
+import { TOrganization } from "@/types/organization";
 
 interface ImageSidebarProps {
   editor: Editor | undefined;
@@ -37,16 +39,17 @@ export const ImageSidebar = ({
   onChangeActiveTool,
   organizationId,
 }: ImageSidebarProps) => {
+  console.log(organizationId);
   const {
-    organization,
-    isLoading: fetching,
-    getOrganization,
-  } = useGetOrganization({
-    organizationId,
-  });
-  const { updateOrganization, isLoading: updating } = useUpdateOrganization({
-    organizationId,
-  });
+    data: organization,
+    isLoading: workspaceIsLoading,
+    getData: getOrganization,
+  } = useGetData<TOrganization>(`workspaces/${organizationId}`);
+
+  console.log(organization);
+
+  const { mutateData: updateOrganization, isLoading: updating } =
+    useMutateData<TOrganization>(`workspaces/${organizationId}`);
 
   const [elementUploading, setElementUploading] = useState<boolean>(false);
   const uploadElement = async (file: File | null) => {
@@ -57,9 +60,8 @@ export const ImageSidebar = ({
       const { url, error } = await uploadFile(file, "image");
 
       if (error || !url) throw error;
-      // alert("File uploaded successfully");
+      alert("File uploaded successfully");
 
-      // setValue("element", url);
       const payload = organization?.certificateAsset
         ? {
             certificateAsset: {
@@ -75,12 +77,6 @@ export const ImageSidebar = ({
               backgrounds: [],
             },
           };
-
-      // const payload = {
-      //   certificateAsset: {
-      //     elements: organization?.certificateAsset?.elements,
-      //   },
-      // };
 
       console.log(payload.certificateAsset.elements);
 
@@ -100,6 +96,8 @@ export const ImageSidebar = ({
   const divRef = useRef<HTMLDivElement>(null);
 
   const deleteElement = async (url: string) => {
+    await deleteCloudinaryImage(url);
+
     const payload = {
       certificateAsset: organization?.certificateAsset
         ? {
@@ -268,7 +266,7 @@ export const ImageSidebar = ({
           Upload JPG and PNG not more than 2MB
         </span>
       </div>
-      {fetching && (
+      {workspaceIsLoading && (
         <div className="flex flex-1 items-center justify-center">
           <Loader className="size-4 animate-spin text-muted-foreground" />
         </div>

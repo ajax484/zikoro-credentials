@@ -33,12 +33,12 @@ export const Sidebar = ({ activeTool, onChangeActiveTool }: SidebarProps) => {
           isActive={activeTool === "templates"}
           onClick={() => onChangeActiveTool("templates")}
         />
-        <SidebarItem
+        {/* <SidebarItem
           icon={PiSelectionBackground}
           label="Background"
           isActive={activeTool === "background"}
           onClick={() => onChangeActiveTool("background")}
-        />
+        /> */}
         <SidebarItem
           icon={ImageIcon}
           label="Image"

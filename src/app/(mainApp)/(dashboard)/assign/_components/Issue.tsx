@@ -42,23 +42,23 @@ const issueesFilter: TFilter<
 >[] = [
   {
     label: "Issue Date",
-    type: "dateRange",
-    order: 1,
+    accessor: "created_at",
     icon: (
       <svg
-        stroke="currentColor"
-        fill="currentColor"
-        strokeWidth={0}
-        viewBox="0 0 1024 1024"
-        height="1em"
-        width="1em"
         xmlns="http://www.w3.org/2000/svg"
+        width={25}
+        height={24}
+        viewBox="0 0 25 24"
+        fill="none"
       >
-        <path d="M712 304c0 4.4-3.6 8-8 8h-56c-4.4 0-8-3.6-8-8v-48H384v48c0 4.4-3.6 8-8 8h-56c-4.4 0-8-3.6-8-8v-48H184v136h656V256H712v48z" />
-        <path d="M880 184H712v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H384v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H144c-17.7 0-32 14.3-32 32v664c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V216c0-17.7-14.3-32-32-32zm-40 656H184V460h656v380zm0-448H184V256h128v48c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-48h256v48c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-48h128v136z" />
+        <path
+          d="M9.27979 11H7.27979V13H9.27979V11ZM13.2798 11H11.2798V13H13.2798V11ZM17.2798 11H15.2798V13H17.2798V11ZM19.2798 4H18.2798V2H16.2798V4H8.27979V2H6.27979V4H5.27979C4.16979 4 3.28979 4.9 3.28979 6L3.27979 20C3.27979 20.5304 3.4905 21.0391 3.86557 21.4142C4.24064 21.7893 4.74935 22 5.27979 22H19.2798C20.3798 22 21.2798 21.1 21.2798 20V6C21.2798 4.9 20.3798 4 19.2798 4ZM19.2798 20H5.27979V9H19.2798V20Z"
+          fill="#717171"
+        />
       </svg>
     ),
-    accessor: "created_at",
+    type: "dateSingle",
+    order: 1,
   },
   {
     label: "Status",
@@ -132,7 +132,7 @@ const Issue = ({
   });
 
   useEffect(() => {
-    // if (isLoading) return;
+    if (isLoading) return;
     filters
       .filter((filter) => filter.optionsFromData)
       .forEach(({ accessor }) => {
@@ -141,9 +141,8 @@ const Issue = ({
           extractUniqueTypes<CertificateRecipient>(certificateIssuees, accessor)
         );
       });
-  }, []);
-
-  //   }, [isLoading]);
+    // }, []);
+  }, [isLoading]);
 
   const [selectedOption, setSelectedOption] = useState("manual");
 

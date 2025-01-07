@@ -58,7 +58,6 @@ const navlinks2: Navlinks[] = [
     name: "Refer & Earn",
     href: "/refer",
     Icon: Gift,
-    disabled: true,
   },
   {
     name: "Support",
@@ -70,7 +69,6 @@ const navlinks2: Navlinks[] = [
     name: "Feedback",
     href: "/feedback",
     Icon: Star,
-    disabled: true,
   },
 ];
 

@@ -9,6 +9,7 @@ import {
   onFilterProps,
 } from "@/types/filter";
 import { getProperty } from "@/utils/helpers";
+import { isSameDay } from "date-fns";
 import { useEffect, useState, useCallback } from "react";
 
 interface UseFilterProps<T> {
@@ -37,6 +38,8 @@ export const useFilter = <T>({ data, dataFilters }: UseFilterProps<T>) => {
           switch (type) {
             case "range":
               return pptyVal >= value[0] && pptyVal <= value[1];
+            case "dateSingle":
+              return isSameDay(new Date(pptyVal), new Date(value));
             case "dateRange":
               return (
                 (value?.from &&
