@@ -2,9 +2,20 @@
 import Image from "next/image";
 import whiteScreen from "@/public/bigScreen.png";
 import { useRouter } from "next/navigation";
+import { NewPlayIcon } from "@/constants";
+import { useState } from "react";
 
 export default function Section1() {
   const router = useRouter();
+  const [showIcon, setShowIcon] = useState(true);
+
+  const handleClick = () => {
+    setShowIcon(false);
+  };
+
+  const handleVideoEnd = () => {
+    setShowIcon(true);
+  };
   return (
     <>
       {/* big screen */}
@@ -23,7 +34,7 @@ export default function Section1() {
           {/* button */}
           <div className="flex justify-center">
             <div>
-              <button className="mt-6 font-semibold rounded-[10px] py-2 px-4 text-[14px] text-medium text-white bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end" onClick={()=> router.push('/signup')}>
+              <button className="mt-6 font-semibold rounded-[10px] py-2 px-4 text-[14px] text-medium text-white bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end" onClick={() => router.push('/signup')}>
                 Get Started For Free
               </button>
               <p className="text-center text-[12px] text-[#55555] mt-2">
@@ -33,18 +44,41 @@ export default function Section1() {
           </div>
 
           {/* big white board */}
-          <div className="flex justify-center mt-7">
-            <Image
-              src={whiteScreen}
-              alt=""
-              height={651}
-              width={1128}
-              className="w-full lg:w-[970px] xl:w-[1128px] "
-            />
-         
-          </div>
+          {showIcon ? (
+            <div className="flex justify-center mt-7 relative">
+              <Image
+                src={whiteScreen}
+                alt=""
+                height={651}
+                width={1128}
+                className="w-full lg:w-[970px]  "
+              />
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer" onClick={handleClick}>
+                <NewPlayIcon />
+              </div>
+
+
+            </div>) : (
+            <div className="w-full lg:w-[970px] xl:w-[1128px] h-[400px] mt-28 z-50 flex justify-center items-center rounded-3xl">
+              <video
+                className="max-w-full max-h-full rounded-3xl"
+                controls
+                muted
+                onEnded={handleVideoEnd}
+                style={{ minWidth: "100%", minHeight: "100%" }}
+              >
+                <source
+                  src="https://res.cloudinary.com/zikoro/video/upload/v1736186789/ZIKORO/videos/zikoro_credentials_2_vrvxqh.mp4"
+                  type="video/mp4"
+                />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          )}
         </div>
       </div>
     </>
   );
 }
+
+

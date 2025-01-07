@@ -1438,3 +1438,63 @@ export function CredentialSec3() {
     </div>
   );
 }
+
+export function NewPlayIcon() {
+  return (
+    <div className="">
+      <svg
+        width="52"
+        height="52"
+        viewBox="0 0 52 52"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          x="0.8125"
+          y="0.8125"
+          width="50.375"
+          height="50.375"
+          rx="25.1875"
+          fill="white"
+        />
+        <rect
+          x="0.8125"
+          y="0.8125"
+          width="50.375"
+          height="50.375"
+          rx="25.1875"
+          stroke="url(#paint0_linear_15_128)"
+          stroke-width="1.625"
+        />
+        <path
+          d="M37.8073 28.4635C38.1834 28.1724 38.4879 27.799 38.6974 27.372C38.9069 26.945 39.0158 26.4757 39.0158 26C39.0158 25.5244 38.9069 25.0551 38.6974 24.628C38.4879 24.201 38.1834 23.8276 37.8073 23.5365C32.9358 19.7684 27.4969 16.7978 21.6938 14.7355L20.6326 14.3585C18.6046 13.6386 16.4613 15.0101 16.1866 17.1048C15.4196 23.0101 15.4196 28.9899 16.1866 34.8953C16.4629 36.9899 18.6046 38.3614 20.6326 37.6415L21.6938 37.2645C27.4969 35.2023 32.9358 32.2316 37.8073 28.4635Z"
+          fill="url(#paint1_linear_15_128)"
+        />
+        <defs>
+          <linearGradient
+            id="paint0_linear_15_128"
+            x1="0"
+            y1="26"
+            x2="52"
+            y2="26"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#001FCC" />
+            <stop offset="1" stop-color="#9D00FF" />
+          </linearGradient>
+          <linearGradient
+            id="paint1_linear_15_128"
+            x1="15.6114"
+            y1="26"
+            x2="39.0158"
+            y2="26"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#001FCC" />
+            <stop offset="1" stop-color="#9D00FF" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  );
+}
