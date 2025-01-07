@@ -10,6 +10,7 @@ export async function POST(
   if (req.method === "POST") {
     try {
       const { workspaceId } = params;
+      console.log(workspaceId);
       //
       const payload = await req.json();
 
@@ -18,6 +19,8 @@ export async function POST(
         .update(payload)
         .eq("id", workspaceId)
         .select("*");
+
+      console.log(data);
 
       if (error) throw error;
       return NextResponse.json(
@@ -81,10 +84,10 @@ export async function PATCH(req: NextRequest) {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { organizationId: number } }
+  { params }: { params: { workspaceId: number } }
 ) {
-  const { organizationId } = params;
-  console.log(organizationId);
+  const { workspaceId } = params;
+  console.log(workspaceId);
   const supabase = createRouteHandlerClient({ cookies });
 
   if (req.method === "GET") {
@@ -92,7 +95,7 @@ export async function GET(
       const { data, error, status } = await supabase
         .from("organization")
         .select("*")
-        .eq("id", organizationId)
+        .eq("id", workspaceId)
         .maybeSingle();
 
       if (error) throw error;

@@ -21,7 +21,16 @@ export interface TAuthUser {
 
 export interface TUserAccess {
   isOrganizer?:boolean;
-  isTeamMember?:boolean;
+isTeamMember?:boolean;
   attendeeId?: number;
   attendee?: TAttendee
+}
+
+export interface UserFeedback {
+  id: string;
+  comment: string;
+  ratings: number;
+  platform: string;
+  userId: number;
+  created_at: string;
 }

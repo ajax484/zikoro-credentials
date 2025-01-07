@@ -193,6 +193,8 @@ export async function uploadFile(
     if (response.ok) {
       const data = await response.json();
 
+      console.log(data);
+
       return { url: data.url, error: null };
     } else {
       throw "failed to upload file";
@@ -201,6 +203,83 @@ export async function uploadFile(
     console.error("Error uploading image:", error);
     return { url: null, error };
   }
+}
+
+export function generateCloudinarySignature(
+  params: Record<string, string | number>,
+  apiSecret: string
+): string {
+  const excludedKeys = ["file", "cloud_name", "resource_type", "api_key"];
+  const filteredParams = Object.entries(params)
+    .filter(([key]) => !excludedKeys.includes(key))
+    .reduce((acc, [key, value]) => {
+      acc[key] = value;
+      return acc;
+    }, {} as Record<string, string | number>);
+
+  if (!filteredParams.timestamp) {
+    filteredParams.timestamp = Math.floor(Date.now() / 1000);
+  }
+
+  const sortedParams = Object.keys(filteredParams)
+    .sort()
+    .map((key) => `${key}=${filteredParams[key]}`)
+    .join("&");
+
+  const stringToSign = `${sortedParams}${apiSecret}`;
+
+  return crypto.createHash("sha1").update(stringToSign).digest("hex");
+}
+
+export async function deleteCloudinaryImage(url: string): Promise<void> {
+  const id = getPublicCloudinaryId(url);
+
+  if (!id) {
+    console.error("Invalid Cloudinary public ID");
+    return;
+  }
+
+  const apiKey = "YOUR_API_KEY";
+  const apiSecret = "YOUR_API_SECRET";
+  const timestamp = Math.floor(Date.now() / 1000);
+
+  const signature = generateCloudinarySignature(
+    { public_id: id, timestamp: timestamp, api_key: apiKey },
+    apiSecret
+  );
+
+  try {
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/zikoro/image/destroy`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          public_id: id,
+          timestamp: timestamp.toString(),
+          api_key: apiKey,
+          signature: signature,
+        }).toString(),
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log("Image deleted successfully:", data);
+    } else {
+      console.error("Failed to delete image:", data);
+    }
+  } catch (error) {
+    console.error("Error deleting image:", error);
+  }
+}
+
+export function getPublicCloudinaryId(url: string): string | null {
+  const match = url.match(/\/upload\/(?:v\d+\/)?([^\.]+)/);
+  return match ? match[1] : null;
 }
 
 export function base64ToFile(base64Data: string, fileName: string): File {
