@@ -262,7 +262,7 @@ const ReferralPage = () => {
           </div>
         </div>
       </div>
-      <Dialog open={!user.referralCode}>
+      <Dialog open={!user?.referralCode}>
         <DialogContent>
           <DialogHeader>
             <span className="text-2xl font-bold">Complete Onboarding</span>
