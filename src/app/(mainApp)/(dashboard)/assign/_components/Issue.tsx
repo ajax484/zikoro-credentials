@@ -62,7 +62,7 @@ const issueesFilter: TFilter<
   },
   {
     label: "Status",
-    type: "single",
+    type: "multiple",
     order: 2,
     icon: (
       <svg

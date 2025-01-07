@@ -35,7 +35,7 @@ interface ToolbarProps {
   onChangeActiveTool: (tool: ActiveTool) => void;
 }
 
-export const Toolbar = ({
+export const bToolbar = ({
   editor,
   activeTool,
   onChangeActiveTool,
