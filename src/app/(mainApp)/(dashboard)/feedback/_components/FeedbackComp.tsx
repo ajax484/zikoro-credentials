@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { DialogHeader } from "@/components/ui/dialog";
 
 const eventFeedBackSchema = z.object({
   comment: z.string().min(3, { message: "Comment is required" }),
@@ -56,6 +57,7 @@ export function FeedBackComp({ close }: { close: () => void }) {
   return (
     <>
       <div className="w-full flex items-center justify-between">
+        <DialogHeader>
         <div className="flex flex-col items-start justify-start">
           <h2 className="font-medium text-lg sm:text-xl">
             Zikoro wants your feedback
@@ -64,11 +66,7 @@ export function FeedBackComp({ close }: { close: () => void }) {
             Select a number and state your reason.
           </p>
         </div>
-        {close && (
-          <Button onClick={close} className="px-1 h-fit w-fit">
-            <CloseOutline size={22} />
-          </Button>
-        )}
+        </DialogHeader>
       </div>
       <Form {...form}>
         <form
