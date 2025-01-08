@@ -95,7 +95,7 @@ const Navbar = () => {
       )}
 
       {isOpen && (
-        <div className="bg-violet-100 flex-col absolute p-[30px] mt-3 w-full max-w-[92%] lg:hidden rounded-[8px]">
+        <div className="bg-violet-100 flex-col absolute p-[30px] mt-3 w-full max-w-[92%] lg:hidden rounded-[8px] z-10">
           <ul className="">
             <li className="mt-5 font-medium" onClick={() => router.push("/verify")}>Verify </li>
             <li className="mt-5 font-medium ">Templates </li>
