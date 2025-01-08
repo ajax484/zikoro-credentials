@@ -42,6 +42,26 @@ interface EditorProps {
   setSettings: (settings: any) => void;
   type: "certificate" | "badge";
   alias: string;
+  getCredits: () => Promise<void>;
+  creditBalance: {
+    bronze: number;
+    silver: number;
+    gold: number;
+  };
+  credentialId: number;
+  chargeCredits: ({
+    payload,
+  }: {
+    payload: {
+      amountToCharge: number;
+      activityBy: number;
+      credentialId: number;
+      workspaceId: number;
+      tokenId: number;
+    };
+  }) => Promise<void>;
+  isMutating: boolean;
+  creditsIsLoading: boolean;
 }
 
 export const Editor = ({
@@ -56,6 +76,12 @@ export const Editor = ({
   setSettings,
   type,
   alias,
+  getCredits,
+  creditBalance,
+  credentialId,
+  chargeCredits,
+  isMutating,
+  creditsIsLoading,
 }: EditorProps) => {
   // const { mutate } = useUpdateProject(initialData.id);
 
@@ -187,6 +213,13 @@ export const Editor = ({
           editor={editor}
           activeTool={activeTool}
           onChangeActiveTool={onChangeActiveTool}
+          getCredits={getCredits}
+          creditBalance={creditBalance}
+          credentialId={credentialId}
+          workspaceId={workspaceId}
+          chargeCredits={chargeCredits}
+          isMutating={isMutating}
+          creditsIsLoading={creditsIsLoading}
         />
         <VerificationSidebar
           editor={editor}
@@ -259,7 +292,12 @@ export const Editor = ({
           >
             <canvas ref={canvasRef} />
           </div>
-          <Footer editor={editor} />
+          <Footer
+            workspaceId={workspaceId}
+            editor={editor}
+            getCredits={getCredits}
+            creditBalance={creditBalance}
+          />
         </main>
       </div>
     </div>

@@ -73,7 +73,6 @@ export async function POST(
           subject: `Resending ${certificateName}`,
           htmlbody: `
           Hi ${recipientFirstName},\n\n
-www.credentials.zikoro.com/credentials/verify/certificate/${recipient.certificateId}\n
           Your certificate is ready for download. Access it now through this link: https://www.credentials.zikoro.com/credentials/verify/certificate/${recipient.certificateId}\n
           Best,\n
           Zikoro Team

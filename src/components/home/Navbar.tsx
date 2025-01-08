@@ -49,7 +49,7 @@ const Navbar = () => {
         />
 
         <div className="gap-x-8 hidden lg:flex ">
-          <p className="text-base font-medium cursor-pointer" onClick={() => router.push("/verify")}
+          <p className="text-base font-medium cursor-pointer" onClick={() => router.push("/verify/certificates")}
           >Verify</p>
 
           <p className="text-base font-medium cursor-pointer">Templates</p>

@@ -25,13 +25,21 @@ export const TextSidebar = ({
     <aside
       className={cn(
         "relative z-[40] flex h-full w-[360px] flex-col border-r bg-white",
-        activeTool === "text" ? "visible" : "hidden",
+        activeTool === "text" ? "visible" : "hidden"
       )}
     >
-      <ToolSidebarHeader title="Text" description="Add text to your credential" />
+      <ToolSidebarHeader
+        title="Text"
+        description="Add text to your credential"
+      />
       <ScrollArea>
         <div className="space-y-4 border-b p-4">
-          <Button className="w-full" onClick={() => editor?.addText("Textbox")}>
+          <Button
+            className="h-16 w-full"
+            variant="secondary"
+            size="lg"
+            onClick={() => editor?.addText("Textbox")}
+          >
             Add a textbox
           </Button>
           <Button
