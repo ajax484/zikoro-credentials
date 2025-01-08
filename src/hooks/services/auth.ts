@@ -74,7 +74,7 @@ export function useLogin() {
         await setLoggedInUser(data?.user?.email);
         //  console.log(data?.user?.email);
         toast.success("Sign In Successful");
-        router.push(redirectTo ?? "/dashboard");
+        router.push(redirectTo ?? "/home");
         setLoading(false);
       } else {
         toast.error("Incorrect Details");

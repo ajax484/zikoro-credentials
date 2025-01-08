@@ -743,7 +743,7 @@ export default function OnboardingForm({
             {/* buttons */}
             <div className="flex justify-center gap-x-4 mx-auto mt-[52px] ">
               <button
-                onClick={() => router.push("/dashboard")}
+                onClick={() => router.push("/home")}
                 className="text-white font-semibold text-base bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end py-3 px-4 rounded-[8px]"
               >
                 Start Exploring
