@@ -1,6 +1,5 @@
 "use client"
 import Image from "next/image";
-import whiteScreen from "@/public/bigScreen.png";
 import { useRouter } from "next/navigation";
 import { NewPlayIcon } from "@/constants";
 import { useState } from "react";
@@ -44,39 +43,39 @@ export default function Section1() {
           </div>
 
           {/* big white board */}
-          {showIcon ? (
-            <div className="flex justify-center mt-7 relative">
-              <Image
-                src={whiteScreen}
-                alt=""
-                height={651}
-                width={1128}
-                className="w-full lg:w-[970px]  "
-              />
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer" onClick={handleClick}>
-                <NewPlayIcon />
+          <div className="relative mt-6">
+            <div className="absolute bg-[#001FCC] blur-[70px] rounded-full h-[150px] w-[80px] -bottom-[20px] -left-[20px] opacity-80 "></div>
+
+            <div className="absolute bg-[#9D00FF] blur-[70px] rounded-full h-[150px] w-[80px] -top-[20px] -right-[5px] opacity-80 "></div>
+            {showIcon ? (
+              <div className="relative z-5 bg-white rounded-[10px] shadow-md p-10 w-full lg:w-[970px] xl:w-[1128px] h-[205px] lg:h-[651px]">
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer" onClick={handleClick}>
+                  <NewPlayIcon />
+                </div>
               </div>
+            ) : (
+              <div className="w-full lg:w-[970px] xl:w-[1128px] h-[205px] lg:h-[651px] rounded-[10px] shadow-md">
+                <video
+                  className="max-w-full max-h-full rounded-[10px]"
+                  autoPlay
+                  controls
+                  muted
+                  onEnded={handleVideoEnd}
+                  style={{ minWidth: "100%", minHeight: "100%" }}
+                >
+                  <source
+                    src="https://res.cloudinary.com/zikoro/video/upload/v1736186789/ZIKORO/videos/zikoro_credentials_2_vrvxqh.mp4"
+                    type="video/mp4"
+                  />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            )}
 
+          </div>
 
-            </div>) : (
-            <div className="w-full lg:w-[970px] xl:w-[1128px] h-[400px] mt-28 z-50 flex justify-center items-center rounded-3xl">
-              <video
-                className="max-w-full max-h-full rounded-3xl"
-                controls
-                muted
-                onEnded={handleVideoEnd}
-                style={{ minWidth: "100%", minHeight: "100%" }}
-              >
-                <source
-                  src="https://res.cloudinary.com/zikoro/video/upload/v1736186789/ZIKORO/videos/zikoro_credentials_2_vrvxqh.mp4"
-                  type="video/mp4"
-                />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          )}
-        </div>
-      </div>
+        </div >
+      </div >
     </>
   );
 }

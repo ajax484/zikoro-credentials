@@ -3,11 +3,9 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "styled-icons/bootstrap";
-import { ThreeLineCircle, XCircle } from "@/constants/icons";
+import { NavModalIcon, NavModalIcon2, ThreeLineCircle, XCircle } from "@/constants/icons";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import bPreview from "@/public/otherPreviewB.png";
-import sPreview from "@/public/OtherTopPrevS.png";
 import logo from "@/public/logo.png";
 
 const Navbar = () => {
@@ -82,20 +80,54 @@ const Navbar = () => {
 
       {/* preview modal */}
       {isPreviewShowing && (
-        <div className="absolute cursor-pointer hidden lg:block left-96 ">
-          <Image
-            src={bPreview}
-            className="w-[577px] h-[307px]"
-            alt=""
-            height={307}
-            width={577}
-            onClick={() => router.push("https://www.zikoro.com/")}
-          />
+        <div className="absolute bg-white  hidden lg:flex flex-col mt-3 gap-y-6 p-3 left-1/2 transform -translate-x-1/2  rounded-[10px] ">
+          {/* 1st div */}
+          <div className="w-full flex items-center gap-x-4">
+            {/* left */}
+            <div>
+              <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">Zikoro Events</p>
+              <p className="text-[12px] font-medium text-[#31353B] w-[282px]">Create event tickets, check-in attendees, send RSVPs and more. </p>
+            </div>
+
+            {/* right */}
+            <div className="cursor-pointer " onClick={() => router.push("https://www.zikoro.com")}>
+              <NavModalIcon />
+            </div>
+          </div>
+
+          {/* 2nd app */}
+          <div className="w-full flex items-center gap-x-4">
+            {/* left */}
+            <div>
+              <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">Zikoro Engagement</p>
+              <p className="text-[12px] font-medium text-[#31353B] w-[282px]">Drive interaction with engaging polls, quizzes,and live Q&A </p>
+            </div>
+
+            {/* right */}
+            <div className="cursor-pointer " onClick={() => router.push("https://engagements.zikoro.com/")}>
+              <NavModalIcon />
+            </div>
+          </div>
+
+
+          {/* 3rd app */}
+          <div className="w-full flex items-center gap-x-4">
+            {/* left */}
+            <div>
+              <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">Zikoro Bookings</p>
+              <p className="text-[12px] font-medium text-[#31353B]  w-[282px]">Simplify appointment booking and scheduling for seamless coordination.</p>
+            </div>
+
+            {/* right */}
+            <div className="cursor-pointer " onClick={() => router.push("https://bookings.zikoro.com/")}>
+              <NavModalIcon />
+            </div>
+          </div>
         </div>
       )}
 
       {isOpen && (
-        <div className="bg-violet-100 flex-col absolute p-[30px] mt-3 w-full max-w-[92%] lg:hidden rounded-[8px]">
+        <div className="bg-violet-100 flex-col absolute p-[30px] mt-3 w-full max-w-[92%] lg:hidden rounded-[8px] z-10">
           <ul className="">
             <li className="mt-5 font-medium" onClick={() => router.push("/verify")}>Verify </li>
             <li className="mt-5 font-medium ">Templates </li>
@@ -105,14 +137,51 @@ const Navbar = () => {
             >
               Other Products <ChevronDown size={20} />{" "}
               {isPreviewShowing && (
-                <Image
-                  src={sPreview}
-                  width={273}
-                  height={278}
-                  alt=""
-                  className="mt-[19px] w-[273px] h-[278px] block lg:hidden"
-                  onClick={() => router.push("https://www.zikoro.com")}
-                />
+                <div className="bg-white flex flex-col mt-3 gap-y-6 p-3 lg:hidden rounded-[10px] ">
+                  {/* 1st div */}
+                  <div className="w-full flex items-center gap-x-4">
+                    {/* left */}
+                    <div>
+                      <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">Zikoro Events</p>
+                      <p className="text-[11px] font-medium text-[#31353B] w-[232px]">Create event tickets, check-in attendees, send RSVPs and more. </p>
+
+                    </div>
+
+                    {/* right */}
+                    <div className="cursor-pointer" onClick={() => router.push("https://www.zikoro.com")}>
+                      <NavModalIcon2 />
+                    </div>
+                  </div>
+
+                  {/* 2nd app */}
+                  <div className="w-full flex items-center gap-x-4">
+                    {/* left */}
+                    <div>
+                      <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">Zikoro Engagement</p>
+                      <p className="text-[11px] font-medium text-[#31353B] w-[232px]">Drive interaction with engaging polls, quizzes,and live Q&A </p>
+                    </div>
+
+                    {/* right */}
+                    <div className="cursor-pointer " onClick={() => router.push("https://engagements.zikoro.com/")}>
+                      <NavModalIcon2 />
+                    </div>
+                  </div>
+
+
+                  {/* 3rd app */}
+                  <div className="w-full flex items-center gap-x-4">
+                    {/* left */}
+                    <div>
+                      <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">Zikoro Bookings</p>
+                      <p className="text-[11px] font-medium text-[#31353B]  w-[232px]">Simplify appointment booking and scheduling for seamless coordination.</p>
+                    </div>
+
+                    {/* right */}
+                    <div className="cursor-pointer " onClick={() => router.push("https://bookings.zikoro.com/")}>
+                      <NavModalIcon2 />
+                    </div>
+                  </div>
+                </div>
               )}
             </li>
             <li
