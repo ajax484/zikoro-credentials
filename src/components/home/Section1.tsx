@@ -57,7 +57,7 @@ export default function Section1() {
             ) : (
               <div className="w-full lg:w-[970px] xl:w-[1128px] h-[205px] lg:h-[651px] rounded-[10px] shadow-md">
                 <video
-                  className="max-w-full max-h-full rounded-3xl"
+                  className="max-w-full max-h-full rounded-[10px]"
                   controls
                   muted
                   onEnded={handleVideoEnd}
