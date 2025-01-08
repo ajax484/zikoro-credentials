@@ -1,6 +1,5 @@
 "use client"
 import Image from "next/image";
-import whiteScreen from "@/public/bigScreen.png";
 import { useRouter } from "next/navigation";
 import { NewPlayIcon } from "@/constants";
 import { useState } from "react";
@@ -58,6 +57,7 @@ export default function Section1() {
               <div className="w-full lg:w-[970px] xl:w-[1128px] h-[205px] lg:h-[651px] rounded-[10px] shadow-md">
                 <video
                   className="max-w-full max-h-full rounded-[10px]"
+                  autoPlay
                   controls
                   muted
                   onEnded={handleVideoEnd}
