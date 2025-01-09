@@ -24,7 +24,7 @@ const AppointmentSignupPage = ({
             src={Banner}
             alt="banner"
             width={864}
-            className="w-full h-screen"
+            className="w-full h-fit"
           />
         </div>
 

@@ -8,10 +8,11 @@ import {
   SProgress5,
 } from "@/constants";
 import React, { useState } from "react";
-import { useOnboarding } from "@/hooks";
+import { useOnboarding, useSetLoggedInUser } from "@/hooks";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+
 
 const countryList = [
   "Afghanistan",
@@ -298,6 +299,8 @@ const industryList = [
   "Education and Non-Profits",
 ];
 
+
+
 type SearchParamsType = {
   email: string;
   createdAt: string;
@@ -521,7 +524,7 @@ export default function OnboardingForm({
               </div>
 
               <div className="mt-[29px]">
-                <p className="text-black text-[14px] ">Country</p>
+                <p className="text-black text-[14px]">Country</p>
                 <div className=" border-[1px] border-gray-200 hover:border-indigo-600 w-full px-[9px] py-[16px] rounded-[6px] mt-3">
                   <select
                     name="country"
