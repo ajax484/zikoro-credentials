@@ -4,7 +4,6 @@ import React from "react";
 import sBanner from "@/public/appointments/signupBannerS.png";
 import Banner from "@/public/appointments/signupBanner.png";
 
-
 type SearchParamsType = {
   email: string;
   createdAt: string;
@@ -47,7 +46,6 @@ const AppointmentSignupPage = ({
         <Onboarding searchParams={searchParams} />
       </div>
     </div>
-
   );
 };
 
