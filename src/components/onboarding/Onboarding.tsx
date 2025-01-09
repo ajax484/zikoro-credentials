@@ -346,7 +346,6 @@ export default function OnboardingForm({
     industry: "",
   });
 
-
   const router = useRouter();
   const handleChange = (e: any) => {
     const { name, value } = e.target;
@@ -383,12 +382,8 @@ export default function OnboardingForm({
       referredBy: values.referredBy.toUpperCase(),
     };
     try {
-
-      if (await registration(payload, email, createdAt)) {
-        handleNext();
-      } else {
-        toast.error("Registration failed")
-      }
+      handleNext();
+      toast.error("Registration failed");
     } catch (error) {
       console.error("Registration failed:", error);
     }
@@ -475,17 +470,20 @@ export default function OnboardingForm({
       {currentIndex === 1 && (
         <div className="px-3 lg:px-0 max-w-full lg:max-w-[835px] w-full lg:w-[532px] mt-6 lg:mt-10 mx-auto pb-[100px]">
           <p className=" font-medium text-center hidden lg:block">
-            We ask for your phone number, city, and country to personalize your experience, tailor services to your location, and ensure secure account setup.
+            We ask for your phone number, city, and country to personalize your
+            experience, tailor services to your location, and ensure secure
+            account setup.
           </p>
           <p className="w-full lg:w-[835px] font-medium text-center block lg:hidden">
-            We ask for your phone number, city, and country to personalize your experience, tailor services to your location, and ensure secure account setup.
+            We ask for your phone number, city, and country to personalize your
+            experience, tailor services to your location, and ensure secure
+            account setup.
           </p>
           <div className="max-w-full lg:max-w-[458px] mx-auto mt-8 lg:mt-[80px]">
             <div className="flex mx-auto justify-center">
               <SProgress2 />
             </div>
             <div className="mt-6 lg:mt-[80px] ">
-
               <div className="">
                 <p className="text-black text-[14px] ">Workspace</p>
                 <div className=" border-[1px] border-gray-200 hover:border-indigo-600 w-full pl-[10px] py-4 rounded-[6px] mt-3">
@@ -503,7 +501,7 @@ export default function OnboardingForm({
               </div>
 
               <div className="mt-[29px]">
-                <p className="text-black text-[14px] ">Phone Nuber</p>
+                <p className="text-black text-[14px] ">Phone Number</p>
                 <div className="flex gap-x-[10px] items-center border-[1px] border-gray-200 hover:border-indigo-600 w-full pl-[10px] py-4 rounded-[6px] mt-3">
                   <p>+</p>
                   <input
@@ -582,7 +580,8 @@ export default function OnboardingForm({
       {currentIndex === 2 && (
         <div className="px-3 lg:px-0 max-w-full lg:max-w-[835px] w-full lg:w-[532px] mt-6 lg:mt-10 mx-auto pb-[100px]">
           <p className=" font-medium text-center hidden lg:block">
-            Your name allows us to personalize communication and also address you properly.
+            Your name allows us to personalize communication and also address
+            you properly.
           </p>
           <div className="max-w-full lg:max-w-[458px] mx-auto  mt-8 lg:mt-[80px]">
             <div className="flex mx-auto justify-center">
@@ -655,7 +654,8 @@ export default function OnboardingForm({
       {currentIndex === 3 && (
         <div className="px-3 lg:px-0 max-w-full lg:max-w-[835px] w-full lg:w-[532px] mt-6 lg:mt-10 mx-auto pb-[100px]">
           <p className=" font-medium text-center hidden lg:block">
-            Understanding your industry helps us provide features, resources, and updates that align with your professional needs.
+            Understanding your industry helps us provide features, resources,
+            and updates that align with your professional needs.
           </p>
           <div className="max-w-[458px] mx-auto  mt-8 lg:mt-[80px]">
             <div className="flex mx-auto justify-center">
