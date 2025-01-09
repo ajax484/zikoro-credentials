@@ -23,9 +23,8 @@ export function useRegistration() {
         email: values.email,
         password: values.password,
         options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback/${
-            values?.email
-          }/${new Date().toISOString()}`,
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback/${values?.email
+            }/${new Date().toISOString()}`,
         },
       });
 
@@ -244,8 +243,7 @@ export function useVerifyCode() {
         router.push(`${window.location.origin}/update-password`);
       } else {
         router.push(
-          `${
-            window.location.origin
+          `${window.location.origin
           }/onboarding?email=${email}&createdAt=${new Date().toISOString()}`
         );
       }
@@ -297,7 +295,6 @@ export function useOnboarding() {
     referralCode: string;
     referredBy: string;
     phoneNumber: string;
-    city: string;
     country: string;
     firstName: string;
     lastName: string;

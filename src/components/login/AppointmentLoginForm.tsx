@@ -28,7 +28,7 @@ const AppointmentLoginForm = () => {
   }
 
   return (
-    <div className="bg-white mx-3 lg:mx-auto py-[16px] lg:py-[20px] px-3 sm:px-[42px] lg:px-[42px] rounded-[8px] w-full max-w-full sm:max-w-md md:max-w-[542px] lg:max-w-[542px] ">
+    <div className="bg-white md:mx-auto py-[16px] lg:py-[20px] px-3 sm:px-[42px] lg:px-[42px] rounded-[8px] w-full max-w-full sm:max-w-md md:max-w-[542px] lg:max-w-[542px] ">
       <div className="flex justify-center ">
         <Image
           src={logoFooter}
@@ -43,8 +43,9 @@ const AppointmentLoginForm = () => {
         Welcome Back
       </p>
       <p className="mt-4 font-normal text-center">
-        Time to Take Control –{" "}
-        <span className="block"> Log In and Get Your Schedule Sorted! </span>
+        Take Charge of Your Progress –{" "}
+        <span className="block"> Log In, Manage, and Issue Certificates with Ease!
+        </span>
       </p>
 
       <form action="" className="mt-5" onSubmit={onSubmit}>

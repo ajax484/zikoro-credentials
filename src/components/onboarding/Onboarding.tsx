@@ -307,7 +307,6 @@ type FormData = {
   referralCode: string;
   referredBy: string;
   phoneNumber: string;
-  city: string;
   country: string;
   firstName: string;
   lastName: string;
@@ -335,17 +334,18 @@ export default function OnboardingForm({
 }) {
   const [isRefferalCode, setIsReferralCode] = useState<boolean>(false);
   const { loading, registration } = useOnboarding();
+  const [workspaceName, setWorkspaceName] = useState<string>();
 
   const [formData, setFormData] = useState({
     referralCode: "",
     referredBy: "",
     phoneNumber: "",
-    city: "",
     country: "",
     firstName: "",
     lastName: "",
     industry: "",
   });
+
 
   const router = useRouter();
   const handleChange = (e: any) => {
@@ -383,8 +383,12 @@ export default function OnboardingForm({
       referredBy: values.referredBy.toUpperCase(),
     };
     try {
-      await registration(payload, email, createdAt);
-      handleNext();
+
+      if (await registration(payload, email, createdAt)) {
+        handleNext();
+      } else {
+        toast.error("Registration failed")
+      }
     } catch (error) {
       console.error("Registration failed:", error);
     }
@@ -398,7 +402,7 @@ export default function OnboardingForm({
           <div className="flex mx-auto justify-center">
             <SProgress1 />
           </div>
-          <div className="mt-6 lg:mt-[52px] ">
+          <div className="mt-6 lg:mt-[80px] ">
             <p className="text-black text-[20px] font-semibold w-full text-center">
               Do you have a referral code?
             </p>
@@ -469,29 +473,42 @@ export default function OnboardingForm({
 
       {/* 2nd */}
       {currentIndex === 1 && (
-        <div className="px-3 lg:px-0 max-w-full lg:max-w-[835px] mt-6 lg:mt-10 mx-auto pb-[100px]">
-          <p className="w-full lg:w-[835px] font-medium text-center hidden lg:block">
-            We need this information to personalize your experience, tailor
-            services to your location, and ensure secure account setup.
+        <div className="px-3 lg:px-0 max-w-full lg:max-w-[835px] w-full lg:w-[532px] mt-6 lg:mt-10 mx-auto pb-[100px]">
+          <p className=" font-medium text-center hidden lg:block">
+            We ask for your phone number, city, and country to personalize your experience, tailor services to your location, and ensure secure account setup.
           </p>
           <p className="w-full lg:w-[835px] font-medium text-center block lg:hidden">
-            We ask for your phone number, city, and country to personalize your
-            experience, tailor services to your location, and ensure secure
-            account setup.
+            We ask for your phone number, city, and country to personalize your experience, tailor services to your location, and ensure secure account setup.
           </p>
-          <div className="max-w-full lg:max-w-[458px] mx-auto">
+          <div className="max-w-full lg:max-w-[458px] mx-auto mt-8 lg:mt-[80px]">
             <div className="flex mx-auto justify-center">
               <SProgress2 />
             </div>
-            <div className="mt-6 lg:mt-[52px] ">
-              {/* 1st input */}
-              <div>
+            <div className="mt-6 lg:mt-[80px] ">
+
+              <div className="">
+                <p className="text-black text-[14px] ">Workspace</p>
+                <div className=" border-[1px] border-gray-200 hover:border-indigo-600 w-full pl-[10px] py-4 rounded-[6px] mt-3">
+                  <input
+                    type="text"
+                    placeholder="Organization name"
+                    className=" text-[#1f1f1f] placeholder-gray-500 bg-transparent outline-none "
+                    name=""
+                    value={workspaceName}
+                    onChange={(e) => setWorkspaceName(e.target.value)}
+                    autoComplete="off"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="mt-[29px]">
                 <p className="text-black text-[14px] ">Phone Nuber</p>
                 <div className="flex gap-x-[10px] items-center border-[1px] border-gray-200 hover:border-indigo-600 w-full pl-[10px] py-4 rounded-[6px] mt-3">
                   <p>+</p>
                   <input
                     type="tel"
-                    placeholder="234 001 002 0003"
+                    placeholder="Enter Phone Number"
                     className=" text-[#1f1f1f] placeholder-gray-500 bg-transparent outline-none "
                     name="phoneNumber"
                     id=""
@@ -501,23 +518,6 @@ export default function OnboardingForm({
                     autoComplete="off"
                     min={11}
                     max={13}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-[29px]">
-                <p className="text-black text-[14px] ">City</p>
-                <div className=" border-[1px] border-gray-200 hover:border-indigo-600 w-full pl-[10px] py-4 rounded-[6px] mt-3">
-                  <input
-                    type="text"
-                    placeholder="Enter Your City"
-                    className=" text-[#1f1f1f] placeholder-gray-500 bg-transparent outline-none "
-                    name="city"
-                    id=""
-                    value={formData.city}
-                    onChange={handleChange}
-                    autoComplete="off"
-                    required
                   />
                 </div>
               </div>
@@ -562,7 +562,7 @@ export default function OnboardingForm({
                 </button>{" "}
                 <button
                   onClick={() => {
-                    if (!formData.city) {
+                    if (!workspaceName) {
                       toast.error("Please fill out all required fields!");
                     } else {
                       handleNext();
@@ -580,16 +580,15 @@ export default function OnboardingForm({
       )}
       {/* 3rd */}
       {currentIndex === 2 && (
-        <div className="px-3 lg:px-0 max-w-full lg:max-w-[835px] mt-6 lg:mt-10 mx-auto pb-[100px]">
-          <p className=" w-full lg:w-[835px] font-medium text-center">
-            Your name allows us to personalize communication and also address
-            you properly.
+        <div className="px-3 lg:px-0 max-w-full lg:max-w-[835px] w-full lg:w-[532px] mt-6 lg:mt-10 mx-auto pb-[100px]">
+          <p className=" font-medium text-center hidden lg:block">
+            Your name allows us to personalize communication and also address you properly.
           </p>
-          <div className="max-w-full lg:max-w-[458px] mx-auto mt-8">
+          <div className="max-w-full lg:max-w-[458px] mx-auto  mt-8 lg:mt-[80px]">
             <div className="flex mx-auto justify-center">
               <SProgress3 />
             </div>
-            <div className="mt-6 lg:mt-[52px] ">
+            <div className="mt-6 lg:mt-[80px] ">
               {/* 1st input */}
               <div>
                 <p className="text-black text-[14px] ">First Name</p>
@@ -654,16 +653,15 @@ export default function OnboardingForm({
 
       {/* 4th */}
       {currentIndex === 3 && (
-        <div className="px-3 lg:px-0 max-w-full lg:max-w-[835px] mt-6 lg:mt-10 mx-auto pb-[100px]">
-          <p className=" w-full xl:w-[835px] text-[14px] lg:text-base font-medium text-center">
-            Understanding your industry helps us provide features, resources,
-            and updates that align with your professional needs.
+        <div className="px-3 lg:px-0 max-w-full lg:max-w-[835px] w-full lg:w-[532px] mt-6 lg:mt-10 mx-auto pb-[100px]">
+          <p className=" font-medium text-center hidden lg:block">
+            Understanding your industry helps us provide features, resources, and updates that align with your professional needs.
           </p>
-          <div className="max-w-[458px] mx-auto">
+          <div className="max-w-[458px] mx-auto  mt-8 lg:mt-[80px]">
             <div className="flex mx-auto justify-center">
               <SProgress4 />
             </div>
-            <div className="mt-6 lg:mt-[52px] ">
+            <div className="mt-6 lg:mt-[8px] ">
               {/* 1st input */}
 
               <div className="mt-[29px]">
@@ -727,7 +725,7 @@ export default function OnboardingForm({
           <div className="flex mx-auto justify-center">
             <SProgress5 />
           </div>
-          <div className="mt-[24px] lg:mt-[52px] ">
+          <div className="mt-[24px] lg:mt-[80px] ">
             <div className="flex justify-center">
               <SpCheck />
             </div>
