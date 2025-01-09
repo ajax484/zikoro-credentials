@@ -47,7 +47,8 @@ export async function POST(
         workspaceId,
         workspaceAlias,
         recipientDetails: recipients,
-        tokenId: 1
+        tokenId: 1,
+        credentialType: "certificate",
       }
     );
 

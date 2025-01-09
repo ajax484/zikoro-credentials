@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import axios from "axios";
 
 export async function POST(
   req: NextRequest,
@@ -12,8 +11,23 @@ export async function POST(
   try {
     const { workspaceId: workspaceAlias } = params;
     const payload = await req.json();
-    const { amountToCharge, activityBy, credentialId, workspaceId, tokenId } =
-      payload;
+    const {
+      amountToCharge,
+      activityBy,
+      credentialId,
+      workspaceId,
+      tokenId,
+      credentialType,
+    } = payload;
+
+    console.log(
+      amountToCharge,
+      activityBy,
+      credentialId,
+      workspaceId,
+      tokenId,
+      credentialType
+    );
 
     const { data: tokens, error: creditsError } = await supabase
       .from("credentialsWorkspaceToken")
@@ -61,18 +75,22 @@ export async function POST(
       throw new Error("Insufficient balance to complete the charge.");
     }
 
+    const log = {
+      workspaceAlias,
+      tokenId,
+      creditAmount: amountToCharge,
+      activityBy,
+      activity: "debit",
+      creditBalance: balance - amountToCharge,
+      recipientDetails: payload?.recipientDetails,
+    };
+
+    log[credentialType === "certificate" ? "certificateId" : "badgeId"] =
+      credentialId;
+
     const { error: logError } = await supabase
       .from("credentialTokenUsageHistory")
-      .insert({
-        workspaceAlias,
-        credentialId,
-        tokenId,
-        creditAmount: amountToCharge,
-        activityBy,
-        activity: "debit",
-        creditBalance: balance - amountToCharge,
-        recipientDetails: payload?.recipientDetails,
-      });
+      .insert(log);
 
     if (logError) {
       throw new Error(`Failed to insert usage logs: ${logError.message}`);
