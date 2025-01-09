@@ -13,6 +13,7 @@ const page = ({
   params: { alias: string };
   searchParams: {
     workspaceId: string;
+    workspaceAlias: string;
     eventAlias: string;
     type: "certificate" | "badge";
   };
@@ -24,6 +25,7 @@ const page = ({
       workspaceId={searchParams.workspaceId}
       eventAlias={searchParams.eventAlias}
       type={searchParams.type}
+      workspaceAlias={searchParams.workspaceAlias}
     />
   );
 };

@@ -32,6 +32,7 @@ interface EditorProps {
   name: string;
   setName: (name: string) => void;
   workspaceId: string;
+  workspaceAlias: string;
   save: (
     values: { json: string; height: number; width: number },
     url: string
@@ -69,6 +70,7 @@ export const Editor = ({
   name,
   setName,
   workspaceId,
+  workspaceAlias,
   save,
   isSaving,
   isError,
@@ -220,6 +222,8 @@ export const Editor = ({
           chargeCredits={chargeCredits}
           isMutating={isMutating}
           creditsIsLoading={creditsIsLoading}
+          type={type}
+          workspaceAlias={workspaceAlias}
         />
         <VerificationSidebar
           editor={editor}

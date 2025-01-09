@@ -315,17 +315,6 @@ const buildEditor = ({
     },
     addQRCode: (value: string, color: string, bgcolor: string) => {
       try {
-        console.log(
-          rgbaToHex(color),
-          rgbaToHex(bgcolor),
-          "https://api.qrserver.com/v1/create-qr-code/?size=150x150&format=svg" +
-            "&bgcolor=" +
-            (rgbaToHex(bgcolor) || "#ffffff") +
-            "&color=" +
-            (rgbaToHex(color) || "#000000") +
-            "&data=" +
-            encodeURIComponent(value)
-        );
         fabric.Image.fromURL(
           "https://api.qrserver.com/v1/create-qr-code/?size=150x150&format=svg" +
             "&bgcolor=" +
@@ -337,8 +326,8 @@ const buildEditor = ({
           (image) => {
             const workspace = getWorkspace();
 
-            image.scaleToWidth(workspace?.width || 0);
-            image.scaleToHeight(workspace?.height || 0);
+            // image.scaleToWidth(workspace?.width || 0);
+            // image.scaleToHeight(workspace?.height || 0);
 
             addToCanvas(image);
           },

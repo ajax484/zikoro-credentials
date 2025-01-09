@@ -15,11 +15,13 @@ const CreateCredentialsPage = ({
   workspaceId,
   eventAlias,
   type,
+  workspaceAlias,
 }: {
   alias: string;
   workspaceId: string;
   eventAlias: string;
   type: "badge" | "certificate";
+  workspaceAlias: string;
 }) => {
   console.log(alias, workspaceId);
   const credentialFetchFn =
@@ -99,7 +101,7 @@ const CreateCredentialsPage = ({
     credentialId: number;
     workspaceId: number;
     tokenId: number;
-  }>(`/workspaces/${workspaceId}/credits/charge`);
+  }>(`/workspaces/${workspaceAlias}/credits/charge`);
 
   const creditBalance = {
     bronze: credits
@@ -122,6 +124,7 @@ const CreateCredentialsPage = ({
         name={name}
         setName={setName}
         workspaceId={workspaceId}
+        workspaceAlias={workspaceAlias}
         save={saveCredentialsFn}
         isSaving={saving}
         isError={error}

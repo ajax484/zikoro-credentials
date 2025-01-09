@@ -30,10 +30,11 @@ export interface CredentialTokenUsageHistory {
   id: number;
   createdAt: Date;
   workspaceAlias: string;
-  credentialId?: number | null;
+  certificateId?: number | null;
+  badgeId?: number | null;
   tokenId?: number | null;
   creditAmount: number;
-  recipientDetails?: Record<string, any> | null; // json
+  recipientDetails?: Record<string, any> | null;
   activityBy: number;
   activity: string;
   creditBalance: number;

@@ -18,6 +18,7 @@ import {
 import { ColorPicker } from "@/components/editor/components/color-picker";
 import { toast } from "react-toastify";
 import useUserStore from "@/store/globalUserStore";
+import useOrganizationStore from "@/store/globalOrganizationStore";
 
 interface QRCodeSidebarProps {
   editor: Editor | undefined;
@@ -44,6 +45,8 @@ interface QRCodeSidebarProps {
   }) => Promise<void>;
   isMutating: boolean;
   creditsIsLoading: boolean;
+  type: "certificate" | "badge";
+  workspaceAlias: string;
 }
 
 const QRCodeSchema = z.object({
@@ -71,6 +74,8 @@ export const QRCodeSidebar = ({
   chargeCredits,
   isMutating,
   creditsIsLoading,
+  type,
+  workspaceAlias,
 }: QRCodeSidebarProps) => {
   const onClose = () => {
     onChangeActiveTool("select");
@@ -101,8 +106,10 @@ export const QRCodeSidebar = ({
       amountToCharge: 1,
       activityBy: user?.id,
       credentialId,
+      workspaceAlias,
       workspaceId,
       tokenId: 2,
+      credentialType: type,
     };
 
     try {
