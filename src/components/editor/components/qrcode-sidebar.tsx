@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import InputOffsetLabel from "@/components/InputOffsetLabel";
 import {
   Form,
   FormControl,
@@ -16,13 +15,35 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { ColorPicker } from "@/components/editor/components/color-picker";
+import { toast } from "react-toastify";
+import useUserStore from "@/store/globalUserStore";
 
 interface QRCodeSidebarProps {
   editor: Editor | undefined;
   activeTool: ActiveTool;
   onChangeActiveTool: (tool: ActiveTool) => void;
+  getCredits: () => Promise<void>;
+  creditBalance: {
+    bronze: number;
+    silver: number;
+    gold: number;
+  };
+  credentialId: number;
+  workspaceId: string;
+  chargeCredits: ({
+    payload,
+  }: {
+    payload: {
+      amountToCharge: number;
+      activityBy: number;
+      credentialId: number;
+      workspaceId: number;
+      tokenId: number;
+    };
+  }) => Promise<void>;
+  isMutating: boolean;
+  creditsIsLoading: boolean;
 }
 
 const QRCodeSchema = z.object({
@@ -43,15 +64,24 @@ export const QRCodeSidebar = ({
   editor,
   activeTool,
   onChangeActiveTool,
+  getCredits,
+  creditBalance,
+  credentialId,
+  workspaceId,
+  chargeCredits,
+  isMutating,
+  creditsIsLoading,
 }: QRCodeSidebarProps) => {
   const onClose = () => {
     onChangeActiveTool("select");
   };
 
+  const { user } = useUserStore();
+
   const form = useForm<z.infer<typeof QRCodeSchema>>({
     resolver: zodResolver(QRCodeSchema),
     defaultValues: {
-      text: "https://www.zikoro.com/credentials/verify/certificate/#{certificateId#}",
+      text: "https://www.credentials.zikoro.com/credentials/verify/certificate/#{certificateId#}",
       color: "#000000",
       bgcolor: "#ffffff",
     },
@@ -59,7 +89,30 @@ export const QRCodeSidebar = ({
 
   const onSubmit = async (data: z.infer<typeof QRCodeSchema>) => {
     console.log(data);
-    editor?.addQRCode(data.text, data.color, data.bgcolor);
+
+    if (!user) return;
+
+    if (creditBalance.silver === 0) {
+      toast.error("Insufficient balance to complete the charge.");
+      return;
+    }
+
+    const payload = {
+      amountToCharge: 1,
+      activityBy: user?.id,
+      credentialId,
+      workspaceId,
+      tokenId: 2,
+    };
+
+    try {
+      await chargeCredits({ payload });
+      toast.success("QR Code charged successfully.");
+      await getCredits();
+      editor?.addQRCode(data.text, data.color, data.bgcolor);
+    } catch (error) {
+      toast.error("Failed to charge QR Code.");
+    }
   };
 
   return (
@@ -116,8 +169,12 @@ export const QRCodeSidebar = ({
                 )}
               />
             </div>
-            <Button type="submit" className="w-full">
-              Generate
+            <Button
+              disabled={isMutating || creditsIsLoading}
+              type="submit"
+              className="w-full"
+            >
+              Generate (1 silver token)
             </Button>
           </form>
         </Form>

@@ -47,6 +47,7 @@ export async function POST(
         workspaceId,
         workspaceAlias,
         recipientDetails: recipients,
+        tokenId: 1
       }
     );
 

@@ -35,41 +35,53 @@ export const VerificationSidebar = ({
       <ScrollArea>
         <div className="space-y-4 border-b p-4">
           <Button
-            className="w-full"
+            className="h-16 w-full"
+            variant="secondary"
+            size="lg"
             onClick={() => editor?.addText("Certificate ID: #{certificateId#}")}
           >
             Add Certificate Id
           </Button>
           <Button
-            className="w-full"
+            className="h-16 w-full"
+            variant="secondary"
+            size="lg"
             onClick={() => editor?.addText("#{first_name#}")}
           >
-            Add a Attendee First name
+            Add a First name
           </Button>
           <Button
-            className="w-full"
+            className="h-16 w-full"
+            variant="secondary"
+            size="lg"
             onClick={() => editor?.addText("#{last_name#}")}
           >
-            Add a Attendee Last name
+            Add a Last name
           </Button>
           <Button
-            className="w-full"
+            className="h-16 w-full"
+            variant="secondary"
+            size="lg"
             onClick={() => editor?.addText("#{first_name#} #{last_name#}")}
           >
-            Add a Attendee full name
+            Add a full name
           </Button>
           <Button
-            className="w-full"
+            className="h-16 w-full"
+            variant="secondary"
+            size="lg"
             onClick={() =>
               editor?.addText(
-                "https://www.credentials.zikoro.com/credentials/certificate/verify/#{certificateId#}"
+                "https://www.credentials.zikoro.com/credentials/verify/certificate/#{certificateId#}"
               )
             }
           >
             Add a Verification URL
           </Button>
           <Button
-            className="w-full"
+            className="h-16 w-full"
+            variant="secondary"
+            size="lg"
             onClick={() => editor?.addImage("#{placeholder_profile}#")}
           >
             Add a Profile Image

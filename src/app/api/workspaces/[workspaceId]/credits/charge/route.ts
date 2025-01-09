@@ -12,13 +12,14 @@ export async function POST(
   try {
     const { workspaceId: workspaceAlias } = params;
     const payload = await req.json();
-    const { amountToCharge, activityBy, credentialId, workspaceId } = payload;
+    const { amountToCharge, activityBy, credentialId, workspaceId, tokenId } =
+      payload;
 
     const { data: tokens, error: creditsError } = await supabase
       .from("credentialsWorkspaceToken")
       .select("*")
       .eq("workspaceId", workspaceId)
-      .eq("tokenId", 1)
+      .eq("tokenId", tokenId)
       .gte("expiryDate", new Date().toISOString())
       .order("expiryDate", { ascending: true });
 
@@ -33,17 +34,7 @@ export async function POST(
     let remainingCharge = amountToCharge;
     const logs = [];
 
-    const balance = {
-      bronze: tokens
-        .filter(({ tokenId }) => tokenId === 1)
-        .reduce((acc, curr) => acc + curr.creditRemaining, 0),
-      silver: tokens
-        .filter(({ tokenId }) => tokenId === 2)
-        .reduce((acc, curr) => acc + curr.creditRemaining, 0),
-      gold: tokens
-        .filter(({ tokenId }) => tokenId === 3)
-        .reduce((acc, curr) => acc + curr.creditRemaining, 0),
-    };
+    const balance = tokens.reduce((acc, curr) => acc + curr.creditRemaining, 0);
 
     console.log(balance);
 
@@ -75,11 +66,11 @@ export async function POST(
       .insert({
         workspaceAlias,
         credentialId,
-        tokenId: 1,
+        tokenId,
         creditAmount: amountToCharge,
         activityBy,
         activity: "debit",
-        creditBalance: balance.bronze - amountToCharge,
+        creditBalance: balance - amountToCharge,
         recipientDetails: payload?.recipientDetails,
       });
 
