@@ -18,18 +18,33 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
 
+
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 0) {
+      const topSectionHeight = 100; // Adjust this to define the "top section" height
+      if (window.scrollY > topSectionHeight) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
       }
     };
 
+    // Trigger handleScroll on scroll and when the browser regains focus
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        handleScroll(); // Re-check scroll position
+      }
+    };
+
     window.addEventListener("scroll", handleScroll);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    // Initial check on mount
+    handleScroll();
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
