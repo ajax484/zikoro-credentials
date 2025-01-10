@@ -8,11 +8,11 @@ import {
   SProgress5,
 } from "@/constants";
 import React, { useState } from "react";
-import { useOnboarding, useSetLoggedInUser } from "@/hooks";
+import { useOnboarding, useGetUserId } from "@/hooks";
+import { useCreateUserOrganization } from "@/hooks/services/workspace";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-
 
 const countryList = [
   "Afghanistan",
@@ -299,8 +299,6 @@ const industryList = [
   "Education and Non-Profits",
 ];
 
-
-
 type SearchParamsType = {
   email: string;
   createdAt: string;
@@ -316,7 +314,7 @@ type FormData = {
   industry: string;
 };
 
-export function generateAlphanumericHash(length?: number): string {
+function generateAlphanumericHash(length?: number): string {
   const characters =
     "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   const hashLength = length || 18;
@@ -338,6 +336,8 @@ export default function OnboardingForm({
   const [isRefferalCode, setIsReferralCode] = useState<boolean>(false);
   const { loading, registration } = useOnboarding();
   const [workspaceName, setWorkspaceName] = useState<string>();
+  const { getUserId } = useGetUserId();
+  const { createUserOrganization } = useCreateUserOrganization();
 
   const [formData, setFormData] = useState({
     referralCode: "",
@@ -385,10 +385,11 @@ export default function OnboardingForm({
       referredBy: values.referredBy.toUpperCase(),
     };
     try {
+      await createUserOrganization(workspaceName ?? "", formData.firstName);
+      await registration(payload, email, createdAt);
       handleNext();
-      toast.error("Registration failed");
     } catch (error) {
-      console.error("Registration failed:", error);
+      toast.error("Registration failed");
     }
   }
 
@@ -482,11 +483,11 @@ export default function OnboardingForm({
             experience, tailor services to your location, and ensure secure
             account setup.
           </p>
-          <div className="max-w-full lg:max-w-[458px] mx-auto mt-8 lg:mt-[80px]">
+          <div className="max-w-full lg:max-w-[458px] mx-auto mt-8 lg:mt-[30px]">
             <div className="flex mx-auto justify-center">
               <SProgress2 />
             </div>
-            <div className="mt-6 lg:mt-[80px] ">
+            <div className="mt-6  ">
               <div className="">
                 <p className="text-black text-[14px] ">Workspace</p>
                 <div className=" border-[1px] border-gray-200 hover:border-indigo-600 w-full pl-[10px] py-4 rounded-[6px] mt-3">
@@ -738,7 +739,7 @@ export default function OnboardingForm({
 
             <p className="text-black font-medium text-center mt-3">
               Your profile has been created successfully, start exploring zikoro
-              bookings!{" "}
+              credentials!{" "}
             </p>
 
             {/* buttons */}

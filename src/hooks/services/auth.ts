@@ -284,7 +284,6 @@ export const getUser = async (email: string | null) => {
 export function useOnboarding() {
   const [loading, setLoading] = useState(false);
   const { setUser } = useUserStore();
-  const router = useRouter();
 
   type CreateUser = {
     values: z.infer<typeof onboardingSchema>;
@@ -308,22 +307,28 @@ export function useOnboarding() {
   ) {
     try {
       setLoading(true);
-      const { data, status } = await postRequest<CreateUser>({
-        endpoint: "/auth/user",
-        payload: {
-          ...values,
+      const { data, error, status } = await supabase
+        .from("users")
+        .insert({
           userEmail: email,
+          firstName: values.firstName,
+          lastName: values.lastName,
           created_at: createdAt,
-        },
-      });
+          industry: values.industry,
+          referralCode: values.referralCode,
+          phoneNumber: values.phoneNumber,
+          referredBy: values.referredBy
+        });
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
 
       if (status === 201 || status === 200) {
-        const user = await getUser(email);
-        setUser(user);
         setLoading(false);
         toast.success("Profile Updated Successfully");
       }
-
       return data;
     } catch (error: any) {
       //
@@ -337,3 +342,24 @@ export function useOnboarding() {
     loading,
   };
 }
+
+
+export const useGetUserId = () => {
+  const getUserId = async (email: string | null): Promise<string | undefined> => {
+    if (!email) return;
+
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("id") // Select only the id field
+      .eq("userEmail", email)
+      .single();
+
+    if (error) {
+      console.error("Error fetching user ID:", error);
+      return;
+    }
+    return user.id; // Return the user ID
+  };
+
+  return { getUserId };
+};
