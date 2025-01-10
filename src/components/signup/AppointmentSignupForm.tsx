@@ -27,7 +27,7 @@ const AppointmentSignupForm = () => {
   }
 
   return (
-    <div className="bg-white py-[16px] lg:py-[37px] px-3 lg:px-[42px]  rounded-[8px] max-w-full lg:max-w-[542px] ">
+    <div className="bg-white py-[16px] lg:py-[37px] px-3 lg:px-[42px] rounded-[8px] max-w-full md:max-w-[542px] mx-auto ">
       <div className="flex justify-center ">
         <Image
           src={logoFooter}
@@ -41,8 +41,11 @@ const AppointmentSignupForm = () => {
       <p className="text-2xl text-indigo-600 text-center mt-10 font-semibold">
         Sign Up
       </p>
-      <p className="mt-4 font-normal text-center lg:text-left">
-        It&apos;ll Only Take 2 Minutes to Get You Up and Running!
+      <p className="mt-4 font-normal text-center">
+        Get Started in Just 2 Minutes –
+        <span className="block">
+          Sign Up, Manage, and Issue Certificates with Ease!
+        </span>
       </p>
 
       <form action="" className="mt-10" onSubmit={onSubmit}>

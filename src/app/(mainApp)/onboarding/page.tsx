@@ -1,8 +1,8 @@
 import Onboarding from "@/components/onboarding/Onboarding";
 import Image from "next/image";
 import React from "react";
-import sBanner from "@/public/appointments/signupBannerS.webp";
-import bBanner from "@/public/appointments/signupBanner.png";
+import sBanner from "@/public/appointments/signupBannerS.png";
+import Banner from "@/public/appointments/signupBanner.png";
 
 type SearchParamsType = {
   email: string;
@@ -15,26 +15,36 @@ const AppointmentSignupPage = ({
   searchParams: SearchParamsType;
 }) => {
   return (
-    <div className="bg-[#f9faff] min-h-screen">
-      {/* banner */}
-      <Image
-        src={bBanner}
-        alt="banner"
-        width={1140}
-        height={377}
-        className="w-full h-full object-cover hidden lg:block "
-      />
+    <div>
+      {/* large screen */}
+      <div className="bg-[#f9faff] hidden lg:flex items-center">
+        <div className="w-[50%]">
+          <Image
+            src={Banner}
+            alt="banner"
+            width={864}
+            className="w-full h-screen"
+          />
+        </div>
 
-      <Image
-        src={sBanner}
-        alt="banner"
-        width={375}
-        height={215}
-        className="w-full h-full object-cover block lg:hidden"
-      />
+        <div className="w-[50%]">
+          <Onboarding searchParams={searchParams} />
+        </div>
+      </div>
+      {/* small screen */}
+      <div className="bg-[#f9faff] min-h-screen block lg:hidden">
+        {/* banner */}
+        <Image
+          src={sBanner}
+          alt="banner"
+          width={375}
+          height={215}
+          className="w-full h-full object-cover"
+        />
 
-      {/* dynamic components */}
-      <Onboarding searchParams={searchParams} />
+        {/* dynamic components */}
+        <Onboarding searchParams={searchParams} />
+      </div>
     </div>
   );
 };
