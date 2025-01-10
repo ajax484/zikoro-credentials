@@ -43,7 +43,6 @@ import CertificateIcon2 from "@/public/icons/ph_certificate-duotone.svg";
 import CertificateAssignIcon from "@/public/icons/clarity_certificate-outline-alerted.svg";
 import EmailOpenedIcon from "@/public/icons/line-md_email-opened-alt-twotone.svg";
 import ShareIcon from "@/public/icons/ic_twotone-share.svg";
-import QuestionIcon from "@/public/icons/mdi_question-mark-rhombus.svg";
 import { InfoCircle } from "styled-icons/bootstrap";
 
 const CreateCertificateDialog = ({
@@ -306,11 +305,8 @@ const Home = () => {
               <p className="font-medium text-sm">Create new badge</p>
               <small className="text-xs text-gray-600">Coming soon</small>
             </button>
-            <div className="bg-white text-[#1F1F1F] px-1 py-4 rounded-xl space-y-1 border">
-              <div className="space-y-2">
-                <h3 className="text-gray-700 font-semibold text-center">
-                  My Points
-                </h3>
+            <div className="bg-white text-[#1F1F1F] px-1 py-4 rounded-xl flex flex-col justify-center items-center gap-y-2 border">
+              <div className="">
                 <div className="flex gap-8 justify-center">
                   <div>
                     <span className="font-medium text-sm">Bronze</span>
@@ -352,7 +348,7 @@ const Home = () => {
               </p>
               <Link
                 href={"/credits/buy"}
-                className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize"
+                className="text-xs bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize"
               >
                 Buy more credits
               </Link>
@@ -478,13 +474,13 @@ const Home = () => {
                   <span className="font-bold text-xl">{0}</span>
                 </div>
               </div>
-              <div className="flex justify-center items-center gap-2">
+              {/* <div className="flex justify-center items-center gap-2">
                 <Link href={"/analytics"}>
                   <span className="text-basePrimary mx-auto underline">
                     See all
                   </span>
                 </Link>
-              </div>
+              </div> */}
             </div>
           </div>
 
