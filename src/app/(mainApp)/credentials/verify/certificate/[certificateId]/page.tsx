@@ -44,7 +44,7 @@ const CertificateView = ({
       replaceSpecialText(
         JSON.stringify(certificate?.originalCertificate.JSON?.json || {}),
         {
-          asset: certificate,
+          asset: certificate.originalCertificate,
           recipient: certificate,
           organization: certificate.originalCertificate.workspace,
         }

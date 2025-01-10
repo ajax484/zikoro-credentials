@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Upload from "./upload";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { useGetData } from "@/hooks/services/request";
@@ -8,6 +8,12 @@ import MapRecipients from "./MapRecipients";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Preview from "./Preview";
+
+export interface Header {
+  label: string;
+  value: string;
+  isRequired: boolean;
+}
 
 const AssignExcelPage = ({
   certificateAlias,
@@ -24,12 +30,7 @@ const AssignExcelPage = ({
 
   const [excelResult, setExcelResult] = useState<string[][]>([]);
 
-  const [headers, setHeaders] = useState<
-    Map<
-      { label: string; value: keyof CertificateRecipient; isRequired: boolean },
-      any
-    >
-  >(
+  const [headers, setHeaders] = useState<Map<Header, any>>(
     new Map([
       [
         { label: "First name", value: "recipientFirstName", isRequired: true },
@@ -42,6 +43,33 @@ const AssignExcelPage = ({
       [{ label: "Email", value: "recipientEmail", isRequired: true }, null],
     ])
   );
+
+  const [headersUpdated, setHeadersUpdated] = useState(false);
+
+  useEffect(() => {
+    if (headersUpdated) return;
+    if (!certificate || certificateIsLoading) return;
+    console.log("here");
+    setHeadersUpdated(true);
+    setHeaders((prevHeaders) => {
+      const updatedHeaders = new Map(prevHeaders);
+
+      certificate?.attributes?.forEach((attribute) => {
+        const duplicateKey = Array.from(updatedHeaders.keys()).find(
+          (key) => key.label === attribute || key.value === attribute
+        );
+
+        if (!duplicateKey) {
+          updatedHeaders.set(
+            { label: attribute, value: attribute, isRequired: false },
+            "N/A"
+          );
+        }
+      });
+
+      return updatedHeaders;
+    });
+  }, [certificateIsLoading]);
 
   const updateHeader = (
     key: {
@@ -102,6 +130,7 @@ const AssignExcelPage = ({
             excelHeaders={excelResult[0]}
             step={step}
             setStep={setStep}
+            attributes={certificate?.attributes}
           />
         )}
         {step === 3 && (

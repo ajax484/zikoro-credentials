@@ -6,7 +6,7 @@ import Certificate from "@/public/icons/ph_certificate-duotone.svg";
 import Image from "next/image";
 import { useGetData } from "@/hooks/services/request";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TCertificate } from "@/types/certificates";
+import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import Email from "@/public/icons/mdi_email-sent.svg";
 import Calendar from "@/public/icons/duo-icons_calendar.svg";
 import { format } from "date-fns";
@@ -36,6 +36,15 @@ import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { CreateOrganization } from "@/components/CreateOrganisation/createOrganisation";
 import { PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { CredentialsWorkspaceToken } from "@/types/token";
+import SelectOrganization from "@/components/SelectOrganization/SelectOrganization";
+import CertificateIcon from "@/public/icons/teenyicons_certificate-solid.svg";
+import CertificateIcon2 from "@/public/icons/ph_certificate-duotone.svg";
+import CertificateAssignIcon from "@/public/icons/clarity_certificate-outline-alerted.svg";
+import EmailOpenedIcon from "@/public/icons/line-md_email-opened-alt-twotone.svg";
+import ShareIcon from "@/public/icons/ic_twotone-share.svg";
+import QuestionIcon from "@/public/icons/mdi_question-mark-rhombus.svg";
+import { InfoCircle } from "styled-icons/bootstrap";
 
 const CreateCertificateDialog = ({
   open,
@@ -45,6 +54,7 @@ const CreateCertificateDialog = ({
   setDialogIsOpen,
   workspaces,
   workspacesIsLoading,
+  triggerButton,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -59,6 +69,7 @@ const CreateCertificateDialog = ({
   setDialogIsOpen: (open: boolean) => void;
   workspaces: TOrganization[];
   workspacesIsLoading: boolean;
+  triggerButton: React.ReactNode;
 }) => {
   const { organization, setOrganization } = useOrganizationStore();
 
@@ -75,18 +86,7 @@ const CreateCertificateDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <button className="rounded flex-1 flex flex-col items-center justify-center px-2 py-12 bg-white border">
-          <Image
-            src={Certificate}
-            alt={"certificate"}
-            width={30}
-            height={30}
-            className="rounded-full"
-          />
-          <p className="font-medium text-sm">Create new certificate</p>
-        </button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{triggerButton}</DialogTrigger>
       <DialogContent className="max-w-[50%]">
         <DialogHeader>
           <DialogTitle>Create Certificate</DialogTitle>
@@ -183,9 +183,23 @@ const Home = () => {
     error,
   } = useGetData<TCertificate[]>(
     `/certificates?workspaceAlias=${organization?.organizationAlias}`,
-
     []
   );
+
+  const { data: recentCertificate, isLoading: recentCertificateIsLoading } =
+    useGetData<TCertificate>(`/certificates/recent`, {});
+
+  //fetch recipients
+  const { data: recipients, isLoading: recipientsIsLoading } = useGetData<
+    CertificateRecipient[]
+  >(`/${organization?.organizationAlias}/certificates/recipients`, []);
+
+  console.log(recentCertificate);
+  console.log(recipients);
+
+  const { data: credits, isLoading: creditsIsLoading } = useGetData<
+    CredentialsWorkspaceToken[]
+  >(`/workspaces/${organization?.id}/credits`, []);
 
   const { createCertificate, isLoading: certificateIsCreating } =
     useCreateCertificate();
@@ -217,21 +231,56 @@ const Home = () => {
 
   const [dialogIsOpen, setDialogIsOpen] = useState<boolean>(false);
 
+  const creditBalance = {
+    bronze: credits
+      .filter((v) => v.tokenId === 1)
+      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
+    silver: credits
+      .filter((v) => v.tokenId === 2)
+      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
+    gold: credits
+      .filter((v) => v.tokenId === 3)
+      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
+  };
+
+  const recentCertificateHasBeenAssigned = recipients?.some(
+    (recipient) => recipient.certificateGroupId === recentCertificate?.id
+  );
+
+  const assignedCertificates = certificates?.filter(
+    (certificate) => certificate.recipientCount > 0
+  );
+
   return (
     <section className="space-y-4">
-      <div className="text-gray-700">
-        <p>
-          Hello, <b>{user?.firstName}</b>
-        </p>
-        <p className="text-sm text-gray-600">
-          What will you be working on today?
-        </p>
+      <div className="flex items-center justify-between">
+        <div className="text-gray-700">
+          <p>
+            Hello, <b>{user?.firstName}</b>
+          </p>
+          <p className="text-sm text-gray-600">
+            What will you be working on today?
+          </p>
+        </div>
+        <SelectOrganization />
       </div>
 
       <div className="grid gap-4">
         <div className="space-y-6">
-          <div className="flex items-center gap-6">
+          <div className="grid grid-cols-3 gap-4 min-h-fit">
             <CreateCertificateDialog
+              triggerButton={
+                <button className="rounded flex flex-col items-center justify-center px-2 py-12 bg-white border">
+                  <Image
+                    src={Certificate}
+                    alt={"certificate"}
+                    width={30}
+                    height={30}
+                    className="rounded-full"
+                  />
+                  <p className="font-medium text-sm">Create new certificate</p>
+                </button>
+              }
               open={open}
               setOpen={setOpen}
               createCertificateFn={createCertificateFn}
@@ -244,8 +293,8 @@ const Home = () => {
               workspacesIsLoading={workspacesIsLoading}
             />
             <button
-              className="rounded flex-1 flex flex-col items-center justify-center px-2 py-12 bg-white border"
               disabled
+              className="rounded flex flex-col items-center justify-center px-2 py-12 bg-white border"
             >
               <Image
                 src={Badge}
@@ -257,6 +306,186 @@ const Home = () => {
               <p className="font-medium text-sm">Create new badge</p>
               <small className="text-xs text-gray-600">Coming soon</small>
             </button>
+            <div className="bg-white text-[#1F1F1F] px-1 py-4 rounded-xl space-y-1 border">
+              <div className="space-y-2">
+                <h3 className="text-gray-700 font-semibold text-center">
+                  My Points
+                </h3>
+                <div className="flex gap-8 justify-center">
+                  <div>
+                    <span className="font-medium text-sm">Bronze</span>
+                    <div className="flex gap-x-1 items-center">
+                      <div className="rounded-full p-0.5 [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]">
+                        <div className="rounded-full size-5 [box-shadow:_0px_8px_12px_0px_#C2AF9B66;] [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]" />
+                      </div>
+                      <span className="font-semibold text-sm">
+                        {creditBalance.bronze}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-sm">Silver</span>
+                    <div className="flex gap-x-1">
+                      <div className="rounded-full p-0.5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1));]">
+                        <div className="rounded-full size-5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1));]" />
+                      </div>
+                      <span className="font-semibold text-sm">
+                        {creditBalance.silver}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-sm">Gold</span>
+                    <div className="flex gap-x-1">
+                      <div className="rounded-full p-0.5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%);]">
+                        <div className="rounded-full size-5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%);]" />
+                      </div>
+                      <span className="font-semibold text-sm">
+                        {creditBalance.gold}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="text-center font-medium text-gray-800 text-xs">
+                You need credits to issue credentials.
+              </p>
+              <Link
+                href={"/credits/buy"}
+                className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize"
+              >
+                Buy more credits
+              </Link>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-9 gap-4">
+            <div className="rounded-lg border border-gray-200 bg-white col-span-6 p-4 space-y-4">
+              <h3 className="font-semibold">📍Pick up where you left off</h3>
+              <div className="flex gap-2">
+                <div className="flex-[40%] flex justify-center items-center p-8 bg-basePrimary/10 rounded-lg">
+                  <Image
+                    src={CertificateIcon}
+                    alt={"certificate"}
+                    height={200}
+                    width={200}
+                  />
+                </div>
+
+                <div className="flex-[60%] space-y-4">
+                  <h4 className="font-medium">Your progress:</h4>
+                  <div>
+                    <div className="flex gap-2 items-end">
+                      <div className="border-2 rounded-full size-6 border-basePrimary" />
+                      <span>Design</span>
+                    </div>
+                    <div className="ml-[11px] h-10 w-[2px] bg-basePrimary" />
+                    <div className="flex gap-2 items-end">
+                      <div className="border-2 rounded-full size-6 border-basePrimary" />
+                      <span>Assign</span>
+                    </div>
+                    <div className="ml-[11px] h-10 w-[2px] bg-basePrimary" />
+                    <div className="flex gap-2 items-end">
+                      <div className="border-2 rounded-full size-6 border-basePrimary" />
+                      <span>Track Usage</span>
+                    </div>
+                  </div>
+                  {(!recentCertificate || !recentCertificate.lastEdited) && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <InfoCircle size={20} className="text-red-600" />
+                        <span className="text-xs text-gray-500">
+                          Looks like you haven't started designing
+                        </span>
+                      </div>
+                      <CreateCertificateDialog
+                        triggerButton={
+                          <Button className="bg-basePrimary text-white rounded-md">
+                            Start Designing
+                          </Button>
+                        }
+                        open={open}
+                        setOpen={setOpen}
+                        createCertificateFn={createCertificateFn}
+                        certificateIsCreating={certificateIsCreating}
+                        setDialogIsOpen={() => {
+                          setOpen(false);
+                          setDialogIsOpen(true);
+                        }}
+                        workspaces={workspaces}
+                        workspacesIsLoading={workspacesIsLoading}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="border rounded-md bg-white p-4 col-span-3 space-y-6 w-full">
+              <div className="flex justify-between">
+                <h3 className="font-semibold">📊 Analytics</h3>
+              </div>
+              <div className="space-y-4 divide-y divide-gray-200 [&>*]:pt-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex gap-2 items-center">
+                    <Image
+                      src={CertificateIcon2}
+                      alt={"certificate"}
+                      width={30}
+                      height={30}
+                    />
+                    <span>Created Credentials</span>
+                  </div>
+                  <span className="font-bold text-xl">
+                    {certificates.length}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="flex gap-2 items-center">
+                    <Image
+                      src={CertificateAssignIcon}
+                      alt={"assigned"}
+                      width={30}
+                      height={30}
+                    />
+                    <span>Assigned</span>
+                  </div>
+                  <span className="font-bold text-xl">
+                    {assignedCertificates?.length}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="flex gap-2 items-center">
+                    <Image
+                      src={EmailOpenedIcon}
+                      alt={"assigned"}
+                      width={30}
+                      height={30}
+                    />
+                    <span>Viewed</span>
+                  </div>
+                  <span className="font-bold text-xl">{0}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="flex gap-2 items-center">
+                    <Image
+                      src={ShareIcon}
+                      alt={"assigned"}
+                      width={30}
+                      height={30}
+                    />
+                    <span>Shared On Socials</span>
+                  </div>
+                  <span className="font-bold text-xl">{0}</span>
+                </div>
+              </div>
+              <div className="flex justify-center items-center gap-2">
+                <Link href={"/analytics"}>
+                  <span className="text-basePrimary mx-auto underline">
+                    See all
+                  </span>
+                </Link>
+              </div>
+            </div>
           </div>
 
           {/* <div className="border rounded-md bg-white">

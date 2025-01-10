@@ -53,6 +53,9 @@ const CreateCredentialsPage = ({
         JSON: values,
         certificateSettings: settings,
         previewUrl: url,
+        attributes,
+        hasQRCode,
+        lastEdited: new Date().toISOString(),
       },
     });
   };
@@ -66,6 +69,12 @@ const CreateCredentialsPage = ({
 
   const [name, setName] = useState<string>("Untitled Certificate");
 
+  const [attributes, setAttributes] = useState<string[]>([]);
+
+  const [hasQRCode, setHasQRCode] = useState<boolean>(false);
+
+  const toggleQRCode = (value: boolean) => setHasQRCode(value);
+
   const [settings, setSettings] = useState({
     skills: [],
     publishOn: new Date(),
@@ -74,6 +83,14 @@ const CreateCredentialsPage = ({
   useEffect(() => {
     if (data?.name) {
       setName(data?.name);
+    }
+
+    if (data?.hasQRCode) {
+      setHasQRCode(data?.hasQRCode);
+    }
+
+    if (data?.attributes) {
+      setAttributes(data?.attributes);
     }
 
     if (data?.certificateSettings) {
@@ -139,6 +156,10 @@ const CreateCredentialsPage = ({
         credentialId={data?.id}
         chargeCredits={chargeCredits}
         isMutating={isMutating}
+        attributes={attributes}
+        setAttributes={setAttributes}
+        toggleQRCode={toggleQRCode}
+        hasQRCode={hasQRCode}
       />
     </>
   );

@@ -9,7 +9,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
     <>
       <header className="py-2.5 px-4 bg-white fixed w-screen z-[100]">
         <a href="https://zikoro.com" rel="noopener noreferrer">
-          <Image src={logo} alt={"zikoro logo"} width={100} height={50}></Image>
+          <Image src={logo} alt={"zikoro logo"} width={50} height={25}></Image>
         </a>
       </header>
       <main className="bg-baseBody">{children}</main>

@@ -5,17 +5,26 @@ import { ToolSidebarHeader } from "@/components/editor/components/tool-sidebar-h
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import AddVariables from "@/components/modals/AddVariables.modal";
 
 interface VerificationSidebarProps {
   editor: Editor | undefined;
   activeTool: ActiveTool;
   onChangeActiveTool: (tool: ActiveTool) => void;
+  attributes: string[];
+  setAttributes: React.Dispatch<React.SetStateAction<string[]>>;
+  save: () => Promise<void>;
+  isSaving: boolean;
 }
 
 export const VerificationSidebar = ({
   editor,
   activeTool,
   onChangeActiveTool,
+  attributes,
+  setAttributes,
+  save,
+  isSaving,
 }: VerificationSidebarProps) => {
   const onClose = () => {
     onChangeActiveTool("select");
@@ -31,6 +40,12 @@ export const VerificationSidebar = ({
       <ToolSidebarHeader
         title="Attributes"
         description="Add attributes to your credential"
+      />
+      <AddVariables
+      attributes={attributes}
+      setAttributes={setAttributes}
+      save={save}
+      isSaving={isSaving}
       />
       <ScrollArea>
         <div className="space-y-4 border-b p-4">
@@ -48,7 +63,7 @@ export const VerificationSidebar = ({
             size="lg"
             onClick={() => editor?.addText("#{first_name#}")}
           >
-            Add a First name
+            Add Recipient First name
           </Button>
           <Button
             className="h-16 w-full"
@@ -56,7 +71,7 @@ export const VerificationSidebar = ({
             size="lg"
             onClick={() => editor?.addText("#{last_name#}")}
           >
-            Add a Last name
+            Add Recipient Last name
           </Button>
           <Button
             className="h-16 w-full"
@@ -64,7 +79,7 @@ export const VerificationSidebar = ({
             size="lg"
             onClick={() => editor?.addText("#{first_name#} #{last_name#}")}
           >
-            Add a full name
+            Add Recipient full name
           </Button>
           <Button
             className="h-16 w-full"
@@ -76,7 +91,7 @@ export const VerificationSidebar = ({
               )
             }
           >
-            Add a Verification URL
+            Add Verification URL
           </Button>
           <Button
             className="h-16 w-full"
@@ -84,8 +99,19 @@ export const VerificationSidebar = ({
             size="lg"
             onClick={() => editor?.addImage("#{placeholder_profile}#")}
           >
-            Add a Profile Image
+            Add Profile Image
           </Button>
+          {attributes.length > 0 &&
+            attributes.map((attribute) => (
+              <Button
+                className="h-16 w-full"
+                variant="secondary"
+                size="lg"
+                onClick={() => editor?.addText(`#{${attribute}#}`)}
+              >
+                Add {attribute}
+              </Button>
+            ))}
         </div>
       </ScrollArea>
       <ToolSidebarClose onClick={onClose} />

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { CertificateRecipient } from "@/types/certificates";
 import { useRecipientsStore } from "@/store/globalRecipientsStore";
 import { useRouter } from "next/navigation";
+import { Header } from "./AssignExcelPage";
 
 const Preview = ({
   data,
@@ -13,10 +14,7 @@ const Preview = ({
 }: {
   data: any[][];
   excelHeaders: any[];
-  headers: Map<
-    { label: string; value: keyof CertificateRecipient; isRequired: boolean },
-    any
-  >;
+  headers: Map<Header, any>;
   setStep: Dispatch<SetStateAction<number>>;
   certificateAlias: string;
 }) => {
@@ -43,6 +41,7 @@ const Preview = ({
       recipientFirstName: string;
       recipientLastName: string;
       recipientEmail: string;
+      [key: string]: any;
     }[];
 
     setRecipients(recipients);
