@@ -1,5 +1,11 @@
 "use client";
-import { CredentialSec1, CredentialSec2, CredentialSec3 } from "@/constants";
+import {
+  CredentialSec1,
+  CredentialSec2,
+  CredentialSec3,
+  StraightLineIcon,
+  StraightLineIcon2,
+} from "@/constants";
 import { useRouter } from "next/navigation";
 
 export default function Section3() {
@@ -11,9 +17,18 @@ export default function Section3() {
         <p className="text-[32px] font-semibold text-center">How it works</p>
 
         {/* mid section */}
-        <div className="flex flex-col lg:flex-row mt-[34px] gap-10">
+        <div className="flex flex-col lg:flex-row mt-[34px] gap-10 relative">
+          {/* lg screens */}
+          <div className="hidden lg:inline xl:hidden 2xl:inline absolute top-[15%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 -z-5 ">
+            <StraightLineIcon2 />
+          </div>
+
+          {/* xl screens */}
+          <div className="hidden xl:inline 2xl:hidden absolute top-[15%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 -z-5 ">
+            <StraightLineIcon />
+          </div>
           {/* 1st div */}
-          <div className="text-center w-full lg:w-[33%]">
+          <div className="text-center w-full lg:w-[33%] z-20">
             <div className="flex justify-center">
               <CredentialSec2 />
             </div>
@@ -29,7 +44,7 @@ export default function Section3() {
           </div>
 
           {/* 2nd div */}
-          <div className="text-center w-full lg:w-[33%]">
+          <div className="text-center w-full lg:w-[33%] z-20">
             <div className="flex justify-center">
               <CredentialSec1 />
             </div>
@@ -41,7 +56,7 @@ export default function Section3() {
           </div>
 
           {/* 3rd div */}
-          <div className="text-center w-full lg:w-[33%]">
+          <div className="text-center w-full lg:w-[33%] z-20">
             <div className="flex justify-center">
               <CredentialSec3 />
             </div>
