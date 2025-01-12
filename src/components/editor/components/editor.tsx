@@ -26,6 +26,7 @@ import { VerificationSidebar } from "./verification-sidebar";
 
 import { QRCodeSidebar } from "./qrcode-sidebar";
 import { base64ToFile, uploadFile } from "@/utils/helpers";
+import { CredentialsWorkspaceToken } from "@/types/token";
 
 interface EditorProps {
   initialData: ResponseType["data"];
@@ -43,7 +44,7 @@ interface EditorProps {
   setSettings: (settings: any) => void;
   type: "certificate" | "badge";
   alias: string;
-  getCredits: () => Promise<void>;
+  getCredits: () => Promise<CredentialsWorkspaceToken[] | undefined>;
   creditBalance: {
     bronze: number;
     silver: number;
@@ -63,6 +64,10 @@ interface EditorProps {
   }) => Promise<void>;
   isMutating: boolean;
   creditsIsLoading: boolean;
+  attributes: string[];
+  setAttributes: React.Dispatch<React.SetStateAction<string[]>>;
+  toggleQRCode: (value: boolean) => void;
+  hasQRCode: boolean;
 }
 
 export const Editor = ({
@@ -84,6 +89,10 @@ export const Editor = ({
   chargeCredits,
   isMutating,
   creditsIsLoading,
+  attributes,
+  setAttributes,
+  toggleQRCode,
+  hasQRCode,
 }: EditorProps) => {
   // const { mutate } = useUpdateProject(initialData.id);
 
@@ -119,6 +128,7 @@ export const Editor = ({
     defaultHeight: initialData?.height ?? 1200,
     clearSelectionCallback: onClearSelection,
     saveCallback: debouncedSave,
+    toggleQRCode,
   });
 
   const onChangeActiveTool = useCallback(
@@ -224,11 +234,17 @@ export const Editor = ({
           creditsIsLoading={creditsIsLoading}
           type={type}
           workspaceAlias={workspaceAlias}
+          toggleQRCode={toggleQRCode}
+          hasQRCode={hasQRCode}
         />
         <VerificationSidebar
           editor={editor}
           activeTool={activeTool}
           onChangeActiveTool={onChangeActiveTool}
+          attributes={attributes}
+          setAttributes={setAttributes}
+          save={debouncedSave}
+          isSaving={isSaving}
         />
         <FontSidebar
           editor={editor}

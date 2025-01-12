@@ -183,6 +183,7 @@ export interface EditorHookProps {
     height: number;
     width: number;
   }) => void;
+  toggleQRCode: (value: boolean) => void;
 }
 
 export type BuildEditorProps = {
@@ -206,6 +207,7 @@ export type BuildEditorProps = {
   setStrokeColor: (value: string) => void;
   setStrokeWidth: (value: number) => void;
   setFontFamily: (value: string) => void;
+  toggleQRCode: (value: boolean) => void;
 };
 
 export interface Editor {
@@ -237,7 +239,7 @@ export interface Editor {
   changeImageFilter: (value: string) => void;
   addImage: (value: string) => void;
   addBackgroundImage: (value: string) => void;
-  addQRCode: (value: string, color?: string, bgcolor?: string) => void;
+  addQRCode: (value: string, color: string, bgcolor: string) => void;
   delete: () => void;
   changeFontSize: (value: number) => void;
   getActiveFontSize: () => number;

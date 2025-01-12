@@ -18,9 +18,12 @@ import { Form, FormField } from "../ui/form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { generateAlias } from "@/utils/helpers";
-import { Lock } from "lucide-react";
+import { Lock, X } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import { useRouter } from "next/navigation";
+import { ArrowBackOutline } from "styled-icons/evaicons-outline";
+import { Cancel } from "styled-icons/material-rounded";
+import useOrganizationStore from "@/store/globalOrganizationStore";
 
 type TPricingPlan = {
   amount: number | null;
@@ -53,11 +56,14 @@ export function CreateOrganization({
   close,
   refetch,
   allowRedirect = false,
+  isInitial = false,
 }: {
   refetch?: () => Promise<any>;
   close: () => void;
   allowRedirect?: boolean;
+  isInitial?: boolean;
 }) {
+  const { setOrganization } = useOrganizationStore();
   const router = useRouter();
   const { data: pricing } = useGetData<TPricingPlan[]>("/pricing");
   const { data: zikoroDiscounts } =
@@ -127,12 +133,16 @@ export function CreateOrganization({
   }, [subPlanPrice, discount]);
 
   async function onSubmit(values: z.infer<typeof organizationSchema>) {
-    await organisation(values);
-    if (refetch) refetch();
-    if (allowRedirect && buyCredits) {
-      router.push("/credits/buy");
+    const newWorkspace = await organisation(values);
+
+    if (newWorkspace) {
+      setOrganization(newWorkspace);
+      if (refetch) refetch();
+      if (allowRedirect && buyCredits) {
+        router.push("/credits/buy");
+      }
+      close();
     }
-    close();
   }
 
   function applyDiscount() {
@@ -164,16 +174,34 @@ export function CreateOrganization({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-[95%] h-[90vh] overflow-y-auto max-w-5xl grid grid-cols-1 md:grid-cols-9 box-animation bg-white mx-auto my-12  md:my-auto absolute inset-x-0 md:inset-y-0 "
+        className="rounded-xl w-[60%] h-[90vh] overflow-y-auto max-w-5xl box-animation bg-white mx-auto my-12  md:my-auto absolute inset-x-0 md:inset-y-0 "
       >
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full md:col-span-5 grid grid-cols-1 py-8 sm:py-10 px-4 sm:px-8 lg:px-10 bg-white"
+            className="w-full grid grid-cols-1 py-8 sm:py-10 px-4 sm:px-8 lg:px-10 bg-white"
           >
-            <h2 className="text-base sm:text-xl font-semibold">
-              Personal Information
-            </h2>
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <h2 className="text-base sm:text-xl font-semibold">
+                  Create Workspace
+                </h2>
+                {isInitial && (
+                  <div className="text-sm">
+                    Create a new workspace to access zikoro credentials
+                  </div>
+                )}
+              </div>
+              {!isInitial && (
+                <button
+                  aria-label="Close"
+                  onClick={close}
+                  className="w-fit h-fit px-0 ml-auto hover:cursor-pointer"
+                >
+                  <X size={22} />
+                </button>
+              )}
+            </div>
 
             <div className="w-full flex py-4 flex-col gap-y-3 items-start justify-start">
               <FormField

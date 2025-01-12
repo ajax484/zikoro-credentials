@@ -178,7 +178,7 @@ const Sidebar = () => {
       <button
         onClick={() => {
           if (typeof window !== "undefined") {
-            localStorage.clear();
+            localStorage.removeItem("user");
             setTimeout(() => {
               window.open("/", "_self");
             }, 2000);

@@ -347,9 +347,9 @@ const Designs = () => {
       <SelectOrganization />
       <div className="bg-basePrimary/10 text-[#1F1F1F] px-1 py-4 rounded-xl space-y-2 border w-1/2 mx-auto my-6">
         <div className="mb-4 space-y-2">
-          <h3 className="text-lg text-gray-700 font-semibold py-2 text-center">
+          {/* <h3 className="text-lg text-gray-700 font-semibold py-2 text-center">
             Current Credit Information
-          </h3>
+          </h3> */}
           <div className="flex gap-8 justify-center">
             <div>
               <span className="font-medium">Bronze</span>
@@ -385,7 +385,7 @@ const Designs = () => {
         </p>
         <Link
           href={"/credits/buy"}
-          className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize"
+          className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize text-xs"
         >
           Buy more credits
         </Link>

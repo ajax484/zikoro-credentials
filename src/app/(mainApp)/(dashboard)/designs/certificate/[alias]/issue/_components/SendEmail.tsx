@@ -48,7 +48,7 @@ const SendEmail = ({
     resolver: zodResolver(sendEmailSchema),
     defaultValues: {
       body: `
-      Dear #{recipientFirstName#},\n
+      Dear #{first_name#},\n
 
         Great news, your certificate is ready for download. Access it now through this link: View Certificate\n
 
@@ -88,7 +88,19 @@ const SendEmail = ({
         certificateGroupId: certificate.id,
         ...data,
         action: "release",
-        recipients,
+        recipients: recipients.map(
+          ({
+            recipientEmail,
+            recipientFirstName,
+            recipientLastName,
+            ...metadata
+          }) => ({
+            metadata,
+            recipientEmail: recipientEmail.trim(),
+            recipientFirstName: recipientFirstName.trim(),
+            recipientLastName: recipientLastName.trim(),
+          })
+        ),
         status: "email sent",
         createdBy: user?.id,
         workspaceAlias: organization?.organizationAlias,

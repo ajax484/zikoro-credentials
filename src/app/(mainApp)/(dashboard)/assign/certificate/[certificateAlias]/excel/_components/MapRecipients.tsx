@@ -11,6 +11,7 @@ import { Dispatch, FormEventHandler, SetStateAction } from "react";
 import { findKeysWithSharedValue } from "@/utils/helpers";
 import { CertificateRecipient } from "@/types/certificates";
 import { toast } from "@/hooks/use-toast";
+import { Header } from "./AssignExcelPage";
 
 const MapRecipients = ({
   headers,
@@ -19,11 +20,9 @@ const MapRecipients = ({
   deleteHeader,
   step,
   setStep,
+  attributes,
 }: {
-  headers: Map<
-    { label: string; value: keyof CertificateRecipient; isRequired: boolean },
-    any
-  >;
+  headers: Map<Header, any>;
   updateHeader: (
     key: {
       label: string;
@@ -40,11 +39,17 @@ const MapRecipients = ({
   excelHeaders: any[];
   step: number;
   setStep: Dispatch<SetStateAction<number>>;
+  attributes: string[];
 }) => {
+  // console.log(headers);
   const options = [
     { label: "First name", value: "recipientFirstName" },
     { label: "Last name", value: "recipientLastName" },
     { label: "Email", value: "recipientEmail" },
+    ...attributes.map((attribute) => ({
+      label: attribute,
+      value: attribute,
+    })),
   ];
 
   const onSubmit: FormEventHandler = (e) => {

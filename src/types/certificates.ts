@@ -42,6 +42,7 @@ export interface TCertificate {
   recipientCount: number;
   createdBy: number;
   isValid: boolean;
+  attributes: string[];
 }
 
 export interface TCertificateSettings {
@@ -96,4 +97,5 @@ export interface CertificateRecipient {
   certificateGroupId: number;
   recipientAlias: string;
   isValid: boolean;
+  hasQRCode: boolean;
 }

@@ -17,7 +17,7 @@ export const TextEditor = ({
   const handleChange = (value: string) => {
     setState({ value });
     onChangeContent(value);
-  };ed
+  };
 
   return (
     <div className="text-editor">

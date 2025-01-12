@@ -17,11 +17,15 @@ import { z } from "zod";
 // Create Zod schema for recipient form validation
 const recipientSchema = z.object({
   recipients: z.array(
-    z.object({
-      recipientFirstName: z.string().nonempty("First name is required"),
-      recipientLastName: z.string().nonempty("Last name is required"),
-      recipientEmail: z.string().email("Enter a valid Email address"),
-    })
+    z
+      .object({
+        recipientFirstName: z.string().nonempty("First name is required"),
+        recipientLastName: z.string().nonempty("Last name is required"),
+        recipientEmail: z.string().email("Enter a valid Email address"),
+      })
+      .catchall(
+        z.string().nonempty("Additional fields must be non-empty strings")
+      )
   ),
 });
 
@@ -141,50 +145,67 @@ const RecipientsPage = ({
           )}{" "}
         </h3>
 
-        <div className="space-y-6 p-6 rounded-md">
+        <div className="space-y-8 p-6 rounded-md">
           {recipients.map((recipient, index) => (
             <FormField
               key={index}
               name={`recipients.${index}` as const}
               render={() => (
-                <FormItem className="grid grid-cols-[1fr_1fr_2fr_auto] gap-4 items-center">
-                  <FormControl>
-                    <Input
-                      placeholder="First Name"
-                      value={recipient.recipientFirstName}
-                      onChange={(e) =>
-                        updateRecipient(index, {
-                          ...recipient,
-                          recipientFirstName: e.target.value,
-                        })
-                      }
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <Input
-                      placeholder="Last Name"
-                      value={recipient.recipientLastName}
-                      onChange={(e) =>
-                        updateRecipient(index, {
-                          ...recipient,
-                          recipientLastName: e.target.value,
-                        })
-                      }
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <Input
-                      type="recipientEmail"
-                      placeholder="recipientEmail"
-                      value={recipient.recipientEmail}
-                      onChange={(e) =>
-                        updateRecipient(index, {
-                          ...recipient,
-                          recipientEmail: e.target.value,
-                        })
-                      }
-                    />
-                  </FormControl>
+                <FormItem className="flex gap-4 w-full">
+                  <div className="grid grid-cols-2 gap-4 items-center flex-1">
+                    <FormControl>
+                      <Input
+                        placeholder="First Name"
+                        value={recipient.recipientFirstName}
+                        onChange={(e) =>
+                          updateRecipient(index, {
+                            ...recipient,
+                            recipientFirstName: e.target.value,
+                          })
+                        }
+                      />
+                    </FormControl>
+                    <FormControl>
+                      <Input
+                        placeholder="Last Name"
+                        value={recipient.recipientLastName}
+                        onChange={(e) =>
+                          updateRecipient(index, {
+                            ...recipient,
+                            recipientLastName: e.target.value,
+                          })
+                        }
+                      />
+                    </FormControl>
+                    <FormControl>
+                      <Input
+                        type="recipientEmail"
+                        placeholder="recipientEmail"
+                        value={recipient.recipientEmail}
+                        onChange={(e) =>
+                          updateRecipient(index, {
+                            ...recipient,
+                            recipientEmail: e.target.value,
+                          })
+                        }
+                      />
+                    </FormControl>
+                    {certificate.attributes.length > 0 &&
+                      certificate.attributes.map((attribute) => (
+                        <FormControl>
+                          <Input
+                            placeholder={`enter ${attribute}`}
+                            value={recipient[attribute] ?? ""}
+                            onChange={(e) =>
+                              updateRecipient(index, {
+                                ...recipient,
+                                [attribute]: e.target.value,
+                              })
+                            }
+                          />
+                        </FormControl>
+                      ))}
+                  </div>
                   <button
                     aria-label="Delete recipient"
                     className="text-red-600"

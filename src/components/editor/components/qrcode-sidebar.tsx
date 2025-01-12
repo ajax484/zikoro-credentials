@@ -47,6 +47,8 @@ interface QRCodeSidebarProps {
   creditsIsLoading: boolean;
   type: "certificate" | "badge";
   workspaceAlias: string;
+  toggleQRCode: (value: boolean) => void;
+  hasQRCode: boolean;
 }
 
 const QRCodeSchema = z.object({
@@ -76,6 +78,8 @@ export const QRCodeSidebar = ({
   creditsIsLoading,
   type,
   workspaceAlias,
+  toggleQRCode,
+  hasQRCode,
 }: QRCodeSidebarProps) => {
   const onClose = () => {
     onChangeActiveTool("select");
@@ -113,10 +117,11 @@ export const QRCodeSidebar = ({
     };
 
     try {
-      await chargeCredits({ payload });
-      toast.success("QR Code charged successfully.");
-      await getCredits();
+      // await chargeCredits({ payload });
+      // await getCredits();
+      // toast.success("QR Code charged successfully.");
       editor?.addQRCode(data.text, data.color, data.bgcolor);
+      toggleQRCode(true);
     } catch (error) {
       toast.error("Failed to charge QR Code.");
     }
@@ -177,11 +182,11 @@ export const QRCodeSidebar = ({
               />
             </div>
             <Button
-              disabled={isMutating || creditsIsLoading}
+              disabled={isMutating || creditsIsLoading || hasQRCode}
               type="submit"
               className="w-full"
             >
-              Generate (1 silver token)
+              {hasQRCode ? "QR Code already generated" : "Generate"}
             </Button>
           </form>
         </Form>

@@ -55,6 +55,7 @@ const buildEditor = ({
   selectedObjects,
   strokeDashArray,
   setStrokeDashArray,
+  toggleQRCode,
 }: BuildEditorProps): Editor => {
   const generateSaveOptions = () => {
     console.log(getWorkspace());
@@ -323,7 +324,7 @@ const buildEditor = ({
             (rgbaToHex(color) || "#000000") +
             "&data=" +
             encodeURIComponent(value),
-          (image) => {
+          (image: fabric.Image) => {
             const workspace = getWorkspace();
 
             // image.scaleToWidth(workspace?.width || 0);
@@ -340,7 +341,19 @@ const buildEditor = ({
       }
     },
     delete: () => {
-      canvas.getActiveObjects().forEach((object) => canvas.remove(object));
+      canvas.getActiveObjects().forEach((object: fabric.Object) => {
+        if (object.type === "image") {
+          const imageURL = object.getSrc();
+          if (
+            imageURL.includes(
+              "https://api.qrserver.com/v1/create-qr-code/?size=150x150&format=svg"
+            )
+          ) {
+            toggleQRCode(false);
+          }
+        }
+        canvas.remove(object);
+      });
       canvas.discardActiveObject();
       canvas.renderAll();
     },
@@ -365,7 +378,7 @@ const buildEditor = ({
       return value;
     },
     changeFontSize: (value: number) => {
-      canvas.getActiveObjects().forEach((object) => {
+      canvas.getActiveObjects().forEach((object: fabric.Object) => {
         if (isTextType(object.type)) {
           // @ts-ignore
           // Faulty TS library, fontSize exists.
@@ -746,6 +759,7 @@ export const useEditor = ({
   defaultWidth,
   clearSelectionCallback,
   saveCallback,
+  toggleQRCode,
 }: EditorHookProps) => {
   const initialState = useRef(defaultState);
   const initialWidth = useRef(defaultWidth);
@@ -824,6 +838,7 @@ export const useEditor = ({
         setStrokeDashArray,
         fontFamily,
         setFontFamily,
+        toggleQRCode,
       });
     }
 
