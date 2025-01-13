@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
+import { CertificateRecipient } from "@/types/certificates";
 
 export async function GET(
   req: NextRequest,
@@ -11,7 +12,8 @@ export async function GET(
     try {
       const { certificateId } = params;
 
-      // .select("*")
+      let certificate: CertificateRecipient | null = null;
+
       const { data, error, status } = await supabase
         .from("certificateRecipients")
         .select(
@@ -25,8 +27,36 @@ export async function GET(
 
       if (error) throw error;
 
+      certificate = data;
+
+      if (data.status !== "email opened" || data.status !== "revoked") {
+        const { data: updatedCertificate, error: updateError } = await supabase
+          .from("certificateRecipients")
+          .update({
+            status: "email opened",
+            statusDetails: [
+              ...(data.statusDetails ?? []),
+              {
+                action: "email opened",
+                date: new Date().toISOString(),
+              },
+            ],
+          })
+          .eq("certificateId", certificateId)
+          .select(
+            "*, originalCertificate:certificate!inner(*, workspace:organization!inner(*))"
+          )
+          .maybeSingle();
+
+        console.log(updatedCertificate);
+
+        if (updateError) throw updateError;
+
+        certificate = updatedCertificate;
+      }
+
       return NextResponse.json(
-        { data },
+        { data: certificate },
         {
           status: 200,
         }

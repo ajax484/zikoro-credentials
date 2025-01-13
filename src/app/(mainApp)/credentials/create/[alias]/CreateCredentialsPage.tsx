@@ -9,6 +9,11 @@ import {
 import React, { useEffect, useState } from "react";
 import { useGetData, useMutateData } from "@/hooks/services/request";
 import { CredentialsWorkspaceToken } from "@/types/token";
+import {
+  base64ToFile,
+  getPublicCloudinaryId,
+  uploadFile,
+} from "@/utils/helpers";
 
 const CreateCredentialsPage = ({
   alias,
@@ -30,6 +35,13 @@ const CreateCredentialsPage = ({
     alias,
   });
 
+  const [previewUrl, setUrl] = useState<string>(data?.previewUrl || "");
+
+  const { mutateData: deletePreviousUrl } = useMutateData(
+    `/cloudinary/images/${getPublicCloudinaryId(previewUrl)}`,
+    true
+  );
+
   const {
     saveCertificate,
     isLoading: saving,
@@ -46,13 +58,22 @@ const CreateCredentialsPage = ({
     },
     url: string
   ) => {
+    console.log(url);
+    if (previewUrl !== "")
+      await deletePreviousUrl({
+        payload: {},
+      });
+    base64ToFile(url, name + ".png");
+    const { url: imageUrl, error } = await uploadFile(url, "image");
+    if (error) return;
+    if (!imageUrl) return;
     const data = await saveCertificate({
       payload: {
         certificateAlias: alias,
         name,
         JSON: values,
         certificateSettings: settings,
-        previewUrl: url,
+        previewUrl: imageUrl,
         attributes,
         hasQRCode,
         lastEdited: new Date().toISOString(),
@@ -60,7 +81,7 @@ const CreateCredentialsPage = ({
     });
   };
 
-  console.log(data);
+  // console.log(data);
 
   const { event, isLoading: eventLoading } = useGetEvent({
     eventId: eventAlias,
@@ -83,6 +104,10 @@ const CreateCredentialsPage = ({
   useEffect(() => {
     if (data?.name) {
       setName(data?.name);
+    }
+
+    if (data?.previewUrl) {
+      setUrl(data?.previewUrl);
     }
 
     if (data?.hasQRCode) {

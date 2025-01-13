@@ -2,14 +2,24 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  {
+    params,
+  }: {
+    params: { workspaceId: string };
+  }
+) {
   const supabase = createRouteHandlerClient({ cookies });
+
   if (req.method === "GET") {
+    const { workspaceId } = params;
     try {
       const { data, error, status } = await supabase
         .from("certificate")
         .select("*")
         .order("lastEdited", { ascending: true })
+        .filter("workspaceAlias", "eq", workspaceId)
         .limit(1);
 
       console.log(data, "certificate");

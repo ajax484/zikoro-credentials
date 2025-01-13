@@ -35,28 +35,29 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     organization
   );
 
-  const [open, setOpen] = useState(true);
-
   const [dialogIsOpen, setDialogIsOpen] = React.useState<boolean>(true);
 
-  const updateOrganization = (value: string) => {
-    setWorkspace(
-      workspaces?.find((workspace) => String(workspace.id) === value)
-    );
-  };
+  useEffect(() => {
+    if (workspaces.length > 0) {
+      setDialogIsOpen(false);
+    } else {
+      setDialogIsOpen(true);
+    }
+  }, [workspacesIsLoading]);
 
-  // useEffect(() => {
-  //   if (!organization) {
-  //     setOpen(true);
-  //   } else {
-  //     setOpen(false);
-  //   }
-  // }, [organization]);
+  if (workspacesIsLoading)
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white">
+        <div className="animate-spin rounded-full h-16 w-16 bg-basePrimary flex items-center justify-center p-4">
+          <div className="w-full h-full bg-white rounded-full" />
+        </div>
+      </div>
+    );
 
   return (
     <main className="min-h-screen relative bg-[#f7f8ff] flex w-full">
       {/* if organization is not set, show dialog */}
-      {false && (
+      {/* {false && (
         <>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent>
@@ -106,12 +107,11 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             </DialogContent>
           </Dialog>
         </>
-      )}
+      )} */}
       {dialogIsOpen && (
         <CreateOrganization
           close={() => {
-            setOpen(true);
-            setDialogIsOpen(false);
+          setDialogIsOpen(false);
           }}
           allowRedirect={true}
           isInitial

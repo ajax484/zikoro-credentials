@@ -2,7 +2,10 @@ import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { certificateId: string } }
+) {
   const supabase = createRouteHandlerClient({ cookies });
 
   if (req.method !== "POST") {
@@ -10,36 +13,36 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const { certificateId } = params;
     const bodyParams = await req.json();
-    const { ids } = bodyParams;
+    const { social } = bodyParams;
 
-    console.log(ids);
+    console.log(social);
 
     let query;
 
-    const { data: certificates, error: fetchError } = await supabase
+    const { data: certificate, error: fetchError } = await supabase
       .from("certificateRecipients")
-      .select("*")
-      .in("id", ids);
+      .select("statusDetails")
+      .eq("certificateId", certificateId)
+      .maybeSingle();
 
     if (fetchError) throw fetchError;
 
+    if (!certificate) throw new Error("Certificate not found");
+
     query = supabase
       .from("certificateRecipients")
-      .update(
-        certificates.map((certificate) => ({
-          isValid: false,
-          status: "revoked",
-          statusDetails: [
-            ...(certificate.statusDetails || []),
-            {
-              action: "revoked",
-              date: new Date().toISOString(),
-            },
-          ],
-        }))
-      )
-      .in("id", ids);
+      .update({
+        statusDetails: [
+          ...(certificate.statusDetails || []),
+          {
+            action: "shared on" + social,
+            date: new Date().toISOString(),
+          },
+        ],
+      })
+      .eq("certificateId", certificateId);
 
     const { error } = await query;
 

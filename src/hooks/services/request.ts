@@ -143,7 +143,8 @@ export const useGetData = <TData>(
 };
 
 export const useMutateData = <TData, TReturnData = any>(
-  endpoint: string
+  endpoint: string,
+  silent?: boolean
 ): usePostResult<TData, TReturnData> => {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
@@ -159,7 +160,8 @@ export const useMutateData = <TData, TReturnData = any>(
   }) => {
     try {
       setLoading(true);
-      toast({ description: loadingMessage ?? "performing action..." });
+      !silent &&
+        toast({ description: loadingMessage ?? "performing action..." });
 
       const { data, status } = await postRequest<TReturnData>({
         endpoint,
@@ -171,9 +173,10 @@ export const useMutateData = <TData, TReturnData = any>(
         throw data;
       }
 
-      toast({
-        description: confirmationMessage ?? "action performed successfully",
-      });
+      !silent &&
+        toast({
+          description: confirmationMessage ?? "action performed successfully",
+        });
 
       return data.data;
     } catch (error) {
