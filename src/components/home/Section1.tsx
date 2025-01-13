@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { NewPlayIcon } from "@/constants";
 import { useState } from "react";
+import banner from "@/public/banner.png"
 
 export default function Section1() {
   const router = useRouter();
@@ -48,7 +49,11 @@ export default function Section1() {
 
             <div className="absolute bg-[#9D00FF] blur-[70px] rounded-full h-[150px] w-[80px] -top-[20px] -right-[5px] opacity-80 "></div>
             {showIcon ? (
-              <div className="relative z-5 bg-white rounded-[10px] shadow-md p-10 w-full lg:w-[970px] xl:w-[1128px] h-[205px] lg:h-[651px]">
+              <div className="relative z-5  rounded-[10px] shadow-md p-10 w-full lg:w-[970px] xl:w-[1128px] h-[205px] md:h-[405px]  lg:h-[651px]" style={{
+                backgroundImage: `url(${banner.src})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}>
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer" onClick={handleClick}>
                   <NewPlayIcon />
                 </div>

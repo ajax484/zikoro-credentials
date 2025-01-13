@@ -15,13 +15,13 @@ export default function Section2() {
       {/* section 2 */}
       <div className=" flex flex-col lg:flex-row gap-4 mt-[90px] min-w-[269px]">
         {/* 1st div */}
-        <div className="bg-white rounded-lg p-[10px]">
+        <div className="bg-white rounded-lg p-[10px] min-w-[269px] lg:min-w-[23%] xl:min-w-[269px]">
           <Image
             alt=""
             src={sec1}
             height={249}
             width={249}
-            className="w-full lg:w-[249px] h-[249px]"
+            className="mx-auto w-fit lg:w-[249px] h-[249px]"
           />
           <div className="mt-5 text-center">
             <p className=" text-base font-semibold ">Customizable Templates</p>
@@ -33,13 +33,13 @@ export default function Section2() {
         </div>
 
         {/* 2nd div */}
-        <div className="bg-white rounded-lg p-[10px] min-w-[269px]">
+        <div className="bg-white rounded-lg p-[10px] min-w-[269px] lg:min-w-[23%] xl:min-w-[269px]">
           <Image
             alt=""
             src={sec2}
             height={249}
             width={249}
-            className="w-full lg:w-[249px] h-[249px]"
+            className="mx-auto w-fit lg:w-[249px] h-[249px]"
           />
           <div className="mt-5 text-center">
             <p className=" text-base font-semibold ">Instant Verification</p>
@@ -50,13 +50,13 @@ export default function Section2() {
         </div>
 
         {/* 3rd div */}
-        <div className="bg-white rounded-lg p-[10px] min-w-[269px]">
+        <div className="bg-white rounded-lg p-[10px] min-w-[269px] lg:min-w-[23%] xl:min-w-[269px]">
           <Image
             alt=""
             src={sec3}
             height={249}
             width={249}
-            className="w-full lg:w-[249px] h-[249px]"
+            className="mx-auto w-fit lg:w-[249px] h-[249px]"
           />
           <div className="mt-5 text-center">
             <p className=" text-base font-semibold ">Global Accessibility</p>
@@ -67,13 +67,13 @@ export default function Section2() {
         </div>
 
         {/* 4th div */}
-        <div className="bg-white rounded-lg p-[10px] min-w-[269px]">
+        <div className="bg-white rounded-lg p-[10px] min-w-[269px] lg:min-w-[23%] xl:min-w-[269px]">
           <Image
             alt=""
             src={sec4}
             height={249}
             width={249}
-            className="w-full lg:w-[249px] h-[249px]"
+            className="mx-auto w-fit lg:w-[249px] h-[249px]"
           />
           <div className="mt-5 text-center">
             <p className=" text-base font-semibold ">Increase Brand Visibility</p>
