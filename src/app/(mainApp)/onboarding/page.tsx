@@ -9,7 +9,7 @@ type SearchParamsType = {
   createdAt: string;
 };
 
-const AppointmentSignupPage = ({
+const OnboardingPage = ({
   searchParams,
 }: {
   searchParams: SearchParamsType;
@@ -23,7 +23,7 @@ const AppointmentSignupPage = ({
             src={Banner}
             alt="banner"
             width={864}
-            className="w-full h-screen"
+            className="w-fit h-screen"
           />
         </div>
 
@@ -49,4 +49,4 @@ const AppointmentSignupPage = ({
   );
 };
 
-export default AppointmentSignupPage;
+export default OnboardingPage;

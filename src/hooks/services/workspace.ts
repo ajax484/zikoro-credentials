@@ -33,5 +33,33 @@ export function useCreateUserOrganization(
     };
 }
 
-//update user id 
+//update Workspace Details 
 
+export function useUpdateOrganization(
+) {
+    async function updateOrganization(
+        orgName: string,
+        username: string) {
+        try {
+            const { data, error, status } = await supabase
+                .from("organization")
+                .upsert({
+                    // organizationOwnerId: userId,
+                    organizationName: orgName,
+                    organizationOwner: username,
+                });
+
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+            if (status === 204 || status === 200) {
+                toast.success("Organization created successfully");
+            }
+        } catch (error) { }
+    }
+
+    return {
+        updateOrganization,
+    };
+}

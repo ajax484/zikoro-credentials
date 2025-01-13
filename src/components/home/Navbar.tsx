@@ -25,7 +25,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const topSectionHeight = 100; // Adjust this to define the "top section" height
+      const topSectionHeight = 70; // Adjust this to define the "top section" height
       if (window.scrollY > topSectionHeight) {
         setIsScrolled(true);
       } else {
@@ -120,7 +120,7 @@ const Navbar = () => {
             {/* right */}
             <div
               className="cursor-pointer "
-              onClick={() => router.push("https://www.zikoro.com")}
+              onClick={() => window.open("https://www.zikoro.com", "_blank")}
             >
               <NavModalIcon />
             </div>
@@ -141,7 +141,9 @@ const Navbar = () => {
             {/* right */}
             <div
               className="cursor-pointer "
-              onClick={() => router.push("https://engagements.zikoro.com/")}
+              onClick={() =>
+                window.open("https://engagements.zikoro.com/", "_blank")
+              }
             >
               <NavModalIcon />
             </div>
@@ -163,7 +165,9 @@ const Navbar = () => {
             {/* right */}
             <div
               className="cursor-pointer "
-              onClick={() => router.push("https://bookings.zikoro.com/")}
+              onClick={() =>
+                window.open("https://bookings.zikoro.com/", "_blank")
+              }
             >
               <NavModalIcon />
             </div>
@@ -203,7 +207,9 @@ const Navbar = () => {
                     {/* right */}
                     <div
                       className="cursor-pointer"
-                      onClick={() => router.push("https://www.zikoro.com")}
+                      onClick={() =>
+                        window.open("https://www.zikoro.com", "_blank")
+                      }
                     >
                       <NavModalIcon2 />
                     </div>
@@ -226,7 +232,7 @@ const Navbar = () => {
                     <div
                       className="cursor-pointer "
                       onClick={() =>
-                        router.push("https://engagements.zikoro.com/")
+                        window.open("https://engagements.zikoro.com/", "_blank")
                       }
                     >
                       <NavModalIcon2 />
@@ -250,7 +256,7 @@ const Navbar = () => {
                     <div
                       className="cursor-pointer "
                       onClick={() =>
-                        router.push("https://bookings.zikoro.com/")
+                        window.open("https://bookings.zikoro.com/", "_blank")
                       }
                     >
                       <NavModalIcon2 />

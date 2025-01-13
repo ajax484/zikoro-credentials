@@ -76,9 +76,12 @@ export default function Section2() {
             className="mx-auto w-fit lg:w-[249px] h-[249px]"
           />
           <div className="mt-5 text-center">
-            <p className=" text-base font-semibold ">Increase Brand Visibility</p>
+            <p className=" text-base font-semibold ">
+              Increase Brand Visibility
+            </p>
             <p className="mt-[10px] text-[14px]">
-              Boost your brand's visibility with  every shared certificate or badge.
+              Boost your brand's visibility with every shared certificate or
+              badge.
             </p>
           </div>
         </div>
