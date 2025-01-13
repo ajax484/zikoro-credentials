@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
             const { data, error } = await supabase
                 .from("organization")
                 .select("*")
-                .order("created_at", { ascending: false });
+                .order("created_at", { ascending: true });
             // Order by created_at in descending order
 
 

@@ -9,7 +9,10 @@ import {
 } from "@/constants";
 import React, { useState } from "react";
 import { useOnboarding, useGetUserId } from "@/hooks";
-import { useCreateUserOrganization } from "@/hooks/services/workspace";
+import {
+  useCreateUserOrganization,
+  useUpdateOrganization,
+} from "@/hooks/services/workspace";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -351,7 +354,9 @@ export default function OnboardingForm({
   const [workspaceName, setWorkspaceName] = useState<string>();
   const { getUserId } = useGetUserId();
   const { createUserOrganization } = useCreateUserOrganization();
-  
+  const [orgAlias, setOrgAlias] = useState<string>("");
+  const [orgId, setOrgId] = useState<number>(0);
+  const { updateOrganization } = useUpdateOrganization();
 
   const [formData, setFormData] = useState({
     referralCode: "",
@@ -398,8 +403,17 @@ export default function OnboardingForm({
       referralCode: generateAlphanumericHash(10).toUpperCase(),
       referredBy: values.referredBy.toUpperCase(),
     };
+
     try {
-      await createUserOrganization(workspaceName ?? "", formData.firstName);
+      setOrgAlias(generateOrgAlias());
+      await createUserOrganization(
+        workspaceName ?? "",
+        formData.firstName,
+        formData.phoneNumber,
+        formData.country,
+        email,
+        orgAlias
+      );
       await registration(payload, email, createdAt);
       handleNext();
     } catch (error) {
@@ -407,7 +421,14 @@ export default function OnboardingForm({
     }
   }
 
-  //update workspace
+  //update workspace ID
+  const updateWorkspaceId = async () => {
+    const response = await getUserId(email);
+    console.log(response);
+    setOrgId(Number(response));
+    await updateOrganization(orgAlias, orgId);
+    router.push("/home");
+  };
 
   return (
     <div>
@@ -761,7 +782,7 @@ export default function OnboardingForm({
             {/* buttons */}
             <div className="flex justify-center gap-x-4 mx-auto mt-[52px] ">
               <button
-                onClick={() => router.push("/home")}
+                onClick={() => updateWorkspaceId()}
                 className="text-white font-semibold text-base bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end py-3 px-4 rounded-[8px]"
               >
                 Start Exploring

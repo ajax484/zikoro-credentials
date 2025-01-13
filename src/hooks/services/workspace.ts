@@ -8,14 +8,24 @@ export function useCreateUserOrganization(
 ) {
     async function createUserOrganization(
         orgName: string,
-        username: string) {
+        username: string,
+        phone: string,
+        country: string,
+        email: string,
+        alias: string
+
+    ) {
         try {
             const { data, error, status } = await supabase
                 .from("organization")
                 .upsert({
-                    // organizationOwnerId: userId,
                     organizationName: orgName,
                     organizationOwner: username,
+                    subscriptionPlan: 'free',
+                    eventPhoneNumber: phone,
+                    country: country,
+                    eventContactEmail: email,
+                    organizationAlias: alias
                 });
 
             if (error) {
@@ -34,27 +44,23 @@ export function useCreateUserOrganization(
 }
 
 //update Workspace Details 
-
 export function useUpdateOrganization(
 ) {
     async function updateOrganization(
-        orgName: string,
-        username: string) {
+        alias: string,
+        id: number,) {
         try {
-            const { data, error, status } = await supabase
+            const { error, status } = await supabase
                 .from("organization")
-                .upsert({
-                    // organizationOwnerId: userId,
-                    organizationName: orgName,
-                    organizationOwner: username,
-                });
+                .update({ organizationOwnerId: id })
+                .eq("organizationAlias", alias);
 
             if (error) {
-                toast.error(error.message);
+                console.log(error.message);
                 return;
             }
             if (status === 204 || status === 200) {
-                toast.success("Organization created successfully");
+                console.log("Organization updated successfully");
             }
         } catch (error) { }
     }
