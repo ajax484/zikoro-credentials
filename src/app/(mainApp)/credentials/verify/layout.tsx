@@ -11,8 +11,8 @@ const layout = ({ children }: { children: React.ReactNode }) => {
         <div className="flex items-center gap-x-2 p-3">
           <Image
             src={logo}
-            width={40}
-            height={40}
+            width={50}
+            height={25}
             alt="logo"
             className="cursor-pointer"
           />
@@ -21,7 +21,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
           </span>
         </div>
       </header>
-      <main className="bg-baseBody">{children}</main>
+      <main className="bg-baseBody pt-12">{children}</main>
       <footer className="border-t border-t-basePrimary py-4 flex justify-between px-4 md:px-8 items-center">
         <span>
           <span className="hidden md:inline">Copyright</span> © 2024 - Zikoro{" "}
