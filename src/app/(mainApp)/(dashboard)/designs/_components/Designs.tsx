@@ -196,8 +196,6 @@ const Designs = () => {
   }) => {
     if (!organization) return toast.error("Please select an organization");
 
-    if (creditBalance.bronze === 0) return toast.error("Insufficient credits");
-
     if (user?.id === undefined)
       return toast.error("Please login to create certificates");
 
