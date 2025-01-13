@@ -79,36 +79,38 @@ const BuyCreditPage = () => {
   }
 
   return (
-    <section className="flex flex-col items-center pt-12 w-1/2 mx-auto gap-6 space-y-12">
-      <Timeline step={step} setStep={(step) => setStep(step)} />
-      {step === 1 && (
-        <AddPoints
-          handleNext={handleNext}
-          credits={credits}
-          updateCredits={updateCredits}
-          tokens={tokens}
-          currencyConversion={currencyConversion}
-          selectedCurrency={selectedCurrency}
-          updateCurrency={updateCurrency}
-        />
-      )}
-      {step === 2 && (
-        <Details
-          handleNext={handleNext}
-          workspace={workspace}
-          handleWorkspaceChange={handleWorkspaceChange}
-          workspaces={workspaces}
-        />
-      )}
-      {step === 3 && (
-        <Checkout
-          credits={credits}
-          tokens={tokens}
-          currencyConversion={currencyConversion}
-          selectedCurrency={selectedCurrency}
-          workspace={workspace}
-        />
-      )}
+    <section className="bg-[#f7f8ff] w-full min-h-screen">
+      <section className="flex flex-col items-center pt-12 w-1/2 mx-auto gap-6 space-y-12">
+        <Timeline step={step} setStep={(step) => setStep(step)} />
+        {step === 1 && (
+          <AddPoints
+            handleNext={handleNext}
+            credits={credits}
+            updateCredits={updateCredits}
+            tokens={tokens}
+            currencyConversion={currencyConversion}
+            selectedCurrency={selectedCurrency}
+            updateCurrency={updateCurrency}
+          />
+        )}
+        {step === 2 && (
+          <Details
+            handleNext={handleNext}
+            workspace={workspace}
+            handleWorkspaceChange={handleWorkspaceChange}
+            workspaces={workspaces}
+          />
+        )}
+        {step === 3 && (
+          <Checkout
+            credits={credits}
+            tokens={tokens}
+            currencyConversion={currencyConversion}
+            selectedCurrency={selectedCurrency}
+            workspace={workspace}
+          />
+        )}
+      </section>
     </section>
   );
 };
