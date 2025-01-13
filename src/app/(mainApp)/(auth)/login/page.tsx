@@ -7,15 +7,15 @@ import Image from "next/image";
 const AppointmentLoginPage = () => {
   return (
     <div className=" flex items-center w-full h-screen ">
-      <div className="lg:w-[50%] xl:w-[864px] 2xl:w-[60%] hidden lg:block">
+      <div className="lg:w-[50%] hidden lg:inline">
         <Image
           src={Banner}
           alt="banner"
           width={864}
-          className="w-full h-screen"
+          className="w-fit h-screen"
         />
       </div>
-      <div className="w-full lg:w-[50%] xl:w-[calc(100%-864px)] 2xl:w-[40%]">
+      <div className="w-full lg:w-[50%]">
         <AppointmentLoginForm />
       </div>
     </div>

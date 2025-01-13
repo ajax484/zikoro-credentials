@@ -328,6 +328,8 @@ export function useOnboarding() {
       if (status === 201 || status === 200) {
         setLoading(false);
         toast.success("Profile Updated Successfully");
+        const user = await getUser(email);
+        setUser(user);
       }
       return data;
     } catch (error: any) {
@@ -352,7 +354,9 @@ export const useGetUserId = () => {
       .from("users")
       .select("id") // Select only the id field
       .eq("userEmail", email)
+      .order("created_at", { ascending: false })
       .single();
+
 
     if (error) {
       console.error("Error fetching user ID:", error);

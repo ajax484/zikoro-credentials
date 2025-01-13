@@ -328,6 +328,19 @@ function generateAlphanumericHash(length?: number): string {
   return hash;
 }
 
+function generateOrgAlias(length?: number): string {
+  const characters =
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const aliasLength = length || 18;
+  let alias = "";
+
+  for (let i = 0; i < aliasLength; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    alias += characters.charAt(randomIndex);
+  }
+  return alias;
+}
+
 export default function OnboardingForm({
   searchParams: { email, createdAt },
 }: {
@@ -338,6 +351,7 @@ export default function OnboardingForm({
   const [workspaceName, setWorkspaceName] = useState<string>();
   const { getUserId } = useGetUserId();
   const { createUserOrganization } = useCreateUserOrganization();
+  
 
   const [formData, setFormData] = useState({
     referralCode: "",
@@ -392,6 +406,8 @@ export default function OnboardingForm({
       toast.error("Registration failed");
     }
   }
+
+  //update workspace
 
   return (
     <div>
