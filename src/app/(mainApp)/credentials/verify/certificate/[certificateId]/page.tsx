@@ -297,20 +297,6 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
 
   console.log(certificate, certificateId);
 
-  useEffect(() => {
-    if (isLoading) {
-      return;
-    }
-
-    if (!certificate) {
-      toast({
-        variant: "destructive",
-        description: "Certificate does not exist",
-      });
-      return;
-    }
-  }, [isLoading, certificate]);
-
   return (
     <section className="min-h-screen flex flex-col md:flex-row justify-center gap-6 pt-20 pb-8 bg-[#F9FAFF]">
       {!isLoading && certificate ? (
@@ -393,7 +379,8 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
                 their award criteria.
               </p>
             </div>
-            <div className="space-y-4 w-3/4">
+
+            {/* <div className="space-y-4 w-3/4">
               <h2 className="text-gray-800 text-lg md:text-xl font-medium">
                 Scope of the training
               </h2>
@@ -414,7 +401,7 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
                   )
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
         </>
       ) : !isLoading && !certificate ? (
