@@ -63,6 +63,9 @@ export function CreateOrganization({
   allowRedirect?: boolean;
   isInitial?: boolean;
 }) {
+  const { mutateData: addCredits, isLoading: mutateLoading } = useMutateData(
+    `/workspaces/credits/buy`
+  );
   const { setOrganization } = useOrganizationStore();
   const router = useRouter();
   const { data: pricing } = useGetData<TPricingPlan[]>("/pricing");
