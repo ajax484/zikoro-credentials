@@ -9,7 +9,8 @@ export default function Section5() {
         {/* header text */}
         <div className="py-[100px] lg:py-[141px]">
           <p className="text-center font-semibold text-[32px] text-white ">
-            Start Recognizing Achievements Today{" "}
+            Start Recognizing <br className="block md:hidden" /> Achievements{" "}
+            <br className="block md:hidden" /> Today{" "}
           </p>
           <p className=" mt-[14px] text-center font-medium text-xl text-white ">
             Join organizations creating credentials that inspire trust and

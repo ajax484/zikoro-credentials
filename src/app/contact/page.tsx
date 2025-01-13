@@ -3,7 +3,7 @@ import AppointmentContactForm from "@/components/contact/AppointmentContactForm"
 import AppointmentFooter from "@/components/home/Footer";
 import AppointmentNav from "@/components/home/Navbar";
 import Image from "next/image";
-import sImage from "@/public/appointments/contactForm.webp";
+import sImage from "@/public/appointments/contactForm.png";
 
 const AppointmentContactPage = () => {
   return (
@@ -25,7 +25,7 @@ const AppointmentContactPage = () => {
 
           <Image
             src={sImage}
-            width={746}
+            width={764}
             height={605}
             alt=""
             className="w-full h-[520px] xl:h-[605px]"

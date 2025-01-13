@@ -124,10 +124,13 @@ const AppointmentContactForm = () => {
 
           <button
             type="submit"
-            className="py-4 px-3 text-base w-full rounded-[8px] font-semibold mt-10 mb-6 text-white bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end"
+            className="py-4 px-3 text-base w-full rounded-[8px] font-semibold mt-10 mb-3 text-white bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end"
           >
             Submit
           </button>
+          <p className="text-center font-normal text-[10px] lg:text-sm mt-3 mb-6">
+            2A Musari Apena Street, Mafoluku, Lagos State, Nigeria{" "}
+          </p>
         </form>
       )}
     </div>
