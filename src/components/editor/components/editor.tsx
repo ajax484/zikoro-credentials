@@ -100,14 +100,9 @@ export const Editor = ({
   const debouncedSave = useCallback(
     debounce(
       async (values: { json: string; height: number; width: number }) => {
-        // const imageURL = editor?.generateLink();
-        // if (!imageURL) return;
-        // base64ToFile(imageURL, name + ".png");
-        // const { url, error } = await uploadFile(imageURL, "image");
-        // if (error) return;
-        // if (!url) return;
-        // save(values, url);
-        save(values, "");
+        const imageURL = editor?.generateLink();
+        if (!imageURL) return;
+        save(values, imageURL);
       },
       1500
     ),

@@ -34,7 +34,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { CreateOrganization } from "@/components/CreateOrganisation/createOrganisation";
-import { PlusCircle } from "lucide-react";
+import { Check, PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CredentialsWorkspaceToken } from "@/types/token";
 import SelectOrganization from "@/components/SelectOrganization/SelectOrganization";
@@ -186,12 +186,18 @@ const Home = () => {
   );
 
   const { data: recentCertificate, isLoading: recentCertificateIsLoading } =
-    useGetData<TCertificate>(`/certificates/recent`, {});
+    useGetData<TCertificate>(
+      `/workspaces/${organization?.organizationAlias}/certificates/recent`,
+      {}
+    );
 
   //fetch recipients
   const { data: recipients, isLoading: recipientsIsLoading } = useGetData<
     CertificateRecipient[]
-  >(`/${organization?.organizationAlias}/certificates/recipients`, []);
+  >(
+    `/workspaces/${organization?.organizationAlias}/certificates/recipients`,
+    []
+  );
 
   console.log(recentCertificate);
   console.log(recipients);
@@ -242,10 +248,6 @@ const Home = () => {
       .reduce((acc, curr) => acc + curr.creditRemaining, 0),
   };
 
-  const recentCertificateHasBeenAssigned = recipients?.some(
-    (recipient) => recipient.certificateGroupId === recentCertificate?.id
-  );
-
   const assignedCertificates = certificates?.filter(
     (certificate) => certificate.recipientCount > 0
   );
@@ -264,227 +266,310 @@ const Home = () => {
         <SelectOrganization />
       </div>
 
-      <div className="grid gap-4">
-        <div className="space-y-6">
-          <div className="grid grid-cols-3 gap-4 min-h-fit">
-            <CreateCertificateDialog
-              triggerButton={
-                <button className="rounded flex flex-col items-center justify-center px-2 py-12 bg-white border">
-                  <Image
-                    src={Certificate}
-                    alt={"certificate"}
-                    width={30}
-                    height={30}
-                    className="rounded-full"
-                  />
-                  <p className="font-medium text-sm">Create new certificate</p>
-                </button>
-              }
-              open={open}
-              setOpen={setOpen}
-              createCertificateFn={createCertificateFn}
-              certificateIsCreating={certificateIsCreating}
-              setDialogIsOpen={() => {
-                setOpen(false);
-                setDialogIsOpen(true);
-              }}
-              workspaces={workspaces}
-              workspacesIsLoading={workspacesIsLoading}
-            />
-            <button
-              disabled
-              className="rounded flex flex-col items-center justify-center px-2 py-12 bg-white border"
-            >
-              <Image
-                src={Badge}
-                alt={"badge certificate"}
-                width={30}
-                height={30}
-                className="rounded-full"
-              />
-              <p className="font-medium text-sm">Create new badge</p>
-              <small className="text-xs text-gray-600">Coming soon</small>
-            </button>
-            <div className="bg-white text-[#1F1F1F] px-1 py-4 rounded-xl flex flex-col justify-center items-center gap-y-2 border">
-              <div className="">
-                <div className="flex gap-8 justify-center">
-                  <div>
-                    <span className="font-medium text-sm">Bronze</span>
-                    <div className="flex gap-x-1 items-center">
-                      <div className="rounded-full p-0.5 [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]">
-                        <div className="rounded-full size-5 [box-shadow:_0px_8px_12px_0px_#C2AF9B66;] [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]" />
-                      </div>
-                      <span className="font-semibold text-sm">
-                        {creditBalance.bronze}
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="font-medium text-sm">Silver</span>
-                    <div className="flex gap-x-1">
-                      <div className="rounded-full p-0.5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1));]">
-                        <div className="rounded-full size-5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1));]" />
-                      </div>
-                      <span className="font-semibold text-sm">
-                        {creditBalance.silver}
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="font-medium text-sm">Gold</span>
-                    <div className="flex gap-x-1">
-                      <div className="rounded-full p-0.5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%);]">
-                        <div className="rounded-full size-5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%);]" />
-                      </div>
-                      <span className="font-semibold text-sm">
-                        {creditBalance.gold}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <p className="text-center font-medium text-gray-800 text-xs">
-                You need credits to issue credentials.
-              </p>
-              <Link
-                href={"/credits/buy"}
-                className="text-xs bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize"
-              >
-                Buy more credits
-              </Link>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-9 gap-4">
-            <div className="rounded-lg border border-gray-200 bg-white col-span-6 p-4 space-y-4">
-              <h3 className="font-semibold">📍Pick up where you left off</h3>
-              <div className="flex gap-2">
-                <div className="flex-[40%] flex justify-center items-center p-8 bg-basePrimary/10 rounded-lg">
-                  <Image
-                    src={CertificateIcon}
-                    alt={"certificate"}
-                    height={200}
-                    width={200}
-                  />
-                </div>
-
-                <div className="flex-[60%] space-y-4">
-                  <h4 className="font-medium">Your progress:</h4>
-                  <div>
-                    <div className="flex gap-2 items-end">
-                      <div className="border-2 rounded-full size-6 border-basePrimary" />
-                      <span>Design</span>
-                    </div>
-                    <div className="ml-[11px] h-10 w-[2px] bg-basePrimary" />
-                    <div className="flex gap-2 items-end">
-                      <div className="border-2 rounded-full size-6 border-basePrimary" />
-                      <span>Assign</span>
-                    </div>
-                    <div className="ml-[11px] h-10 w-[2px] bg-basePrimary" />
-                    <div className="flex gap-2 items-end">
-                      <div className="border-2 rounded-full size-6 border-basePrimary" />
-                      <span>Track Usage</span>
-                    </div>
-                  </div>
-                  {(!recentCertificate || !recentCertificate.lastEdited) && (
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <InfoCircle size={20} className="text-red-600" />
-                        <span className="text-xs text-gray-500">
-                          Looks like you haven't started designing
-                        </span>
-                      </div>
-                      <CreateCertificateDialog
-                        triggerButton={
-                          <Button className="bg-basePrimary text-white rounded-md">
-                            Start Designing
-                          </Button>
-                        }
-                        open={open}
-                        setOpen={setOpen}
-                        createCertificateFn={createCertificateFn}
-                        certificateIsCreating={certificateIsCreating}
-                        setDialogIsOpen={() => {
-                          setOpen(false);
-                          setDialogIsOpen(true);
-                        }}
-                        workspaces={workspaces}
-                        workspacesIsLoading={workspacesIsLoading}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="border rounded-md bg-white p-4 col-span-3 space-y-6 w-full">
-              <div className="flex justify-between">
-                <h3 className="font-semibold">📊 Analytics</h3>
-              </div>
-              <div className="space-y-4 divide-y divide-gray-200 [&>*]:pt-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex gap-2 items-center">
+      {recentCertificateIsLoading ||
+      recipientsIsLoading ||
+      creditsIsLoading ||
+      certificatesIsLoading ||
+      workspacesIsLoading ? (
+        <div>Loading...</div>
+      ) : (
+        <div className="grid gap-4">
+          <div className="space-y-6">
+            <div className="grid grid-cols-3 gap-4 min-h-fit">
+              <CreateCertificateDialog
+                triggerButton={
+                  <button className="rounded flex flex-col items-center justify-center px-2 py-12 bg-white border">
                     <Image
-                      src={CertificateIcon2}
+                      src={Certificate}
                       alt={"certificate"}
                       width={30}
                       height={30}
+                      className="rounded-full"
                     />
-                    <span>Created Credentials</span>
+                    <p className="font-medium text-sm">
+                      Create new certificate
+                    </p>
+                  </button>
+                }
+                open={open}
+                setOpen={setOpen}
+                createCertificateFn={createCertificateFn}
+                certificateIsCreating={certificateIsCreating}
+                setDialogIsOpen={() => {
+                  setOpen(false);
+                  setDialogIsOpen(true);
+                }}
+                workspaces={workspaces}
+                workspacesIsLoading={workspacesIsLoading}
+              />
+              <button
+                disabled
+                className="rounded flex flex-col items-center justify-center px-2 py-12 bg-white border"
+              >
+                <Image
+                  src={Badge}
+                  alt={"badge certificate"}
+                  width={30}
+                  height={30}
+                  className="rounded-full"
+                />
+                <p className="font-medium text-sm">Create new badge</p>
+                <small className="text-xs text-gray-600">Coming soon</small>
+              </button>
+              <div className="bg-white text-[#1F1F1F] px-1 py-4 rounded-xl flex flex-col justify-center items-center gap-y-2 border">
+                <div className="">
+                  <div className="flex gap-8 justify-center">
+                    <div>
+                      <span className="font-medium text-sm">Bronze</span>
+                      <div className="flex gap-x-1 items-center">
+                        <div className="rounded-full p-0.5 [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]">
+                          <div className="rounded-full size-5 [box-shadow:_0px_8px_12px_0px_#C2AF9B66;] [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]" />
+                        </div>
+                        <span className="font-semibold text-sm">
+                          {creditBalance.bronze}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="font-medium text-sm">Silver</span>
+                      <div className="flex gap-x-1">
+                        <div className="rounded-full p-0.5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1));]">
+                          <div className="rounded-full size-5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1));]" />
+                        </div>
+                        <span className="font-semibold text-sm">
+                          {creditBalance.silver}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="font-medium text-sm">Gold</span>
+                      <div className="flex gap-x-1">
+                        <div className="rounded-full p-0.5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%);]">
+                          <div className="rounded-full size-5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%);]" />
+                        </div>
+                        <span className="font-semibold text-sm">
+                          {creditBalance.gold}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <span className="font-bold text-xl">
-                    {certificates.length}
-                  </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <div className="flex gap-2 items-center">
+                <p className="text-center font-medium text-gray-800 text-xs">
+                  You need credits to issue credentials.
+                </p>
+                <Link
+                  href={"/credits/buy"}
+                  className="text-xs bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize"
+                >
+                  Buy more credits
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-9 gap-4">
+              <div className="rounded-lg border border-gray-200 bg-white col-span-6 p-4 space-y-4">
+                <h3 className="font-semibold">📍Pick up where you left off</h3>
+                <div className="flex gap-2">
+                  <Link
+                    className="flex-[40%] flex justify-center items-center p-8 border-basePrimary/10 border rounded-lg relative group"
+                    href={
+                      recentCertificate?.JSON
+                        ? "/credentials/create/" +
+                          recentCertificate.certificateAlias +
+                          "?type=certificate&workspaceId=" +
+                          organization?.id +
+                          "&workspaceAlias=" +
+                          organization?.organizationAlias
+                        : {}
+                    }
+                  >
                     <Image
-                      src={CertificateAssignIcon}
-                      alt={"assigned"}
-                      width={30}
-                      height={30}
+                      src={
+                        recentCertificate?.previewUrl
+                          ? recentCertificate.previewUrl
+                          : CertificateIcon
+                      }
+                      alt={"certificate"}
+                      height={200}
+                      width={200}
                     />
-                    <span>Assigned</span>
+                    {recentCertificate?.JSON && (
+                      <div className="absolute inset-0 p-2 bg-black/50 group-hover:flex hidden z-10 group-hover:gap-8 group-hover:justify-center group-hover:items-center rounded-lg">
+                        <div className="flex flex-col gap-2 items-center">
+                          <p className="text-sm text-white font-semibold capitalize text-center group-hover:underline">
+                            Continue editing {recentCertificate?.name}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </Link>
+
+                  <div className="flex-[60%] space-y-4">
+                    <h4 className="font-medium">Your progress:</h4>
+
+                    <div>
+                      <div className="flex gap-2 items-end">
+                        <div className="border-2 rounded-full size-6 flex items-center justify-center border-basePrimary text-basePrimary">
+                          {recentCertificate && <Check className="size-4" />}
+                        </div>
+                        <span>Started Designing</span>
+                      </div>
+                      <div className="ml-[11px] h-10 w-[2px] bg-basePrimary" />
+                      <div className="flex gap-2 items-end">
+                        <div className="border-2 rounded-full size-6 flex items-center justify-center border-basePrimary text-basePrimary">
+                          {assignedCertificates?.length > 0 && (
+                            <Check className="size-4" />
+                          )}
+                        </div>
+                        <span>Assigned To Recipients</span>
+                      </div>
+                      <div className="ml-[11px] h-10 w-[2px] bg-basePrimary" />
+                      <div className="flex gap-2 items-end">
+                        <div className="border-2 rounded-full size-6 flex items-center justify-center border-basePrimary text-basePrimary">
+                          {assignedCertificates?.length > 0 && (
+                            <Check className="size-4" />
+                          )}
+                        </div>
+                        <span>Track Usage</span>
+                      </div>
+                    </div>
+
+                    {!recentCertificate && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <InfoCircle size={20} className="text-red-600" />
+                          <span className="text-xs text-gray-500">
+                            Looks like you haven't started designing
+                          </span>
+                        </div>
+                        <CreateCertificateDialog
+                          triggerButton={
+                            <Button className="bg-basePrimary text-white rounded-md">
+                              Start Designing
+                            </Button>
+                          }
+                          open={open}
+                          setOpen={setOpen}
+                          createCertificateFn={createCertificateFn}
+                          certificateIsCreating={certificateIsCreating}
+                          setDialogIsOpen={() => {
+                            setOpen(false);
+                            setDialogIsOpen(true);
+                          }}
+                          workspaces={workspaces}
+                          workspacesIsLoading={workspacesIsLoading}
+                        />
+                      </div>
+                    )}
+                    {recentCertificate &&
+                      assignedCertificates?.length === 0 && (
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <InfoCircle size={20} className="text-red-600" />
+                            <span className="text-xs text-gray-500">
+                              Looks like you haven't assigned any recipients
+                            </span>
+                          </div>
+                          <Button
+                            onClick={() => router.push("/assign")}
+                            className="bg-basePrimary text-white rounded-md"
+                          >
+                            Assign Recipients
+                          </Button>
+                        </div>
+                      )}
                   </div>
-                  <span className="font-bold text-xl">
-                    {assignedCertificates?.length}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="flex gap-2 items-center">
-                    <Image
-                      src={EmailOpenedIcon}
-                      alt={"assigned"}
-                      width={30}
-                      height={30}
-                    />
-                    <span>Viewed</span>
-                  </div>
-                  <span className="font-bold text-xl">{0}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="flex gap-2 items-center">
-                    <Image
-                      src={ShareIcon}
-                      alt={"assigned"}
-                      width={30}
-                      height={30}
-                    />
-                    <span>Shared On Socials</span>
-                  </div>
-                  <span className="font-bold text-xl">{0}</span>
                 </div>
               </div>
-              {/* <div className="flex justify-center items-center gap-2">
+              <div className="border rounded-md bg-white p-4 col-span-3 space-y-6 w-full">
+                <div className="flex justify-between">
+                  <h3 className="font-semibold">📊 Analytics</h3>
+                </div>
+                <div className="space-y-4 divide-y divide-gray-200 [&>*]:pt-4">
+                  <div className="flex justify-between items-center">
+                    <div className="flex gap-2 items-center">
+                      <Image
+                        src={CertificateIcon2}
+                        alt={"certificate"}
+                        width={30}
+                        height={30}
+                      />
+                      <span>Created Credentials</span>
+                    </div>
+                    <span className="font-bold text-xl">
+                      {certificates.length}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex gap-2 items-center">
+                      <Image
+                        src={CertificateAssignIcon}
+                        alt={"assigned"}
+                        width={30}
+                        height={30}
+                      />
+                      <span>Assigned Credentials</span>
+                    </div>
+                    <span className="font-bold text-xl">
+                      {assignedCertificates?.length}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex gap-2 items-center">
+                      <Image
+                        src={EmailOpenedIcon}
+                        alt={"assigned"}
+                        width={30}
+                        height={30}
+                      />
+                      <span>Viewed</span>
+                    </div>
+                    <span className="font-bold text-xl">
+                      {
+                        recipients.filter(
+                          (recipient) =>
+                            recipient.statusDetails &&
+                            recipient.statusDetails.some(
+                              (status) => status.action === "email opened"
+                            )
+                        ).length
+                      }
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex gap-2 items-center">
+                      <Image
+                        src={ShareIcon}
+                        alt={"assigned"}
+                        width={30}
+                        height={30}
+                      />
+                      <span>Shared On Socials</span>
+                    </div>
+                    <span className="font-bold text-xl">
+                      {
+                        recipients.filter(
+                          (recipient) =>
+                            recipient.statusDetails &&
+                            recipient.statusDetails.some((status) =>
+                              status.action.includes("shared")
+                            )
+                        ).length
+                      }
+                    </span>
+                  </div>
+                </div>
+                {/* <div className="flex justify-center items-center gap-2">
                 <Link href={"/analytics"}>
                   <span className="text-basePrimary mx-auto underline">
                     See all
                   </span>
                 </Link>
               </div> */}
+              </div>
             </div>
-          </div>
 
-          {/* <div className="border rounded-md bg-white">
+            {/* <div className="border rounded-md bg-white">
             <h2 className="text-sm text-gray-700 font-medium text-center py-2 border-b">
               My designs
             </h2>
@@ -569,8 +654,9 @@ const Home = () => {
               </Tabs>
             </div>
           </div> */}
+          </div>
         </div>
-      </div>
+      )}
       {dialogIsOpen && (
         <CreateOrganization
           refetch={refetchWorkspaces}

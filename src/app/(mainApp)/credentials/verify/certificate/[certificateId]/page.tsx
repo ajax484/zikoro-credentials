@@ -12,10 +12,15 @@ import { useEffect, useRef, useState } from "react";
 import { replaceSpecialText, replaceURIVariable } from "@/utils/helpers";
 import { toast } from "@/hooks/use-toast";
 import { fabric } from "fabric";
-import { FacebookIcon, LinkedinIcon, LinkedinShareButton, TwitterIcon } from "next-share";
+import {
+  FacebookIcon,
+  LinkedinIcon,
+  LinkedinShareButton,
+  TwitterIcon,
+} from "next-share";
 import { useEditor } from "@/components/editor/hooks/use-editor";
 import { Button } from "@/components/ui/button";
-import { useGetData } from "@/hooks/services/request";
+import { useGetData, useMutateData } from "@/hooks/services/request";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { TOrganization } from "@/types/organization";
 
@@ -23,12 +28,14 @@ import { TOrganization } from "@/types/organization";
 
 const CertificateView = ({
   certificate,
+  recordShare,
 }: {
   certificate: CertificateRecipient & {
     originalCertificate: TCertificate & {
       workspace: TOrganization;
     };
   };
+  recordShare: ({ payload }: { payload: { social: string } }) => Promise<void>;
 }) => {
   const initialData = certificate?.originalCertificate.JSON;
 
@@ -66,6 +73,7 @@ const CertificateView = ({
     defaultState: newState,
     defaultWidth: initialData?.width ?? 900,
     defaultHeight: initialData?.height ?? 1200,
+    toggleQRCode: () => {},
   });
 
   useEffect(() => {
@@ -158,6 +166,7 @@ const CertificateView = ({
             <h3 className="font-medium">Share this Certificate</h3>
             {isShareDropDown && (
               <ActionModal
+                recordShare={recordShare}
                 close={toggleShareDropDown}
                 url={window.location.href}
                 shareText={shareText}
@@ -223,6 +232,7 @@ const CertificateView = ({
             <h3 className="font-medium">Share This Certificate</h3>
             {isShareDropDown && (
               <ActionModal
+                recordShare={recordShare}
                 close={toggleShareDropDown}
                 url={window.location.href}
                 shareText={shareText}
@@ -281,6 +291,10 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
     }
   >(`/certificates/verify/${certificateId}`);
 
+  const { mutateData: recordShare } = useMutateData<{
+    social: string;
+  }>(`/certificates/verify/${certificateId}/share`, true);
+
   console.log(certificate, certificateId);
 
   useEffect(() => {
@@ -301,7 +315,10 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
     <section className="min-h-screen flex flex-col md:flex-row justify-center gap-6 pt-20 pb-8 bg-[#F9FAFF]">
       {!isLoading && certificate ? (
         <>
-          <CertificateView certificate={certificate} />
+          <CertificateView
+            certificate={certificate}
+            recordShare={recordShare}
+          />
           <div className="flex flex-[40%] flex-col gap-8 px-2">
             <div className="flex flex-col gap-4">
               <div>
@@ -417,11 +434,13 @@ function ActionModal({
   close,
   url,
   shareText,
+  recordShare,
 }: {
   url?: string;
   instagram?: string;
   close: () => void;
   shareText: string;
+  recordShare: ({ payload }: { payload: { social: string } }) => Promise<void>;
 }) {
   const linkToCertificate = window.location.href;
   return (
@@ -436,14 +455,15 @@ function ActionModal({
           className="flex relative z-[50] flex-col py-4 items-start justify-start bg-white rounded-lg w-full h-fit shadow-lg"
         >
           <button
-            onClick={() =>
+            onClick={() => {
+              recordShare({ payload: { social: "twitter" } });
               window.open(
                 `https://twitter.com/intent/tweet?text=${encodeURIComponent(
                   shareText
                 )}`,
                 "_blank"
-              )
-            }
+              );
+            }}
             className="items-center flex px-2 h-10 w-full gap-x-2 justify-start text-xs"
           >
             <TwitterIcon />
@@ -459,20 +479,22 @@ function ActionModal({
               className={
                 "items-center h-10 gap-x-2 px-2 flex justify-start w-full text-xs"
               }
+              onClick={() => recordShare({ payload: { social: "linkedin" } })}
             >
               <LinkedinIcon />
               <span>LinkedIn</span>
             </button>
           </LinkedinShareButton>
           <button
-            onClick={() =>
+            onClick={() => {
+              recordShare({ payload: { social: "facebook" } });
               window.open(
                 `https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(
                   shareText
                 )}`,
                 "_blank"
-              )
-            }
+              );
+            }}
             className={
               "items-center h-10 gap-x-2 px-2 flex justify-start w-full text-xs"
             }

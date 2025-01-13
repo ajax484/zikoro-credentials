@@ -170,20 +170,20 @@ export function CreateOrganization({
   return (
     <div
       onClick={close}
-      className="w-full h-full fixed overflow-y-auto no-scrollbar z-[100] inset-0 bg-black/50"
+      className="w-full h-full fixed overflow-y-auto no-scrollbar z-[100] inset-0 bg-black/50 flex items-center justify-center"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="rounded-xl w-[60%] h-[90vh] overflow-y-auto max-w-5xl box-animation bg-white mx-auto my-12  md:my-auto absolute inset-x-0 md:inset-y-0 "
+        className="rounded-xl w-[60%] h-fit overflow-y-auto max-w-5xl box-animation bg-white mx-auto md:my-auto absolute inset-x-0 md:inset-y-0 "
       >
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full grid grid-cols-1 py-8 sm:py-10 px-4 sm:px-8 lg:px-10 bg-white"
+            className="w-full grid grid-cols-1 p-6 bg-white"
           >
             <div className="flex items-center justify-between">
               <div className="space-y-2">
-                <h2 className="text-base sm:text-xl font-semibold">
+                <h2 className="text-base sm:text-2xl font-semibold">
                   Create Workspace
                 </h2>
                 {isInitial && (

@@ -5,7 +5,6 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: NextApiRequest,
-  res: NextApiResponse,
   {
     params,
   }: {
@@ -14,6 +13,7 @@ export async function GET(
 ) {
   if (req.method === "GET") {
     try {
+      console.log("here");
       const { workspaceId: workspaceAlias } = params;
       const supabase = createRouteHandlerClient({ cookies });
 

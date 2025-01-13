@@ -339,8 +339,11 @@ export function replaceSpecialText(input: string, context: Context): string {
 
   console.log(context.asset.attributes, "attribute");
   return input.replaceAll(/#{(.*?)#}/g, (match, value) => {
-    console.log(value, context.asset?.attributes, "attribute");
-    if (context.asset?.attributes?.includes(value.trim())) {
+    // console.log(value, context.asset?.attributes, "attribute");
+    if (
+      context.asset?.attributes &&
+      context.asset?.attributes?.includes(value.trim())
+    ) {
       return context?.recipient?.metadata?.[value.trim()] || "N/A";
     }
 

@@ -15,13 +15,30 @@ export async function POST(req: NextRequest) {
 
     console.log(ids);
 
+    const { data: certificates, error: fetchError } = await supabase
+      .from("certificateRecipients")
+      .select("*")
+      .in("id", ids);
+
+    if (fetchError) throw fetchError;
+
     let query;
 
     query = supabase
       .from("certificateRecipients")
-      .update({
-        isValid: true,
-      })
+      .update(
+        certificates.map((certificate) => ({
+          isValid: true,
+          status: "reissued",
+          statusDetails: [
+            ...(certificate.statusDetails || []),
+            {
+              action: "reissued",
+              date: new Date().toISOString(),
+            },
+          ],
+        }))
+      )
       .in("id", ids);
 
     const { error } = await query;
