@@ -6,7 +6,7 @@ import React from "react";
 import {
   Select,
   SelectTrigger,
-  SelectContent,
+  SelectContent,  
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
@@ -114,7 +114,7 @@ const AddPoints = ({
               </li>
               <li className="flex gap-2 items-center">
                 <X className="size-4" />
-                <span>Branding</span>
+                <span>Custon Attributes</span>
               </li>
             </ul>
           </div>
@@ -230,7 +230,7 @@ const AddPoints = ({
               </li>
               <li className="flex gap-2 items-center">
                 <X className="size-4" />
-                <span>Branding</span>
+                <span>Custon Attributes</span>
               </li>
             </ul>
           </div>
@@ -346,7 +346,7 @@ const AddPoints = ({
               </li>
               <li className="flex gap-2 items-center">
                 <Check className="size-4" />
-                <span>Branding</span>
+                <span>Custon Attributes</span>
               </li>
             </ul>
           </div>
