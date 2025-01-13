@@ -1,11 +1,12 @@
 import { UserSchema } from "@/schemas/user";
 import { z } from "zod";
-import {TAttendee} from "@/types";
+import { TAttendee } from "@/types";
 
 // Optional: You can use the following line to enforce strict typing
 export type TUser = z.infer<typeof UserSchema> & {
   id: number;
   referralCode: string;
+  freeCreditClaimed: boolean;
 };
 
 type User = {
@@ -18,12 +19,11 @@ export interface TAuthUser {
   user: User;
 }
 
-
 export interface TUserAccess {
-  isOrganizer?:boolean;
-isTeamMember?:boolean;
+  isOrganizer?: boolean;
+  isTeamMember?: boolean;
   attendeeId?: number;
-  attendee?: TAttendee
+  attendee?: TAttendee;
 }
 
 export interface UserFeedback {

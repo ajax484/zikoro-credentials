@@ -1,11 +1,10 @@
 "use client";
 import useUserStore from "@/store/globalUserStore";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Badge from "@/public/icons/iconamoon_certificate-badge-duotone.svg";
 import Certificate from "@/public/icons/ph_certificate-duotone.svg";
 import Image from "next/image";
-import { useGetData } from "@/hooks/services/request";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useGetData, useMutateData } from "@/hooks/services/request";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import Email from "@/public/icons/mdi_email-sent.svg";
 import Calendar from "@/public/icons/duo-icons_calendar.svg";
@@ -34,7 +33,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { CreateOrganization } from "@/components/CreateOrganisation/createOrganisation";
-import { Check, PlusCircle } from "lucide-react";
+import { Check, Gift, PlusCircle, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CredentialsWorkspaceToken } from "@/types/token";
 import SelectOrganization from "@/components/SelectOrganization/SelectOrganization";
@@ -44,6 +43,7 @@ import CertificateAssignIcon from "@/public/icons/clarity_certificate-outline-al
 import EmailOpenedIcon from "@/public/icons/line-md_email-opened-alt-twotone.svg";
 import ShareIcon from "@/public/icons/ic_twotone-share.svg";
 import { InfoCircle } from "styled-icons/bootstrap";
+import { generateAlphanumericHash } from "@/utils/helpers";
 
 const CreateCertificateDialog = ({
   open,
@@ -170,9 +170,12 @@ const Home = () => {
 
     []
   );
-  // const router = useRouter();
 
-  // if (!user) return router.push("/login");
+  const { mutateData: updateUser, isLoading: updateUserIsLoading } =
+    useMutateData(`/users/${user?.id}`, true);
+
+  const { mutateData: claimCredits, isLoading: claimCreditsIsLoading } =
+    useMutateData(`/workspaces/credits/buy`);
 
   console.log(organization);
 
@@ -202,9 +205,14 @@ const Home = () => {
   console.log(recentCertificate);
   console.log(recipients);
 
-  const { data: credits, isLoading: creditsIsLoading } = useGetData<
-    CredentialsWorkspaceToken[]
-  >(`/workspaces/${organization?.id}/credits`, []);
+  const {
+    data: credits,
+    isLoading: creditsIsLoading,
+    getData: getCredits,
+  } = useGetData<CredentialsWorkspaceToken[]>(
+    `/workspaces/${organization?.id}/credits`,
+    []
+  );
 
   const { createCertificate, isLoading: certificateIsCreating } =
     useCreateCertificate();
@@ -252,8 +260,92 @@ const Home = () => {
     (certificate) => certificate.recipientCount > 0
   );
 
+  const [claimCreditIsOpen, setClaimCreditIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user?.freeCreditClaimed) {
+      setClaimCreditIsOpen(true);
+    }
+  }, [user]);
+
+  const claimCreditsFn = async () => {
+    if (!organization) return;
+
+    const reference =
+      "FREE-" +
+      organization?.organizationAlias +
+      "-" +
+      generateAlphanumericHash(12);
+
+    const data = await claimCredits({
+      payload: {
+        credits: {
+          bronze: {
+            amount: 5,
+            price: 0,
+          },
+          silver: {
+            amount: 3,
+            price: 0,
+          },
+          gold: {
+            amount: 2,
+            price: 0,
+          },
+        },
+        workspaceId: organization?.id,
+        email: user?.userEmail,
+        name: user?.firstName,
+        workspaceName: organization?.organizationName,
+        reference,
+        currency: "NGN",
+        workspaceAlias: organization?.organizationAlias,
+        activityBy: user?.id,
+      },
+    });
+
+    if (!data) return;
+
+    setClaimCreditIsOpen(false);
+
+    await getCredits();
+
+    const updatedUser = await updateUser({
+      payload: {
+        freeCreditClaimed: true,
+      },
+    });
+
+    if (updatedUser) setUser(updatedUser);
+  };
+
   return (
     <section className="space-y-4">
+      {claimCreditIsOpen && (
+        <div className="p-4 bg-basePrimary rounded-md flex items-center justify-center text-white gap-4 relative">
+          <button
+            aria-label="Close"
+            onClick={() => setClaimCreditIsOpen(false)}
+            className="absolute text-white top-1 right-1"
+          >
+            <X className="size-5" />
+          </button>
+          <p className="font-semibold">
+            Get started by claiming your free credits for this workspace
+          </p>
+          <Button
+            onClick={claimCreditsFn}
+            disabled={
+              updateUserIsLoading || claimCreditsIsLoading || !organization
+            }
+            className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex
+        items-center justify-center rounded-lg py-2 px-8 w-fit"
+          >
+            <Gift className="size-4" />
+            <span>Claim</span>
+          </Button>
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <div className="text-gray-700">
           <p>
