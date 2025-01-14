@@ -18,12 +18,12 @@ const OnboardingPage = ({
     <div>
       {/* large screen */}
       <div className="bg-[#f9faff] hidden lg:flex items-center">
-        <div className="w-[50%]">
+        <div className="w-[50%] hidden lg:flex items-center bg-gradient-to-tr from-concert-gradient-start to-concert-gradient-end">
           <Image
             src={Banner}
             alt="banner"
-            width={864}
-            className="w-fit h-screen"
+            width={760}
+            className=" mx-auto w-fit h-screen bg-contain"
           />
         </div>
 
