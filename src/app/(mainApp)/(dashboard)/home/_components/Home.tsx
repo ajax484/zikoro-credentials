@@ -506,7 +506,7 @@ const Home = () => {
 
                     <div>
                       <div className="flex gap-2 ">
-                        <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary">
+                        <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
                           <Image
                             src={NibIcon}
                             alt="Nib Icon"
@@ -515,7 +515,7 @@ const Home = () => {
                           />
                         </div>
                         <div className="flex flex-col justify-between">
-                          <span className="font-semibold">
+                          <span className="font-medium">
                             Continue editing {recentCertificate?.name}
                           </span>
                           <Link
@@ -540,7 +540,7 @@ const Home = () => {
                       </div>
                       <div className="ml-[25px] h-10 w-[2px] bg-basePrimary" />
                       <div className="flex gap-2 items-end">
-                        <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary">
+                        <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
                           <Image
                             src={Assign}
                             alt="Assign Icon"
@@ -549,7 +549,7 @@ const Home = () => {
                           />
                         </div>
                         <div className="flex flex-col justify-between">
-                          <span className="font-semibold">
+                          <span className="font-medium">
                             Assigned To Recipients
                           </span>
                           <Link
@@ -570,7 +570,7 @@ const Home = () => {
                       </div>
                       <div className="ml-[25px] h-10 w-[2px] bg-basePrimary" />
                       <div className="flex gap-2">
-                        <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary">
+                        <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
                           <Image
                             src={Analytics}
                             alt="analytics icon"
@@ -579,7 +579,7 @@ const Home = () => {
                           />
                         </div>
                         <div className="flex flex-col h-full">
-                          <span className="font-semibold">Track Usage</span>
+                          <span className="font-medium">Track Usage</span>
                           {/* <Link
                             href={
                               recentCertificate?.JSON

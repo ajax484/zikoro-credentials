@@ -75,7 +75,7 @@ const CreateCredentialsPage = ({
         previewUrl: imageUrl,
         attributes,
         hasQRCode,
-        lastEdited: new Date().toISOString(),
+        lastEdited: new Date(),
       },
     });
   };
