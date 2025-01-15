@@ -33,7 +33,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { CreateOrganization } from "@/components/CreateOrganisation/createOrganisation";
-import { Check, Gift, PlusCircle, X } from "lucide-react";
+import { ArrowRight, Check, Gift, PlusCircle, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CredentialsWorkspaceToken } from "@/types/token";
 import SelectOrganization from "@/components/SelectOrganization/SelectOrganization";
@@ -42,6 +42,9 @@ import CertificateIcon2 from "@/public/icons/ph_certificate-duotone.svg";
 import CertificateAssignIcon from "@/public/icons/clarity_certificate-outline-alerted.svg";
 import EmailOpenedIcon from "@/public/icons/line-md_email-opened-alt-twotone.svg";
 import ShareIcon from "@/public/icons/ic_twotone-share.svg";
+import NibIcon from "@/public/icons/iconoir_design-nib-solid.svg";
+import Assign from "@/public/icons/clarity_certificate-solid-alerted (1).svg";
+import Analytics from "@/public/icons/ic_twotone-analytics.svg";
 import { InfoCircle } from "styled-icons/bootstrap";
 import { generateAlphanumericHash } from "@/utils/helpers";
 
@@ -502,29 +505,100 @@ const Home = () => {
                     <h4 className="font-medium">Your progress:</h4>
 
                     <div>
-                      <div className="flex gap-2 items-end">
-                        <div className="border-2 rounded-full size-6 flex items-center justify-center border-basePrimary text-basePrimary">
-                          {recentCertificate && <Check className="size-4" />}
+                      <div className="flex gap-2 ">
+                        <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary">
+                          <Image
+                            src={NibIcon}
+                            alt="Nib Icon"
+                            width={20}
+                            height={20}
+                          />
                         </div>
-                        <span>Started Designing</span>
+                        <div className="flex flex-col justify-between">
+                          <span className="font-semibold">
+                            Continue editing {recentCertificate?.name}
+                          </span>
+                          <Link
+                            href={
+                              recentCertificate?.JSON
+                                ? "/credentials/create/" +
+                                  recentCertificate.certificateAlias +
+                                  "?type=certificate&workspaceId=" +
+                                  organization?.id +
+                                  "&workspaceAlias=" +
+                                  organization?.organizationAlias
+                                : {}
+                            }
+                            className="flex gap-2 items-center"
+                          >
+                            <span className="text-basePrimary underline">
+                              Proceed
+                            </span>
+                            <ArrowRight className="text-basePrimary size-4" />
+                          </Link>
+                        </div>
                       </div>
-                      <div className="ml-[11px] h-10 w-[2px] bg-basePrimary" />
+                      <div className="ml-[25px] h-10 w-[2px] bg-basePrimary" />
                       <div className="flex gap-2 items-end">
-                        <div className="border-2 rounded-full size-6 flex items-center justify-center border-basePrimary text-basePrimary">
-                          {assignedCertificates?.length > 0 && (
-                            <Check className="size-4" />
-                          )}
+                        <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary">
+                          <Image
+                            src={Assign}
+                            alt="Assign Icon"
+                            width={20}
+                            height={20}
+                          />
                         </div>
-                        <span>Assigned To Recipients</span>
+                        <div className="flex flex-col justify-between">
+                          <span className="font-semibold">
+                            Assigned To Recipients
+                          </span>
+                          <Link
+                            href={
+                              recentCertificate?.JSON
+                                ? "assign?certificateAlias=" +
+                                  recentCertificate.certificateAlias
+                                : {}
+                            }
+                            className="flex gap-2 items-center"
+                          >
+                            <span className="text-basePrimary underline">
+                              Proceed
+                            </span>
+                            <ArrowRight className="text-basePrimary size-4" />
+                          </Link>
+                        </div>
                       </div>
-                      <div className="ml-[11px] h-10 w-[2px] bg-basePrimary" />
-                      <div className="flex gap-2 items-end">
-                        <div className="border-2 rounded-full size-6 flex items-center justify-center border-basePrimary text-basePrimary">
-                          {assignedCertificates?.length > 0 && (
-                            <Check className="size-4" />
-                          )}
+                      <div className="ml-[25px] h-10 w-[2px] bg-basePrimary" />
+                      <div className="flex gap-2">
+                        <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary">
+                          <Image
+                            src={Analytics}
+                            alt="analytics icon"
+                            width={20}
+                            height={20}
+                          />
                         </div>
-                        <span>Track Usage</span>
+                        <div className="flex flex-col h-full">
+                          <span className="font-semibold">Track Usage</span>
+                          {/* <Link
+                            href={
+                              recentCertificate?.JSON
+                                ? "/credentials/create/" +
+                                  recentCertificate.certificateAlias +
+                                  "?type=certificate&workspaceId=" +
+                                  organization?.id +
+                                  "&workspaceAlias=" +
+                                  organization?.organizationAlias
+                                : {}
+                            }
+                            className="flex gap-2 items-center"
+                          >
+                            <span className="text-basePrimary underline">
+                              Proceed
+                            </span>
+                            <ArrowRight className="text-basePrimary size-4" />
+                          </Link> */}
+                        </div>
                       </div>
                     </div>
 

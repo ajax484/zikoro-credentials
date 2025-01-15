@@ -14,7 +14,6 @@ import {
 
 import { ActiveTool } from "@/components/editor/types";
 import { SidebarItem } from "@/components/editor/components/sidebar-item";
-import { PiSelectionBackground } from "react-icons/pi";
 import { Signature } from "styled-icons/fluentui-system-filled";
 
 
