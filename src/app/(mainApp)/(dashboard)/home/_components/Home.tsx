@@ -171,6 +171,8 @@ const Home = () => {
     []
   );
 
+  console.log(workspaces);
+
   const { mutateData: updateUser, isLoading: updateUserIsLoading } =
     useMutateData(`/users/${user?.id}`, true);
 

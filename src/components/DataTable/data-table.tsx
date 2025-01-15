@@ -5,6 +5,7 @@ import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   Row,
   RowSelectionState,
   Table as TableProps,
@@ -64,6 +65,7 @@ export function DataTable<TData>({
     getRowId: (row) => (row?.id ? row?.id.toString() : ""),
     enableRowSelection: true,
     manualPagination: true,
+    getSortedRowModel: getSortedRowModel(),
   });
 
   return (
@@ -76,15 +78,38 @@ export function DataTable<TData>({
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
-                      className="!text-black py-4 !font-medium"
                       key={header.id}
+                      className="!text-black py-4 !font-medium"
+                      colSpan={header.colSpan}
                     >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
+                      {header.isPlaceholder ? null : (
+                        <div
+                          className={
+                            header.column.getCanSort()
+                              ? "cursor-pointer select-none"
+                              : ""
+                          }
+                          onClick={header.column.getToggleSortingHandler()}
+                          title={
+                            header.column.getCanSort()
+                              ? header.column.getNextSortingOrder() === "asc"
+                                ? "Sort ascending"
+                                : header.column.getNextSortingOrder() === "desc"
+                                ? "Sort descending"
+                                : "Clear sort"
+                              : undefined
+                          }
+                        >
+                          {flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
+                          {{
+                            asc: " 🔼",
+                            desc: " 🔽",
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </div>
+                      )}
                     </TableHead>
                   );
                 })}

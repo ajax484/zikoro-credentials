@@ -15,9 +15,7 @@ import { useMutateData } from "@/hooks/services/request";
 
 export const issueesColumns = (
   refetch: () => void
-): (() => ColumnDef<
-  CertificateRecipient & { certificate: TCertificate }
->[]) => [
+): ColumnDef<CertificateRecipient & { certificate: TCertificate }>[] => [
   {
     accessorKey: "select",
     header: ({ table }) => (
@@ -50,10 +48,12 @@ export const issueesColumns = (
   {
     accessorKey: "recipientFirstName",
     header: "First Name",
+    sortingFn: "alphanumeric",
   },
   {
     accessorKey: "recipientLastName",
     header: "Last Name",
+    sortingFn: "alphanumeric",
   },
   {
     accessorKey: "recipientEmail",
@@ -62,6 +62,7 @@ export const issueesColumns = (
   {
     accessorKey: "certificate.name",
     header: "Credential",
+    sortingFn: "alphanumeric",
   },
   {
     accessorKey: "created_at",
@@ -70,32 +71,30 @@ export const issueesColumns = (
       const date = getValue() as Date;
       return format(date, "MMMM do, yyyy");
     },
+    sortingFn: "datetime",
   },
   {
     accessorKey: "status",
     header: () => <div className="text-center">Status</div>,
     cell: ({ getValue }) => {
       const status = getValue() as string;
-      const statusIcon =
-        status === "issued" ? (
-          <MailSend className="size-6" />
-        ) : status === "email opened" ? (
-          <MailOpen className="size-6" />
-        ) : status === "revoked" ? (
-          <X className="size-6" />
-        ) : (
-          <MailSend className="size-6" />
-        );
+      const statusIconMap: Record<string, JSX.Element> = {
+        issued: <MailSend className="size-6" />,
+        "email opened": <MailOpen className="size-6" />,
+        revoked: <X className="size-6" />,
+        default: <MailSend className="size-6" />,
+      };
 
       return (
         <div className="flex items-center gap-2 w-2/3 mx-auto">
           <div className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center">
-            {statusIcon}
+            {statusIconMap[status] || statusIconMap.default}
           </div>
           <span className="text-xs capitalize">{status ?? "email sent"}</span>
         </div>
       );
     },
+    enableSorting: false,
   },
   {
     accessorKey: "isValid",
@@ -110,12 +109,7 @@ export const issueesColumns = (
 
       const toggleCertificatesFn = async () => {
         const toggleFn = isValid ? recallCertificates : reIssueCertificates;
-
-        await toggleFn({
-          payload: {
-            ids: [row.original.id],
-          },
-        });
+        await toggleFn({ payload: { ids: [row.original.id] } });
         await refetch();
       };
 
@@ -128,6 +122,7 @@ export const issueesColumns = (
         />
       );
     },
+    enableSorting: false,
   },
   {
     accessorKey: "certificateId",
@@ -153,13 +148,14 @@ export const issueesColumns = (
         defaultState: newState,
         defaultWidth: certificate?.JSON?.width ?? 900,
         defaultHeight: certificate?.JSON?.height ?? 1200,
+        toggleQRCode: () => {},
       });
 
-      const canvasRef = useRef(null);
+      const canvasRef = useRef<HTMLCanvasElement>(null);
       const containerRef = useRef<HTMLDivElement>(null);
 
       useEffect(() => {
-        const canvas = new fabric.Canvas(canvasRef.current, {
+        const canvas = new fabric.Canvas(canvasRef.current!, {
           controlsAboveOverlay: true,
           preserveObjectStacking: true,
         });
@@ -169,9 +165,7 @@ export const issueesColumns = (
           initialContainer: containerRef.current!,
         });
 
-        return () => {
-          canvas.dispose();
-        };
+        return () => canvas.dispose();
       }, [init]);
 
       if (!row.original?.isValid) return null;
@@ -190,15 +184,10 @@ export const issueesColumns = (
             className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center"
           >
             <Download className="size-6" />
-            <div
-              className="h-[calc(100%-124px)] flex-1 bg-muted hidden"
-              ref={containerRef}
-            >
-              <canvas ref={canvasRef} />
-            </div>
           </button>
         </div>
       );
     },
+    enableSorting: false,
   },
 ];
