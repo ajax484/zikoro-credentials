@@ -131,7 +131,7 @@ const Navbar = () => {
             {/* left */}
             <div>
               <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
-                Zikoro Engagement
+                Zikoro Engagements
               </p>
               <p className="text-[12px] font-medium text-[#31353B] w-[282px]">
                 Drive interaction with engaging polls, quizzes,and live Q&A{" "}
@@ -220,7 +220,7 @@ const Navbar = () => {
                     {/* left */}
                     <div>
                       <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
-                        Zikoro Engagement
+                        Zikoro Engagements
                       </p>
                       <p className="text-[11px] font-medium text-[#31353B] w-[232px]">
                         Drive interaction with engaging polls, quizzes,and live
