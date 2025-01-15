@@ -556,7 +556,12 @@ const Home = () => {
                             href={
                               recentCertificate?.JSON
                                 ? "assign?certificateAlias=" +
-                                  recentCertificate.certificateAlias
+                                  recentCertificate.certificateAlias +
+                                  "&type=certificate" +
+                                  "workspaceId=" +
+                                  organization?.id +
+                                  "&workspaceAlias=" +
+                                  organization?.id
                                 : {}
                             }
                             className="flex gap-2 items-center"
