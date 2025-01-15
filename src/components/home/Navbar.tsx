@@ -131,7 +131,7 @@ const Navbar = () => {
             {/* left */}
             <div>
               <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
-                Zikoro Engagement
+                Zikoro Engagements
               </p>
               <p className="text-[12px] font-medium text-[#31353B] w-[282px]">
                 Drive interaction with engaging polls, quizzes,and live Q&A{" "}
@@ -190,7 +190,7 @@ const Navbar = () => {
             >
               Other Products <ChevronDown size={20} />{" "}
               {isPreviewShowing && (
-                <div className="bg-white flex flex-col mt-3 gap-y-6 p-3 lg:hidden rounded-[10px] ">
+                <div className="bg-white flex flex-col mt-3 gap-y-6 p-3 lg:hidden rounded-[10px] w-fit ">
                   {/* 1st div */}
                   <div className="w-full flex items-center gap-x-4">
                     {/* left */}
@@ -220,7 +220,7 @@ const Navbar = () => {
                     {/* left */}
                     <div>
                       <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
-                        Zikoro Engagement
+                        Zikoro Engagements
                       </p>
                       <p className="text-[11px] font-medium text-[#31353B] w-[232px]">
                         Drive interaction with engaging polls, quizzes,and live
