@@ -23,7 +23,7 @@ export const Footer = ({
   console.log(creditBalance);
 
   return (
-    <footer className="z-[49] flex py-2 w-full shrink-0 justify-between items-center border-t bg-white p-2 px-4">
+    <footer className="z-[49] flex py-2 w-full shrink-0 justify-between items-center border-t bg-[#f7f8ff] p-2 px-4">
       <div className="flex gap-8 justify-center">
         <div className="flex gap-x-1 items-center">
           <div className="rounded-full p-0.5 [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]">
