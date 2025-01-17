@@ -116,3 +116,23 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
 }
+
+.radio-input {
+  appearance: none; /* Remove default radio button styling */
+  width: 16px;
+  height: 16px;
+  border: 2px solid #9ca3af; /* Gray border */
+  border-radius: 50%; /* Make it circular */
+  outline: none;
+  background-color: #f3f4f6; /* Light gray background */
+  cursor: pointer;
+}
+
+.radio-input:checked {
+  border-color: #6d28d9; /* Purple border when checked */
+  background-color: #6d28d9; /* Purple fill when checked */
+}
+
+.radio-input:focus {
+  outline: 2px solid #6d28d9; /* Purple outline on focus */
+}
