@@ -24,7 +24,7 @@ const SelectAttendee = ({
     TAttendee[]
   >(
     `workspaces/${selectedEvent.organisationId}/events/${selectedEvent.eventAlias}/attendees`,
-    
+
     []
   );
 
@@ -52,6 +52,7 @@ const SelectAttendee = ({
         recipientFirstName: attendee.firstName,
         recipientLastName: attendee.lastName,
         recipientEmail: attendee.email,
+        profilePicture: attendee.profilePicture,
       }))
     );
     router.push(

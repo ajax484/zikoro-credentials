@@ -15,7 +15,7 @@ const page = ({
     workspaceId: string;
     workspaceAlias: string;
     eventAlias: string;
-    type: "certificate" | "badge";
+  type: "certificate" | "badge";
   };
 }) => {
   console.log(params);

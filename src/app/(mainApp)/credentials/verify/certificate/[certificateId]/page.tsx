@@ -253,7 +253,7 @@ const CertificateView = ({
       <div className="relative h-full w-full flex justify-center items-center flex-1">
         <img
           alt="certificate"
-          src={editor?.generateLink()}
+          src={editor?.generateLink(true)}
           style={{ width: initialData?.width }}
           className="h-auto"
         />{" "}

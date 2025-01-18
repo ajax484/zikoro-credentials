@@ -123,11 +123,10 @@ const buildEditor = ({
     autoZoom();
   };
 
-  const generateLink = () => {
-    console.log(canvas, "here");
+  const generateLink = (isLive = false) => {
     const options = generateSaveOptions();
 
-    // canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+    isLive && canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
     const dataUrl = canvas.toDataURL(options);
 
     console.log(dataUrl);

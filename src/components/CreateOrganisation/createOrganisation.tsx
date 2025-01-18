@@ -11,9 +11,7 @@ import useUserStore from "@/store/globalUserStore";
 import { useEffect, useState, useMemo } from "react";
 import { Plus } from "styled-icons/bootstrap";
 import { Minus } from "styled-icons/feather";
-import { cn } from "@/lib/utils";
 import React from "react";
-import toast from "react-hot-toast";
 import { Form, FormField } from "../ui/form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -21,9 +19,9 @@ import { generateAlias } from "@/utils/helpers";
 import { Lock, X } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import { useRouter } from "next/navigation";
-import { ArrowBackOutline } from "styled-icons/evaicons-outline";
-import { Cancel } from "styled-icons/material-rounded";
+import CreateWorkspace from "@/public/images/create_workspace.svg";
 import useOrganizationStore from "@/store/globalOrganizationStore";
+import Image from "next/image";
 
 type TPricingPlan = {
   amount: number | null;
@@ -105,7 +103,7 @@ export function CreateOrganization({
   }, [user]);
 
   const watchedSubSelection = form.watch("subscriptionPlan");
-  const organizationAlias = form.watch("organizationAlias");
+  // const organizationAlias = form.watch("organizationAlias");
 
   useEffect(() => {
     if (pricing && watchedSubSelection) {
@@ -129,12 +127,6 @@ export function CreateOrganization({
     }
   }, [selectedPricing, isMonthly, currencyConverter, selectedCurrency]);
 
-  const appliedDiscount = useMemo(() => {
-    if (discount) {
-      return ((Number(discount?.discountPercentage) || 0) / 100) * subPlanPrice;
-    } else return 0;
-  }, [subPlanPrice, discount]);
-
   async function onSubmit(values: z.infer<typeof organizationSchema>) {
     const newWorkspace = await organisation(values);
 
@@ -148,26 +140,6 @@ export function CreateOrganization({
     }
   }
 
-  function applyDiscount() {
-    if (!zikoroDiscounts) return;
-
-    const percent = zikoroDiscounts?.find((v) => v?.discountCode === code);
-    if (percent) {
-      if (percent.validUntil && new Date(percent.validUntil) < new Date()) {
-        toast.error("Oops! Discount code has expired. Try another one");
-        return;
-      }
-      setDiscount(percent);
-      toast.success("Greate move!. Discount has been applied");
-      setIsDiscount(true);
-      return;
-    } else {
-      setDiscount(null);
-      toast.error("Oops! Discount code is incorrect. Try again");
-      return;
-    }
-  }
-
   const [buyCredits, setBuyCredits] = useState(false);
 
   return (
@@ -177,7 +149,7 @@ export function CreateOrganization({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="rounded-xl w-[60%] h-fit overflow-y-auto max-w-5xl box-animation bg-white mx-auto md:my-auto absolute inset-x-0 md:inset-y-0 "
+        className="rounded-xl w-[60%] h-fit overflow-y-auto max-w-5xl box-animation bg-white mx-auto md:my-auto absolute inset-x-0 md:inset-y-0 grid grid-cols-2"
       >
         <Form {...form}>
           <form
@@ -410,6 +382,14 @@ export function CreateOrganization({
             </div>
           </form>
         </Form>
+        <div className="w-full h-full relative">
+          <Image
+            src={CreateWorkspace ?? ""}
+            alt={"create workspace"}
+            objectFit="cover"
+            layout="fill"
+          />
+        </div>
       </div>
     </div>
   );

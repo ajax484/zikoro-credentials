@@ -2,13 +2,6 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../sidebar/Sidebar";
 import useOrganizationStore from "@/store/globalOrganizationStore";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-} from "../ui/dialog";
-import SelectOrganization from "../SelectOrganization/SelectOrganization";
 import { TOrganization } from "@/types/organization";
 import { useGetData } from "@/hooks/services/request";
 import GradientBorderSelect from "../CustomSelect/GradientSelectBorder";

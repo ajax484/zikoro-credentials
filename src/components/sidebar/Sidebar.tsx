@@ -43,7 +43,6 @@ const navlinks: Navlinks[] = [
     name: "Analytics",
     href: "/analytics",
     Icon: Analytics,
-    disabled: true,
   },
   {
     name: "Workspace",

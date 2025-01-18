@@ -1,17 +1,25 @@
 "use client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useGetData } from "@/hooks/services/request";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { TCertificate } from "@/types/certificates";
 import { CredentialsWorkspaceToken } from "@/types/token";
-import { generateAlias } from "@/utils/helpers";
+import { generateAlias, uploadFile } from "@/utils/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Trash } from "lucide-react";
+import { Pen, Trash } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { z } from "zod";
 
 // Create Zod schema for recipient form validation
@@ -22,6 +30,7 @@ const recipientSchema = z.object({
         recipientFirstName: z.string().nonempty("First name is required"),
         recipientLastName: z.string().nonempty("Last name is required"),
         recipientEmail: z.string().email("Enter a valid Email address"),
+        profilePicture: z.string().url("Enter a valid URL"),
       })
       .catchall(
         z.string().nonempty("Additional fields must be non-empty strings")
@@ -88,6 +97,7 @@ const RecipientsPage = ({
       recipientFirstName: string;
       recipientLastName: string;
       recipientEmail: string;
+      profilePicture: string;
     }
   ) => {
     const newRecipients = [...recipients];
@@ -100,6 +110,9 @@ const RecipientsPage = ({
     newRecipients.splice(index, 1);
     form.setValue("recipients", newRecipients);
   };
+
+  const [profilePictureUploading, setProfilePictureUploading] =
+    useState<boolean>(false);
 
   const onSubmit = (data: z.infer<typeof recipientSchema>) => {
     console.log(data);
@@ -153,6 +166,54 @@ const RecipientsPage = ({
               render={() => (
                 <FormItem className="flex gap-4 w-full">
                   <div className="grid grid-cols-2 gap-4 items-center flex-1">
+                    <FormControl className="relative w-fit">
+                      <Avatar className="w-24 h-24">
+                        <AvatarImage src={recipient.profilePicture} />
+                        <AvatarFallback>
+                          {recipient.recipientFirstName[0] +
+                            recipient.recipientLastName[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                      <label className="absolute bottom-0 right-0 p-1 transition-colors bg-white rounded-full shadow-lg cursor-pointer hover:bg-gray-50">
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            if (!file.type.startsWith("image/")) {
+                              toast.error("Please upload an image file");
+                              return;
+                            }
+                            if (file.size > 5 * 1024 * 1024) {
+                              toast.error("Image size should be less than 5MB");
+                              return;
+                            }
+                            setProfilePictureUploading(true);
+                            const { url, error } = await uploadFile(
+                              file,
+                              "image"
+                            );
+
+                            if (error) return toast.error(error);
+                            // alert("File uploaded successfully");
+
+                            url &&
+                              updateRecipient(index, {
+                                ...recipient,
+                                profilePicture: url,
+                              });
+                          }}
+                          disabled={profilePictureUploading}
+                        />
+                        {profilePictureUploading ? (
+                          <div className="w-4 h-4 border-2 border-gray-300 rounded-full animate-spin border-t-black" />
+                        ) : (
+                          <Pen className="w-4 h-4" />
+                        )}
+                      </label>
+                    </FormControl>
                     <FormControl>
                       <Input
                         placeholder="First Name"

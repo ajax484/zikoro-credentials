@@ -6,6 +6,7 @@ export type TAttendee = {
   firstName: string;
   lastName: string;
   email: string;
+  profilePicture: string;
 };
 
 export type ValueType = TAttendee | TAttendee[];

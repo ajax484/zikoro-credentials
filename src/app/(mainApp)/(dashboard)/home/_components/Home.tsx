@@ -174,8 +174,6 @@ const Home = () => {
     []
   );
 
-  console.log(workspaces);
-
   const { mutateData: updateUser, isLoading: updateUserIsLoading } =
     useMutateData(`/users/${user?.id}`, true);
 
@@ -585,15 +583,11 @@ const Home = () => {
                         </div>
                         <div className="flex flex-col h-full">
                           <span className="font-medium">Track Usage</span>
-                          {/* <Link
+                          <Link
                             href={
                               recentCertificate?.JSON
-                                ? "/credentials/create/" +
-                                  recentCertificate.certificateAlias +
-                                  "?type=certificate&workspaceId=" +
-                                  organization?.id +
-                                  "&workspaceAlias=" +
-                                  organization?.organizationAlias
+                                ? "/analytics?certificateAlias=" +
+                                  recentCertificate.certificateAlias
                                 : {}
                             }
                             className="flex gap-2 items-center"
@@ -602,7 +596,7 @@ const Home = () => {
                               Proceed
                             </span>
                             <ArrowRight className="text-basePrimary size-4" />
-                          </Link> */}
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -732,13 +726,13 @@ const Home = () => {
                     </span>
                   </div>
                 </div>
-                {/* <div className="flex justify-center items-center gap-2">
-                <Link href={"/analytics"}>
-                  <span className="text-basePrimary mx-auto underline">
-                    See all
-                  </span>
-                </Link>
-              </div> */}
+                <div className="flex justify-center items-center gap-2">
+                  <Link href={"/analytics"}>
+                    <span className="text-basePrimary mx-auto underline">
+                      See all
+                    </span>
+                  </Link>
+                </div>
               </div>
             </div>
 

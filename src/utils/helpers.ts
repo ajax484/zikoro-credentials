@@ -408,3 +408,19 @@ export function applyCredentialsDiscount(
       return amount;
   }
 }
+
+export function formatNumber(num: number): string {
+  if (num >= 1_000_000_000) {
+    return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, "") + "b"; // Billion
+  }
+  if (num >= 1_000_000) {
+    return (num / 1_000_000).toFixed(1).replace(/\.0$/, "") + "m"; // Million
+  }
+  if (num >= 1_000) {
+    return (num / 1_000).toFixed(1).replace(/\.0$/, "") + "k"; // Thousand
+  }
+  if (num >= 100) {
+    return (num / 100).toFixed(1).replace(/\.0$/, "") + "h"; // Hundred
+  }
+  return num.toString(); // Less than 100, no formatting
+}
