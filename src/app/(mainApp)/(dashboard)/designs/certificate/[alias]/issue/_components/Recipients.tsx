@@ -54,13 +54,17 @@ const RecipientsPage = ({
   const form = useForm<z.infer<typeof recipientSchema>>({
     resolver: zodResolver(recipientSchema),
     defaultValues: {
-      recipients: mainRecipients || [
-        {
-          recipientFirstName: "John",
-          recipientLastName: "Doe",
-          recipientEmail: "johndoe@example.com",
-        },
-      ],
+      recipients:
+        mainRecipients.length > 0
+          ? mainRecipients
+          : [
+              {
+                recipientFirstName: "John",
+                recipientLastName: "Doe",
+                recipientEmail: "johndoe@example.com",
+                profilePicture: "",
+              },
+            ],
     },
   });
 
@@ -87,7 +91,12 @@ const RecipientsPage = ({
   const addRecipient = () => {
     form.setValue("recipients", [
       ...recipients,
-      { recipientFirstName: "", recipientLastName: "", recipientEmail: "" },
+      {
+        recipientFirstName: "",
+        recipientLastName: "",
+        recipientEmail: "",
+        profilePicture: "",
+      },
     ]);
   };
 
@@ -165,8 +174,8 @@ const RecipientsPage = ({
               name={`recipients.${index}` as const}
               render={() => (
                 <FormItem className="flex gap-4 w-full">
-                  <div className="grid grid-cols-2 gap-4 items-center flex-1">
-                    <FormControl className="relative w-fit">
+                  <FormControl className="relative w-fit">
+                    <div className="relative h-fit">
                       <Avatar className="w-24 h-24">
                         <AvatarImage src={recipient.profilePicture} />
                         <AvatarFallback>
@@ -204,6 +213,8 @@ const RecipientsPage = ({
                                 ...recipient,
                                 profilePicture: url,
                               });
+
+                            setProfilePictureUploading(false);
                           }}
                           disabled={profilePictureUploading}
                         />
@@ -213,7 +224,9 @@ const RecipientsPage = ({
                           <Pen className="w-4 h-4" />
                         )}
                       </label>
-                    </FormControl>
+                    </div>
+                  </FormControl>
+                  <div className="grid grid-cols-2 gap-4 items-center flex-1">
                     <FormControl>
                       <Input
                         placeholder="First Name"
@@ -251,7 +264,8 @@ const RecipientsPage = ({
                         }
                       />
                     </FormControl>
-                    {certificate.attributes.length > 0 &&
+                    {certificate.attributes &&
+                      certificate.attributes.length > 0 &&
                       certificate.attributes.map((attribute) => (
                         <FormControl>
                           <Input
