@@ -661,7 +661,7 @@ const Home = () => {
                         width={30}
                         height={30}
                       />
-                      <span>Created Credentials</span>
+                      <span className="text-sm">Created Credentials</span>
                     </div>
                     <span className="font-bold text-xl">
                       {certificates.length}
@@ -675,7 +675,7 @@ const Home = () => {
                         width={30}
                         height={30}
                       />
-                      <span>Assigned Credentials</span>
+                      <span className="text-sm">Assigned Credentials</span>
                     </div>
                     <span className="font-bold text-xl">
                       {assignedCertificates?.length}
@@ -689,7 +689,7 @@ const Home = () => {
                         width={30}
                         height={30}
                       />
-                      <span>Viewed</span>
+                      <span className="text-sm">Viewed</span>
                     </div>
                     <span className="font-bold text-xl">
                       {
@@ -711,7 +711,7 @@ const Home = () => {
                         width={30}
                         height={30}
                       />
-                      <span>Shared On Socials</span>
+                      <span className="text-sm">Shared On Socials</span>
                     </div>
                     <span className="font-bold text-xl">
                       {
@@ -728,7 +728,7 @@ const Home = () => {
                 </div>
                 <div className="flex justify-center items-center gap-2">
                   <Link href={"/analytics"}>
-                    <span className="text-basePrimary mx-auto underline">
+                    <span className="text-basePrimary mx-auto underline text-xs">
                       See all
                     </span>
                   </Link>

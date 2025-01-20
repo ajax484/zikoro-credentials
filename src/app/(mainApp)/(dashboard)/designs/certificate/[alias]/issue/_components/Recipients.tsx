@@ -62,7 +62,8 @@ const RecipientsPage = ({
                 recipientFirstName: "John",
                 recipientLastName: "Doe",
                 recipientEmail: "johndoe@example.com",
-                profilePicture: "",
+                profilePicture:
+                  "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
               },
             ],
     },
@@ -95,7 +96,8 @@ const RecipientsPage = ({
         recipientFirstName: "",
         recipientLastName: "",
         recipientEmail: "",
-        profilePicture: "",
+        profilePicture:
+          "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
       },
     ]);
   };
@@ -179,8 +181,8 @@ const RecipientsPage = ({
                       <Avatar className="w-24 h-24">
                         <AvatarImage src={recipient.profilePicture} />
                         <AvatarFallback>
-                          {recipient.recipientFirstName[0] +
-                            recipient.recipientLastName[0]}
+                          {(recipient.recipientFirstName[0] || "#") +
+                            (recipient.recipientLastName[0] || "#")}
                         </AvatarFallback>
                       </Avatar>
                       <label className="absolute bottom-0 right-0 p-1 transition-colors bg-white rounded-full shadow-lg cursor-pointer hover:bg-gray-50">
@@ -229,6 +231,7 @@ const RecipientsPage = ({
                   <div className="grid grid-cols-2 gap-4 items-center flex-1">
                     <FormControl>
                       <Input
+                        required
                         placeholder="First Name"
                         value={recipient.recipientFirstName}
                         onChange={(e) =>
@@ -241,6 +244,7 @@ const RecipientsPage = ({
                     </FormControl>
                     <FormControl>
                       <Input
+                        required
                         placeholder="Last Name"
                         value={recipient.recipientLastName}
                         onChange={(e) =>
@@ -253,6 +257,7 @@ const RecipientsPage = ({
                     </FormControl>
                     <FormControl>
                       <Input
+                        required
                         type="recipientEmail"
                         placeholder="recipientEmail"
                         value={recipient.recipientEmail}

@@ -48,7 +48,6 @@ const navlinks: Navlinks[] = [
     name: "Workspace",
     href: "/workspace",
     Icon: Workspace,
-    disabled: true,
   },
 ];
 
