@@ -61,11 +61,11 @@ const CertificateView = ({
   );
 
   // Find placeholder in newState and replace with profile picture in the string
-  // newState = newState.replaceAll(
-  //   "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
-  //   certificate?.attendee?.profilePicture?.trim() ||
-  //     "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg"
-  // );
+  newState = newState.replaceAll(
+    "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
+    certificate?.profilePicture?.trim() ||
+      "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg"
+  );
 
   console.log(newState);
 
@@ -381,12 +381,12 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
               </p>
             </div>
 
-            {/* <div className="space-y-4 w-3/4">
+            <div className="space-y-4 w-3/4">
               <h2 className="text-gray-800 text-lg md:text-xl font-medium">
                 Scope of the training
               </h2>
               <div className="flex flex-wrap gap-2">
-                {certificate?.originalCertificate?.certificateSettings?.skills.map(
+                {certificate?.originalCertificate?.settings?.skills.map(
                   ({ value, color }) => (
                     <div
                       className="relative text-xs flex items-center gap-1.5 p-2 rounded w-fit md:text-sm"
@@ -402,7 +402,7 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
                   )
                 )}
               </div>
-            </div> */}
+            </div>
           </div>
         </>
       ) : !isLoading && !certificate ? (

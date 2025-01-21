@@ -90,7 +90,7 @@ export const QRCodeSidebar = ({
   const form = useForm<z.infer<typeof QRCodeSchema>>({
     resolver: zodResolver(QRCodeSchema),
     defaultValues: {
-      text: "https://www.credentials.zikoro.com/credentials/verify/certificate/#{certificateId#}",
+      text: "https://credentials.zikoro.com/credentials/verify/certificate/#{certificateId#}",
       color: "#000000",
       bgcolor: "#ffffff",
     },
