@@ -378,7 +378,7 @@ export function CreateOrganization({
             <button
               aria-label="Close"
               onClick={close}
-              className="w-fit h-fit px-0 ml-auto hover:cursor-pointer absolute right-2 top-2"
+              className="w-fit h-fit px-0 ml-auto hover:cursor-pointer absolute right-2 top-2 z-[100]"
             >
               <X size={22} />
             </button>
