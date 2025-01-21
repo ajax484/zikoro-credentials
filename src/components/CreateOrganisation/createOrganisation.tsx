@@ -167,15 +167,6 @@ export function CreateOrganization({
                   </div>
                 )}
               </div>
-              {!isInitial && (
-                <button
-                  aria-label="Close"
-                  onClick={close}
-                  className="w-fit h-fit px-0 ml-auto hover:cursor-pointer"
-                >
-                  <X size={22} />
-                </button>
-              )}
             </div>
 
             <div className="w-full flex py-4 flex-col gap-y-3 items-start justify-start">
@@ -383,6 +374,15 @@ export function CreateOrganization({
           </form>
         </Form>
         <div className="w-full h-full relative">
+          {!isInitial && (
+            <button
+              aria-label="Close"
+              onClick={close}
+              className="w-fit h-fit px-0 ml-auto hover:cursor-pointer absolute right-2 top-2"
+            >
+              <X size={22} />
+            </button>
+          )}
           <Image
             src={CreateWorkspace ?? ""}
             alt={"create workspace"}
