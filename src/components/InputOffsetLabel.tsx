@@ -5,7 +5,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import React from "react";
-import {cn} from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 export default function InputOffsetLabel({
   children,
@@ -13,38 +13,38 @@ export default function InputOffsetLabel({
   isRequired,
   append,
   prepend,
-  className
+  className,
 }: {
   children: React.ReactNode;
   label: string;
   isRequired?: boolean;
   append?: React.ReactNode;
   prepend?: React.ReactNode;
-  className?:string
+  className?: string;
 }) {
   return (
-    <FormItem className={cn("relative space-y-4 w-full",className)}>
-      <FormLabel className=" text-gray-600">
+    <FormItem className={cn("relative space-y-4 w-full", className)}>
+      <FormLabel className="font-medium text-xs text-gray-600">
         {label}
         {isRequired && <sup className="text-red-700">*</sup>}
       </FormLabel>
-      {append && (
-        <div className="absolute !my-0 left-2 z-10 h-full flex items-center">
-          {append}
-        </div>
-      )}
-      {prepend && (
-        <div className="absolute !my-0 right-2 z-10 h-full flex items-center">
-          {prepend}
-        </div>
-      )}
       <FormControl className="!mt-0">
-        <div
-          className={`${append ? "[&>*]:pl-8" : ""} ${
-            prepend ? "[&>*]:pr-8" : ""
-          }  border border-basePrimary rounded-md p-[0.2rem]`}
-        >
-          <div className="w-full bg-gradient-to-tr rounded-md from-custom-bg-gradient-start to-custom-bg-gradient-end placeholder-gray-500">
+        <div className={`relative h-fit border rounded-md`}>
+          {append && (
+            <div className="absolute !my-0 left-2 inset-y-0 z-10 h-fit flex items-center">
+              {append}
+            </div>
+          )}
+          {prepend && (
+            <div className="absolute !my-0 right-2 z-10 h-full flex items-center">
+              {prepend}
+            </div>
+          )}
+          <div
+            className={`w-full bg-basePrimary/10 rounded-md placeholder-gray-500 ${
+              append ? "[&>*]:pl-8" : ""
+            } ${prepend ? "[&>*]:pr-8" : ""} `}
+          >
             {children}
           </div>
         </div>

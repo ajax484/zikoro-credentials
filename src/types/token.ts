@@ -28,7 +28,7 @@ export type CredentialsToken = {
 
 export interface CredentialTokenUsageHistory {
   id: number;
-  createdAt: Date;
+  created_at: Date;
   workspaceAlias: string;
   certificateId?: number | null;
   badgeId?: number | null;
