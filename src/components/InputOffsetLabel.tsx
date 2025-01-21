@@ -29,24 +29,12 @@ export default function InputOffsetLabel({
         {isRequired && <sup className="text-red-700">*</sup>}
       </FormLabel>
       <FormControl className="!mt-0">
-        <div className={`relative h-fit border rounded-md`}>
-          {append && (
-            <div className="absolute !my-0 left-2 inset-y-0 z-10 h-fit flex items-center">
-              {append}
-            </div>
-          )}
-          {prepend && (
-            <div className="absolute !my-0 right-2 z-10 h-full flex items-center">
-              {prepend}
-            </div>
-          )}
-          <div
-            className={`w-full bg-basePrimary/10 rounded-md placeholder-gray-500 ${
-              append ? "[&>*]:pl-8" : ""
-            } ${prepend ? "[&>*]:pr-8" : ""} `}
-          >
-            {children}
-          </div>
+        <div
+          className={`w-full bg-basePrimary/10 rounded-md placeholder-gray-500 relative h-fit border flex gap-0.5 p-0.5 items-center`}
+        >
+          {append && <div>{append}</div>}
+          {prepend && <div>{prepend}</div>}
+          <div className="flex-1">{children}</div>
         </div>
       </FormControl>
 

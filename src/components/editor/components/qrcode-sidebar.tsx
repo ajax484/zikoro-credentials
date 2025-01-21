@@ -101,10 +101,10 @@ export const QRCodeSidebar = ({
 
     if (!user) return;
 
-    if (creditBalance.silver === 0) {
-      toast.error("Insufficient balance to complete the charge.");
-      return;
-    }
+    // if (creditBalance.silver === 0) {
+    //   toast.error("Insufficient balance to complete the charge.");
+    //   return;
+    // }
 
     const payload = {
       amountToCharge: 1,
