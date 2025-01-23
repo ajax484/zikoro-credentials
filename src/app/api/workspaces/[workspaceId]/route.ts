@@ -56,12 +56,15 @@ export async function PATCH(req: NextRequest) {
     try {
       const params = await req.json();
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("organization")
-        .upsert(params, { onConflict: "id" });
+        .upsert(params, { onConflict: "id" })
+        .select("*");
+
       if (error) throw error;
+
       return NextResponse.json(
-        { msg: "event updated successfully" },
+        { msg: "event updated successfully", data },
         {
           status: 200,
         }

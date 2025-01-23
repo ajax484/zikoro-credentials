@@ -7,7 +7,7 @@ import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { TFilter } from "@/types/filter";
 import { convertCamelToNormal, extractUniqueTypes } from "@/utils/helpers";
 import { Send, Trash } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { PiExport } from "react-icons/pi";
 import { issueesColumns } from "./columns";
 import logo from "@/public/icons/logo.svg";
@@ -411,6 +411,19 @@ const Issue = ({
 
   const columns = issueesColumns(refetch);
 
+  const creditType = useMemo(() => {
+    const certificate = certificates.find(
+      ({ certificateAlias }) => certificateAlias === selectedCertificate
+    );
+    if (!certificate) return "bronze";
+
+    return certificate?.attributes.length > 0
+      ? "gold"
+      : certificate.hasQRCode
+      ? "silver"
+      : "bronze";
+  }, [selectedCertificate]);
+
   return (
     <section className="space-y-4">
       <div className="flex items-end justify-between">
@@ -557,15 +570,18 @@ const Issue = ({
                   </div>
                 </label>
               </div>
-              <div className="flex flex-col items-center gap-2 text-xs text-gray-600">
-                <span>
-                  Assigning certificate costs <b>1 bronze token</b> per
-                  recipient
-                </span>
-                <span>
-                  You have <b>{creditBalance.bronze}</b> bronze tokens
-                </span>
-              </div>
+              {selectedCertificate && (
+                <div className="flex flex-col items-center gap-2 text-xs text-gray-600">
+                  <span>
+                    Assigning this certificate costs <b>1 {creditType} token</b>{" "}
+                    per recipient
+                  </span>
+                  <span>
+                    You have <b>{creditBalance[creditType]}</b> {creditType}{" "}
+                    tokens
+                  </span>
+                </div>
+              )}
               <GradientBorderSelect
                 placeholder="Select Credential"
                 value={selectedCertificate || ""}

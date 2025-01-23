@@ -21,6 +21,7 @@ import useUserStore from "@/store/globalUserStore";
 import { CredentialsWorkspaceToken } from "@/types/token";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { toast } from "react-toastify";
+import { profile } from "console";
 
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
@@ -80,8 +81,11 @@ const SendEmail = ({
   };
 
   const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
-    if (creditBalance.bronze === 0 || creditBalance.bronze < recipients.length)
-      return toast.error("Insufficient credits");
+    if (
+      creditBalance[creditType] === 0 ||
+      creditBalance[creditType] < recipients.length
+    )
+      return toast.error(`Insufficient ${creditType} credits`);
 
     await mutateData({
       payload: {
@@ -93,12 +97,14 @@ const SendEmail = ({
             recipientEmail,
             recipientFirstName,
             recipientLastName,
+            profilePicture,
             ...metadata
           }) => ({
             metadata,
             recipientEmail: recipientEmail.trim(),
             recipientFirstName: recipientFirstName.trim(),
             recipientLastName: recipientLastName.trim(),
+            profilePicture,
           })
         ),
         status: "email sent",
@@ -109,6 +115,13 @@ const SendEmail = ({
     });
     router.push("/assign");
   };
+
+  const creditType =
+    certificate?.attributes && certificate?.attributes.length > 0
+      ? "gold"
+      : certificate.hasQRCode
+      ? "silver"
+      : "bronze";
 
   return (
     <Form {...form}>
@@ -206,7 +219,7 @@ const SendEmail = ({
             type="submit"
             disabled={isLoading}
           >
-            Send email ({recipients.length} bronze credits)
+            Send email ({recipients.length} {creditType} credits)
           </Button>
         </div>
       </form>

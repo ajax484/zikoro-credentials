@@ -337,7 +337,6 @@ export function replaceSpecialText(input: string, context: Context): string {
   } else {
   }
 
-  console.log(context.asset.attributes, "attribute");
   return input.replaceAll(/#{(.*?)#}/g, (match, value) => {
     // console.log(value, context.asset?.attributes, "attribute");
     if (
@@ -354,7 +353,7 @@ export function replaceSpecialText(input: string, context: Context): string {
         return context.recipient.recipientLastName;
       case "recipient_email":
         return context.recipient.recipientEmail;
-      case "certificate_id":
+      case "certificateId":
         return context.recipient.certificateId;
       case "certificate_link":
         return (

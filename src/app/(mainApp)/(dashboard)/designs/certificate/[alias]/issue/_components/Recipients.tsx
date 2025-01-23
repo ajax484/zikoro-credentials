@@ -17,7 +17,7 @@ import { generateAlias, uploadFile } from "@/utils/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pen, Trash } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -136,6 +136,15 @@ const RecipientsPage = ({
     updatePage(1);
   };
 
+  console.log(certificate.hasQRCode)
+
+  const creditType =
+    certificate?.attributes && certificate?.attributes.length > 0
+      ? "gold"
+      : certificate.hasQRCode
+      ? "silver"
+      : "bronze";
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -153,9 +162,9 @@ const RecipientsPage = ({
         </div>
 
         <h3 className="text-sm font-medium text-gray-700 text-center">
-          {recipients.length} Recipients will receive this Credential. Your
-          Bronze Credit balance is {creditBalance.bronze}.{" "}
-          {creditBalance.bronze < recipients.length && (
+          {recipients.length} Recipients will receive this Credential. Your{" "}
+          {creditType} Credit balance is {creditBalance[creditType]}.{" "}
+          {creditBalance[creditType] < recipients.length && (
             <span>
               You do not have sufficient credits to issue this credential to the
               recipients.{" "}
@@ -301,7 +310,7 @@ const RecipientsPage = ({
 
           <button
             disabled={
-              creditBalance.bronze < recipients.length || creditsIsLoading
+              creditBalance[creditType] < recipients.length || creditsIsLoading
             }
             onClick={addRecipient}
             className="text-basePrimary text-sm"

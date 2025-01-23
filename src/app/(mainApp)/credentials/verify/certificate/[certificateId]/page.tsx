@@ -60,6 +60,8 @@ const CertificateView = ({
     )
   );
 
+  console.log(certificate.originalCertificate.certificateSettings.skills);
+
   // Find placeholder in newState and replace with profile picture in the string
   newState = newState.replaceAll(
     "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
@@ -386,7 +388,7 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
                 Scope of the training
               </h2>
               <div className="flex flex-wrap gap-2">
-                {certificate?.originalCertificate?.settings?.skills.map(
+                {certificate?.originalCertificate?.certificateSettings?.skills.map(
                   ({ value, color }) => (
                     <div
                       className="relative text-xs flex items-center gap-1.5 p-2 rounded w-fit md:text-sm"
@@ -430,6 +432,20 @@ function ActionModal({
   shareText: string;
   recordShare: ({ payload }: { payload: { social: string } }) => Promise<void>;
 }) {
+  // const handleShare = () => {
+  //   const linkedInUrl = new URL(
+  //     "https://www.linkedin.com/sharing/share-offsite/"
+  //   );
+  //   linkedInUrl.searchParams.set("url", pageUrl);
+
+  //   // Additional parameters (optional, can be embedded in the URL if your page supports Open Graph meta tags)
+  //   linkedInUrl.searchParams.set("title", title);
+  //   linkedInUrl.searchParams.set("summary", description);
+  //   linkedInUrl.searchParams.set("source", imageUrl);
+
+  //   window.open(linkedInUrl.toString(), "_blank");
+  // };
+
   const linkToCertificate = window.location.href;
   return (
     <>
@@ -458,10 +474,10 @@ function ActionModal({
             <span>X</span>
           </button>
 
-          <LinkedinShareButton
-            url={`https://www.linkedin.com/shareArticle?mini=true&title=${encodeURIComponent(
-              shareText
-            )}`}
+          <button
+            className={
+              "items-center h-10 gap-x-2 px-2 flex justify-start w-full text-xs"
+            }
           >
             <button
               className={
@@ -472,7 +488,7 @@ function ActionModal({
               <LinkedinIcon />
               <span>LinkedIn</span>
             </button>
-          </LinkedinShareButton>
+          </button>
           <button
             onClick={() => {
               recordShare({ payload: { social: "facebook" } });

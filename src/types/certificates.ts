@@ -31,7 +31,7 @@ export interface TCertificate {
   created_at: Date;
   eventAlias: string;
   name: string;
-  settings: TCertificateSettings;
+  certificateSettings: TCertificateSettings;
   event?: Event;
   lastEdited: Date;
   previewUrl?: string;
@@ -43,6 +43,7 @@ export interface TCertificate {
   createdBy: number;
   isValid: boolean;
   attributes: string[];
+  hasQRCode: boolean;
 }
 
 export interface TCertificateSettings {

@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash, replaceSpecialText } from "@/utils/helpers";
 import axios from "axios";
+import { TCertificate } from "@/types/certificates";
 
 export async function POST(
   req: NextRequest,
@@ -38,6 +39,18 @@ export async function POST(
       senderName
     );
 
+    const { data: certificate, error: certificateError } = await supabase
+      .from("certificate")
+      .select("*")
+      .eq("id", certificateGroupId)
+      .single();
+
+    if (certificateError) throw certificateError;
+
+    if (!certificate) {
+      throw new Error("Invalid certificate");
+    }
+
     const response = await axios.post(
       `${req.nextUrl.origin}/api/workspaces/${workspaceAlias}/credits/charge`,
       {
@@ -47,7 +60,12 @@ export async function POST(
         workspaceId,
         workspaceAlias,
         recipientDetails: recipients,
-        tokenId: 1,
+        tokenId:
+          certificate?.attributes && certificate?.attributes.length > 0
+            ? 3
+            : certificate.hasQRCode
+            ? 2
+            : 1,
         credentialType: "certificate",
       }
     );

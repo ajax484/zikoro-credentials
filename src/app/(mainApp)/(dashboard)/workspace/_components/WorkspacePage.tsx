@@ -8,7 +8,6 @@ import SocialLinksIcon from "@/public/icons/line-md_link.svg";
 import WorkspaceInformation from "./tabs/WorkspaceInformation";
 import CreditHistory from "./tabs/CreditHistory";
 import Image from "next/image";
-import SocialLinks from "./tabs/SocialLinks";
 import TeamMembers from "./tabs/TeamMembers";
 
 type Tabs = {
@@ -32,11 +31,6 @@ const tabs: Tabs[] = [
     name: "Team members",
     Icon: TeamMembersIcon,
     Component: TeamMembers,
-  },
-  {
-    name: "Social links",
-    Icon: SocialLinksIcon,
-    Component: SocialLinks,
   },
 ];
 
