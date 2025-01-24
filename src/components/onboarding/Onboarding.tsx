@@ -12,6 +12,7 @@ import { useOnboarding, useGetUserId } from "@/hooks";
 import {
   useCreateUserOrganization,
   useUpdateOrganization,
+  useCreateTeamMember,
 } from "@/hooks/services/workspace";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { useRouter } from "next/navigation";
@@ -357,6 +358,7 @@ export default function OnboardingForm({
   const [orgAlias, setOrgAlias] = useState<string>("");
   const [orgId, setOrgId] = useState<number>(0);
   const { updateOrganization } = useUpdateOrganization();
+  const { createTeamMember } = useCreateTeamMember();
 
   const [formData, setFormData] = useState({
     referralCode: "",
@@ -424,9 +426,9 @@ export default function OnboardingForm({
   //update workspace ID
   const updateWorkspaceId = async () => {
     const response = await getUserId(email);
-    console.log(response);
     setOrgId(Number(response));
     await updateOrganization(orgAlias, orgId);
+    await createTeamMember(orgId, email, orgAlias);
     router.push("/home");
   };
 
