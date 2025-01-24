@@ -93,10 +93,10 @@ export function useCreateTeamMember(
                 return;
             }
             if (status === 204 || status === 200) {
-                toast.success("Organization created successfully");
+                console.log("Organization created successfully");
             }
         } catch (error) {
-            toast.error('error creating team members')
+            console.log('error creating team members')
         }
     }
 
