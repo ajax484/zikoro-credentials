@@ -136,14 +136,15 @@ export async function POST(
             },
           ],
           subject,
-          htmlbody:
-            replaceSpecialText(body, {
-              recipient: recipient,
-              organization: {},
-            }) +
-            `
+          htmlbody: `
+          <div>
+          ${replaceSpecialText(body, {
+            recipient: recipient,
+            organization: {},
+          })}
+          </div>
           <div style="text-align: center; margin-top: 20px; background-color: #9D00FF; padding: 10px; border-radius: 5px; color: white;">
-            <a href="${window.location.origin}/credentials/verify/certificate/${certificateId}">View Certificate</a>
+            <a href="https://credentials.zikoro.com/credentials/verify/certificate/${certificateId}">View Certificate</a>
           </div>
           `,
         });
