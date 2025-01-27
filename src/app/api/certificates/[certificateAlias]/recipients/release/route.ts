@@ -109,8 +109,12 @@ export async function POST(
 
     // Sending emails using ZeptoMail
     for (const recipient of recipientData) {
-      const { recipientEmail, recipientFirstName, recipientLastName } =
-        recipient;
+      const {
+        recipientEmail,
+        recipientFirstName,
+        recipientLastName,
+        certificateId,
+      } = recipient;
       try {
         const { SendMailClient } = require("zeptomail");
         const client = new SendMailClient({
@@ -132,10 +136,16 @@ export async function POST(
             },
           ],
           subject,
-          htmlbody: replaceSpecialText(body, {
-            recipient: recipient,
-            organization: {},
-          }),
+          htmlbody:
+            replaceSpecialText(body, {
+              recipient: recipient,
+              organization: {},
+            }) +
+            `
+          <div style="text-align: center; margin-top: 20px; background-color: #9D00FF; padding: 10px; border-radius: 5px; color: white;">
+            <a href="${window.location.origin}/credentials/verify/certificate/${certificateId}">View Certificate</a>
+          </div>
+          `,
         });
       } catch (emailError) {
         console.error(`Error sending email to ${recipientEmail}:`, emailError);
