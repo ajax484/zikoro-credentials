@@ -18,7 +18,7 @@ export async function GET(
       const { data, error, status } = await supabase
         .from("certificate")
         .select("*")
-        .order("lastEdited", { ascending: true })
+        .order("lastEdited", { ascending: false })
         .filter("workspaceAlias", "eq", workspaceId)
         .limit(1);
 

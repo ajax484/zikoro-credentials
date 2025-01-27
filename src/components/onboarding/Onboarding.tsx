@@ -8,7 +8,7 @@ import {
   SProgress5,
 } from "@/constants";
 import React, { useEffect, useState } from "react";
-import { useOnboarding, useGetUserId } from "@/hooks";
+import { useOnboarding, useGetUserId, useCreateOrganisation } from "@/hooks";
 import {
   useCreateUserOrganization,
   useUpdateOrganization,
@@ -423,25 +423,26 @@ export default function OnboardingForm({
   }
 
   //update workspace ID
-  const updateWorkspaceId = async () => {
-    const response = await getUserId(email);
+ const updateWorkspaceId = async () => {
+  const response = await getUserId(email);
 
-    if (!response) {
-      console.error("Failed to get user ID");
-      return;
-    }
+  if (!response) {
+    console.error("Failed to get user ID");
+    return;
+  }
 
-    const userOrgId = Number(response); // Convert the response to a number
+  const userOrgId = Number(response); // Convert the response to a number
 
-    // Use userOrgId directly without relying on state
-    await updateOrganization(orgAlias, userOrgId);
-    await createTeamMember(userOrgId, email, orgAlias);
+  // Use userOrgId directly without relying on state
+  await updateOrganization(orgAlias, userOrgId);
+  await createTeamMember(userOrgId, email, orgAlias);
+  
+  // Update the state asynchronously for future use if needed
+  setOrgId(userOrgId);
 
-    // Update the state asynchronously for future use if needed
-    setOrgId(userOrgId);
+  router.push("/home");
+};
 
-    router.push("/home");
-  };
 
   useEffect(() => {
     setOrgAlias(generateOrgAlias());

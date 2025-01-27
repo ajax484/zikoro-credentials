@@ -3,12 +3,15 @@ import { useState } from "react";
 import { ThumbUp } from "styled-icons/material-rounded";
 import { FeedBackComp } from "./FeedbackComp";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
 
 export default function FeedBack() {
   const [showSuccess, setShowSuccess] = useState(false);
+  const router = useRouter();
 
   function onClose() {
-    setShowSuccess((prev) => !prev);
+    // setShowSuccess((prev) => !prev);
+    router.back();
   }
   return (
     <div className="w-full max-w-xl m-auto min-h-screen flex flex-col items-start justify-center gap-y-4 py-8 sm:py-10 px-4 sm:px-6">

@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { postRequest } from "@/utils/api";
 import useUserStore from "@/store/globalUserStore";
 import { createClient } from "@/utils/supabase/client";
+import { TUser } from "@/types/user";
 
 const supabase = createClient();
 
@@ -23,8 +24,9 @@ export function useRegistration() {
         email: values.email,
         password: values.password,
         options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback/${values?.email
-            }/${new Date().toISOString()}`,
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback/${
+            values?.email
+          }/${new Date().toISOString()}`,
         },
       });
 
@@ -222,11 +224,7 @@ export function useVerifyCode() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  async function verifyCode(
-    email: string,
-    token: string,
-    type: string | null
-  ) {
+  async function verifyCode(email: string, token: string, type: string | null) {
     try {
       setLoading(true);
       const { data, error } = await supabase.auth.verifyOtp({
@@ -243,7 +241,8 @@ export function useVerifyCode() {
         router.push(`${window.location.origin}/update-password`);
       } else {
         router.push(
-          `${window.location.origin
+          `${
+            window.location.origin
           }/onboarding?email=${email}&createdAt=${new Date().toISOString()}`
         );
       }
@@ -317,21 +316,23 @@ export function useOnboarding() {
           industry: values.industry,
           referralCode: values.referralCode,
           phoneNumber: values.phoneNumber,
-          referredBy: values.referredBy
-        });
+          referredBy: values.referredBy,
+        })
+        .select("*")
+        .maybeSingle();
 
       if (error) {
         toast.error(error.message);
         return;
       }
 
-      if (status === 201 || status === 200) {
-        setLoading(false);
-        toast.success("Profile Updated Successfully");
-        const user = await getUser(email);
-        setUser(user);
-      }
-      return data;
+      setLoading(false);
+      toast.success("Profile Updated Successfully");
+      const user = data as unknown as TUser;
+      setUser(user);
+
+      console.log(user);
+      return data as unknown as TUser;
     } catch (error: any) {
       //
       toast.error(error?.response?.data?.error);
@@ -345,9 +346,10 @@ export function useOnboarding() {
   };
 }
 
-
 export const useGetUserId = () => {
-  const getUserId = async (email: string | null): Promise<string | undefined> => {
+  const getUserId = async (
+    email: string | null
+  ): Promise<string | undefined> => {
     if (!email) return;
 
     const { data: user, error } = await supabase
@@ -356,7 +358,6 @@ export const useGetUserId = () => {
       .eq("userEmail", email)
       .order("created_at", { ascending: false })
       .single();
-
 
     if (error) {
       console.error("Error fetching user ID:", error);

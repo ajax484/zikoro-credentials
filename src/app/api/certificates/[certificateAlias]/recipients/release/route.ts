@@ -109,8 +109,12 @@ export async function POST(
 
     // Sending emails using ZeptoMail
     for (const recipient of recipientData) {
-      const { recipientEmail, recipientFirstName, recipientLastName } =
-        recipient;
+      const {
+        recipientEmail,
+        recipientFirstName,
+        recipientLastName,
+        certificateId,
+      } = recipient;
       try {
         const { SendMailClient } = require("zeptomail");
         const client = new SendMailClient({
@@ -132,13 +136,36 @@ export async function POST(
             },
           ],
           subject,
-          htmlbody: replaceSpecialText(body, {
+          htmlbody: `
+          <div>
+          ${replaceSpecialText(body, {
             recipient: recipient,
             organization: {},
-          }),
+          })}
+          </div>
+          <div style="text-align: center; margin-top: 20px;">
+  <a
+    href="https://credentials.zikoro.com/credentials/verify/certificate/${certificateId}"
+    style="
+      display: inline-block;
+      background-color: #9D00FF;
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      font-weight: bold;
+    "
+  >
+    View
+  </a>
+</div>
+
+          `,
         });
       } catch (emailError) {
-        console.error(`Error sending email to ${recipientEmail}:`, emailError);
+        console.error(`qError sending email to ${recipientEmail}:`, emailError);
       }
     }
 

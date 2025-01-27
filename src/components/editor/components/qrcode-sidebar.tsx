@@ -182,11 +182,12 @@ export const QRCodeSidebar = ({
               />
             </div>
             <Button
-              disabled={isMutating || creditsIsLoading || hasQRCode}
+              disabled={isMutating || creditsIsLoading}
               type="submit"
               className="w-full"
             >
-              {hasQRCode ? "QR Code already generated" : "Generate"}
+              Generate
+              {/* {hasQRCode ? "QR Code already generated" : "Generate"} */}
             </Button>
           </form>
         </Form>

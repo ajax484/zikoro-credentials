@@ -209,6 +209,7 @@ export const useGetEvents = (): UseGetResult<
 
 export function useCreateOrganisation() {
   const { user: userData } = useUserStore();
+  const { setOrganization } = useOrganizationStore();
   const [loading, setLoading] = useState(false);
 
   async function organisation(
@@ -216,22 +217,22 @@ export function useCreateOrganisation() {
     exp?: string
   ) {
     setLoading(true);
-    const { firstName, lastName, userEmail, ...restData } = values;
+    const { firstName, lastName, userEmail, id, ...restData } = values;
     try {
       const { data, error, status } = await supabase
         .from("organization")
         .upsert([
           {
             ...restData,
-            organizationOwner: userData?.userEmail,
-            organizationOwnerId: userData?.id,
+            organizationOwner: userEmail,
+            organizationOwnerId: id,
             subscriptionExpiryDate: exp || null,
             teamMembers: [
               {
-                userId: userData?.id,
-                userFirstName: userData?.firstName,
-                userLastName: userData?.lastName,
-                userEmail: userData?.userEmail,
+                userId: id,
+                userFirstName: firstName,
+                userLastName: lastName,
+                userEmail: userEmail,
                 userRole: "owner",
               },
             ],
@@ -240,18 +241,22 @@ export function useCreateOrganisation() {
         .select("*")
         .maybeSingle();
 
+      console.log(data);
       if (error) {
-        toast.error(error.message);
-
-        setLoading(false);
-        return data as unknown as TOrganization;
+        console.log(error);
+        return toast.error(error.message);
       }
 
-      if (status === 201 || status === 200) {
-        setLoading(false);
-        toast.success("Organisation created successfully");
-      }
-    } catch (error) {}
+      console.log(data);
+      setLoading(false);
+      setOrganization(data as unknown as TOrganization);
+      toast.success("Organisation created successfully");
+      return data as unknown as TOrganization;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return {
