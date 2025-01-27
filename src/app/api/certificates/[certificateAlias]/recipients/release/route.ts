@@ -143,13 +143,29 @@ export async function POST(
             organization: {},
           })}
           </div>
-          <div style="text-align: center; margin-top: 20px; background-color: #9D00FF; padding: 10px; border-radius: 5px; color: white;">
-            <a href="https://credentials.zikoro.com/credentials/verify/certificate/${certificateId}">View Certificate</a>
-          </div>
+          <div style="text-align: center; margin-top: 20px;">
+  <a
+    href="https://credentials.zikoro.com/credentials/verify/certificate/${certificateId}"
+    style="
+      display: inline-block;
+      background-color: #9D00FF;
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      font-weight: bold;
+    "
+  >
+    View Certificate
+  </a>
+</div>
+
           `,
         });
       } catch (emailError) {
-        console.error(`Error sending email to ${recipientEmail}:`, emailError);
+        console.error(`qError sending email to ${recipientEmail}:`, emailError);
       }
     }
 
