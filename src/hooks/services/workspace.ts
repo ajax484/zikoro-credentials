@@ -69,3 +69,38 @@ export function useUpdateOrganization(
         updateOrganization,
     };
 }
+
+
+export function useCreateTeamMember(
+) {
+    async function createTeamMember(
+        userId: number,
+        userEmail: string,
+        workspaceAlias: string
+    ) {
+        try {
+            const { data, error, status } = await supabase
+                .from("organizationTeamMembers")
+                .upsert({
+                    userId: userId,
+                    userEmail: userEmail,
+                    userRole: "Owner",
+                    workspaceAlias: workspaceAlias, // this comes from the hook's scope
+                })
+
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+            if (status === 204 || status === 200) {
+                console.log("Organization created successfully");
+            }
+        } catch (error) {
+            console.log('error creating team members')
+        }
+    }
+
+    return {
+        createTeamMember,
+    };
+}
