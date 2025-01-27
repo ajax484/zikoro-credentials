@@ -27,10 +27,7 @@ const Preview = ({
 
   const submitRecipients = async () => {
     const recipients = data.map((row) => {
-      const recipient = {
-        profilePicture:
-          "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
-      };
+      const recipient = {};
 
       Array.from(headers).forEach(([key, value]) => {
         const rowValue = headerMap.get(value) ?? "";
@@ -44,11 +41,16 @@ const Preview = ({
       recipientFirstName: string;
       recipientLastName: string;
       recipientEmail: string;
-      profilePicture: string;
       [key: string]: any;
     }[];
 
-    setRecipients(recipients);
+    setRecipients(
+      recipients.map((recipient) => ({
+        ...recipient,
+        profilePicture:
+          "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
+      }))
+    );
     router.push(`/designs/certificate/${certificateAlias}/issue?from=excel`);
   };
 
