@@ -217,22 +217,22 @@ export function useCreateOrganisation() {
     exp?: string
   ) {
     setLoading(true);
-    const { firstName, lastName, userEmail, ...restData } = values;
+    const { firstName, lastName, userEmail, id, ...restData } = values;
     try {
       const { data, error, status } = await supabase
         .from("organization")
         .upsert([
           {
             ...restData,
-            organizationOwner: userData?.userEmail,
-            organizationOwnerId: userData?.id,
+            organizationOwner: userEmail,
+            organizationOwnerId: id,
             subscriptionExpiryDate: exp || null,
             teamMembers: [
               {
-                userId: userData?.id,
-                userFirstName: userData?.firstName,
-                userLastName: userData?.lastName,
-                userEmail: userData?.userEmail,
+                userId: id,
+                userFirstName: firstName,
+                userLastName: lastName,
+                userEmail: userEmail,
                 userRole: "owner",
               },
             ],

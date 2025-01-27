@@ -331,6 +331,7 @@ export function useOnboarding() {
       const user = data as unknown as TUser;
       setUser(user);
 
+      console.log(user);
       return data as unknown as TUser;
     } catch (error: any) {
       //

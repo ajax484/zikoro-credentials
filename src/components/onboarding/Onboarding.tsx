@@ -410,7 +410,7 @@ export default function OnboardingForm({
 
     try {
       const user = await registration(payload, email, createdAt);
-      if(!user) throw new Error("Failed to create user");
+      if (!user) throw new Error("Failed to create user");
       await organisation({
         organizationName: workspaceName ?? "",
         userEmail: user.userEmail,
@@ -419,6 +419,7 @@ export default function OnboardingForm({
         organizationAlias: generateAlias(),
         firstName: user.firstName,
         lastName: user.lastName,
+        id: user.id,
       });
       handleNext();
     } catch (error) {
