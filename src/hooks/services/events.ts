@@ -241,17 +241,20 @@ export function useCreateOrganisation() {
         .maybeSingle();
 
       if (error) {
-        toast.error(error.message);
-
-        setLoading(false);
-        return data as unknown as TOrganization;
+        console.log(error);
+        return toast.error(error.message);
       }
 
       if (status === 201 || status === 200) {
         setLoading(false);
         toast.success("Organisation created successfully");
+        return data as unknown as TOrganization;
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return {

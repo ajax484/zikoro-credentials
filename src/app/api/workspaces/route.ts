@@ -12,9 +12,11 @@ export async function GET(req: NextRequest) {
 
       const { data: organizations, error } = await supabase
         .from("organization")
-        .select("*");
-
+        .select("*")
+        .order("created_at", { ascending: false });
       console.log(userEmail);
+
+      console.log(organizations);
 
       const filteredOrganizations = organizations?.filter((organization) => {
         return organization.teamMembers?.some(

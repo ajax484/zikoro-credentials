@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { CredentialTokenUsageHistory } from "@/types/token";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -6,6 +7,20 @@ export const creditHistoryColumns: ColumnDef<CredentialTokenUsageHistory>[] = [
   {
     accessorKey: "activity",
     header: "Transaction type",
+    cell: ({ getValue }) => {
+      const activity = getValue() as string;
+
+      return (
+        <div
+          className={cn(
+            "text-sm font-medium rounded-md text-white p-2 w-fit",
+            activity === "credit" ? "bg-green-500" : "bg-red-500"
+          )}
+        >
+          {activity}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "tokenId",
@@ -58,5 +73,5 @@ export const creditHistoryColumns: ColumnDef<CredentialTokenUsageHistory>[] = [
       const date = getValue() as Date;
       return format(date, "dd/MM/yyyy hh:mm");
     },
-  }
+  },
 ];
