@@ -7,7 +7,7 @@ import {
   SProgress4,
   SProgress5,
 } from "@/constants";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useOnboarding, useGetUserId } from "@/hooks";
 import {
   useCreateUserOrganization,
@@ -335,7 +335,7 @@ function generateAlphanumericHash(length?: number): string {
 function generateOrgAlias(length?: number): string {
   const characters =
     "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  const aliasLength = length || 18;
+  const aliasLength = length || 15;
   let alias = "";
 
   for (let i = 0; i < aliasLength; i++) {
@@ -407,7 +407,6 @@ export default function OnboardingForm({
     };
 
     try {
-      setOrgAlias(generateOrgAlias());
       await createUserOrganization(
         workspaceName ?? "",
         formData.firstName,
@@ -426,11 +425,27 @@ export default function OnboardingForm({
   //update workspace ID
   const updateWorkspaceId = async () => {
     const response = await getUserId(email);
-    setOrgId(Number(response));
-    await updateOrganization(orgAlias, orgId);
-    await createTeamMember(orgId, email, orgAlias);
+
+    if (!response) {
+      console.error("Failed to get user ID");
+      return;
+    }
+
+    const userOrgId = Number(response); // Convert the response to a number
+
+    // Use userOrgId directly without relying on state
+    await updateOrganization(orgAlias, userOrgId);
+    await createTeamMember(userOrgId, email, orgAlias);
+
+    // Update the state asynchronously for future use if needed
+    setOrgId(userOrgId);
+
     router.push("/home");
   };
+
+  useEffect(() => {
+    setOrgAlias(generateOrgAlias());
+  }, []);
 
   return (
     <div>
