@@ -158,7 +158,7 @@ export async function POST(
       font-weight: bold;
     "
   >
-    View Certificate
+    View
   </a>
 </div>
 
