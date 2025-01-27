@@ -209,6 +209,7 @@ export const useGetEvents = (): UseGetResult<
 
 export function useCreateOrganisation() {
   const { user: userData } = useUserStore();
+  const { setOrganization } = useOrganizationStore();
   const [loading, setLoading] = useState(false);
 
   async function organisation(
@@ -246,12 +247,11 @@ export function useCreateOrganisation() {
         return toast.error(error.message);
       }
 
-      if (status === 201 || status === 200) {
-        console.log(data);
-        setLoading(false);
-        toast.success("Organisation created successfully");
-        return data as unknown as TOrganization;
-      }
+      console.log(data);
+      setLoading(false);
+      setOrganization(data as unknown as TOrganization);
+      toast.success("Organisation created successfully");
+      return data as unknown as TOrganization;
     } catch (error) {
       console.log(error);
     } finally {
