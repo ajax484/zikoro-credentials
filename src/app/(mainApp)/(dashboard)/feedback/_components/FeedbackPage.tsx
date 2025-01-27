@@ -10,7 +10,7 @@ export default function FeedBack() {
   const router = useRouter();
 
   function onClose() {
-    setShowSuccess((prev) => !prev);
+    // setShowSuccess((prev) => !prev);
     router.back();
   }
   return (
