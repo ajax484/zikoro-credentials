@@ -8,7 +8,7 @@ import {
   SProgress5,
 } from "@/constants";
 import React, { useState } from "react";
-import { useOnboarding, useGetUserId } from "@/hooks";
+import { useOnboarding, useGetUserId, useCreateOrganisation } from "@/hooks";
 import {
   useCreateUserOrganization,
   useUpdateOrganization,
@@ -17,6 +17,7 @@ import {
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { generateAlias } from "@/utils/helpers";
 
 const countryList = [
   "Afghanistan",
@@ -354,7 +355,8 @@ export default function OnboardingForm({
   const { loading, registration } = useOnboarding();
   const [workspaceName, setWorkspaceName] = useState<string>();
   const { getUserId } = useGetUserId();
-  const { createUserOrganization } = useCreateUserOrganization();
+  // const { createUserOrganization } = useCreateUserOrganization();
+  const { organisation } = useCreateOrganisation();
   const [orgAlias, setOrgAlias] = useState<string>("");
   const [orgId, setOrgId] = useState<number>(0);
   const { updateOrganization } = useUpdateOrganization();
@@ -407,16 +409,17 @@ export default function OnboardingForm({
     };
 
     try {
-      setOrgAlias(generateOrgAlias());
-      await createUserOrganization(
-        workspaceName ?? "",
-        formData.firstName,
-        formData.phoneNumber,
-        formData.country,
-        email,
-        orgAlias
-      );
-      await registration(payload, email, createdAt);
+      const user = await registration(payload, email, createdAt);
+      if(!user) throw new Error("Failed to create user");
+      await organisation({
+        organizationName: workspaceName ?? "",
+        userEmail: user.userEmail,
+        subscriptionPlan: "free",
+        organizationType: "Private",
+        organizationAlias: generateAlias(),
+        firstName: user.firstName,
+        lastName: user.lastName,
+      });
       handleNext();
     } catch (error) {
       toast.error("Registration failed");
