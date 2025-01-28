@@ -40,6 +40,7 @@ interface NavbarProps {
   onChangeActiveTool: (tool: ActiveTool) => void;
   setName: (name: string) => void;
   name: string;
+  save: () => void;
   isSaving: boolean;
   isError: boolean;
   eventAlias: string;
@@ -54,6 +55,7 @@ export const Navbar = ({
   onChangeActiveTool,
   setName,
   name,
+  save,
   isSaving,
   isError,
   eventAlias,
@@ -137,9 +139,11 @@ export const Navbar = ({
         )}
         <Input
           type="text"
-          className="outline-0 bg-transparent border-0 max-w-fit px-4 focus-visible:ring-sky-300 flex justify-center mx-auto border-b"
+          className="outline-0 bg-transparent border-0 min-w-[250px] text-center max-w-fit !shadow-none px-4 focus-visible:ring-sky-300 focus-visible:ring-2 flex justify-center mx-auto border-b"
           value={name}
           onInput={(e) => setName(e.currentTarget.value)}
+          onBlur={() => save()}
+          // on
         />
         <div className="ml-auto flex items-center gap-x-4">
           {/* <DropdownMenu modal={false}>

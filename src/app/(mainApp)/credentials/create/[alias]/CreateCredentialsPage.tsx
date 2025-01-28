@@ -58,6 +58,7 @@ const CreateCredentialsPage = ({
     },
     url: string
   ) => {
+    console.log("here");
     if (previewUrl !== "")
       await deletePreviousUrl({
         payload: {},

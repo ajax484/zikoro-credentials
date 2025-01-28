@@ -27,6 +27,7 @@ import { VerificationSidebar } from "./verification-sidebar";
 import { QRCodeSidebar } from "./qrcode-sidebar";
 import { base64ToFile, uploadFile } from "@/utils/helpers";
 import { CredentialsWorkspaceToken } from "@/types/token";
+import { TemplateSidebar } from "./template-sidebar";
 
 interface EditorProps {
   initialData: ResponseType["data"];
@@ -100,6 +101,7 @@ export const Editor = ({
   const debouncedSave = useCallback(
     debounce(
       async (values: { json: string; height: number; width: number }) => {
+        console.log("here");
         const imageURL = editor?.generateLink();
         if (!imageURL) return;
         save(values, imageURL);
@@ -176,6 +178,7 @@ export const Editor = ({
           setName(name);
           debouncedSave();
         }}
+        save={debouncedSave}
         name={name}
         isSaving={isSaving}
         isError={isError}
@@ -258,11 +261,11 @@ export const Editor = ({
           onChangeActiveTool={onChangeActiveTool}
           organizationId={workspaceId}
         />
-        {/* <TemplateSidebar
+        <TemplateSidebar
           editor={editor}
           activeTool={activeTool}
           onChangeActiveTool={onChangeActiveTool}
-        /> */}
+        />
         <FilterSidebar
           editor={editor}
           activeTool={activeTool}

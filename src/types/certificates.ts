@@ -67,16 +67,16 @@ export type TFullCertificate = TAttendeeCertificate & {
   };
 };
 
-export interface CertificateTemplate {
-  id: number;
-  created_at: Date;
-  templateName: string;
-  templateUrl: string;
-  certificateTemplate: string;
-  category: string;
-  figmaName: string;
-  colour: string;
-}
+// export interface CertificateTemplate {
+//   id: number;
+//   created_at: Date;
+//   templateName: string;
+//   templateUrl: string;
+//   certificateTemplate: string;
+//   category: string;
+//   figmaName: string;
+//   colour: string;
+// }
 
 export type issueActions =
   | "issued"
@@ -101,4 +101,12 @@ export interface CertificateRecipient {
   recipientAlias: string;
   isValid: boolean;
   hasQRCode: boolean;
+}
+
+export interface CertificateTemplate {
+  id: number;
+  name: string;
+  JSON: Record<string, any>;
+  tags: string[];
+  previewUrl: string;
 }

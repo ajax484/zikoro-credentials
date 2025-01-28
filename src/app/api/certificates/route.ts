@@ -15,7 +15,8 @@ export async function GET(req: NextRequest) {
 
       const query = supabase
         .from("certificate")
-        .select("*, recipientCount:certificateRecipients!inner(count)");
+        .select("*, recipientCount:certificateRecipients!inner(count)")
+        .order("lastEdited", { ascending: false });
 
       if (workspaceAlias) query.eq("workspaceAlias", workspaceAlias);
 

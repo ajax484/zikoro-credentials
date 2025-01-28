@@ -165,7 +165,7 @@ export async function POST(
           `,
         });
       } catch (emailError) {
-        console.error(`qError sending email to ${recipientEmail}:`, emailError);
+        console.error(`Error sending email to ${recipientEmail}:`, emailError);
       }
     }
 

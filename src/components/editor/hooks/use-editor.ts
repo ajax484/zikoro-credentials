@@ -324,6 +324,7 @@ const buildEditor = ({
             "&data=" +
             encodeURIComponent(value),
           (image: fabric.Image) => {
+            console.log(image);
             const workspace = getWorkspace();
 
             // image.scaleToWidth(workspace?.width || 0);

@@ -7,10 +7,9 @@ export async function GET(req: NextRequest) {
   if (req.method === "GET") {
     try {
       const { data, error, status } = await supabase
-        .from("certificateTemplate")
+        .from("certificateTemplateNew")
         .select("*");
 
-      
       if (error) throw error;
 
       return NextResponse.json(
@@ -32,6 +31,38 @@ export async function GET(req: NextRequest) {
     }
   } else {
     return NextResponse.json({ error: "Method not allowed" });
+  }
+}
+
+export async function POST(request: Request) {
+  const supabase = createRouteHandlerClient({ cookies });
+  const payload = await request.json();
+  console.log(payload);
+
+  try {
+    const { data, error } = await supabase
+      .from("certificateTemplateNew")
+      .insert(payload)
+      .select("*");
+
+    if (error) throw error;
+
+    return NextResponse.json(
+      { data },
+      {
+        status: 201,
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      {
+        error: "An error occurred while making the request.",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }
 
