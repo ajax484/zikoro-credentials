@@ -18,7 +18,7 @@ export function useCreateUserOrganization(
         try {
             const { data, error, status } = await supabase
                 .from("organization")
-                .upsert({
+                .insert({
                     organizationName: orgName,
                     organizationOwner: username,
                     subscriptionPlan: 'free',
@@ -48,7 +48,7 @@ export function useUpdateOrganization(
 ) {
     async function updateOrganization(
         alias: string,
-        id: number,) {
+        id: number) {
         try {
             const { error, status } = await supabase
                 .from("organization")
@@ -71,6 +71,7 @@ export function useUpdateOrganization(
 }
 
 
+
 export function useCreateTeamMember(
 ) {
     async function createTeamMember(
@@ -79,13 +80,16 @@ export function useCreateTeamMember(
         workspaceAlias: string
     ) {
         try {
+            console.log('id', userId)
+            console.log('email', userEmail)
+            console.log('alias', workspaceAlias)
             const { data, error, status } = await supabase
                 .from("organizationTeamMembers")
-                .upsert({
+                .insert({
                     userId: userId,
                     userEmail: userEmail,
                     userRole: "Owner",
-                    workspaceAlias: workspaceAlias, // this comes from the hook's scope
+                    workspaceAlias: workspaceAlias,
                 })
 
             if (error) {

@@ -7,7 +7,7 @@ import {
   SProgress4,
   SProgress5,
 } from "@/constants";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useOnboarding, useGetUserId, useCreateOrganisation } from "@/hooks";
 import {
   useCreateUserOrganization,
@@ -17,7 +17,6 @@ import {
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { generateAlias } from "@/utils/helpers";
 
 const countryList = [
   "Afghanistan",
@@ -336,7 +335,7 @@ function generateAlphanumericHash(length?: number): string {
 function generateOrgAlias(length?: number): string {
   const characters =
     "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  const aliasLength = length || 18;
+  const aliasLength = length || 15;
   let alias = "";
 
   for (let i = 0; i < aliasLength; i++) {
@@ -355,8 +354,7 @@ export default function OnboardingForm({
   const { loading, registration } = useOnboarding();
   const [workspaceName, setWorkspaceName] = useState<string>();
   const { getUserId } = useGetUserId();
-  // const { createUserOrganization } = useCreateUserOrganization();
-  const { organisation } = useCreateOrganisation();
+  const { createUserOrganization } = useCreateUserOrganization();
   const [orgAlias, setOrgAlias] = useState<string>("");
   const [orgId, setOrgId] = useState<number>(0);
   const { updateOrganization } = useUpdateOrganization();
@@ -409,18 +407,15 @@ export default function OnboardingForm({
     };
 
     try {
-      const user = await registration(payload, email, createdAt);
-      if (!user) throw new Error("Failed to create user");
-      await organisation({
-        organizationName: workspaceName ?? "",
-        userEmail: user.userEmail,
-        subscriptionPlan: "free",
-        organizationType: "Private",
-        organizationAlias: generateAlias(),
-        firstName: user.firstName,
-        lastName: user.lastName,
-        id: user.id,
-      });
+      await createUserOrganization(
+        workspaceName ?? "",
+        formData.firstName,
+        formData.phoneNumber,
+        formData.country,
+        email,
+        orgAlias
+      );
+      await registration(payload, email, createdAt);
       handleNext();
     } catch (error) {
       toast.error("Registration failed");
@@ -428,13 +423,30 @@ export default function OnboardingForm({
   }
 
   //update workspace ID
-  const updateWorkspaceId = async () => {
-    const response = await getUserId(email);
-    setOrgId(Number(response));
-    await updateOrganization(orgAlias, orgId);
-    await createTeamMember(orgId, email, orgAlias);
-    router.push("/home");
-  };
+ const updateWorkspaceId = async () => {
+  const response = await getUserId(email);
+
+  if (!response) {
+    console.error("Failed to get user ID");
+    return;
+  }
+
+  const userOrgId = Number(response); // Convert the response to a number
+
+  // Use userOrgId directly without relying on state
+  await updateOrganization(orgAlias, userOrgId);
+  await createTeamMember(userOrgId, email, orgAlias);
+  
+  // Update the state asynchronously for future use if needed
+  setOrgId(userOrgId);
+
+  router.push("/home");
+};
+
+
+  useEffect(() => {
+    setOrgAlias(generateOrgAlias());
+  }, []);
 
   return (
     <div>
