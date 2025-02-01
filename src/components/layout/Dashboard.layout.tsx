@@ -2,6 +2,13 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../sidebar/Sidebar";
 import useOrganizationStore from "@/store/globalOrganizationStore";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "../ui/dialog";
+import SelectOrganization from "../SelectOrganization/SelectOrganization";
 import { TOrganization } from "@/types/organization";
 import { useGetData } from "@/hooks/services/request";
 import GradientBorderSelect from "../CustomSelect/GradientSelectBorder";
@@ -23,34 +30,54 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     `/workspaces?userEmail=${user?.userEmail || "ubahyusuf484@gmail.com"}`,
     []
   );
+  
 
   const [workspace, setWorkspace] = useState<TOrganization | null>(
     organization
   );
 
-  const [dialogIsOpen, setDialogIsOpen] = React.useState<boolean>(true);
+  const [open, setOpen] = useState(true);
+
+  const [dialogIsOpen, setDialogIsOpen] = React.useState<boolean>(false);
+
+  const updateOrganization = (value: string) => {
+    setWorkspace(
+      workspaces?.find((workspace) => String(workspace.id) === value)
+    );
+  };
 
   useEffect(() => {
-    if (workspaces.length > 0) {
-      setDialogIsOpen(false);
+    if (!organization) {
+      setOpen(true);
     } else {
-      setDialogIsOpen(true);
+      setOpen(false);
     }
-  }, [workspacesIsLoading]);
+  }, [organization]);
 
-  if (workspacesIsLoading)
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-white">
-        <div className="animate-spin rounded-full h-16 w-16 bg-basePrimary flex items-center justify-center p-4">
-          <div className="w-full h-full bg-white rounded-full" />
-        </div>
-      </div>
-    );
+  function applyDiscount() {
+    if (!zikoroDiscounts) return;
+
+    const percent = zikoroDiscounts?.find((v) => v?.discountCode === code);
+    if (percent) {
+      if (percent.validUntil && new Date(percent.validUntil) < new Date()) {
+        toast.error("Oops! Discount code has expired. Try another one");
+        return;
+      }
+      setDiscount(percent);
+      toast.success("Great move!. Discount has been applied");
+      setIsDiscount(true);
+      return;
+    } else {
+      setDiscount(null);
+      toast.error("Oops! Discount code is incorrect. Try again");
+      return;
+    }
+  }
 
   return (
     <main className="min-h-screen relative bg-[#f7f8ff] flex w-full">
       {/* if organization is not set, show dialog */}
-      {/* {false && (
+      {!organization && (
         <>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent>
@@ -100,11 +127,12 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             </DialogContent>
           </Dialog>
         </>
-      )} */}
+      )}
       {dialogIsOpen && (
         <CreateOrganization
           close={() => {
-          setDialogIsOpen(false);
+            setOpen(true);
+            setDialogIsOpen(false);
           }}
           allowRedirect={true}
           isInitial

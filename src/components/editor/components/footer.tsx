@@ -20,7 +20,6 @@ export const Footer = ({
   getCredits,
   creditBalance,
 }: FooterProps) => {
-  console.log(creditBalance);
 
   return (
     <footer className="z-[49] flex py-2 w-full shrink-0 justify-between items-center border-t bg-[#f7f8ff] p-2 px-4">

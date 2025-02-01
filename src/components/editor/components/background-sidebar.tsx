@@ -36,7 +36,6 @@ export const BackgroundSidebar = ({
   onChangeActiveTool,
   organizationId,
 }: ImageSidebarProps) => {
-  console.log(organizationId);
   const {
     organization,
     isLoading: fetching,

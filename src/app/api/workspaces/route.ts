@@ -10,27 +10,34 @@ export async function GET(req: NextRequest) {
       const { searchParams } = new URL(req.url);
       const userEmail = searchParams.get("userEmail");
 
-      const { data: organizations, error } = await supabase
+      // get all teams for the user
+      const { data, error } = await supabase
+        .from("organizationTeamMembers_Credentials")
+        .select("workspaceAlias")
+        .eq("userEmail", userEmail)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      const workspaceAliases = data?.map(
+        ({ workspaceAlias }) => workspaceAlias
+      );
+
+      const { data: organizations, error: organizationsError } = await supabase
         .from("organization")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .in("organizationAlias", workspaceAliases);
+
       console.log(userEmail);
 
       console.log(organizations);
 
-      const filteredOrganizations = organizations?.filter((organization) => {
-        return organization.teamMembers?.some(
-          ({ userEmail: email }) => email === userEmail
-        );
-      });
-
-      console.log(filteredOrganizations);
-
-      if (error) throw error;
+      if (organizationsError) throw error;
 
       return NextResponse.json(
         {
-          data: filteredOrganizations,
+          data: organizations,
         },
         {
           status: 200,

@@ -28,7 +28,6 @@ const CreateCredentialsPage = ({
   type: "badge" | "certificate";
   workspaceAlias: string;
 }) => {
-  console.log(alias, workspaceId);
   const credentialFetchFn =
     type === "certificate" ? useGetCertificate : useGetBadge;
   const { data, isLoading } = credentialFetchFn({

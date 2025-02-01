@@ -129,7 +129,7 @@ const buildEditor = ({
     isLive && canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
     const dataUrl = canvas.toDataURL(options);
 
-    console.log(dataUrl);
+    // console.log(dataUrl);
 
     return dataUrl;
   };
@@ -176,9 +176,11 @@ const buildEditor = ({
     canvas._centerObject(object, center);
   };
 
-  const addToCanvas = (object: fabric.Object) => {
+  const addToCanvas = (object: fabric.Object, selectable = true) => {
     center(object);
+    object.set({ selectable });
     canvas.add(object);
+
     canvas.setActiveObject(object);
   };
 
@@ -287,30 +289,43 @@ const buildEditor = ({
       );
     },
     addBackgroundImage: (value: string) => {
-      console.log(value);
+      console.log("Adding background image:", value);
 
       fabric.Image.fromURL(
         value,
         (image) => {
           const workspace = getWorkspace();
+          if (!workspace) return; // Prevent errors if workspace is null
 
-          // image.scaleToWidth(workspace?.width || 0);
-          // image.scaleToHeight(workspace?.height || 0);
-          image.scaleToHeight(900);
-          image.scaleToWidth(1200);
+          console.log(image);
 
-          addToCanvas(image);
-          canvas.getActiveObjects().forEach((object) => {
-            canvas.sendToBack(object);
-          });
+          // Remove any existing background image
+          canvas
+            .getObjects()
+            .filter(
+              (object) => object instanceof fabric.Image && object.isBackground
+            )
+            .forEach((bgImage) => canvas.remove(bgImage));
 
+          // Mark the image as a background
+          image.set({ isBackground: true });
+
+          // Scale image to fit the workspace
+          image.scaleToWidth(workspace.width || 1200);
+          image.scaleToHeight(workspace.height || 900);
+
+          console.log("final", image);
+
+          // Add the image to canvas and send it to the back
+          addToCanvas(image, false);
+          canvas.sendToBack(image);
+
+          // Ensure no object is active & re-render canvas
           canvas.discardActiveObject();
           canvas.renderAll();
           workspace?.sendToBack();
         },
-        {
-          crossOrigin: "anonymous",
-        }
+        { crossOrigin: "anonymous" }
       );
     },
     addQRCode: (value: string, color: string, bgcolor: string) => {
@@ -529,7 +544,7 @@ const buildEditor = ({
     },
     changeFontFamily: (value: string) => {
       setFontFamily(value);
-      canvas.getActiveObjects().forEach((object) => {
+      canvas.getActiveObjects().forEach((object: fabric.Object) => {
         if (isTextType(object.type)) {
           // @ts-ignore
           // Faulty TS library, fontFamily exists.
@@ -900,6 +915,18 @@ export const useEditor = ({
       initialCanvas.add(initialWorkspace);
       initialCanvas.centerObject(initialWorkspace);
       initialCanvas.clipPath = initialWorkspace;
+
+      initialCanvas
+        .getObjects()
+        .filter(
+          (object) => object instanceof fabric.Image && object.isBackground
+        )
+        .forEach((bgImage) => {
+          console.log(bgImage);
+          canvas.sendToBack(bgImage);
+        });
+
+      initialWorkspace.sendToBack();
 
       setCanvas(initialCanvas);
       setContainer(initialContainer);

@@ -4,7 +4,11 @@ import { paymentConfig } from "@/hooks/common/usePayStackPayment";
 import { useMutateData } from "@/hooks/services/request";
 import useUserStore from "@/store/globalUserStore";
 import { TOrganization } from "@/types/organization";
-import { CredentialCurrencyConverter, CredentialsToken } from "@/types/token";
+import {
+  CredentialCurrencyConverter,
+  CredentialsToken,
+  TZikoroDiscount,
+} from "@/types/token";
 import {
   applyCredentialsDiscount,
   generateAlphanumericHash,
@@ -20,6 +24,7 @@ const Checkout = ({
   tokens,
   currencyConversion,
   selectedCurrency,
+  discount,
 }: {
   workspace: TOrganization | null;
   credits: {
@@ -30,6 +35,7 @@ const Checkout = ({
   tokens: CredentialsToken[];
   currencyConversion: CredentialCurrencyConverter[];
   selectedCurrency: string;
+  discount: TZikoroDiscount | null;
 }) => {
   const { user } = useUserStore();
   const { mutateData, isLoading: mutateLoading } = useMutateData(
@@ -60,11 +66,17 @@ const Checkout = ({
       currentCurrency?.amount * bronzeToken?.amount
     );
 
+  const totalWithDiscount =
+    total -
+    (discount?.discountPercentage
+      ? ((Number(discount?.discountPercentage) || 0) / 100) * total
+      : discount?.discountAmount || 0);
+
   const config = paymentConfig({
     reference:
       workspace?.organizationAlias + "-" + generateAlphanumericHash(12),
     email: user?.userEmail,
-    amount: total,
+    amount: totalWithDiscount,
     currency: currentCurrency.currency,
   });
 
@@ -94,6 +106,7 @@ const Checkout = ({
         currency: currentCurrency.currency,
         workspaceAlias: workspace?.organizationAlias,
         activityBy: user?.id,
+        discountCode: discount?.discountCode,
       },
     });
 
@@ -105,7 +118,7 @@ const Checkout = ({
     children: (
       <Button className="w-full sm:w-[405px] gap-x-2 bg-basePrimary text-gray-50 font-medium">
         <Lock size={22} />
-        <span>{`Pay NGN ${Number(total)?.toLocaleString()}`}</span>
+        <span>{`Pay NGN ${Number(totalWithDiscount)?.toLocaleString()}`}</span>
       </Button>
     ),
     onSuccess: (reference: any) => handleSuccess(reference),
@@ -154,11 +167,19 @@ const Checkout = ({
             ).toLocaleString()}
           </span>
         </div>
+        <div className="flex justify-between items-center">
+          <span className="text-gray-700">Discount</span>
+          <span className="text-gray-700">
+            {discount?.discountPercentage
+              ? discount?.discountPercentage + "%"
+              : discount?.discountAmount}
+          </span>
+        </div>
         <div className="flex justify-between items-center font-bold">
           <span className="text-gray-700">Total</span>
           <span className="text-gray-700">
             {selectedCurrency}
-            {Number(total).toLocaleString()}
+            {Number(totalWithDiscount).toLocaleString()}
           </span>
         </div>
       </div>

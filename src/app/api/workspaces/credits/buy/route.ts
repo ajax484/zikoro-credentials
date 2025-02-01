@@ -1,3 +1,4 @@
+import { TZikoroDiscount } from "@/types/token";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { addYears } from "date-fns";
 import { cookies } from "next/headers";
@@ -15,6 +16,7 @@ export async function POST(req: NextRequest) {
     reference,
     workspaceAlias,
     activityBy,
+    discountCode,
   } = await req.json();
 
   if (!workspaceId || !credits || !email || !name) {
@@ -99,6 +101,24 @@ export async function POST(req: NextRequest) {
       throw new Error(`Failed to insert usage logs: ${logError.message}`);
     }
 
+    let discount: TZikoroDiscount | null = null;
+
+    if (discountCode) {
+      //fetch dscount code
+      const { data, error } = await supabase
+        .from("zikoroDiscount")
+        .select("*")
+        .eq("discountCode", discountCode)
+        .maybeSingle();
+
+      if (error) {
+        console.log(error);
+        throw new Error(`Failed to fetch discount code: ${error.message}`);
+      }
+
+      discount = data;
+    }
+
     // Prepare email content
     const creditDetails = creditTypes
       .filter((type) => credits[type] && credits[type].amount > 0)
@@ -116,6 +136,13 @@ export async function POST(req: NextRequest) {
       <p>Details:</p>
       <p>Reference: <strong>${reference}</strong></p>
       <ul>${creditDetails}</ul>
+      <p>Discount of <strong>${
+        discount?.discountPercentage
+          ? discount?.discountPercentage + "%"
+          : discount?.discountAmount
+      }</strong> has been applied to your purchase using code: <strong>${
+      discount?.discountCode
+    }</strong></p>
       <p>Thank you for your purchase!</p>
     `;
 
