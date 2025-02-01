@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 
 const TeamMembers = () => {
   const { organization } = useOrganizationStore();
-
+  const { user: userData } = useUserStore();
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const searchParams = new URLSearchParams({});
@@ -173,7 +173,8 @@ const TeamMembers = () => {
   return (
     <div className="space-y-4">
       <div className="flex justify-end gap-4">
-        <InviteTeamMember />
+        {teamMembers.find(({ userEmail }) => userEmail === userData?.userEmail)
+          ?.userRole === "owner" && <InviteTeamMember />}
       </div>
       <DataTable<OrganizationTeamMembersCredentials>
         columns={teamMembersColumns}
