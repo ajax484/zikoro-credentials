@@ -37,6 +37,8 @@ const TeamMembers = () => {
     searchParams
   );
 
+  console.log(teamMembers);
+
   const { mutateData: mutateTeamMember, isLoading: mutateIsLoading } =
     useMutateData<OrganizationTeamMembersCredentials>(
       `/workspaces/${organization?.organizationAlias}/team`

@@ -30,7 +30,6 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     `/workspaces?userEmail=${user?.userEmail || "ubahyusuf484@gmail.com"}`,
     []
   );
-  
 
   const [workspace, setWorkspace] = useState<TOrganization | null>(
     organization
@@ -53,26 +52,6 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       setOpen(false);
     }
   }, [organization]);
-
-  function applyDiscount() {
-    if (!zikoroDiscounts) return;
-
-    const percent = zikoroDiscounts?.find((v) => v?.discountCode === code);
-    if (percent) {
-      if (percent.validUntil && new Date(percent.validUntil) < new Date()) {
-        toast.error("Oops! Discount code has expired. Try another one");
-        return;
-      }
-      setDiscount(percent);
-      toast.success("Great move!. Discount has been applied");
-      setIsDiscount(true);
-      return;
-    } else {
-      setDiscount(null);
-      toast.error("Oops! Discount code is incorrect. Try again");
-      return;
-    }
-  }
 
   return (
     <main className="min-h-screen relative bg-[#f7f8ff] flex w-full">

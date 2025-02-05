@@ -255,6 +255,7 @@ export function useCreateOrganisation() {
           userEmail: userData?.userEmail,
           userRole: "owner",
           workspaceAlias: data?.organizationAlias,
+          userId: id,
         });
 
       if (insertError) {
