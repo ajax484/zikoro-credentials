@@ -252,7 +252,7 @@ export function useCreateOrganisation() {
       const { data: insertedEvent, error: insertError } = await supabase
         .from("organizationTeamMembers_Credentials")
         .insert({
-          userEmail: userData?.userEmail,
+          userEmail: userEmail,
           userRole: "owner",
           workspaceAlias: data?.organizationAlias,
           userId: id,
