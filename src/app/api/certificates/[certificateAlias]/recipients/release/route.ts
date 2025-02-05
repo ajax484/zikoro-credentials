@@ -144,6 +144,7 @@ export async function POST(
           })}
           </div>
           <div style="text-align: center; margin-top: 20px;">
+          <p style="margin-bottom: 20px;">View in a desktop screen for best experience </p>
   <a
     href="https://credentials.zikoro.com/credentials/verify/certificate/${certificateId}"
     style="
