@@ -104,7 +104,7 @@ export const Editor = ({
         console.log("here");
         const imageURL = editor?.generateLink();
         if (!imageURL) return;
-        // save(values, imageURL);
+        save(values, imageURL);
       },
       1500
     ),

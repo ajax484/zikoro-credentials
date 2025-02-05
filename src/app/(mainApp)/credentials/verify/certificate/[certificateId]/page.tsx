@@ -60,10 +60,12 @@ const CertificateView = ({
     )
   );
 
-  console.log(certificate.originalCertificate.certificateSettings.skills);
+  console.log(newState);
+
+  // console.log(certificate.originalCertificate.certificateSettings.skills);
 
   // Find placeholder in newState and replace with profile picture in the string
-  newState = newState.replaceAll(
+  newState = String(newState).replaceAll(
     "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
     certificate?.profilePicture?.trim() ||
       "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg"
