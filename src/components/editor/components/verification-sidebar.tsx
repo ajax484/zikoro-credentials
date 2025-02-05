@@ -42,10 +42,10 @@ export const VerificationSidebar = ({
         description="Add attributes to your credential"
       />
       <AddVariables
-      attributes={attributes}
-      setAttributes={setAttributes}
-      save={save}
-      isSaving={isSaving}
+        attributes={attributes}
+        setAttributes={setAttributes}
+        save={save}
+        isSaving={isSaving}
       />
       <ScrollArea>
         <div className="space-y-4 border-b p-4">
@@ -53,7 +53,12 @@ export const VerificationSidebar = ({
             className="h-16 w-full"
             variant="secondary"
             size="lg"
-            onClick={() => editor?.addText("Certificate ID: #{certificateId#}")}
+            onClick={() =>
+              editor?.addText("Certificate ID: #{certificateId#}", {
+                fontSize: 32,
+                textAlign: "center",
+              })
+            }
           >
             Add Certificate Id
           </Button>
@@ -61,7 +66,12 @@ export const VerificationSidebar = ({
             className="h-16 w-full"
             variant="secondary"
             size="lg"
-            onClick={() => editor?.addText("#{first_name#}")}
+            onClick={() =>
+              editor?.addText("#{first_name#}", {
+                fontSize: 32,
+                textAlign: "center",
+              })
+            }
           >
             Add Recipient First name
           </Button>
@@ -69,7 +79,12 @@ export const VerificationSidebar = ({
             className="h-16 w-full"
             variant="secondary"
             size="lg"
-            onClick={() => editor?.addText("#{last_name#}")}
+            onClick={() =>
+              editor?.addText("#{last_name#}", {
+                fontSize: 32,
+                textAlign: "center",
+              })
+            }
           >
             Add Recipient Last name
           </Button>
@@ -77,7 +92,12 @@ export const VerificationSidebar = ({
             className="h-16 w-full"
             variant="secondary"
             size="lg"
-            onClick={() => editor?.addText("#{first_name#} #{last_name#}")}
+            onClick={() =>
+              editor?.addText("#{first_name#} #{last_name#}", {
+                fontSize: 32,
+                textAlign: "center",
+              })
+            }
           >
             Add Recipient full name
           </Button>
@@ -87,7 +107,11 @@ export const VerificationSidebar = ({
             size="lg"
             onClick={() =>
               editor?.addText(
-                "https://www.credentials.zikoro.com/credentials/verify/certificate/#{certificateId#}"
+                "https://www.credentials.zikoro.com/credentials/verify/certificate/#{certificateId#}",
+                {
+                  fontSize: 32,
+                  textAlign: "center",
+                }
               )
             }
           >
@@ -107,7 +131,12 @@ export const VerificationSidebar = ({
                 className="h-16 w-full"
                 variant="secondary"
                 size="lg"
-                onClick={() => editor?.addText(`#{${attribute}#}`)}
+                onClick={() =>
+                  editor?.addText(`#{${attribute}#}`, {
+                    fontSize: 32,
+                    textAlign: "center",
+                  })
+                }
               >
                 Add {attribute}
               </Button>
