@@ -2,6 +2,13 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../sidebar/Sidebar";
 import useOrganizationStore from "@/store/globalOrganizationStore";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "../ui/dialog";
+import SelectOrganization from "../SelectOrganization/SelectOrganization";
 import { TOrganization } from "@/types/organization";
 import { useGetData } from "@/hooks/services/request";
 import GradientBorderSelect from "../CustomSelect/GradientSelectBorder";
@@ -28,29 +35,28 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     organization
   );
 
-  const [dialogIsOpen, setDialogIsOpen] = React.useState<boolean>(true);
+  const [open, setOpen] = useState(true);
+
+  const [dialogIsOpen, setDialogIsOpen] = React.useState<boolean>(false);
+
+  const updateOrganization = (value: string) => {
+    setWorkspace(
+      workspaces?.find((workspace) => String(workspace.id) === value)
+    );
+  };
 
   useEffect(() => {
-    if (workspaces.length > 0) {
-      setDialogIsOpen(false);
+    if (!organization) {
+      setOpen(true);
     } else {
-      setDialogIsOpen(true);
+      setOpen(false);
     }
-  }, [workspacesIsLoading]);
-
-  if (workspacesIsLoading)
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-white">
-        <div className="animate-spin rounded-full h-16 w-16 bg-basePrimary flex items-center justify-center p-4">
-          <div className="w-full h-full bg-white rounded-full" />
-        </div>
-      </div>
-    );
+  }, [organization]);
 
   return (
     <main className="min-h-screen relative bg-[#f7f8ff] flex w-full">
       {/* if organization is not set, show dialog */}
-      {/* {false && (
+      {!organization && (
         <>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent>
@@ -100,11 +106,12 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             </DialogContent>
           </Dialog>
         </>
-      )} */}
+      )}
       {dialogIsOpen && (
         <CreateOrganization
           close={() => {
-          setDialogIsOpen(false);
+            setOpen(true);
+            setDialogIsOpen(false);
           }}
           allowRedirect={true}
           isInitial

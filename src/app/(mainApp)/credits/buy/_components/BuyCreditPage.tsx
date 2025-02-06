@@ -10,7 +10,11 @@ import Details from "./Details";
 import AddPoints from "./AddPoints";
 import { TOrganization } from "@/types/organization";
 import { useGetData } from "@/hooks/services/request";
-import { CredentialCurrencyConverter, CredentialsToken } from "@/types/token";
+import {
+  CredentialCurrencyConverter,
+  CredentialsToken,
+  TZikoroDiscount,
+} from "@/types/token";
 import useUserStore from "@/store/globalUserStore";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 
@@ -27,6 +31,7 @@ const BuyCreditPage = () => {
     silver: 0,
     gold: 0,
   });
+  const [discount, setDiscount] = useState<TZikoroDiscount | null>(null);
 
   const { organization: currentWorkspace } = useOrganizationStore();
 
@@ -40,6 +45,9 @@ const BuyCreditPage = () => {
       [credit]: value,
     }));
   };
+
+  const updateDiscount = (discount: TZikoroDiscount | null) =>
+    setDiscount(discount);
 
   const updateCurrency = (currency: string) => setSelectedCurrency(currency);
 
@@ -79,7 +87,7 @@ const BuyCreditPage = () => {
   }
 
   return (
-    <section className="bg-[#f7f8ff] w-full min-h-screen">
+    <section className="bg-[#f7f8ff] w-full min-h-screen pb-4">
       <section className="flex flex-col items-center pt-12 w-1/2 mx-auto gap-6 space-y-12">
         <Timeline step={step} setStep={(step) => setStep(step)} />
         {step === 1 && (
@@ -91,6 +99,8 @@ const BuyCreditPage = () => {
             currencyConversion={currencyConversion}
             selectedCurrency={selectedCurrency}
             updateCurrency={updateCurrency}
+            updateDiscount={updateDiscount}
+            discount={discount}
           />
         )}
         {step === 2 && (
@@ -108,6 +118,7 @@ const BuyCreditPage = () => {
             currencyConversion={currencyConversion}
             selectedCurrency={selectedCurrency}
             workspace={workspace}
+            discount={discount}
           />
         )}
       </section>

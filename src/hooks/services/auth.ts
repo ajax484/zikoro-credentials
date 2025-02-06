@@ -38,7 +38,7 @@ export function useRegistration() {
 
       if (data) {
         //  saveCookie("user", data);
-        toast.success("Registration  Successful");
+        toast.success("Registration Successful");
         router.push(
           `/verify-email?message=Verify your Account&content= Thank you for signing up! A verification code has been sent to your registered email address. Please check your inbox and enter the code to verify your account.&email=${values.email}&type=verify`
         );

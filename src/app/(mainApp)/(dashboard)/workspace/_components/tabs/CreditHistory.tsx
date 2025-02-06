@@ -2,7 +2,7 @@ import { DataTable } from "@/components/DataTable/data-table";
 import { useGetData, useGetPaginatedData } from "@/hooks/services/request";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import React, { useEffect } from "react";
-import { creditHistoryColumns } from "./columns";
+import { creditHistoryColumns } from "./CreditHistoryColumns";
 import { CredentialTokenUsageHistory } from "@/types/token";
 import CreditHistoryIcon from "@/public/icons/ph_coins-duotone.svg";
 import { TFilter } from "@/types/filter";

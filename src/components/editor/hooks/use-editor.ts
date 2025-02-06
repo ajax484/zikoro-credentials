@@ -129,7 +129,7 @@ const buildEditor = ({
     isLive && canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
     const dataUrl = canvas.toDataURL(options);
 
-    console.log(dataUrl);
+    // console.log(dataUrl);
 
     return dataUrl;
   };
@@ -176,9 +176,11 @@ const buildEditor = ({
     canvas._centerObject(object, center);
   };
 
-  const addToCanvas = (object: fabric.Object) => {
+  const addToCanvas = (object: fabric.Object, selectable = true) => {
     center(object);
+    object.set({ selectable });
     canvas.add(object);
+
     canvas.setActiveObject(object);
   };
 
@@ -221,6 +223,12 @@ const buildEditor = ({
     },
     changeBackground: (value: string) => {
       const workspace = getWorkspace();
+      canvas
+        .getObjects()
+        .filter(
+          (object) => object instanceof fabric.Image && object.isBackground
+        )
+        .forEach((bgImage) => canvas.remove(bgImage));
       workspace?.set({ fill: value });
       canvas.renderAll();
       save();
@@ -287,30 +295,43 @@ const buildEditor = ({
       );
     },
     addBackgroundImage: (value: string) => {
-      console.log(value);
+      console.log("Adding background image:", value);
 
       fabric.Image.fromURL(
         value,
         (image) => {
           const workspace = getWorkspace();
+          if (!workspace) return; // Prevent errors if workspace is null
 
-          // image.scaleToWidth(workspace?.width || 0);
-          // image.scaleToHeight(workspace?.height || 0);
-          image.scaleToHeight(900);
-          image.scaleToWidth(1200);
+          console.log(image);
 
-          addToCanvas(image);
-          canvas.getActiveObjects().forEach((object) => {
-            canvas.sendToBack(object);
-          });
+          // Remove any existing background image
+          canvas
+            .getObjects()
+            .filter(
+              (object) => object instanceof fabric.Image && object.isBackground
+            )
+            .forEach((bgImage) => canvas.remove(bgImage));
 
+          // Mark the image as a background
+          image.set({ isBackground: true });
+
+          // Scale image to fit the workspace
+          image.scaleToWidth(workspace.width || 1200);
+          image.scaleToHeight(workspace.height || 900);
+
+          console.log("final", image);
+
+          // Add the image to canvas and send it to the back
+          addToCanvas(image, false);
+          canvas.sendToBack(image);
+
+          // Ensure no object is active & re-render canvas
           canvas.discardActiveObject();
           canvas.renderAll();
           workspace?.sendToBack();
         },
-        {
-          crossOrigin: "anonymous",
-        }
+        { crossOrigin: "anonymous" }
       );
     },
     addQRCode: (value: string, color: string, bgcolor: string) => {
@@ -529,7 +550,7 @@ const buildEditor = ({
     },
     changeFontFamily: (value: string) => {
       setFontFamily(value);
-      canvas.getActiveObjects().forEach((object) => {
+      canvas.getActiveObjects().forEach((object: fabric.Object) => {
         if (isTextType(object.type)) {
           // @ts-ignore
           // Faulty TS library, fontFamily exists.
@@ -900,6 +921,173 @@ export const useEditor = ({
       initialCanvas.add(initialWorkspace);
       initialCanvas.centerObject(initialWorkspace);
       initialCanvas.clipPath = initialWorkspace;
+
+      const measurementThickness = 30;
+      const grid = 20;
+
+      initialCanvas.add(
+        new fabric.Rect({
+          left: 0,
+          top: 0,
+          fill: "#DDD",
+          selectable: false,
+          width: measurementThickness,
+          height: initialHeight.current,
+        })
+      );
+
+      initialCanvas.add(
+        new fabric.Rect({
+          left: 0,
+          top: 0,
+          fill: "#DDD",
+          width: initialContainer?.offsetWidth,
+          selectable: false,
+          height: measurementThickness,
+        })
+      );
+
+      const tickSize = 10;
+      const tickSizeFoot = 40;
+
+      let count = 1;
+      let footCount = 0;
+
+      // for (let i = 0; i < initialContainer?.offsetWidth / grid; i++) {
+      //   var offset = i * grid,
+      //     location1 = offset + measurementThickness,
+      //     isFoot = (i + 1) % 12 === 0 && i !== 0;
+
+      //   // Grid ------------
+
+      //   // vertical
+      //   initialCanvas.add(
+      //     new fabric.Line(
+      //       [
+      //         location1,
+      //         measurementThickness,
+      //         location1,
+      //         initialContainer?.offsetWidth,
+      //       ],
+      //       {
+      //         stroke: isFoot ? "#888" : "#ccc",
+      //         selectable: false,
+      //       }
+      //     )
+      //   );
+
+      //   // horizontal
+      //   initialCanvas.add(
+      //     new fabric.Line([measurementThickness, location1, initialContainer?.offsetWidth, location1], {
+      //       stroke: isFoot ? "#888" : "#ccc",
+      //       selectable: false,
+      //     })
+      //   );
+
+      //   // Ruler ------------
+
+      //   // left
+      //   initialCanvas.add(
+      //     new fabric.Line(
+      //       [
+      //         measurementThickness - tickSize,
+      //         location1,
+      //         measurementThickness,
+      //         location1,
+      //       ],
+      //       { stroke: "#888", selectable: false }
+      //     )
+      //   );
+      //   initialCanvas.add(
+      //     new fabric.Text(count + '"', {
+      //       left: measurementThickness - tickSize * 2 - 7,
+      //       top: location1,
+      //       fontSize: 12,
+      //       fontFamily: "san-serif",
+      //     })
+      //   );
+
+      //   if (isFoot) {
+      //     footCount++;
+
+      //     initialCanvas.add(
+      //       new fabric.Line(
+      //         [
+      //           measurementThickness - tickSizeFoot,
+      //           location1,
+      //           measurementThickness,
+      //           location1,
+      //         ],
+      //         { stroke: "#222", selectable: false }
+      //       )
+      //     );
+      //     initialCanvas.add(
+      //       new fabric.Text(footCount + "'", {
+      //         left: measurementThickness - tickSizeFoot - 7,
+      //         top: location1 + 4,
+      //         fontSize: 12,
+      //         fontFamily: "san-serif",
+      //       })
+      //     );
+      //   }
+
+      //   // top
+      //   initialCanvas.add(
+      //     new fabric.Line(
+      //       [
+      //         location1,
+      //         measurementThickness - tickSize,
+      //         location1,
+      //         measurementThickness,
+      //       ],
+      //       { stroke: "#888", selectable: false }
+      //     )
+      //   );
+      //   initialCanvas.add(
+      //     new fabric.Text(count + '"', {
+      //       left: location1,
+      //       top: measurementThickness - tickSize * 2 - 4,
+      //       fontSize: 12,
+      //       fontFamily: "san-serif",
+      //     })
+      //   );
+
+      //   if (isFoot) {
+      //     initialCanvas.add(
+      //       new fabric.Line(
+      //         [
+      //           location1,
+      //           measurementThickness - tickSizeFoot,
+      //           location1,
+      //           measurementThickness,
+      //         ],
+      //         { stroke: "#222", selectable: false }
+      //       )
+      //     );
+      //     initialCanvas.add(
+      //       new fabric.Text(footCount + "'", {
+      //         left: location1 + 4,
+      //         top: measurementThickness - tickSizeFoot - 7,
+      //         fontSize: 12,
+      //         fontFamily: "san-serif",
+      //       })
+      //     );
+      //   }
+
+      //   count++;
+      // }
+
+      initialCanvas
+        .getObjects()
+        .filter(
+          (object) => object instanceof fabric.Image && object.isBackground
+        )
+        .forEach((bgImage) => {
+          console.log(bgImage);
+          canvas.sendToBack(bgImage);
+        });
+
+      initialWorkspace.sendToBack();
 
       setCanvas(initialCanvas);
       setContainer(initialContainer);

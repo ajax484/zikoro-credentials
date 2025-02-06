@@ -60,10 +60,12 @@ const CertificateView = ({
     )
   );
 
-  console.log(certificate.originalCertificate.certificateSettings.skills);
+  console.log(newState);
+
+  // console.log(certificate.originalCertificate.certificateSettings.skills);
 
   // Find placeholder in newState and replace with profile picture in the string
-  newState = newState.replaceAll(
+  newState = String(newState).replaceAll(
     "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
     certificate?.profilePicture?.trim() ||
       "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg"
@@ -265,22 +267,22 @@ const CertificateView = ({
 };
 
 const Page = ({ params }: { params: { certificateId: string } }) => {
-  // function enforceDesktopView() {
-  //   if (window.innerWidth < 1024) {
-  //     document
-  //       .querySelector("meta[name=viewport]")
-  //       .setAttribute("content", "width=1024");
-  //   }
-  // }
+  function enforceDesktopView() {
+    if (window.innerWidth < 1024) {
+      document
+        .querySelector("meta[name=viewport]")
+        .setAttribute("content", "width=1024");
+    }
+  }
 
-  // useEffect(() => {
-  //   enforceDesktopView();
-  //   window.addEventListener("resize", enforceDesktopView);
+  useEffect(() => {
+    enforceDesktopView();
+    window.addEventListener("resize", enforceDesktopView);
 
-  //   return () => {
-  //     window.removeEventListener("resize", enforceDesktopView);
-  //   };
-  // }, []);
+    return () => {
+      window.removeEventListener("resize", enforceDesktopView);
+    };
+  }, []);
 
   const router = useRouter();
 
@@ -299,6 +301,14 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
   }>(`/certificates/verify/${certificateId}/share`, true);
 
   console.log(certificate, certificateId);
+
+  // if (window.innerWidth < 768) {
+  //   return (
+  //     <div className="min-h-screen flex flex-col md:flex-row justify-center items-center gap-6 pt-20 pb-8 bg-[#F9FAFF]">
+  //       View on a desktop screen for best experience
+  //     </div>
+  //   );
+  // }
 
   return (
     <section className="min-h-screen flex flex-col md:flex-row justify-center gap-6 pt-20 pb-8 bg-[#F9FAFF]">

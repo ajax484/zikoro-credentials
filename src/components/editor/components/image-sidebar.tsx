@@ -46,7 +46,6 @@ export const ImageSidebar = ({
     getData: getOrganization,
   } = useGetData<TOrganization>(`workspaces/${organizationId}`);
 
-  console.log(organization);
 
   const { mutateData: updateOrganization, isLoading: updating } =
     useMutateData<TOrganization>(`workspaces/${organizationId}`);

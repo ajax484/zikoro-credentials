@@ -34,7 +34,6 @@ export const TemplateSidebar = ({
     error,
   } = useGetData<CertificateTemplate[]>(`/certificates/templates`, []);
 
-  console.log(templates);
 
   const onClose = () => {
     onChangeActiveTool("select");

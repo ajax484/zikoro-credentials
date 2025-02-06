@@ -1,7 +1,7 @@
 "use client";
 import { useGetData } from "@/hooks/services/request";
 import useUserStore from "@/store/globalUserStore";
-import React from "react";
+import React, { useEffect } from "react";
 import GradientBorderSelect from "../CustomSelect/GradientSelectBorder";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { TOrganization } from "@/types/organization";
@@ -10,8 +10,11 @@ import { Button } from "../ui/button";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import { DialogContent } from "@radix-ui/react-dialog";
 import { CreateOrganization } from "../CreateOrganisation/createOrganisation";
+import { useSearchParams } from "next/navigation";
 
 const SelectOrganization = () => {
+  const searchParams = useSearchParams();
+  const workspaceAlias = searchParams.get("workspaceAlias");
   const { user } = useUserStore();
   const { organization, setOrganization } = useOrganizationStore();
 
@@ -25,6 +28,16 @@ const SelectOrganization = () => {
   );
 
   console.log(workspaces);
+
+  useEffect(() => {
+    if (workspaceAlias) {
+      const workspace = workspaces?.find(
+        (workspace) => workspace.organizationAlias === workspaceAlias
+      );
+      if (!workspace) return;
+      setOrganization(workspace);
+    }
+  }, [workspaceAlias, workspaces]);
 
   const updateOrganization = (value: string) => {
     setOrganization(

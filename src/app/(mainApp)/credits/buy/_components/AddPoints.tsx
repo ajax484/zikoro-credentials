@@ -2,16 +2,23 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Check, X } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import {
   Select,
   SelectTrigger,
-  SelectContent,  
+  SelectContent,
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { CredentialCurrencyConverter, CredentialsToken } from "@/types/token";
+import {
+  CredentialCurrencyConverter,
+  CredentialsToken,
+  TZikoroDiscount,
+} from "@/types/token";
 import { applyCredentialsDiscount } from "@/utils/helpers";
+import { useMutateData } from "@/hooks/services/request";
+import { toast } from "react-toastify";
+import { LoaderAlt } from "styled-icons/boxicons-regular";
 
 const AddPoints = ({
   credits,
@@ -21,6 +28,8 @@ const AddPoints = ({
   currencyConversion,
   selectedCurrency,
   updateCurrency,
+  updateDiscount,
+  discount,
 }: {
   credits: {
     bronze: number;
@@ -33,7 +42,13 @@ const AddPoints = ({
   currencyConversion: CredentialCurrencyConverter[];
   selectedCurrency: string;
   updateCurrency: (currency: string) => void;
+  updateDiscount: (discount: TZikoroDiscount | null) => void;
+  discount: TZikoroDiscount | null;
 }) => {
+  const [code, setCode] = useState<string>("");
+  const { mutateData: retrieveDiscount, isLoading: retrieveDiscountIsLoading } =
+    useMutateData(`/tokens/pricing/discount`);
+
   const currentCurrency = currencyConversion.find(
     ({ currency }) => currency === selectedCurrency
   ) || { amount: 0 };
@@ -62,6 +77,51 @@ const AddPoints = ({
         return 0;
     }
   };
+
+  const total =
+    applyCredentialsDiscount(
+      credits.gold,
+      currentCurrency?.amount * goldToken?.amount
+    ) +
+    applyCredentialsDiscount(
+      credits.silver,
+      currentCurrency?.amount * silverToken?.amount
+    ) +
+    applyCredentialsDiscount(
+      credits.bronze,
+      currentCurrency?.amount * bronzeToken?.amount
+    );
+
+  const totalWithDiscount =
+    total -
+    (discount?.discountPercentage
+      ? ((Number(discount?.discountPercentage) || 0) / 100) * total
+      : discount?.discountAmount || 0);
+
+  async function applyDiscount() {
+    const discount = await retrieveDiscount({
+      payload: {
+        discountCode: code,
+      },
+    });
+
+    console.log(discount);
+
+    if (discount) {
+      if (discount.validUntil && new Date(discount.validUntil) < new Date()) {
+        toast.error("Oops! Discount code has expired. Try another one");
+        return;
+      }
+
+      toast.success("Discount has been applied");
+      setCode("");
+      updateDiscount(discount);
+      return;
+    } else {
+      toast.error("Oops! Discount code is incorrect. Try again");
+      return;
+    }
+  }
 
   return (
     <section className="space-y-6 w-full">
@@ -433,6 +493,29 @@ const AddPoints = ({
           </span>
         </div>
       </div>
+      <div className={cn("w-full flex items-center")}>
+        <input
+          type="text"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          placeholder="Enter a valid discount code"
+          className="bg-transparent h-10 rounded-l-md px-3 outline-none placeholder:text-gray-300 border border-gray-300 w-[75%]"
+        />
+        <Button
+          disabled={code === ""}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            applyDiscount();
+          }}
+          className="h-10 text-white rounded-r-md rounded-l-none bg-gray-500 font-medium px-0 w-[25%]"
+        >
+          {retrieveDiscountIsLoading && (
+            <LoaderAlt size={22} className="animate-spin" />
+          )}
+          Apply
+        </Button>
+      </div>
 
       <Button
         disabled={
@@ -442,23 +525,18 @@ const AddPoints = ({
           !selectedCurrency
         }
         onClick={handleNext}
-        className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-8 w-fit mx-auto"
+        className={cn(
+          "gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-8 w-fit mx-auto",
+          discount ? "bg-red-600 hover:bg-red-700" : "bg-basePrimary"
+        )}
       >
-        Pay {selectedCurrency}{" "}
-        {(
-          applyCredentialsDiscount(
-            credits.gold,
-            currentCurrency?.amount * goldToken?.amount
-          ) +
-          applyCredentialsDiscount(
-            credits.silver,
-            currentCurrency?.amount * silverToken?.amount
-          ) +
-          applyCredentialsDiscount(
-            credits.bronze,
-            currentCurrency?.amount * bronzeToken?.amount
-          )
-        ).toLocaleString()}
+        Pay {selectedCurrency} {totalWithDiscount.toLocaleString()}
+        {discount &&
+          "(" +
+            (discount?.discountAmount
+              ? discount.discountAmount
+              : discount?.discountPercentage + "%") +
+            " discount applied)"}
       </Button>
     </section>
   );

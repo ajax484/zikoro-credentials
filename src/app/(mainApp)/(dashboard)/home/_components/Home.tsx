@@ -159,7 +159,7 @@ const CreateCertificateDialog = ({
   );
 };
 
-const Home = () => {
+const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
   const { user, setUser } = useUserStore();
   const { organization, setOrganization } = useOrganizationStore();
   const router = useRouter();

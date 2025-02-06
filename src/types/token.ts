@@ -40,3 +40,12 @@ export interface CredentialTokenUsageHistory {
   creditBalance: number;
   transactionReferenceId: string | null;
 }
+
+export type TZikoroDiscount = {
+  id: number;
+  created_at: string;
+  discountCode: string;
+  validUntil: string;
+  discountAmount: number;
+  discountPercentage: string;
+};

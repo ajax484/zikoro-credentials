@@ -26,7 +26,7 @@ export interface TOrganization {
   subDomain: string;
   certificateAsset: TCertificateAsset;
   teamMembers: TOrganizationTeamMember[];
-  subscriptionExpiryDate:string;
+  subscriptionExpiryDate: string;
 }
 
 export interface IPayoutAccountDetails {
@@ -46,4 +46,13 @@ type TOrganizationTeamMember = {
 export interface TCertificateAsset {
   elements: string[];
   backgrounds: string[];
+}
+
+export interface OrganizationTeamMembersCredentials {
+  id: number;
+  created_at: string;
+  userId?: number | null;
+  userEmail?: string | null;
+  userRole?: string | null;
+  workspaceAlias?: string | null;
 }

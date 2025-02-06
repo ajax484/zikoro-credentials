@@ -248,6 +248,21 @@ export function useCreateOrganisation() {
       }
 
       console.log(data);
+
+      const { data: insertedEvent, error: insertError } = await supabase
+        .from("organizationTeamMembers_Credentials")
+        .insert({
+          userEmail: userEmail,
+          userRole: "owner",
+          workspaceAlias: data?.organizationAlias,
+          userId: id,
+        });
+
+      if (insertError) {
+        console.log(insertError);
+        return toast.error(insertError.message);
+      }
+
       setLoading(false);
       setOrganization(data as unknown as TOrganization);
       toast.success("Organisation created successfully");
