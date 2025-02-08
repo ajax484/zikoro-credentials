@@ -44,6 +44,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Nib from "@/public/icons/iconoir_design-nib-solid2.svg";
+import GradientText from "@/components/GradientText";
 
 const CreateCertificateDialog = ({
   open,
@@ -53,6 +55,7 @@ const CreateCertificateDialog = ({
   setDialogIsOpen,
   workspaces,
   workspacesIsLoading,
+  triggerButton,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -67,6 +70,7 @@ const CreateCertificateDialog = ({
   setDialogIsOpen: (open: boolean) => void;
   workspaces: TOrganization[];
   workspacesIsLoading: boolean;
+  triggerButton: React.ReactNode;
 }) => {
   const { organization, setOrganization } = useOrganizationStore();
 
@@ -83,21 +87,7 @@ const CreateCertificateDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <button
-          disabled={certificateIsCreating}
-          className="rounded-md border bg-white flex flex-col items-center justify-center gap-2 min-h-[250px]"
-        >
-          <Image
-            src={Solar}
-            alt={"solar"}
-            width={30}
-            height={30}
-            className="rounded-full"
-          />
-          <span className="text-sm text-basePrimary">Create New</span>
-        </button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{triggerButton}</DialogTrigger>
       <DialogContent className="max-w-[50%]">
         <DialogHeader>
           <DialogTitle>Create Certificate</DialogTitle>
@@ -410,21 +400,25 @@ const Designs = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="certificates">
-          <div className="flex justify-between items-center">
-            <input
-              type="text"
-              placeholder="Search"
-              value={searchTerm}
-              disabled={certificatesIsLoading}
-              onInput={(event) => setSearchTerm(event.currentTarget.value)}
-              className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 mb-6 w-1/3 mx-auto border-b focus-visible:outline-none"
-            />
-          </div>
-          <div className="grid grid-cols-4 gap-8 mb-4">
-            {certificatesIsLoading ? (
-              <div>Loading...</div>
-            ) : (
-              <>
+          {/* {!certificatesIsLoading && certificates?.length === 0 ? ( */}
+          {true ? (
+            <>
+              <div className="flex flex-col justify-center items-center h-[250px] gap-4">
+                <div className="bg-basePrimary rounded-full p-6">
+                  <Image
+                    src={Nib}
+                    alt="nib"
+                    width={30}
+                    height={30}
+                    className="rounded-full"
+                  />
+                </div>
+                <GradientText className="font-bold text-2xl" Tag={"h1"}>
+                  No certificates found
+                </GradientText>
+                <p className="text-gray-800 text-sm font-medium">
+                  Get started by creating your first certificate
+                </p>
                 <CreateCertificateDialog
                   open={open}
                   setOpen={setOpen}
@@ -436,157 +430,218 @@ const Designs = () => {
                   }}
                   workspaces={workspaces}
                   workspacesIsLoading={workspacesIsLoading}
+                  triggerButton={
+                    <Button
+                      type="button"
+                      className="bg-basePrimary text-white"
+                      disabled={certificateIsCreating}
+                    >
+                      Start Creating
+                    </Button>
+                  }
                 />
-                {filteredCertificates?.map((certificate) => (
-                  <div
-                    key={certificate.id}
-                    className="rounded-lg border border-gray-200 bg-white group"
-                  >
-                    <div className="h-[250px] w-full bg-gray-200 relative">
-                      {certificate?.previewUrl && (
-                        <Image
-                          src={certificate?.previewUrl ?? ""}
-                          alt={certificate.name}
-                          objectFit="cover"
-                          layout="fill"
-                        />
-                      )}
-                      <div className="absolute inset-0 p-2 bg-black/50 group-hover:flex hidden z-10 group-hover:gap-8 group-hover:justify-center group-hover:items-center">
-                        <Link
-                          className="text-gray-50 hover:text-basePrimary"
-                          href={
-                            "/credentials/create/" +
-                            certificate.certificateAlias +
-                            "?type=certificate&workspaceId=" +
-                            organization?.id +
-                            "&workspaceAlias=" +
-                            organization?.organizationAlias
-                          }
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex justify-between items-center">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  value={searchTerm}
+                  disabled={certificatesIsLoading}
+                  onInput={(event) => setSearchTerm(event.currentTarget.value)}
+                  className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 mb-6 w-1/3 mx-auto border-b focus-visible:outline-none"
+                />
+              </div>
+              <div className="grid grid-cols-4 gap-8 mb-4">
+                {certificatesIsLoading ? (
+                  <div>Loading...</div>
+                ) : (
+                  <>
+                    <CreateCertificateDialog
+                      open={open}
+                      setOpen={setOpen}
+                      createCertificateFn={createCertificateFn}
+                      certificateIsCreating={certificateIsCreating}
+                      setDialogIsOpen={() => {
+                        setOpen(false);
+                        setDialogIsOpen(true);
+                      }}
+                      workspaces={workspaces}
+                      workspacesIsLoading={workspacesIsLoading}
+                      triggerButton={
+                        <button
+                          disabled={certificateIsCreating}
+                          className="rounded-md border bg-white flex flex-col items-center justify-center gap-2 min-h-[250px]"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="36"
-                            height="36"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              fill="currentColor"
-                              d="m14.06 9.02l.92.92L5.92 19H5v-.92zM17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83l3.75 3.75l1.83-1.83a.996.996 0 0 0 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29m-3.6 3.19L3 17.25V21h3.75L17.81 9.94z"
-                            />
-                          </svg>
-                        </Link>
-                        <Link
-                          className="text-gray-50 hover:text-basePrimary"
-                          href={
-                            "/assign?certificateAlias=" +
-                            certificate.certificateAlias
-                          }
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="36"
-                            height="36"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              fill="currentColor"
-                              d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8"
-                            />
-                          </svg>
-                        </Link>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 p-2">
-                      <div className="flex-1 space-y-2">
-                        <p className="font-medium text-gray-700 text-sm capitalize">
-                          {certificate.name}
-                        </p>
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-1">
+                          <Image
+                            src={Solar}
+                            alt={"solar"}
+                            width={30}
+                            height={30}
+                            className="rounded-full"
+                          />
+                          <span className="text-sm text-basePrimary">
+                            Create New
+                          </span>
+                        </button>
+                      }
+                    />
+                    {filteredCertificates?.map((certificate) => (
+                      <div
+                        key={certificate.id}
+                        className="rounded-lg border border-gray-200 bg-white group"
+                      >
+                        <div className="h-[250px] w-full bg-gray-200 relative">
+                          {certificate?.previewUrl && (
                             <Image
-                              src={Email}
-                              alt={"email"}
-                              width={20}
-                              height={20}
-                              className="rounded-full"
+                              src={certificate?.previewUrl ?? ""}
+                              alt={certificate.name}
+                              objectFit="cover"
+                              layout="fill"
                             />
-                            <p className="text-xs text-gray-600">
-                              {certificate?.recipientCount}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Image
-                              src={Calendar}
-                              alt={"calendar"}
-                              width={20}
-                              height={20}
-                              className="rounded-full"
-                            />
-                            <p className="text-xs text-gray-600">
-                              {format(certificate.created_at, "dd/MM/yyyy")}
-                            </p>
+                          )}
+                          <div className="absolute inset-0 p-2 bg-black/50 group-hover:flex hidden z-10 group-hover:gap-8 group-hover:justify-center group-hover:items-center">
+                            <Link
+                              className="text-gray-50 hover:text-basePrimary"
+                              href={
+                                "/credentials/create/" +
+                                certificate.certificateAlias +
+                                "?type=certificate&workspaceId=" +
+                                organization?.id +
+                                "&workspaceAlias=" +
+                                organization?.organizationAlias
+                              }
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="36"
+                                height="36"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  fill="currentColor"
+                                  d="m14.06 9.02l.92.92L5.92 19H5v-.92zM17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83l3.75 3.75l1.83-1.83a.996.996 0 0 0 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29m-3.6 3.19L3 17.25V21h3.75L17.81 9.94z"
+                                />
+                              </svg>
+                            </Link>
+                            <Link
+                              className="text-gray-50 hover:text-basePrimary"
+                              href={
+                                "/assign?certificateAlias=" +
+                                certificate.certificateAlias
+                              }
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="36"
+                                height="36"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  fill="currentColor"
+                                  d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8"
+                                />
+                              </svg>
+                            </Link>
                           </div>
                         </div>
-                      </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button
-                            aria-label="More options"
-                            className="p-2 z-[10] rotate-90"
-                          >
-                            <svg
-                              stroke="currentColor"
-                              fill="currentColor"
-                              strokeWidth={0}
-                              viewBox="0 0 16 16"
-                              height="1.5em"
-                              width="1.5em"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M3 9.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <ul>
-                            <li className="text-center p-2 hover:bg-gray-100 text-red-700">
-                              <Delete
-                                certificateAlias={certificate.certificateAlias}
-                              />
-                            </li>
-                            <li className="w-full">
+                        <div className="flex items-center gap-2 p-2">
+                          <div className="flex-1 space-y-2">
+                            <p className="font-medium text-gray-700 text-sm capitalize">
+                              {certificate.name}
+                            </p>
+                            <div className="flex items-center gap-4">
+                              <div className="flex items-center gap-1">
+                                <Image
+                                  src={Email}
+                                  alt={"email"}
+                                  width={20}
+                                  height={20}
+                                  className="rounded-full"
+                                />
+                                <p className="text-xs text-gray-600">
+                                  {certificate?.recipientCount}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Image
+                                  src={Calendar}
+                                  alt={"calendar"}
+                                  width={20}
+                                  height={20}
+                                  className="rounded-full"
+                                />
+                                <p className="text-xs text-gray-600">
+                                  {format(certificate.created_at, "dd/MM/yyyy")}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
                               <button
-                                className="w-full hover:bg-gray-100 text-gray-700 py-2"
-                                onClick={(e) => {
-                                  organization &&
-                                    createCertificateFn({
-                                      name: certificate.name + " (copy)",
-                                      workspace: organization,
-                                      originalCopy: {
-                                        JSON: certificate.JSON,
-                                        previewUrl: certificate.previewUrl,
-                                        lastEdited: certificate.lastEdited,
-                                        settings: certificate.settings,
-                                      },
-                                    });
-                                }}
+                                aria-label="More options"
+                                className="p-2 z-[10] rotate-90"
                               >
-                                <span className="p-2">Make a copy</span>
+                                <svg
+                                  stroke="currentColor"
+                                  fill="currentColor"
+                                  strokeWidth={0}
+                                  viewBox="0 0 16 16"
+                                  height="1.5em"
+                                  width="1.5em"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M3 9.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
                               </button>
-                            </li>
-                          </ul>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <ul>
+                                <li className="text-center p-2 hover:bg-gray-100 text-red-700">
+                                  <Delete
+                                    certificateAlias={
+                                      certificate.certificateAlias
+                                    }
+                                  />
+                                </li>
+                                <li className="w-full">
+                                  <button
+                                    className="w-full hover:bg-gray-100 text-gray-700 py-2"
+                                    onClick={(e) => {
+                                      organization &&
+                                        createCertificateFn({
+                                          name: certificate.name + " (copy)",
+                                          workspace: organization,
+                                          originalCopy: {
+                                            JSON: certificate.JSON,
+                                            previewUrl: certificate.previewUrl,
+                                            lastEdited: certificate.lastEdited,
+                                            settings: certificate.settings,
+                                          },
+                                        });
+                                    }}
+                                  >
+                                    <span className="p-2">Make a copy</span>
+                                  </button>
+                                </li>
+                              </ul>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </TabsContent>
         <TabsContent value="badges">Change your password here.</TabsContent>
       </Tabs>
