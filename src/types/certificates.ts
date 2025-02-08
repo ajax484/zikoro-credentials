@@ -110,3 +110,17 @@ export interface CertificateTemplate {
   tags: string[];
   previewUrl: string;
 }
+
+export interface RecipientEmailTemplate {
+  id: number;
+  createdAt: string;
+  body?: string | null;
+  showLogo?: boolean | null;
+  showSocialLinks?: boolean | null;
+  logoUrl?: string | null;
+  subject?: string | null;
+  senderName?: string | null;
+  replyTo?: string | null;
+  templateName?: string | null;
+  workspaceAlias?: string | null;
+}

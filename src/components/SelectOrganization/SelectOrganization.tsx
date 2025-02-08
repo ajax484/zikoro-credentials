@@ -22,6 +22,7 @@ const SelectOrganization = () => {
     data: workspaces,
     isLoading: workspacesIsLoading,
     error: workspacesError,
+    getData: refetchWorkspaces,
   } = useGetData<TOrganization[]>(
     `/workspaces?userEmail=${user?.userEmail}`,
     []
@@ -73,6 +74,7 @@ const SelectOrganization = () => {
           <CreateOrganization
             close={() => setDialogIsOpen(false)}
             allowRedirect={true}
+            refetch={refetchWorkspaces}
           />
         )}
       </div>

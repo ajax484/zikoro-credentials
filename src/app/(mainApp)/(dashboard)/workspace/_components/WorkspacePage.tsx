@@ -9,6 +9,7 @@ import WorkspaceInformation from "./tabs/WorkspaceInformation";
 import CreditHistory from "./tabs/CreditHistory";
 import Image from "next/image";
 import TeamMembers from "./tabs/TeamMembers";
+import SocialLinks from "./tabs/SocialLinks";
 
 type Tabs = {
   name: string;
@@ -31,6 +32,11 @@ const tabs: Tabs[] = [
     name: "Team members",
     Icon: TeamMembersIcon,
     Component: TeamMembers,
+  },
+  {
+    name: "Social Links",
+    Icon: SocialLinksIcon,
+    Component: SocialLinks,
   },
 ];
 

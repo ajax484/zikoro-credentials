@@ -33,10 +33,6 @@ const WorkspaceSchema = z.object({
   organizationName: z.string().min(3, "Name is required"),
   organizationLogo: z.string().url("Enter a valid URL"),
   eventContactEmail: z.string().email("Enter a valid Email address"),
-  linkedIn: z.string().nullable(),
-  instagram: z.string().nullable(),
-  facebook: z.string().nullable(),
-  x: z.string().nullable(),
 });
 
 const WorkspaceInformation = () => {
@@ -51,10 +47,6 @@ const WorkspaceInformation = () => {
       organizationName: organization?.organizationName,
       organizationLogo: organization?.organizationLogo,
       eventContactEmail: organization?.eventContactEmail,
-      linkedIn: organization?.linkedIn,
-      instagram: organization?.instagram,
-      facebook: organization?.facebook,
-      x: organization?.x,
     },
   });
 
@@ -63,7 +55,7 @@ const WorkspaceInformation = () => {
     const updatedOrganization = await updateWorkspace({
       payload: { ...organization, ...data },
     });
-    console.log(updatedOrganization)
+    console.log(updatedOrganization);
     setOrganization(updatedOrganization);
   };
 
@@ -199,98 +191,6 @@ const WorkspaceInformation = () => {
                   <div className="relative w-full">
                     <Input
                       placeholder="contact email"
-                      type="text"
-                      {...field}
-                      className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-                    />
-                  </div>
-                </InputOffsetLabel>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="linkedIn"
-              render={({ field }) => (
-                <InputOffsetLabel
-                  label="Linkedin"
-                  append={
-                    <div className="bg-white p-1 rounded-md">
-                      <Linkedin className="size-6" />
-                    </div>
-                  }
-                >
-                  <div className="relative w-full">
-                    <Input
-                      placeholder="workspace name"
-                      type="text"
-                      {...field}
-                      className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-                    />
-                  </div>
-                </InputOffsetLabel>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="x"
-              render={({ field }) => (
-                <InputOffsetLabel
-                  label="X"
-                  append={
-                    <div className="bg-white p-1 rounded-md">
-                      <X className="size-6" />
-                    </div>
-                  }
-                >
-                  <div className="relative w-full">
-                    <Input
-                      placeholder="X"
-                      type="text"
-                      {...field}
-                      className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-                    />
-                  </div>
-                </InputOffsetLabel>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="instagram"
-              render={({ field }) => (
-                <InputOffsetLabel
-                  label="instagram"
-                  append={
-                    <div className="bg-white p-1 rounded-md">
-                      <Instagram className="size-6" />
-                    </div>
-                  }
-                >
-                  <div className="relative w-full">
-                    <Input
-                      placeholder="workspace name"
-                      type="text"
-                      {...field}
-                      className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-                    />
-                  </div>
-                </InputOffsetLabel>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="facebook"
-              render={({ field }) => (
-                <InputOffsetLabel
-                  label="Facebook"
-                  append={
-                    <div className="bg-white p-1 rounded-md">
-                      <Facebook className="size-6" />
-                    </div>
-                  }
-                >
-                  <div className="relative w-full">
-                    <Input
-                      placeholder="X"
                       type="text"
                       {...field}
                       className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"

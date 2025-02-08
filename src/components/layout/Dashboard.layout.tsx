@@ -8,7 +8,6 @@ import {
   DialogFooter,
   DialogHeader,
 } from "../ui/dialog";
-import SelectOrganization from "../SelectOrganization/SelectOrganization";
 import { TOrganization } from "@/types/organization";
 import { useGetData } from "@/hooks/services/request";
 import GradientBorderSelect from "../CustomSelect/GradientSelectBorder";
@@ -58,7 +57,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       {/* if organization is not set, show dialog */}
       {!organization && (
         <>
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open && !!organization} onOpenChange={setOpen}>
             <DialogContent>
               <DialogHeader className="px-3">
                 <h1 className="text-2xl capitalize font-semibold text-gray-800">
