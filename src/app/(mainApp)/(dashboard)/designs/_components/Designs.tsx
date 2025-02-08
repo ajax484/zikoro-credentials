@@ -335,11 +335,11 @@ const Designs = () => {
       <div className="flex justify-end">
         <SelectOrganization />
       </div>
-      <div className="bg-basePrimary/10 text-[#1F1F1F] px-1 py-4 rounded-xl space-y-2 border w-1/2 mx-auto my-6">
+      {/* <div className="bg-basePrimary/10 text-[#1F1F1F] px-1 py-4 rounded-xl space-y-2 border w-1/2 mx-auto my-6">
         <div className="mb-4 space-y-2">
-          {/* <h3 className="text-lg text-gray-700 font-semibold py-2 text-center">
+          <h3 className="text-lg text-gray-700 font-semibold py-2 text-center">
             Current Credit Information
-          </h3> */}
+          </h3>
           <div className="flex gap-8 justify-center">
             <div>
               <span className="font-medium">Bronze</span>
@@ -379,7 +379,7 @@ const Designs = () => {
         >
           Buy more credits
         </Link>
-      </div>
+      </div> */}
       <Tabs defaultValue="certificates" className="w-full">
         <TabsList className="flex mx-auto w-2/5 border my-6">
           <TabsTrigger
