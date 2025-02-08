@@ -400,8 +400,7 @@ const Designs = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="certificates">
-          {/* {!certificatesIsLoading && certificates?.length === 0 ? ( */}
-          {true ? (
+          {!certificatesIsLoading && certificates?.length === 0 ? (
             <>
               <div className="flex flex-col justify-center items-center h-[250px] gap-4">
                 <div className="bg-basePrimary rounded-full p-6">
