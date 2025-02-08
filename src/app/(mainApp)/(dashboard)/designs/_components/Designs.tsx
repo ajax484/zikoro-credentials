@@ -405,6 +405,7 @@ const Designs = () => {
               <div className="flex flex-col justify-center items-center h-[250px] gap-4">
                 <div className="bg-basePrimary rounded-full p-6">
                   <Image
+                  
                     src={Nib}
                     alt="nib"
                     width={30}
