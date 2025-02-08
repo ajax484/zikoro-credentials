@@ -462,7 +462,13 @@ const SendEmail = ({
                     }),
                   }}
                 />
-                <div style={{ textAlign: "center", marginTop: "20px" }}>
+                <div
+                  style={{
+                    textAlign: "center",
+                    marginTop: "20px",
+                    fontStyle: "italic",
+                  }}
+                >
                   <p style={{ marginBottom: "20px" }}>
                     View in a desktop screen for best experience
                   </p>

@@ -464,7 +464,7 @@ const CertificateView = ({
           </div>
         </div>
       </section>
-      {/* {certificate?.originalCertificate?.certificateSettings?.skills && (
+      {certificate?.originalCertificate?.certificateSettings?.skills && (
         <div className="bg-white p-4 border rounded-md w-full h-full space-y-2 flex flex-col items-center gap-4">
           <GradientText className="font-bold" Tag={"h1"}>
             Earned Skills
@@ -487,7 +487,7 @@ const CertificateView = ({
             )}
           </div>
         </div>
-      )} */}
+      )}
     </section>
   );
 };
