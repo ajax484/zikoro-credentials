@@ -418,7 +418,7 @@ const Designs = () => {
                 <p className="text-gray-800 text-sm font-medium">
                   Get started by creating your first certificate
                 </p>
-                <CreateCertificateDialog
+                {/* <CreateCertificateDialog
                   open={open}
                   setOpen={setOpen}
                   createCertificateFn={createCertificateFn}
@@ -438,7 +438,7 @@ const Designs = () => {
                       Start Creating
                     </Button>
                   }
-                />
+                /> */}
               </div>
             </>
           ) : (

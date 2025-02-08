@@ -479,7 +479,11 @@ const Issue = ({
           >
             Buy more credits
           </Link>
-          <Dialog defaultOpen={!!certificateAlias} open={open}>
+          <Dialog
+            defaultOpen={!!certificateAlias}
+            open={open}
+            onOpenChange={setOpen}
+          >
             <DialogTrigger asChild>
               <Button
                 onClick={() => setOpen(true)}

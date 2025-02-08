@@ -12,11 +12,13 @@ import { Facebook, Instagram, Linkedin } from "styled-icons/bootstrap";
 import { useMutateData } from "@/hooks/services/request";
 
 const socialLinksSchema = z.object({
-  linkedIn: z.string().url("Enter a valid URL"),
-  instagram: z.string().url("Enter a valid URL"),
-  facebook: z.string().url("Enter a valid URL"),
-  x: z.string().url("Enter a valid URL"),
-  socialLinks: z.array(z.string().url("Enter a valid URL")),
+  linkedIn: z.string().url("Enter a valid URL").optional(),
+  instagram: z.string().url("Enter a valid URL").optional(),
+  facebook: z.string().url("Enter a valid URL").optional(),
+  x: z.string().url("Enter a valid URL").optional(),
+  socialLinks: z
+    .array(z.string().url("Enter a valid URL").optional())
+    .optional(),
 });
 
 const SocialLinks = () => {
