@@ -41,7 +41,7 @@ export default function Footer() {
           </div>
 
           {/* 2nd app */}
-          <div className="w-full flex items-center gap-x-4">
+          <div className="w-full flex items-center gap-x-4 mt-6">
             {/* left */}
             <div>
               <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
@@ -64,7 +64,7 @@ export default function Footer() {
           </div>
 
           {/* 3rd app */}
-          <div className="w-full flex items-center gap-x-4">
+          <div className="w-full flex items-center gap-x-4 mt-6">
             {/* left */}
             <div>
               <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
@@ -114,7 +114,7 @@ export default function Footer() {
           </div>
 
           {/* 2nd app */}
-          <div className="w-full flex items-center gap-x-4">
+          <div className="w-full flex items-center gap-x-4 mt-6">
             {/* left */}
             <div>
               <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
@@ -137,7 +137,7 @@ export default function Footer() {
           </div>
 
           {/* 3rd app */}
-          <div className="w-full flex items-center gap-x-4">
+          <div className="w-full flex items-center gap-x-4 mt-6">
             {/* left */}
             <div>
               <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
