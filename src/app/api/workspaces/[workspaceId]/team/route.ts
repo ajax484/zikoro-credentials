@@ -118,7 +118,7 @@ export async function POST(
       });
 
       return NextResponse.json(data, {
-        status: 200,
+        status: 201,
       });
     } catch (error) {
       console.error(error);
