@@ -37,6 +37,8 @@ import * as XLSX from "xlsx";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { format } from "date-fns";
 import { CredentialsWorkspaceToken } from "@/types/token";
+import AccountCancel from "@/public/icons/mdi_account-cancel.svg";
+import GradientText from "@/components/GradientText";
 
 const issueesFilter: TFilter<
   CertificateRecipient & { certificate: TCertificate }
@@ -424,6 +426,8 @@ const Issue = ({
       : "bronze";
   }, [selectedCertificate]);
 
+  const [open, setOpen] = useState(false);
+
   return (
     <section className="space-y-4">
       <div className="flex items-end justify-between">
@@ -475,9 +479,14 @@ const Issue = ({
           >
             Buy more credits
           </Link>
-          <Dialog defaultOpen={!!certificateAlias}>
-            <DialogTrigger>
+          <Dialog
+            defaultOpen={!!certificateAlias}
+            open={open}
+            onOpenChange={setOpen}
+          >
+            <DialogTrigger asChild>
               <Button
+                onClick={() => setOpen(true)}
                 disabled={isLoadingRecall || isLoadingReissue}
                 className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 w-fit text-sm"
               >
@@ -606,45 +615,68 @@ const Issue = ({
           </Dialog>
         </div>
       </div>
-      <div className="flex justify-center items-end">
-        <input
-          type="text"
-          placeholder="Search"
-          value={searchTerm}
-          onInput={(event) => setSearchTerm(event.currentTarget.value)}
-          className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 w-1/3 border-b focus-visible:outline-none"
-        />
-        <Filter
-          className={`space-y-4 w-1/3 mx-auto hide-scrollbar`}
-          filters={filters.sort(
-            (a, b) => (a.order || Infinity) - (b.order || Infinity)
-          )}
-          applyFilter={applyFilter}
-          selectedFilters={selectedFilters}
-        />
-        <GradientBorderSelect
-          placeholder="Select limit"
-          value={pagination.limit.toString()}
-          onChange={(value: string) => updateLimit(parseInt(value))}
-          options={[10, 50, 100, 1000].map((limit) => ({
-            label: limit.toString(),
-            value: limit.toString(),
-          }))}
-        />
-      </div>
-      <DataTable<CertificateRecipient & { certificate: TCertificate }>
-        columns={columns}
-        data={filteredIssuees}
-        currentPage={pagination.page}
-        setCurrentPage={updatePage}
-        limit={pagination.limit}
-        refetch={() => {}}
-        totalDocs={total}
-        isFetching={isLoading}
-        onClick={() => {}}
-        rowSelection={rowSelection}
-        setRowSelection={setRowSelection}
-      />
+      {!isLoading && filteredIssuees.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-4 text-gray-600 h-[500px]">
+          <div className="bg-basePrimary rounded-full p-6">
+            <Image src={AccountCancel} width={40} height={40} alt="logo" />
+          </div>
+          <GradientText className="font-bold text-2xl" Tag={"h1"}>
+            No Assignments Yet
+          </GradientText>
+          <p className="text-gray-800 text-sm font-medium">
+            You haven't issued any certificates yet. Once you have assigned
+            certificates, the list of recipients will appear here
+          </p>
+          <Button
+            className="bg-basePrimary text-white"
+            onClick={() => setOpen(true)}
+          >
+            Assign Credentials
+          </Button>
+        </div>
+      ) : (
+        <>
+          <div className="flex justify-center items-end">
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onInput={(event) => setSearchTerm(event.currentTarget.value)}
+              className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 w-1/3 border-b focus-visible:outline-none"
+            />
+            <Filter
+              className={`space-y-4 w-1/3 mx-auto hide-scrollbar`}
+              filters={filters.sort(
+                (a, b) => (a.order || Infinity) - (b.order || Infinity)
+              )}
+              applyFilter={applyFilter}
+              selectedFilters={selectedFilters}
+            />
+            <GradientBorderSelect
+              placeholder="Select limit"
+              value={pagination.limit.toString()}
+              onChange={(value: string) => updateLimit(parseInt(value))}
+              options={[10, 50, 100, 1000].map((limit) => ({
+                label: limit.toString(),
+                value: limit.toString(),
+              }))}
+            />
+          </div>
+          <DataTable<CertificateRecipient & { certificate: TCertificate }>
+            columns={columns}
+            data={filteredIssuees}
+            currentPage={pagination.page}
+            setCurrentPage={updatePage}
+            limit={pagination.limit}
+            refetch={() => {}}
+            totalDocs={total}
+            isFetching={isLoading}
+            onClick={() => {}}
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
+          />
+        </>
+      )}
     </section>
   );
 };

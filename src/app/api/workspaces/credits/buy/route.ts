@@ -136,13 +136,18 @@ export async function POST(req: NextRequest) {
       <p>Details:</p>
       <p>Reference: <strong>${reference}</strong></p>
       <ul>${creditDetails}</ul>
-      <p>Discount of <strong>${
-        discount?.discountPercentage
-          ? discount?.discountPercentage + "%"
-          : discount?.discountAmount
-      }</strong> has been applied to your purchase using code: <strong>${
-      discount?.discountCode
-    }</strong></p>
+      ${
+        discount &&
+        `
+        <p>Discount of <strong>${
+          discount?.discountPercentage
+            ? discount?.discountPercentage + "%"
+            : discount?.discountAmount
+        }</strong> has been applied to your purchase using code: <strong>${
+          discount?.discountCode
+        }</strong></p>
+        `
+      }
       <p>Thank you for your purchase!</p>
     `;
 

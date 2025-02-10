@@ -130,6 +130,8 @@ export function CreateOrganization({
   async function onSubmit(values: z.infer<typeof organizationSchema>) {
     const newWorkspace = await organisation(values);
 
+    console.log(newWorkspace);
+
     if (newWorkspace) {
       setOrganization(newWorkspace);
       if (refetch) refetch();

@@ -11,6 +11,7 @@ import {
   Loader,
   MousePointerClick,
   Redo2,
+  Save,
   Undo2,
 } from "lucide-react";
 
@@ -46,6 +47,7 @@ interface NavbarProps {
   eventAlias: string;
   type: "certificate" | "badge";
   alias: string;
+  manualSave: (values: { json: string; height: number; width: number }) => void;
 }
 
 export const Navbar = ({
@@ -259,6 +261,18 @@ export const Navbar = ({
                   <p className="text-xs text-muted-foreground">
                     Save for later editing
                   </p>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  save();
+                }}
+              >
+                <Save className="size-8" />
+
+                <div>
+                  <p>Save</p>
+                  <p className="text-xs text-muted-foreground">Manually Save</p>
                 </div>
               </DropdownMenuItem>
             </DropdownMenuContent>

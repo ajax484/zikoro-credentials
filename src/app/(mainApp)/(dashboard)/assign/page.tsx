@@ -12,9 +12,14 @@ export const generateMetadata = async (): Promise<Metadata> => {
 const page = ({
   searchParams,
 }: {
-  searchParams: { certificateAlias: string };
+  searchParams: { certificateAlias: string; searchTerm: string };
 }) => {
-  return <RecipientsPage certificateAlias={searchParams.certificateAlias} />;
+  return (
+    <RecipientsPage
+      certificateAlias={searchParams.certificateAlias}
+      searchTerm={searchParams.searchTerm}
+    />
+  );
 };
 
 export default page;

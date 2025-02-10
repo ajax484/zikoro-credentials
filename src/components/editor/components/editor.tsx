@@ -98,18 +98,18 @@ export const Editor = ({
   // const { mutate } = useUpdateProject(initialData.id);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSave = useCallback(
-    debounce(
-      async (values: { json: string; height: number; width: number }) => {
-        console.log("here");
-        const imageURL = editor?.generateLink();
-        if (!imageURL) return;
-        save(values, imageURL);
-      },
-      1500
-    ),
-    [save]
-  );
+
+  const saveFn = async (values: {
+    json: string;
+    height: number;
+    width: number;
+  }) => {
+    console.log("here");
+    const imageURL = editor?.generateLink();
+    if (!imageURL) return;
+    save(values, imageURL);
+  };
+  const debouncedSave = useCallback(debounce(saveFn, 1500), [save]);
 
   const [activeTool, setActiveTool] = useState<ActiveTool>("select");
 
@@ -183,6 +183,7 @@ export const Editor = ({
         isSaving={isSaving}
         isError={isError}
         type={type}
+        manualSave={saveFn}
       />
       <div className="absolute top-[68px] flex h-[calc(100%-68px)] w-full">
         <Sidebar
