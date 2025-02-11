@@ -95,6 +95,8 @@ const EmailTemplates = () => {
 
   const router = useRouter();
 
+  console.log(organization.organizationAlias);
+
   const searchParams = new URLSearchParams({
     workspaceAlias: organization?.organizationAlias || "",
   });
@@ -175,7 +177,11 @@ const EmailTemplates = () => {
     await getTemplates();
   };
 
-  const templateColumns = columns(getTemplates, createTemplateFn, templateIsCreating);
+  const templateColumns = columns(
+    getTemplates,
+    createTemplateFn,
+    templateIsCreating
+  );
 
   return (
     <div className="space-y-4">

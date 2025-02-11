@@ -545,7 +545,7 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
                   fill="url(#fadeColor)"
                   fillOpacity={1}
                   stroke="#001FCC"
-                  strokeWidth={4}
+                  strokeWidth={2}
                 />
               </AreaChart>
             </ChartContainer>

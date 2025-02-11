@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
         .from("recipientEmailTemplate")
         .select("*, user:users!inner(*)")
         // .select("*")
-        // .eq("workspaceAlias", workspaceAlias)
+        .eq("workspaceAlias", workspaceAlias)
         .order("created_at", { ascending: false })
         .range(from, to);
 

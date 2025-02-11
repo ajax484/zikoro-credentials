@@ -65,6 +65,7 @@ export const useGetPaginatedData = <TData>(
     setLoading(true);
 
     try {
+      console.log(searchParams);
       const params = new URLSearchParams(searchParams);
       params.set("page", pagination.page.toString());
       params.set("limit", pagination.limit.toString());
