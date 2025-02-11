@@ -114,13 +114,15 @@ export interface CertificateTemplate {
 export interface RecipientEmailTemplate {
   id: number;
   createdAt: string;
-  body?: string | null;
-  showLogo?: boolean | null;
-  showSocialLinks?: boolean | null;
-  logoUrl?: string | null;
-  subject?: string | null;
-  senderName?: string | null;
-  replyTo?: string | null;
-  templateName?: string | null;
-  workspaceAlias?: string | null;
+  body: string;
+  showLogo: boolean;
+  showSocialLinks: boolean;
+  logoUrl: string | null;
+  subject: string;
+  senderName: string;
+  replyTo: string | null;
+  templateName: string;
+  workspaceAlias: string;
+  createdBy: number;
+  templateAlias: string;
 }

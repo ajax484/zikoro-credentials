@@ -113,6 +113,8 @@ const Issue = ({
 
   const { organization } = useOrganizationStore();
 
+  console.log(certificateIssuees);
+
   const { filteredData, filters, selectedFilters, applyFilter, setOptions } =
     useFilter<CertificateRecipient & { certificate: TCertificate }>({
       data: certificateIssuees,
@@ -615,7 +617,7 @@ const Issue = ({
           </Dialog>
         </div>
       </div>
-      {!isLoading && filteredIssuees.length === 0 ? (
+      {!isLoading && certificateIssuees.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-4 text-gray-600 h-[500px]">
           <div className="bg-basePrimary rounded-full p-6">
             <Image src={AccountCancel} width={40} height={40} alt="logo" />

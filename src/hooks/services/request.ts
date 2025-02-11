@@ -1,4 +1,4 @@
-import { getRequest, postRequest } from "@/utils/api";
+import { getRequest, patchRequest, postRequest } from "@/utils/api";
 import { useEffect, useState } from "react";
 import { deleteRequest } from "@/utils/api";
 import { toast } from "../use-toast";
@@ -15,6 +15,14 @@ type UseGetResult<TData> = {
 
 type usePostResult<TData, TReturnData = any> = {
   mutateData: ({
+    payload,
+  }: {
+    payload: TData;
+  }) => Promise<TReturnData | undefined>;
+} & RequestStatus;
+
+type usePatchResult<TData, TReturnData = any> = {
+  updateData: ({
     payload,
   }: {
     payload: TData;
@@ -175,14 +183,15 @@ export const useMutateData = <TData, TReturnData = any>(
 
       !silent &&
         toast({
-          description: confirmationMessage ?? "action performed successfully",
+          description: data.message ?? "action performed successfully",
         });
 
       return data.data;
     } catch (error) {
       setError(true);
+      // console.log(error.response, "here");
       toast({
-        description: "something went wrong",
+        description: error.response.data.error,
         variant: "destructive",
       });
     } finally {
@@ -191,6 +200,58 @@ export const useMutateData = <TData, TReturnData = any>(
   };
 
   return { isLoading, error, mutateData };
+};
+
+export const useUpdateData = <TData, TReturnData = any>(
+  endpoint: string,
+  silent?: boolean
+): usePatchResult<TData, TReturnData> => {
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+
+  const updateData = async ({
+    payload,
+    loadingMessage,
+    confirmationMessage,
+  }: {
+    payload: TData;
+    loadingMessage?: string;
+    confirmationMessage?: string;
+  }) => {
+    try {
+      setLoading(true);
+      !silent &&
+        toast({ description: loadingMessage ?? "performing action..." });
+
+      const { data, status } = await patchRequest<TReturnData>({
+        endpoint,
+        payload,
+      });
+
+      console.log(status);
+      if (status !== 201) {
+        throw data;
+      }
+
+      !silent &&
+        toast({
+          description: data.message ?? "action performed successfully",
+        });
+
+      return data.data;
+    } catch (error) {
+      setError(true);
+      // console.log(error.response, "here");
+      toast({
+        description: error.response.data.error,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { isLoading, error, updateData };
 };
 
 export const usePostRequest = <T>(endpoint: string) => {
@@ -230,6 +291,9 @@ export const useDeleteRequest = <T>(endpoint: string) => {
     setLoading(true);
 
     try {
+      toast({
+        description: " Deleting...",
+      });
       const { data, status } = await deleteRequest<T>({
         endpoint: endpoint,
       });

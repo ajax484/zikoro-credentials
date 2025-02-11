@@ -95,6 +95,7 @@ const TeamMembers = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter email"
               type={"email"}
+              required
               className=" placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
             />
           </div>
@@ -162,7 +163,7 @@ const TeamMembers = () => {
           <DialogFooter>
             <Button
               onClick={onSubmit}
-              disabled={selected === "" && !email}
+              disabled={selected === "" && !email && !selected}
               className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 w-fit text-sm"
             >
               Add Team Member

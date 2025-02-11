@@ -37,11 +37,11 @@ export async function POST(
         statusDetails: [
           ...(certificate.statusDetails || []),
           {
-            action: "shared on" + social,
+            action: "shared on " + social,
             date: new Date().toISOString(),
           },
         ],
-      })
+      }) 
       .eq("certificateId", certificateId);
 
     const { error } = await query;

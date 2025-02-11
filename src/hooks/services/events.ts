@@ -226,6 +226,7 @@ export function useCreateOrganisation() {
             ...restData,
             organizationOwner: userEmail,
             organizationOwnerId: id,
+            eventContactEmail: userEmail,
             subscriptionExpiryDate: exp || null,
             teamMembers: [
               {

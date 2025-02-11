@@ -3,7 +3,6 @@ import { useGetData, useGetPaginatedData } from "@/hooks/services/request";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import React, { useState } from "react";
 import Issue from "./Issue";
-import useUserStore from "@/store/globalUserStore";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 
 const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {

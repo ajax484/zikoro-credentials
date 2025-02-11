@@ -10,6 +10,7 @@ import Gift from "@/public/icons/ph_gift-duotone.svg";
 import Support from "@/public/icons/ic_twotone-contact-support.svg";
 import Star from "@/public/icons/ph_star-duotone.svg";
 import Assign from "@/public/icons/clarity_certificate-solid-alerted (1).svg";
+import EmailTemplate from "@/public/icons/iconamoon_email-duotone.svg";
 import profile from "@/public/profile_1.png";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
@@ -43,6 +44,11 @@ const navlinks: Navlinks[] = [
     name: "Analytics",
     href: "/analytics",
     Icon: Analytics,
+  },
+  {
+    name: "Email Template",
+    href: "/email/templates",
+    Icon: EmailTemplate,
   },
   {
     name: "Workspace",

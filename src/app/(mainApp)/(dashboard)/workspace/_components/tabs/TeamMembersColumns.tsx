@@ -27,4 +27,7 @@ export const teamMembersColumns: ColumnDef<OrganizationTeamMembersCredentials>[]
         );
       },
     },
+    {
+      id: "actions",
+    }
   ];

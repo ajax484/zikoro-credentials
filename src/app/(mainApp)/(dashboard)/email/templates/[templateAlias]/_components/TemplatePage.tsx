@@ -6,7 +6,7 @@ import {
   TCertificate,
 } from "@/types/certificates";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -18,8 +18,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import TextEditor from "@/components/textEditor/Editor";
-import { useGetData, useMutateData } from "@/hooks/services/request";
-import { RecipientType } from "./Recipients";
+import {
+  useGetData,
+  useMutateData,
+  useUpdateData,
+} from "@/hooks/services/request";
 import { useRouter } from "next/navigation";
 import useUserStore from "@/store/globalUserStore";
 import { CredentialsWorkspaceToken } from "@/types/token";
@@ -29,11 +32,7 @@ import { profile } from "console";
 import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
 import { ImageIcon, X } from "lucide-react";
-import {
-  generateAlphanumericHash,
-  replaceSpecialText,
-  uploadFile,
-} from "@/utils/helpers";
+import { replaceSpecialText, uploadFile } from "@/utils/helpers";
 import { Facebook, Instagram, Linkedin, Twitter } from "styled-icons/bootstrap";
 import {
   Dialog,
@@ -45,13 +44,6 @@ import {
 } from "@/components/ui/dialog";
 import { TOrganization } from "@/types/organization";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
@@ -61,99 +53,89 @@ const sendEmailSchema = z.object({
   showLogo: z.boolean().optional(),
   logoUrl: z.string().url().optional(),
   showSocialLinks: z.boolean().optional(),
+  templateName: z.string().nonempty("Template name is required"),
 });
 
-const CreateTemplateDialog = ({
-  open,
-  setOpen,
-  createTemplateFn,
-  templateIsCreating,
-  triggerButton,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  createTemplateFn: ({
-    name,
-    workspace,
-  }: {
-    name: string;
-    workspace: TOrganization;
-  }) => void;
-  templateIsCreating: boolean;
-  triggerButton: React.ReactNode;
-}) => {
-  const { organization, setOrganization } = useOrganizationStore();
+// const CreateTemplateDialog = ({
+//   open,
+//   setOpen,
+//   createTemplateFn,
+//   templateIsCreating,
+//   triggerButton,
+// }: {
+//   open: boolean;
+//   setOpen: (open: boolean) => void;
+//   createTemplateFn: ({
+//     name,
+//     workspace,
+//   }: {
+//     name: string;
+//     workspace: TOrganization;
+//   }) => void;
+//   templateIsCreating: boolean;
+//   triggerButton: React.ReactNode;
+// }) => {
+//   const { organization, setOrganization } = useOrganizationStore();
 
-  const [workspace, setWorkspace] = useState<TOrganization | null>(
-    organization
-  );
+//   const [workspace, setWorkspace] = useState<TOrganization | null>(
+//     organization
+//   );
 
-  const [name, setName] = useState<string>("Untitled Certificate");
+//   const [name, setName] = useState<string>("Untitled Certificate");
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{triggerButton}</DialogTrigger>
-      <DialogContent className="max-w-[50%]">
-        <DialogHeader>
-          <DialogTitle>Save Template</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-6">
-          <div className="flex flex-col gap-2 w-full">
-            <label className="font-medium text-gray-700">Template Name</label>
-            <Input
-              type="text"
-              placeholder="Enter template name"
-              className=" placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-              onInput={(e) => setName(e.currentTarget.value)}
-              value={name}
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button
-            onClick={() => {
-              workspace && createTemplateFn({ name, workspace });
-              setOpen(false);
-            }}
-            disabled={templateIsCreating || name === "" || !workspace}
-            className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-md text-gray-50 font-medium"
-          >
-            {templateIsCreating && (
-              <LoaderAlt size={22} className="animate-spin" />
-            )}
-            <span>Create Template</span>
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
+//   return (
+//     <Dialog open={open} onOpenChange={setOpen}>
+//       <DialogTrigger asChild>{triggerButton}</DialogTrigger>
+//       <DialogContent className="max-w-[50%]">
+//         <DialogHeader>
+//           <DialogTitle>Save Template</DialogTitle>
+//         </DialogHeader>
+//         <div className="space-y-6">
+//           <div className="flex flex-col gap-2 w-full">
+//             <label className="font-medium text-gray-700">Template Name</label>
+//             <Input
+//               type="text"
+//               placeholder="Enter template name"
+//               className=" placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+//               onInput={(e) => setName(e.currentTarget.value)}
+//               value={name}
+//             />
+//           </div>
+//         </div>
+//         <DialogFooter>
+//           <Button
+//             onClick={() => {
+//               workspace && createTemplateFn({ name, workspace });
+//               setOpen(false);
+//             }}
+//             disabled={templateIsCreating || name === "" || !workspace}
+//             className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-md text-gray-50 font-medium"
+//           >
+//             {templateIsCreating && (
+//               <LoaderAlt size={22} className="animate-spin" />
+//             )}
+//             <span>Create Template</span>
+//           </Button>
+//         </DialogFooter>
+//       </DialogContent>
+//     </Dialog>
+//   );
+// };
 
-const SendEmail = ({
-  certificate,
-  updatePage,
-  recipients,
-}: {
-  certificate: TCertificate;
-  updatePage: (page: number) => void;
-  recipients: RecipientType;
-}) => {
+const TemplatePage = ({ templateAlias }: { templateAlias: string }) => {
   const { user } = useUserStore();
   const { organization } = useOrganizationStore();
   const router = useRouter();
   const {
-    data: templates,
-    isLoading: templatesIsLoading,
-    getData: getTemplates,
-  } = useGetData<RecipientEmailTemplate[]>(
-    `/workspaces/${organization?.organizationAlias}/certificates/recipients/templates`,
+    data: template,
+    isLoading: templateIsLoading,
+    getData: getTemplate,
+  } = useGetData<RecipientEmailTemplate>(
+    "/certificates/recipients/templates/" + templateAlias,
     []
   );
-  const { mutateData, isLoading } = useMutateData(
-    `/certificates/${certificate.certificateAlias}/recipients/release`
-  );
-  const { mutateData: createTemplate, isLoading: templateIsCreating } =
-    useMutateData(`/certificates/recipients/templates`);
+  const { updateData: updateTemplate, isLoading: templateIsUpdating } =
+    useUpdateData(`/certificates/recipients/templates`);
 
   const form = useForm<z.infer<typeof sendEmailSchema>>({
     resolver: zodResolver(sendEmailSchema),
@@ -177,65 +159,42 @@ const SendEmail = ({
     },
   });
 
-  const { data: credits, isLoading: creditsIsLoading } = useGetData<
-    CredentialsWorkspaceToken[]
-  >(`/workspaces/${organization?.id}/credits`, []);
+  // const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
+  //   if (
+  //     creditBalance[creditType] === 0 ||
+  //     creditBalance[creditType] < recipients.length
+  //   )
+  //     return toast.error(`Insufficient ${creditType} credits`);
 
-  const creditBalance = {
-    bronze: credits
-      .filter((v) => v.tokenId === 1)
-      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
-    silver: credits
-      .filter((v) => v.tokenId === 2)
-      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
-    gold: credits
-      .filter((v) => v.tokenId === 3)
-      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
-  };
-
-  const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
-    if (
-      creditBalance[creditType] === 0 ||
-      creditBalance[creditType] < recipients.length
-    )
-      return toast.error(`Insufficient ${creditType} credits`);
-
-    await mutateData({
-      payload: {
-        certificateGroupId: certificate.id,
-        ...data,
-        action: "release",
-        recipients: recipients.map(
-          ({
-            recipientEmail,
-            recipientFirstName,
-            recipientLastName,
-            logoUrl,
-            ...metadata
-          }) => ({
-            metadata,
-            recipientEmail: recipientEmail.trim(),
-            recipientFirstName: recipientFirstName.trim(),
-            recipientLastName: recipientLastName.trim(),
-            logoUrl,
-          })
-        ),
-        status: "email sent",
-        createdBy: user?.id,
-        workspaceAlias: organization?.organizationAlias,
-        workspaceId: organization?.id,
-        organization,
-      },
-    });
-    router.push("/assign");
-  };
-
-  const creditType =
-    certificate?.attributes && certificate?.attributes.length > 0
-      ? "gold"
-      : certificate.hasQRCode
-      ? "silver"
-      : "bronze";
+  //   await mutateData({
+  //     payload: {
+  //       certificateGroupId: certificate.id,
+  //       ...data,
+  //       action: "release",
+  //       recipients: recipients.map(
+  //         ({
+  //           recipientEmail,
+  //           recipientFirstName,
+  //           recipientLastName,
+  //           logoUrl,
+  //           ...metadata
+  //         }) => ({
+  //           metadata,
+  //           recipientEmail: recipientEmail.trim(),
+  //           recipientFirstName: recipientFirstName.trim(),
+  //           recipientLastName: recipientLastName.trim(),
+  //           logoUrl,
+  //         })
+  //       ),
+  //       status: "email sent",
+  //       createdBy: user?.id,
+  //       workspaceAlias: organization?.organizationAlias,
+  //       workspaceId: organization?.id,
+  //       organization,
+  //     },
+  //   });
+  //   router.push("/assign");
+  // };
 
   const [logoUrlUploading, setLogoUrlUploading] = useState<boolean>(false);
 
@@ -244,74 +203,52 @@ const SendEmail = ({
   const showLogo = form.watch("showLogo");
   const showSocialLinks = form.watch("showSocialLinks");
 
-  const [open, setOpen] = useState(false);
-
-  const createTemplateFn = async ({ name }: { name: string }) => {
+  const onSubmit = async (values: z.infer<typeof sendEmailSchema>) => {
     if (!organization) return toast.error("Please select an organization");
-    const templateAlias = generateAlphanumericHash(12);
-    const values = form.getValues();
-    const data = await createTemplate({
+    const data = await updateTemplate({
       payload: {
-        ...values,
         workspaceAlias: organization.organizationAlias,
-        templateName: name,
         createdBy: user?.id,
-        templateAlias,
+        ...values,
       },
     });
 
     if (!data) return;
-
-    await getTemplates();
   };
 
-  const [currentTemplate, setTemplate] =
-    useState<RecipientEmailTemplate | null>(null);
+  useEffect(() => {
+    if (templateIsLoading) return;
+    if (!template) return;
+    form.setValue("templateName", template.templateName);
+    form.setValue("subject", template.subject);
+    form.setValue("senderName", template.senderName);
+    form.setValue("replyTo", template.replyTo || "");
+    form.setValue("logoUrl", template.logoUrl || "");
+    form.setValue("body", template.body);
+    form.setValue("showLogo", template.showLogo);
+    form.setValue("showSocialLinks", template.showSocialLinks);
+  }, [templateIsLoading]);
+
+  if (templateIsLoading) return <div>Loading...</div>;
 
   return (
     <Form {...form}>
       <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-800">
-            Send {certificate?.name} to recipients
-          </h1>
-          <Select
-            disabled={templatesIsLoading}
-            value={String(currentTemplate?.id)}
-            onValueChange={(value) => {
-              const template = templates?.find(
-                ({ id }) => id === parseInt(value)
-              );
-              if (!template) return;
-              setTemplate(template);
-              form.setValue("subject", template.subject);
-              form.setValue("senderName", template.senderName);
-              form.setValue("replyTo", template.replyTo || "");
-              form.setValue("logoUrl", template.logoUrl || "");
-              form.setValue("body", template.body);
-              form.setValue("showLogo", template.showLogo);
-              form.setValue("showSocialLinks", template.showSocialLinks);
-            }}
-          >
-            <SelectTrigger className="rounded-md bg-white font-medium w-1/2">
-              <SelectValue placeholder={"Select a template"} />
-            </SelectTrigger>
-            <SelectContent>
-              {templates?.map(({ templateName, id }) => (
-                <SelectItem value={String(id)} key={id}>
-                  {templateName}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button
-            disabled={isLoading}
-            className="bg-basePrimary text-white"
-            type="button"
-            onClick={() => updatePage(0)}
-          >
-            Back
-          </Button>
+        <div className="flex items-center justify-center">
+          <FormField
+            name={"templateName" as const}
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    type="text"
+                    className="outline-0 bg-transparent border-0 min-w-[250px] text-center max-w-fit !shadow-none px-4 focus-visible:ring-sky-300 focus-visible:ring-2 flex justify-center mx-auto border-b"
+                    {...field}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
         </div>
         <section className="grid grid-cols-2 gap-4 bg-white py-6 px-8 ">
           <section className="space-y-6">
@@ -499,10 +436,12 @@ const SendEmail = ({
                 </div>
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: replaceSpecialText(body, {
+                    __html: replaceSpecialText(body || "", {
                       recipient: {
-                        ...recipients[0],
-                        certificateId: 12345678,
+                        recipientEmail: "johndoe@gmail.com",
+                        recipientFirstName: "John",
+                        recipientLastName: "Doe",
+                        certificateId: "12345678",
                       },
                       organization,
                     }),
@@ -556,27 +495,12 @@ const SendEmail = ({
           </section>
         </section>
         <div className="flex items-center justify-center gap-4">
-          <CreateTemplateDialog
-            templateIsCreating={templateIsCreating}
-            open={open}
-            setOpen={setOpen}
-            createTemplateFn={createTemplateFn}
-            triggerButton={
-              <Button
-                type="button"
-                className="text-basePrimary text-sm border border-basePrimary bg-white hover:bg-white"
-                disabled={isLoading}
-              >
-                Save as template
-              </Button>
-            }
-          />
           <Button
-            className="bg-basePrimary text-white"
             type="submit"
-            disabled={isLoading}
+            className="bg-basePrimary text-white"
+            disabled={templateIsLoading || templateIsUpdating}
           >
-            Send email ({recipients.length} {creditType} credits)
+            Save template
           </Button>
         </div>
       </form>
@@ -584,4 +508,4 @@ const SendEmail = ({
   );
 };
 
-export default SendEmail;
+export default TemplatePage;

@@ -78,6 +78,41 @@ export async function POST(
     try {
       const payload = await req.json();
 
+      //check if user is already a team member and if there are already 5 members
+      const { data: teamMembers, error: teamMembersError } = await supabase
+        .from("organizationTeamMembers_Credentials")
+        .select("*")
+        .eq("workspaceAlias", payload.workspaceAlias);
+
+      if (teamMembersError) throw teamMembersError;
+
+      if (teamMembers?.length >= 5) {
+        return NextResponse.json(
+          {
+            error: "You can only have 5 team members",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+
+      // check if user is already a team member
+      const isTeamMember = teamMembers?.some(
+        (teamMember) => teamMember.userEmail === payload.userEmail
+      );
+
+      if (isTeamMember) {
+        return NextResponse.json(
+          {
+            error: "User is already a team member",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+
       const { data, error } = await supabase
         .from("organizationTeamMembers_Credentials")
         .insert({
@@ -117,9 +152,15 @@ export async function POST(
         htmlbody: emailContent,
       });
 
-      return NextResponse.json(data, {
-        status: 201 ,
-      });
+      return NextResponse.json(
+        {
+          data,
+          message: "Team Invitation Sent",
+        },
+        {
+          status: 201,
+        }
+      );
     } catch (error) {
       console.error(error);
       return NextResponse.json(

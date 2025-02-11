@@ -347,6 +347,24 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
     0
   );
 
+  // get socials stats as a map of socials and their counts
+  const socialsStats = new Map<string, number>();
+  filteredRecipients.forEach((recipient) => {
+    recipient.statusDetails &&
+      recipient.statusDetails.forEach((status) => {
+        if (status.action.includes("shared")) {
+          const social = status.action.split(" ")[2] as string;
+          if (socialsStats.has(social)) {
+            socialsStats.set(social, socialsStats.get(social) + 1);
+          } else {
+            socialsStats.set(social, 1);
+          }
+        }
+      });
+  });
+
+  console.log(socialsStats);
+
   const openedCredentials = filteredRecipients.filter(
     (recipient) =>
       recipient.statusDetails &&
@@ -523,7 +541,7 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
                 />
                 <Area
                   dataKey="count"
-                  type="natural"
+                  type="linear"
                   fill="url(#fadeColor)"
                   fillOpacity={1}
                   stroke="#001FCC"
@@ -534,75 +552,98 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
           </div>
         </div>
       </div>
-      <div className="bg-white rounded-lg border border-gray-200 space-y-4 p-4">
-        <h2 className="text-lg font-semibold">Engagements</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-md border flex flex-col items-center justify-center p-4 gap-2">
-            <div className="w-full h-full max-w-[200px] max-h-[200px]">
-              <CircularProgressbarWithChildren
-                value={openedCredentialsPercentage}
-                styles={buildStyles({
-                  pathColor: "url(#gradient)", // Use the gradient ID
-                  trailColor: "#E5E5E5", // Background path color
-                })}
-              >
-                {/* Define the gradient */}
-                <svg style={{ height: 0 }}>
-                  <defs>
-                    <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#001FCC" />
-                      <stop offset="100%" stopColor="#9D00FF" />
-                    </linearGradient>
-                  </defs>
-                </svg>
+      <div className="grid grid-cols-3 gap-4">
+        <div className="col-span-2 bg-white rounded-lg border border-gray-200 space-y-4 p-4">
+          <h2 className="text-lg font-semibold">Engagements</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-md border flex flex-col items-center justify-center p-4 gap-2">
+              <div className="w-full h-full max-w-[200px] max-h-[200px]">
+                <CircularProgressbarWithChildren
+                  value={openedCredentialsPercentage}
+                  styles={buildStyles({
+                    pathColor: "url(#gradient)", // Use the gradient ID
+                    trailColor: "#E5E5E5", // Background path color
+                  })}
+                >
+                  {/* Define the gradient */}
+                  <svg style={{ height: 0 }}>
+                    <defs>
+                      <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="#001FCC" />
+                        <stop offset="100%" stopColor="#9D00FF" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
 
-                <GradientText className="text-4xl font-bold" Tag="span">
-                  {openedCredentialsPercentage.toFixed()}%
-                </GradientText>
-              </CircularProgressbarWithChildren>
+                  <GradientText className="text-4xl font-bold" Tag="span">
+                    {openedCredentialsPercentage.toFixed()}%
+                  </GradientText>
+                </CircularProgressbarWithChildren>
+              </div>
+              <h3>Viewed Credentials</h3>
+              <div className="flex items-center gap-2">
+                <b>{openedCredentials}</b> of <b>{filteredRecipients.length}</b>{" "}
+                credentials viewed
+              </div>
+              <p>
+                <b>{totalOpens}</b> total views
+              </p>
             </div>
-            <h3>Viewed Credentials</h3>
-            <div className="flex items-center gap-2">
-              <b>{openedCredentials}</b> of <b>{filteredRecipients.length}</b>{" "}
-              credentials viewed
-            </div>
-            <p>
-              <b>{totalOpens}</b> total views
-            </p>
-          </div>
-          <div className="rounded-md border flex flex-col items-center justify-center p-4 gap-2">
-            <div className="w-full h-full max-w-[200px] max-h-[200px]">
-              <CircularProgressbarWithChildren
-                value={sharedRecipientsPercentage}
-                styles={buildStyles({
-                  pathColor: "url(#gradient)", // Use the gradient ID
-                  trailColor: "#E5E5E5", // Background path color
-                })}
-              >
-                {/* Define the gradient */}
-                <svg style={{ height: 0 }}>
-                  <defs>
-                    <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#001FCC" />
-                      <stop offset="100%" stopColor="#9D00FF" />
-                    </linearGradient>
-                  </defs>
-                </svg>
+            <div className="rounded-md border flex flex-col items-center justify-center p-4 gap-2">
+              <div className="w-full h-full max-w-[200px] max-h-[200px]">
+                <CircularProgressbarWithChildren
+                  value={sharedRecipientsPercentage}
+                  styles={buildStyles({
+                    pathColor: "url(#gradient)", // Use the gradient ID
+                    trailColor: "#E5E5E5", // Background path color
+                  })}
+                >
+                  {/* Define the gradient */}
+                  <svg style={{ height: 0 }}>
+                    <defs>
+                      <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="#001FCC" />
+                        <stop offset="100%" stopColor="#9D00FF" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
 
-                <GradientText className="text-4xl font-bold" Tag="span">
-                  {sharedRecipientsPercentage.toFixed()}%
-                </GradientText>
-              </CircularProgressbarWithChildren>
+                  <GradientText className="text-4xl font-bold" Tag="span">
+                    {sharedRecipientsPercentage.toFixed()}%
+                  </GradientText>
+                </CircularProgressbarWithChildren>
+              </div>
+              <h3>Shared Credentials</h3>
+              <div className="flex items-center gap-2">
+                <b>{sharedRecipients}</b> of <b>{filteredRecipients.length}</b>{" "}
+                credentials shared
+              </div>
+              <p>
+                <b>{totalShares}</b> total shares
+              </p>
             </div>
-            <h3>Shared Credentials</h3>
-            <div className="flex items-center gap-2">
-              <b>{sharedRecipients}</b> of <b>{filteredRecipients.length}</b>{" "}
-              credentials shared
-            </div>
-            <p>
-              <b>{totalShares}</b> total shares
-            </p>
           </div>
+        </div>
+        <div className="bg-white rounded-lg border border-gray-50 space-y-4 p-4">
+          <h2 className="text-lg font-semibold">Social Shares</h2>
+          <table className="w-full text-sm text-gray-700">
+            <thead>
+              <tr className="grid grid-cols-2 text-sm bg-gray-300 text-gray-700 text-left">
+                <th className="p-1">Social Platform</th>
+                <th className="p-1">Number of Shares</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from(socialsStats.entries())
+                .sort((a, b) => b[1] - a[1])
+                .map(([social, count]) => (
+                  <tr key={social} className="grid grid-cols-2">
+                    <td className="p-1">{social}</td>
+                    <td className="p-1">{count}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
