@@ -207,6 +207,7 @@ const TemplatePage = ({ templateAlias }: { templateAlias: string }) => {
     if (!organization) return toast.error("Please select an organization");
     const data = await updateTemplate({
       payload: {
+        id: template.id,
         workspaceAlias: organization.organizationAlias,
         createdBy: user?.id,
         ...values,
