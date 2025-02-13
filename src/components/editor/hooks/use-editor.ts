@@ -327,7 +327,7 @@ const buildEditor = ({
           canvas.sendToBack(image);
 
           // Ensure no object is active & re-render canvas
-          canvas.discardActiveObject();
+          // canvas.discardActiveObject();
           canvas.renderAll();
           workspace?.sendToBack();
         },
