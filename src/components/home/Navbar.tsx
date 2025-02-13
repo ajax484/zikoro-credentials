@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "styled-icons/bootstrap";
 import {
   NavModalIcon,
@@ -16,6 +16,7 @@ import logo from "@/public/logo.png";
 const Navbar = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const previewRef = useRef<HTMLDivElement>(null);
   const [isPreviewShowing, setIsPreviewShowing] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -25,11 +26,20 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const topSectionHeight = 70; // Adjust this to define the "top section" height
+      const topSectionHeight = 40; // Adjust this to define the "top section" height
       if (window.scrollY > topSectionHeight) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
+      }
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        previewRef.current &&
+        !previewRef.current.contains(event.target as Node)
+      ) {
+        setIsPreviewShowing(false);
       }
     };
 
@@ -42,6 +52,7 @@ const Navbar = () => {
 
     window.addEventListener("scroll", handleScroll);
     document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener("mousedown", handleClickOutside);
 
     // Initial check on mount
     handleScroll();
@@ -49,6 +60,7 @@ const Navbar = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -104,7 +116,10 @@ const Navbar = () => {
 
       {/* preview modal */}
       {isPreviewShowing && (
-        <div className="absolute bg-white  hidden lg:flex flex-col mt-3 gap-y-6 p-3 left-1/2 transform -translate-x-1/2  rounded-[10px] ">
+        <div
+          className="absolute bg-white  hidden lg:flex flex-col mt-3 gap-y-6 p-3 left-1/2 transform -translate-x-1/2  rounded-[10px] "
+          ref={previewRef}
+        >
           {/* 1st div */}
           <div className="w-full flex items-center gap-x-4">
             {/* left */}
@@ -190,7 +205,10 @@ const Navbar = () => {
             >
               Other Products <ChevronDown size={20} />{" "}
               {isPreviewShowing && (
-                <div className="bg-white flex flex-col mt-3 gap-y-6 p-3 lg:hidden rounded-[10px] w-fit ">
+                <div
+                  className="bg-white flex flex-col mt-3 gap-y-6 p-3 lg:hidden rounded-[10px] w-fit"
+                  ref={previewRef}
+                >
                   {/* 1st div */}
                   <div className="w-full flex items-center gap-x-4">
                     {/* left */}

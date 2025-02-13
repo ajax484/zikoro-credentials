@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FooterMail,
   FooterMenu,
@@ -13,12 +13,36 @@ import logo from "@/public/logo.png";
 export default function Footer() {
   const router = useRouter();
   const [isPreviewUp, setIsPreviewUp] = useState<boolean>(false);
+  const previewRef = useRef<HTMLDivElement>(null);
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      previewRef.current &&
+      !previewRef.current.contains(event.target as Node)
+    ) {
+      setIsPreviewUp(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isPreviewUp) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isPreviewUp]);
   return (
     <div className=" bg-gradient-to-tr from-custom-bg-gradient-start to-custom-bg-gradient-end max-w-full mx-auto relative  border-t-[1px] border-dotted border-violet-500">
       {/* small screens Preview */}
       {isPreviewUp && (
-        <div className="absolute block bottom-28 right-3 lg:hidden bg-white cursor-pointer rounded-[10px] p-3">
+        <div
+          className="absolute block bottom-28 right-3 lg:hidden bg-white cursor-pointer rounded-[10px] p-3"
+          ref={previewRef}
+        >
           {/* 1st app */}
           <div className="w-full flex items-center gap-x-4">
             {/* left */}
@@ -39,7 +63,6 @@ export default function Footer() {
               <NavModalIcon2 />
             </div>
           </div>
-
           {/* 2nd app */}
           <div className="w-full flex items-center gap-x-4 mt-6">
             {/* left */}
@@ -62,7 +85,6 @@ export default function Footer() {
               <NavModalIcon2 />
             </div>
           </div>
-
           {/* 3rd app */}
           <div className="w-full flex items-center gap-x-4 mt-6">
             {/* left */}
@@ -91,7 +113,10 @@ export default function Footer() {
 
       {/* big screens Preview */}
       {isPreviewUp && (
-        <div className="absolute bottom-32 right-32 hidden lg:block cursor-pointer bg-white rounded-[10px] p-3 ">
+        <div
+          className="absolute bottom-32 right-32 hidden lg:block cursor-pointer bg-white rounded-[10px] p-3 "
+          ref={previewRef}
+        >
           {/* 1st div */}
           <div className="w-full flex items-center gap-x-4">
             {/* left */}
