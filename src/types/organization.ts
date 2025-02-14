@@ -56,3 +56,12 @@ export interface OrganizationTeamMembersCredentials {
   userRole?: string | null;
   workspaceAlias?: string | null;
 }
+
+export interface CredentialsWorkspaceInvite {
+  id: number;
+  createdAt: string;
+  email: string;
+  role: string;
+  workspaceAlias: string;
+  status: string;
+}

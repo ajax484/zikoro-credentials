@@ -1,10 +1,16 @@
 import { DataTable } from "@/components/DataTable/data-table";
 import { useGetPaginatedData, useMutateData } from "@/hooks/services/request";
 import useOrganizationStore from "@/store/globalOrganizationStore";
-import { OrganizationTeamMembersCredentials } from "@/types/organization";
+import {
+  CredentialsWorkspaceInvite,
+  OrganizationTeamMembersCredentials,
+} from "@/types/organization";
 import { RowSelectionState } from "@tanstack/react-table";
 import React, { useState } from "react";
-import { teamMembersColumns } from "./TeamMembersColumns";
+import {
+  inviteTeamMemberColumns,
+  teamMembersColumns,
+} from "./TeamMembersColumns";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { toast } from "react-toastify";
 import useUserStore from "@/store/globalUserStore";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const TeamMembers = () => {
   const { organization } = useOrganizationStore();
@@ -27,29 +34,50 @@ const TeamMembers = () => {
   const {
     data: teamMembers,
     isLoading: teamMembersIsLoading,
-    total,
-    totalPages,
-    pagination,
-    setPagination,
-    getData,
+    total: teamMembersTotal,
+    totalPages: teamMembersTotalPages,
+    pagination: teamMembersPagination,
+    setPagination: setTeamMembersPagination,
+    getData: getTeamMembers,
   } = useGetPaginatedData<OrganizationTeamMembersCredentials>(
     `/workspaces/${organization?.organizationAlias}/team`,
     searchParams
   );
 
-  console.log(teamMembers);
+  const {
+    data: teamMembersInvites,
+    isLoading: teamMembersInviteIsLoading,
+    total: teamMembersInviteTotal,
+    totalPages: teamMembersInviteTotalPages,
+    pagination: teamMembersInvitePagination,
+    setPagination: setTeamMembersInvitePagination,
+    getData: getTeamMembersInvite,
+  } = useGetPaginatedData<CredentialsWorkspaceInvite>(
+    `/workspaces/${organization?.organizationAlias}/team/invites`,
+    searchParams
+  );
 
-  const { mutateData: mutateTeamMember, isLoading: mutateIsLoading } =
+  console.log(teamMembersInvites);
+
+  const { mutateData: inviteTeamMember, isLoading: invitingTeamMember } =
     useMutateData<OrganizationTeamMembersCredentials>(
-      `/workspaces/${organization?.organizationAlias}/team`
+      `/workspaces/${organization?.organizationAlias}/team/invites`
     );
 
   const updatePage = (page: number) => {
-    setPagination({ page, limit: 10 });
+    setTeamMembersPagination({ page, limit: 10 });
+  };
+
+  const updateInvitePage = (page: number) => {
+    setTeamMembersInvitePagination({ page, limit: 10 });
   };
 
   const updateLimit = (limit: number) => {
-    setPagination({ page: 1, limit });
+    setTeamMembersPagination({ page: 1, limit });
+  };
+
+  const updateInviteLimit = (limit: number) => {
+    setTeamMembersInvitePagination({ page: 1, limit });
   };
 
   const InviteTeamMember = () => {
@@ -62,7 +90,7 @@ const TeamMembers = () => {
         return;
       }
 
-      await mutateTeamMember({
+      await inviteTeamMember({
         payload: {
           userEmail: email,
           workspaceAlias: organization?.organizationAlias,
@@ -72,7 +100,8 @@ const TeamMembers = () => {
       });
       setEmail("");
       setSelected("");
-      await getData();
+      await getTeamMembers();
+      await getTeamMembersInvite();
     };
 
     return (
@@ -175,25 +204,49 @@ const TeamMembers = () => {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end gap-4">
-        {teamMembers.find(({ userEmail }) => userEmail === userData?.userEmail)
-          ?.userRole === "owner" && <InviteTeamMember />}
+    <section className="space-y-8">
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h1 className="text-lg font-medium">Team Members</h1>
+          <div className="flex justify-end gap-4">
+            {teamMembers.find(
+              ({ userEmail }) => userEmail === userData?.userEmail
+            )?.userRole === "owner" && <InviteTeamMember />}
+          </div>
+        </div>
+        <DataTable<OrganizationTeamMembersCredentials>
+          columns={teamMembersColumns}
+          data={teamMembers}
+          currentPage={teamMembersPagination.page}
+          setCurrentPage={updatePage}
+          limit={teamMembersPagination.limit}
+          refetch={() => {}}
+          totalDocs={teamMembersTotal}
+          isFetching={teamMembersIsLoading}
+          onClick={() => {}}
+          rowSelection={rowSelection}
+          setRowSelection={setRowSelection}
+        />
       </div>
-      <DataTable<OrganizationTeamMembersCredentials>
-        columns={teamMembersColumns}
-        data={teamMembers}
-        currentPage={pagination.page}
-        setCurrentPage={updatePage}
-        limit={pagination.limit}
-        refetch={() => {}}
-        totalDocs={total}
-        isFetching={teamMembersIsLoading}
-        onClick={() => {}}
-        rowSelection={rowSelection}
-        setRowSelection={setRowSelection}
-      />
-    </div>
+      {teamMembersInvites.length > 0 && !teamMembersInviteIsLoading && (
+        <div className="space-y-4">
+          <h1 className="text-lg font-medium">Invites</h1>
+          <DataTable
+            columns={inviteTeamMemberColumns}
+            data={teamMembersInvites}
+            currentPage={teamMembersInvitePagination.page}
+            setCurrentPage={updateInvitePage}
+            limit={teamMembersInvitePagination.limit}
+            refetch={() => {}}
+            totalDocs={teamMembersInviteTotalPages}
+            isFetching={teamMembersInviteIsLoading}
+            onClick={() => {}}
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
+          />
+        </div>
+      )}
+    </section>
   );
 };
 
