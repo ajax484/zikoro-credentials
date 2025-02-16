@@ -62,7 +62,7 @@ const Preview = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       <div className="flex gap-4">
         <Button className="bg-basePrimary w-full" onClick={submitRecipients}>
           Import Recipients
