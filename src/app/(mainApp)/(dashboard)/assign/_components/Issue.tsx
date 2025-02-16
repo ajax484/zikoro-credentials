@@ -355,20 +355,9 @@ const Issue = ({
                   await resendCertificatesFn();
                   clsBtnRef.current?.click();
                 }}
-                className={cn(
-                  "px-4 mx-auto",
-                  filteredIssuees
-                    .filter(({ id }) => rowSelection[id])
-                    .every(({ isValid }) => isValid)
-                    ? "bg-red-600"
-                    : "bg-basePrimary"
-                )}
+                className={cn("px-4 mx-auto", "bg-basePrimary")}
               >
-                {filteredIssuees
-                  .filter(({ id }) => rowSelection[id])
-                  .every(({ isValid }) => isValid)
-                  ? "Revoke"
-                  : "Reissue"}
+                resend
               </Button>
             </div>
           </div>
