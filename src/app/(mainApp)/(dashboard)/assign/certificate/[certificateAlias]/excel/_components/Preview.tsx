@@ -62,11 +62,8 @@ const Preview = ({
   };
 
   return (
-    <>
+    <div className="space-y-4">
       <div className="flex gap-4">
-        <Button onClick={() => setStep(1)} className="bg-basePrimary w-full">
-          Back
-        </Button>
         <Button className="bg-basePrimary w-full" onClick={submitRecipients}>
           Import Recipients
         </Button>
@@ -98,7 +95,7 @@ const Preview = ({
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   );
 };
 
