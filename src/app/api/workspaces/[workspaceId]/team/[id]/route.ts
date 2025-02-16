@@ -4,40 +4,71 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
   req: NextRequest,
-  {
-    params: { workspaceId, id },
-  }: { params: { workspaceId: number; id: number } }
+  { params }: { params: { workspaceId: string; id: string } }
 ) {
   const supabase = createRouteHandlerClient({ cookies });
 
-  if (req.method === "POST") {
-    try {
-      const payload = await req.json();
+  try {
+    const payload = await req.json();
+    const workspaceAlias = parseInt(params.workspaceId, 10);
+    const userId = parseInt(params.id, 10);
 
-      const { data, error } = await supabase
-        .from("organizationTeamMembers_Credentials")
-        .update(payload)
-        .eq("workspaceAlias", workspaceId)
-        .eq("userId", id);
-
-      if (error) throw error;
-
-      return NextResponse.json(data, {
-        status: 200,
-      });
-    } catch (error) {
-      console.error(error);
+    if (isNaN(workspaceAlias) || isNaN(userId)) {
       return NextResponse.json(
-        {
-          error: "An error occurred while making the request.",
-        },
-        {
-          status: 500,
-        }
+        { error: "Invalid workspaceId or userId." },
+        { status: 400 }
       );
     }
-  } else {
-    return NextResponse.json({ error: "Method not allowed" });
+
+    const { data, error } = await supabase
+      .from("organizationTeamMembers_Credentials")
+      .update(payload)
+      .eq("workspaceAlias", workspaceAlias)
+      .eq("userId", userId);
+
+    if (error) {
+      throw new Error(`Failed to update team member: ${error.message}`);
+    }
+
+    return NextResponse.json(data, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: (error as Error).message || "Internal server error." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  {
+    params: { workspaceId: workspaceAlias, id: userId },
+  }: { params: { workspaceId: string; id: string } }
+) {
+  const supabase = createRouteHandlerClient({ cookies });
+
+  try {
+    console.log(workspaceAlias, userId);
+
+    const { data, error } = await supabase
+      .from("organizationTeamMembers_Credentials")
+      .delete()
+      .eq("workspaceAlias", workspaceAlias)
+      .eq("userId", userId);
+
+    if (error) {
+      console.log(error);
+      throw new Error(`Failed to delete team member: ${error.message}`);
+    }
+
+    return NextResponse.json(data, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: (error as Error).message || "Internal server error." },
+      { status: 500 }
+    );
   }
 }
 

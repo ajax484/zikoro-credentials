@@ -288,15 +288,18 @@ export const usePostRequest = <T>(endpoint: string) => {
 export const useDeleteRequest = <T>(endpoint: string) => {
   const [isLoading, setLoading] = useState<boolean>(false);
 
-  const deleteData = async () => {
+  const deleteData = async (id: string) => {
     setLoading(true);
 
     try {
       toast({
-        description: " Deleting...",
+        description: "Deleting...",
       });
+
+      console.log(endpoint);
+
       const { data, status } = await deleteRequest<T>({
-        endpoint: endpoint,
+        endpoint: `${endpoint}/${id}`,
       });
 
       if (status !== 201) throw data.data;
@@ -306,10 +309,11 @@ export const useDeleteRequest = <T>(endpoint: string) => {
 
       return data.data;
     } catch (error: any) {
-      // toast({
-      //   description: error?.response?.data?.error,
-      //   variant: "destructive",
-      // });
+      toast({
+        description: error?.response?.data?.error,
+        variant: "destructive",
+      });
+      console.log(error);
     } finally {
       setLoading(false);
     }

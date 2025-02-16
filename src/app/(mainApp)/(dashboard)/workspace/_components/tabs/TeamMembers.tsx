@@ -1,5 +1,9 @@
 import { DataTable } from "@/components/DataTable/data-table";
-import { useGetPaginatedData, useMutateData } from "@/hooks/services/request";
+import {
+  useDeleteRequest,
+  useGetPaginatedData,
+  useMutateData,
+} from "@/hooks/services/request";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import {
   CredentialsWorkspaceInvite,
@@ -63,6 +67,9 @@ const TeamMembers = () => {
     useMutateData<OrganizationTeamMembersCredentials>(
       `/workspaces/${organization?.organizationAlias}/team/invites`
     );
+
+  const { deleteData: deleteTeamMember, isLoading: teamMemberDeleting } =
+    useDeleteRequest(`/workspaces/${organization?.organizationAlias}/team`);
 
   const updatePage = (page: number) => {
     setTeamMembersPagination({ page, limit: 10 });
@@ -215,7 +222,11 @@ const TeamMembers = () => {
           </div>
         </div>
         <DataTable<OrganizationTeamMembersCredentials>
-          columns={teamMembersColumns}
+          columns={teamMembersColumns(
+            getTeamMembers,
+            deleteTeamMember,
+            teamMemberDeleting
+          )}
           data={teamMembers}
           currentPage={teamMembersPagination.page}
           setCurrentPage={updatePage}
