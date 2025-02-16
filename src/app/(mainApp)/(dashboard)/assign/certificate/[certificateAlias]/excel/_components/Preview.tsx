@@ -31,7 +31,7 @@ const Preview = ({
 
       Array.from(headers).forEach(([key, value]) => {
         const rowValue = headerMap.get(value) ?? "";
-        recipient[key.value] = row[rowValue];
+        recipient[key.value] = row[rowValue] || "";
 
         console.log(key.value, row[rowValue]);
       });
@@ -63,6 +63,14 @@ const Preview = ({
 
   return (
     <>
+      <div className="flex gap-4">
+        <Button onClick={() => setStep(1)} className="bg-basePrimary w-full">
+          Back
+        </Button>
+        <Button className="bg-basePrimary w-full" onClick={submitRecipients}>
+          Import Recipients
+        </Button>
+      </div>
       <div className="overflow-x-auto max-w-full w-1/2">
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
@@ -89,14 +97,6 @@ const Preview = ({
             ))}
           </tbody>
         </table>
-      </div>
-      <div className="flex gap-4">
-        <Button onClick={() => setStep(1)} className="bg-basePrimary w-full">
-          Back
-        </Button>
-        <Button className="bg-basePrimary w-full" onClick={submitRecipients}>
-          Import Recipients
-        </Button>
       </div>
     </>
   );
