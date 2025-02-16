@@ -27,12 +27,13 @@ export async function POST(
       .eq("userId", userId);
 
     if (error) {
+      console.error("Update Error:", error);
       throw new Error(`Failed to update team member: ${error.message}`);
     }
 
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
-    console.error(error);
+    console.error("POST Error:", error);
     return NextResponse.json(
       { error: (error as Error).message || "Internal server error." },
       { status: 500 }
@@ -42,29 +43,33 @@ export async function POST(
 
 export async function DELETE(
   req: NextRequest,
-  {
-    params: { workspaceId: workspaceAlias, id: userId },
-  }: { params: { workspaceId: string; id: string } }
+  { params }: { params: { workspaceId: string; id: string } }
 ) {
   const supabase = createRouteHandlerClient({ cookies });
 
   try {
-    console.log(workspaceAlias, userId);
+    const workspaceAlias = params.workspaceId;
+    const userId = params.id;
+
+    console.log("Deleting with:", { workspaceAlias, userId });
 
     const { data, error } = await supabase
       .from("organizationTeamMembers_Credentials")
       .delete()
       .eq("workspaceAlias", workspaceAlias)
-      .eq("userId", userId);
+      .eq("id", userId);
 
     if (error) {
-      console.log(error);
+      console.error("Delete Error:", error);
       throw new Error(`Failed to delete team member: ${error.message}`);
     }
 
-    return NextResponse.json(data, { status: 200 });
+    return NextResponse.json(
+      { data, message: "Team member deleted successfully" },
+      { status: 201 }
+    );
   } catch (error) {
-    console.error(error);
+    console.error("DELETE Error:", error);
     return NextResponse.json(
       { error: (error as Error).message || "Internal server error." },
       { status: 500 }

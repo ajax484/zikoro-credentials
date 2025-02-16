@@ -38,7 +38,10 @@ import useOrganizationStore from "@/store/globalOrganizationStore";
 import { format } from "date-fns";
 import { CredentialsWorkspaceToken } from "@/types/token";
 import AccountCancel from "@/public/icons/mdi_account-cancel.svg";
+import ExportFill from "@/public/icons/ph_export-fill.svg";
+import SendIcon from "@/public/icons/fa_send.svg";
 import GradientText from "@/components/GradientText";
+import { Input } from "@/components/ui/input";
 
 const issueesFilter: TFilter<
   CertificateRecipient & { certificate: TCertificate }
@@ -310,6 +313,145 @@ const Issue = ({
     );
   };
 
+  const Resend = () => {
+    const clsBtnRef = useRef<HTMLButtonElement>(null);
+
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <button
+            className={cn(
+              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+                ? "border-gray-600 text-gray-600"
+                : "border-basePrimary text-basePrimary"
+            )}
+            disabled={
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
+                0 ||
+              isLoadingRecall ||
+              isLoadingReissue ||
+              isLoadingResend
+            }
+          >
+            <Send className="size-4" />
+            <span>Resend</span>
+          </button>
+        </DialogTrigger>
+        <DialogContent className="px-4 py-6 z-[1000]">
+          <div className="space-y-4">
+            <div className="flex flex-col gap-4 items-center py-4">
+              <Image src={SendIcon} alt="resend" width={40} height={40} />
+              <h2 className="font-semibold text-center"> Resend Credentials</h2>
+              <div className="text-gray-800 font-medium flex flex-col gap-2 text-center">
+                <span>Are you sure you want to resend these credentials?</span>
+              </div>
+            </div>
+            <div className="flex w-full">
+              <Button
+                disabled={isLoadingRecall || isLoadingReissue}
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  await resendCertificatesFn();
+                  clsBtnRef.current?.click();
+                }}
+                className={cn(
+                  "px-4 mx-auto",
+                  filteredIssuees
+                    .filter(({ id }) => rowSelection[id])
+                    .every(({ isValid }) => isValid)
+                    ? "bg-red-600"
+                    : "bg-basePrimary"
+                )}
+              >
+                {filteredIssuees
+                  .filter(({ id }) => rowSelection[id])
+                  .every(({ isValid }) => isValid)
+                  ? "Revoke"
+                  : "Reissue"}
+              </Button>
+            </div>
+          </div>
+          <DialogClose asChild>
+            <button className="hidden" ref={clsBtnRef}>
+              close
+            </button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
+  const ExportRecipients = () => {
+    const [name, setName] = useState<string>(
+      `credentials_recipients_${
+        organization?.organizationName
+      }_${new Date().toISOString()}`
+    );
+    const clsBtnRef = useRef<HTMLButtonElement>(null);
+
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <button
+            className={cn(
+              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
+                ? "border-gray-600 text-gray-600"
+                : "border-basePrimary text-basePrimary"
+            )}
+            disabled={
+              filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
+                0 ||
+              isLoadingRecall ||
+              isLoadingReissue ||
+              isLoadingResend
+            }
+            // onClick={exportRecipients}
+          >
+            <PiExport className="size-4" />
+            <span>Export</span>
+          </button>
+        </DialogTrigger>
+        <DialogContent className="px-4 py-6 z-[1000]">
+          <div className="space-y-4">
+            <div className="flex flex-col gap-4 items-center py-4">
+              <Image src={ExportFill} alt="export" width={40} height={40} />
+              <h2 className="font-semibold text-center">Export Credentials</h2>
+            </div>
+            <div className="relative w-full">
+              <Input
+                placeholder="file name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+              />
+            </div>
+            <div className="flex w-full">
+              <Button
+                disabled={isLoadingRecall || isLoadingReissue}
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  await exportRecipientsFn(name);
+                  clsBtnRef.current?.click();
+                }}
+                className={cn("px-4 mx-auto", "bg-basePrimary")}
+              >
+                Export
+              </Button>
+            </div>
+          </div>
+          <DialogClose asChild>
+            <button className="hidden" ref={clsBtnRef}>
+              close
+            </button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
   const toggleCertificatesFn = async () => {
     const toggleFn = filteredIssuees
       .filter(({ id }) => rowSelection[id])
@@ -341,7 +483,11 @@ const Issue = ({
     updatePage(1);
   };
 
-  const exportRecipients = () => {
+  const exportRecipientsFn = (
+    name = `credentials_recipients_${
+      organization?.organizationName
+    }_${new Date().toISOString()}`
+  ) => {
     const omittedFields: (keyof (CertificateRecipient & {
       certificate: TCertificate;
     }))[] = ["certificateId", "certificateGroupId", "id", "statusDetails"];
@@ -387,12 +533,7 @@ const Issue = ({
     const worksheet = XLSX.utils.json_to_sheet(normalizedData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(
-      workbook,
-      `credentials_recipients_${
-        organization?.organizationName
-      }_${new Date().toISOString()}.xlsx`
-    );
+    XLSX.writeFile(workbook, `${name}.xlsx`);
   };
 
   const { data: credits, isLoading: creditsIsLoading } = useGetData<
@@ -435,44 +576,8 @@ const Issue = ({
       <div className="flex items-end justify-between">
         <div className="flex gap-2 items-center">
           <ToggleStatus />
-          <button
-            className={cn(
-              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
-                ? "border-gray-600 text-gray-600"
-                : "border-basePrimary text-basePrimary"
-            )}
-            disabled={
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
-                0 ||
-              isLoadingRecall ||
-              isLoadingReissue ||
-              isLoadingResend
-            }
-            onClick={exportRecipients}
-          >
-            <PiExport className="size-4" />
-            <span>Export</span>
-          </button>
-          <button
-            className={cn(
-              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
-                ? "border-gray-600 text-gray-600"
-                : "border-basePrimary text-basePrimary"
-            )}
-            disabled={
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
-                0 ||
-              isLoadingRecall ||
-              isLoadingReissue ||
-              isLoadingResend
-            }
-            onClick={resendCertificatesFn}
-          >
-            <Send className="size-4" />
-            <span>Resend</span>
-          </button>
+          <ExportRecipients />
+          <Resend />
         </div>
         <div className="flex items-center justify-center gap-2">
           <Link

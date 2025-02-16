@@ -288,7 +288,7 @@ export const usePostRequest = <T>(endpoint: string) => {
 export const useDeleteRequest = <T>(endpoint: string) => {
   const [isLoading, setLoading] = useState<boolean>(false);
 
-  const deleteData = async (id: string) => {
+  const deleteData = async (id = "") => {
     setLoading(true);
 
     try {
@@ -302,6 +302,8 @@ export const useDeleteRequest = <T>(endpoint: string) => {
         endpoint: `${endpoint}/${id}`,
       });
 
+      console.log(data, "data");
+
       if (status !== 201) throw data.data;
       toast({
         description: " Delete successful",
@@ -313,7 +315,7 @@ export const useDeleteRequest = <T>(endpoint: string) => {
         description: error?.response?.data?.error,
         variant: "destructive",
       });
-      console.log(error);
+      console.log(error, "error");
     } finally {
       setLoading(false);
     }
