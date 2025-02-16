@@ -1,6 +1,5 @@
 import React, { Dispatch, SetStateAction, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { CertificateRecipient } from "@/types/certificates";
 import { useRecipientsStore } from "@/store/globalRecipientsStore";
 import { useRouter } from "next/navigation";
 import { Header } from "./AssignExcelPage";
@@ -62,13 +61,16 @@ const Preview = ({
   };
 
   return (
-    <div className="space-y-4 w-full">
+    <div className="space-y-4 max-w-full w-1/2 mx-auto">
       <div className="flex gap-4">
+        <Button onClick={() => setStep(2)} className="bg-basePrimary w-full">
+          Back
+        </Button>
         <Button className="bg-basePrimary w-full" onClick={submitRecipients}>
           Import Recipients
         </Button>
       </div>
-      <div className="overflow-x-auto max-w-full w-1/2">
+      <div className="overflow-x-auto w-full">
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr className="bg-gray-100">

@@ -105,13 +105,13 @@ const AssignExcelPage = ({
         <h1 className="text-2xl capitalize font-semibold text-gray-800">
           Send <b>{certificate?.name}</b> to recipients
         </h1>
-        <Button
+        {/* <Button
           onClick={() => router.push(`/designs`)}
           className="bg-basePrimary text-white"
           type="button"
         >
           Back
-        </Button>
+        </Button> */}
       </div>
       <section className="flex flex-col items-center pt-12 w-full py-8 mx-auto gap-6 space-y-12">
         <Timeline step={step} setStep={(step) => setStep(step)} />
