@@ -17,7 +17,7 @@ import { generateAlias, uploadFile } from "@/utils/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pen, Trash } from "lucide-react";
 import Link from "next/link";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -27,9 +27,18 @@ const recipientSchema = z.object({
   recipients: z.array(
     z
       .object({
-        recipientFirstName: z.string().nonempty("First name is required"),
-        recipientLastName: z.string().nonempty("Last name is required"),
-        recipientEmail: z.string().email("Enter a valid Email address"),
+        recipientFirstName: z
+          .string()
+          .nonempty("First name is required")
+          .optional(),
+        recipientLastName: z
+          .string()
+          .nonempty("Last name is required")
+          .optional(),
+        recipientEmail: z
+          .string()
+          .email("Enter a valid Email address")
+          .optional(),
         profilePicture: z.string().url("Enter a valid URL"),
       })
       .catchall(
@@ -136,7 +145,7 @@ const RecipientsPage = ({
     updatePage(1);
   };
 
-  console.log(certificate.hasQRCode)
+  console.log(certificate.hasQRCode);
 
   const creditType =
     certificate?.attributes && certificate?.attributes.length > 0
@@ -144,6 +153,8 @@ const RecipientsPage = ({
       : certificate.hasQRCode
       ? "silver"
       : "bronze";
+
+  console.log(form.formState.errors);
 
   return (
     <Form {...form}>
