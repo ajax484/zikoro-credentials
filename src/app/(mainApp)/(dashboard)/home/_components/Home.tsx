@@ -516,24 +516,26 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                           <span className="font-medium">
                             Continue editing {recentCertificate?.name}
                           </span>
-                          <Link
-                            href={
-                              recentCertificate?.JSON
-                                ? "/credentials/create/" +
-                                  recentCertificate.certificateAlias +
-                                  "?type=certificate&workspaceId=" +
-                                  organization?.id +
-                                  "&workspaceAlias=" +
-                                  organization?.organizationAlias
-                                : {}
-                            }
-                            className="flex gap-2 items-center"
-                          >
-                            <span className="text-basePrimary underline">
-                              Proceed
-                            </span>
-                            <ArrowRight className="text-basePrimary size-4" />
-                          </Link>
+                          {recentCertificate && (
+                            <Link
+                              href={
+                                recentCertificate?.JSON
+                                  ? "/credentials/create/" +
+                                    recentCertificate.certificateAlias +
+                                    "?type=certificate&workspaceId=" +
+                                    organization?.id +
+                                    "&workspaceAlias=" +
+                                    organization?.organizationAlias
+                                  : {}
+                              }
+                              className="flex gap-2 items-center"
+                            >
+                              <span className="text-basePrimary underline">
+                                Proceed
+                              </span>
+                              <ArrowRight className="text-basePrimary size-4" />
+                            </Link>
+                          )}
                         </div>
                       </div>
                       <div className="ml-[25px] h-10 w-[2px] bg-basePrimary" />
@@ -550,25 +552,27 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                           <span className="font-medium">
                             Assigned To Recipients
                           </span>
-                          <Link
-                            href={
-                              recentCertificate?.JSON
-                                ? "assign?certificateAlias=" +
-                                  recentCertificate.certificateAlias +
-                                  "&type=certificate" +
-                                  "workspaceId=" +
-                                  organization?.id +
-                                  "&workspaceAlias=" +
-                                  organization?.id
-                                : {}
-                            }
-                            className="flex gap-2 items-center"
-                          >
-                            <span className="text-basePrimary underline">
-                              Proceed
-                            </span>
-                            <ArrowRight className="text-basePrimary size-4" />
-                          </Link>
+                          {recentCertificate && (
+                            <Link
+                              href={
+                                recentCertificate?.JSON
+                                  ? "assign?certificateAlias=" +
+                                    recentCertificate.certificateAlias +
+                                    "&type=certificate" +
+                                    "workspaceId=" +
+                                    organization?.id +
+                                    "&workspaceAlias=" +
+                                    organization?.id
+                                  : {}
+                              }
+                              className="flex gap-2 items-center"
+                            >
+                              <span className="text-basePrimary underline">
+                                Proceed
+                              </span>
+                              <ArrowRight className="text-basePrimary size-4" />
+                            </Link>
+                          )}
                         </div>
                       </div>
                       <div className="ml-[25px] h-10 w-[2px] bg-basePrimary" />
@@ -583,20 +587,22 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                         </div>
                         <div className="flex flex-col h-full">
                           <span className="font-medium">Track Usage</span>
-                          <Link
-                            href={
-                              recentCertificate?.JSON
-                                ? "/analytics?certificateAlias=" +
-                                  recentCertificate.certificateAlias
-                                : {}
-                            }
-                            className="flex gap-2 items-center"
-                          >
-                            <span className="text-basePrimary underline">
-                              Proceed
-                            </span>
-                            <ArrowRight className="text-basePrimary size-4" />
-                          </Link>
+                          {recentCertificate && (
+                            <Link
+                              href={
+                                recentCertificate?.JSON
+                                  ? "/analytics?certificateAlias=" +
+                                    recentCertificate.certificateAlias
+                                  : {}
+                              }
+                              className="flex gap-2 items-center"
+                            >
+                              <span className="text-basePrimary underline">
+                                Proceed
+                              </span>
+                              <ArrowRight className="text-basePrimary size-4" />
+                            </Link>
+                          )}
                         </div>
                       </div>
                     </div>

@@ -13,9 +13,10 @@ export const TextEditor = ({
   onChangeContent: (content: string) => void;
   value: string;
 }) => {
-  const [state, setState] = React.useState({ value });
+  const [state, setState] = React.useState(value);
+
   const handleChange = (value: string) => {
-    setState({ value });
+    setState(value);
     onChangeContent(value);
   };
 
@@ -24,7 +25,7 @@ export const TextEditor = ({
       <EditorToolbar />
       <ReactQuill
         theme="snow"
-        value={state.value}
+        value={state}
         onChange={handleChange}
         placeholder={"Enter message"}
         modules={modules}
