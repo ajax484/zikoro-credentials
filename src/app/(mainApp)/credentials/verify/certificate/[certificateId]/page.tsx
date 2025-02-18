@@ -12,6 +12,7 @@ import {
   LinkedinShareButton,
   TwitterIcon,
 } from "next-share";
+import XIcon from "@/public/icons/x-twitter.svg";
 import { useEditor } from "@/components/editor/hooks/use-editor";
 import { Button } from "@/components/ui/button";
 import { useGetData, useMutateData } from "@/hooks/services/request";
@@ -21,7 +22,7 @@ import GradientText from "@/components/GradientText";
 import Image from "next/image";
 import Link from "next/link";
 import { Facebook, Instagram, Linkedin } from "styled-icons/bootstrap";
-import { Calendar, Download, X } from "lucide-react";
+import { Calendar, Download, Link2, X } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -289,37 +290,65 @@ const CertificateView = ({
           </span>
 
           <div className="flex items-center justify-center gap-4 text-gray-600">
-            <Link
-              href={
-                certificate?.originalCertificate?.workspace?.linkedIn || "#"
-              }
-              className="flex items-center gap-2"
-            >
-              <Linkedin className="size-4" />
-            </Link>
-            <Link
-              href={certificate?.originalCertificate?.workspace?.x || "#"}
-              className="flex items-center gap-2"
-            >
-              <X className="size-4" />
-            </Link>
-            <Link
-              href={
-                certificate?.originalCertificate?.workspace?.facebook || "#"
-              }
-              className="flex items-center gap-2"
-            >
-              <Facebook className="size-4" />
-            </Link>
-            <Link
-              href={
-                certificate?.originalCertificate?.workspace?.instagram || "#"
-              }
-              className="flex items-center gap-2"
-            >
-              <Instagram className="size-4" />
-            </Link>
+            {certificate?.originalCertificate?.workspace?.linkedIn && (
+              <Link
+                href={
+                  certificate?.originalCertificate?.workspace?.linkedIn || "#"
+                }
+                className="bg-[#f7f8f9] p-2 border rounded"
+              >
+                <Linkedin className="size-4" />
+              </Link>
+            )}
+            {certificate?.originalCertificate?.workspace?.x && (
+              <Link
+                href={certificate?.originalCertificate?.workspace?.x || "#"}
+                className="bg-[#f7f8f9] p-2 border rounded"
+              >
+                <Image src={XIcon} alt="X" width={16} height={16} />
+              </Link>
+            )}
+            {certificate?.originalCertificate?.workspace?.facebook && (
+              <Link
+                href={
+                  certificate?.originalCertificate?.workspace?.facebook || "#"
+                }
+                className="bg-[#f7f8f9] p-2 border rounded"
+              >
+                <Facebook className="size-4" />
+              </Link>
+            )}
+            {certificate?.originalCertificate?.workspace?.instagram && (
+              <Link
+                href={
+                  certificate?.originalCertificate?.workspace?.instagram || "#"
+                }
+                className="bg-[#f7f8f9] p-2 border rounded"
+              >
+                <Instagram className="size-4" />
+              </Link>
+            )}
+            {certificate?.originalCertificate?.workspace?.socialLinks &&
+              certificate?.originalCertificate?.workspace?.socialLinks.map(
+                (link) => (
+                  <Link
+                    key={link}
+                    href={link}
+                    className="bg-[#f7f8f9] p-2 border rounded"
+                  >
+                    <Link2 className="size-4" />
+                  </Link>
+                )
+              )}
           </div>
+
+          <GradientText className="text-sm" Tag={"div"}>
+            <Link
+              href={`mailto:${certificate.originalCertificate.workspace.eventContactEmail}`}
+            >
+              Contact Issuer
+            </Link>
+          </GradientText>
         </div>
         <div className="bg-white p-4 border rounded-md w-full h-full space-y-2 flex flex-col items-center gap-4">
           <GradientText className="font-bold" Tag={"h1"}>

@@ -125,4 +125,5 @@ export interface RecipientEmailTemplate {
   workspaceAlias: string;
   createdBy: number;
   templateAlias: string;
+  buttonProps: { text: string; backgroundColor: string; textColor: string };
 }

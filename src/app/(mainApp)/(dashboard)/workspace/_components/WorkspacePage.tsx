@@ -10,6 +10,7 @@ import CreditHistory from "./tabs/CreditHistory";
 import Image from "next/image";
 import TeamMembers from "./tabs/TeamMembers";
 import SocialLinks from "./tabs/SocialLinks";
+import SelectOrganization from "@/components/SelectOrganization/SelectOrganization";
 
 type Tabs = {
   name: string;
@@ -42,29 +43,32 @@ const tabs: Tabs[] = [
 
 const WorkspacePage = () => {
   return (
-    <div className="bg-white rounded-lg">
-      <Tabs defaultValue="Workspace information" className="w-full !p-0">
-        <TabsList className="bg-white border-b-2 !p-0 !px-12 w-full !flex !h-fit !rounded-none !justify-start">
-          {tabs.map(({ name, Icon }) => (
-            <TabsTrigger
-              key={name}
-              value={name}
-              className="w-fit px-6 py-2 data-[state=active]:bg-transparent group data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-gray-900 flex gap-2 !rounded-none !h-fit focus-visible:!ring-0 focus-visible:!outline-none data-[state=active]:shadow-none"
-            >
-              <div className="flex items-center gap-2">
-                <Image src={Icon} alt={name} width={20} height={20} />
-                <span className="text-sm font-medium">{name}</span>
-              </div>
-            </TabsTrigger>
+    <section className="space-y-4">
+      <SelectOrganization />
+      <div className="bg-white rounded-lg">
+        <Tabs defaultValue="Workspace information" className="w-full !p-0">
+          <TabsList className="bg-white border-b-2 !p-0 !px-12 w-full !flex !h-fit !rounded-none !justify-start">
+            {tabs.map(({ name, Icon }) => (
+              <TabsTrigger
+                key={name}
+                value={name}
+                className="w-fit px-6 py-2 data-[state=active]:bg-transparent group data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-gray-900 flex gap-2 !rounded-none !h-fit focus-visible:!ring-0 focus-visible:!outline-none data-[state=active]:shadow-none"
+              >
+                <div className="flex items-center gap-2">
+                  <Image src={Icon} alt={name} width={20} height={20} />
+                  <span className="text-sm font-medium">{name}</span>
+                </div>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {tabs.map(({ name, Component }) => (
+            <TabsContent key={name} value={name} className="p-4">
+              <Component />
+            </TabsContent>
           ))}
-        </TabsList>
-        {tabs.map(({ name, Component }) => (
-          <TabsContent key={name} value={name} className="p-4">
-            <Component />
-          </TabsContent>
-        ))}
-      </Tabs>
-    </div>
+        </Tabs>
+      </div>
+    </section>
   );
 };
 

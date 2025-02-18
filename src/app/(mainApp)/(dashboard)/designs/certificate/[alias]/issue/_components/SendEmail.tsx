@@ -6,7 +6,7 @@ import {
   TCertificate,
 } from "@/types/certificates";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -28,9 +28,10 @@ import { toast } from "react-toastify";
 import { profile } from "console";
 import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
-import { ImageIcon, X } from "lucide-react";
+import { ImageIcon, Link2, X } from "lucide-react";
 import {
   generateAlphanumericHash,
+  getTextColorFromBackground,
   replaceSpecialText,
   uploadFile,
 } from "@/utils/helpers";
@@ -52,6 +53,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ColorPicker } from "@/components/editor/components/color-picker";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
@@ -61,6 +68,11 @@ const sendEmailSchema = z.object({
   showLogo: z.boolean().optional(),
   logoUrl: z.string().url().optional(),
   showSocialLinks: z.boolean().optional(),
+  buttonProps: z.object({
+    text: z.string(),
+    backgroundColor: z.string(),
+    textColor: z.string(),
+  }),
 });
 
 const CreateTemplateDialog = ({
@@ -174,6 +186,11 @@ const SendEmail = ({
       showLogo: true,
       logoUrl: organization?.organizationLogo || "",
       showSocialLinks: true,
+      buttonProps: {
+        text: "View",
+        backgroundColor: "rgba(156, 39, 176, 1)",
+        textColor: "white",
+      },
     },
   });
 
@@ -243,6 +260,13 @@ const SendEmail = ({
   const body = form.watch("body");
   const showLogo = form.watch("showLogo");
   const showSocialLinks = form.watch("showSocialLinks");
+  const buttonProps = form.watch("buttonProps");
+
+  useEffect(() => {
+    const color = getTextColorFromBackground(buttonProps.backgroundColor);
+    console.log(color, "Color");
+    form.setValue("buttonProps.textColor", color);
+  }, [buttonProps.backgroundColor]);
 
   const [open, setOpen] = useState(false);
 
@@ -291,6 +315,7 @@ const SendEmail = ({
               form.setValue("body", template.body);
               form.setValue("showLogo", template.showLogo);
               form.setValue("showSocialLinks", template.showSocialLinks);
+              form.setValue("buttonProps", template.buttonProps);
             }}
           >
             <SelectTrigger className="rounded-md bg-white font-medium w-1/2">
@@ -463,6 +488,50 @@ const SendEmail = ({
                 )}
               />
             </div>
+            <div className="flex justify-between items-end gap-2">
+              <FormField
+                name={"buttonProps.text" as const}
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-1 flex-1">
+                    <FormLabel className="text-gray-600">Button Text</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Button Text"
+                        defaultValue={"View"}
+                        className="w-full"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name={"buttonProps.backgroundColor" as const}
+                render={({ field }) => (
+                  <FormItem className="!space-y-0">
+                    <FormControl>
+                      <Popover>
+                        <PopoverTrigger>
+                          <div
+                            style={{ backgroundColor: field.value }}
+                            className="size-12 rounded-md"
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-fit px-8 py-4">
+                          <ColorPicker
+                            value={field.value}
+                            onChange={(value) => {
+                              field.onChange(value);
+                            }}
+                            disableTransparent
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
             <div className="flex justify-between items-center">
               <span className="text-lg text-gray-800 font-medium">
                 Social Links
@@ -522,8 +591,8 @@ const SendEmail = ({
                     href={"#"}
                     style={{
                       display: "inline-block",
-                      backgroundColor: "#9D00FF",
-                      color: "white",
+                      backgroundColor: buttonProps.backgroundColor,
+                      color: buttonProps.textColor,
                       textDecoration: "none",
                       padding: "12px 24px",
                       borderRadius: "5px",
@@ -532,7 +601,7 @@ const SendEmail = ({
                       fontWeight: "bold",
                     }}
                   >
-                    View
+                    {buttonProps.text}
                   </a>
                 </div>
                 {showSocialLinks && (
@@ -549,6 +618,13 @@ const SendEmail = ({
                     <div className="flex items-center gap-2">
                       <Instagram className="size-4" />
                     </div>
+                    {/* social links */}
+                    {organization?.socialLinks &&
+                      organization?.socialLinks.map((link: string) => (
+                        <div className="flex items-center gap-2">
+                          <Link2 className="size-4" />
+                        </div>
+                      ))}
                   </div>
                 )}
               </div>

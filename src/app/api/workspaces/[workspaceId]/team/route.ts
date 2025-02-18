@@ -126,13 +126,15 @@ export async function POST(
       if (error) throw error;
 
       const emailContent = `
-      <p>Hello,</p>
-      <p>You have been invited to join the team at <strong>${payload.workspaceName}</strong>.</p>
-      <p>Click the link below to accept the invitation:</p>
-      <p><a href="${inviteLink}" target="_blank">${inviteLink}</a></p>
-      <p>We look forward to having you on board!</p>
-      <p>Best regards,</p>
-      <p>The Team</p>
+      <div style="width: 500px; margin: 0 auto;">
+        <p style="margin-top: 20px;">Hello,</p>
+        <p style="margin-top: 20px;">You have been invited to join the team at <strong>${payload.workspaceName}</strong>.</p>
+        <p style="margin-top: 20px;">Click the link below to accept the invitation:</p>
+        <p style="margin-top: 20px;"><a href="${inviteLink}" target="_blank">${inviteLink}</a></p>
+        <p style="margin-top: 20px;">We look forward to having you on board!</p>
+        <p style="margin-top: 20px;">Best regards,</p>
+        <p style="margin-top: 20px;">The Team</p>
+      </div>
     `;
 
       var { SendMailClient } = require("zeptomail");
@@ -174,6 +176,41 @@ export async function POST(
     }
   } else {
     return NextResponse.json({ error: "Method not allowed" });
+  }
+}
+
+export async function PATCH(
+  req: NextRequest,
+  { params: { workspaceId } }: { params: { workspaceId: number } }
+) {
+  const supabase = createRouteHandlerClient({ cookies });
+  const payload = await req.json();
+  console.log(payload);
+
+  try {
+    const { data, error } = await supabase
+      .from("organizationTeamMembers_Credentials")
+      .upsert(payload)
+      .select("*");
+
+    if (error) throw error;
+
+    return NextResponse.json(
+      { data, message: "member updated successfully" },
+      {
+        status: 201,
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      {
+        error: "An error occurred while making the request.",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }
 

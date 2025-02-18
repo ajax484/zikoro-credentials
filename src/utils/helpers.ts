@@ -423,3 +423,36 @@ export function formatNumber(num: number): string {
   }
   return num.toString(); // Less than 100, no formatting
 }
+
+export function getTextColorFromBackground(backgroundColor: string): string {
+  // Convert rgba color to RGB
+  
+  const rgbaToRgb = (rgba: string): { r: number; g: number; b: number } => {
+    const match = rgba.match(/^rgba?\((\d+), (\d+), (\d+), (\d?\.?\d+)\)$/);
+    if (match) {
+      return {
+        r: parseInt(match[1]),
+        g: parseInt(match[2]),
+        b: parseInt(match[3]),
+      };
+    }
+    throw new Error("Invalid rgba format");
+  };
+
+  // Calculate luminance of a color
+  const luminance = (rgb: { r: number; g: number; b: number }) => {
+    const [r, g, b] = [rgb.r, rgb.g, rgb.b].map((c) => {
+      const normalized = c / 255;
+      return normalized <= 0.03928
+        ? normalized / 12.92
+        : Math.pow((normalized + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+
+  const rgb = rgbaToRgb(backgroundColor);
+  const colorLuminance = luminance(rgb);
+
+  // Return 'light' or 'dark' based on luminance
+  return colorLuminance > 0.5 ? "black" : "white";
+}

@@ -210,15 +210,30 @@ const TeamMembers = () => {
     );
   };
 
+  const verificationStatus =
+    organization?.verification &&
+    organization?.verification?.length > 0 &&
+    organization?.verification.every((v) => v.status !== "rejected")
+      ? organization?.verification.some((v) => v.status === "verified")
+        ? "verified"
+        : "pending"
+      : "unverified";
+
   return (
     <section className="space-y-8">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h1 className="text-lg font-medium">Team Members</h1>
+          <h1 className="text-lg font-bold text-gray-800">Team Members</h1>
           <div className="flex justify-end gap-4">
             {teamMembers.find(
               ({ userEmail }) => userEmail === userData?.userEmail
-            )?.userRole === "owner" && <InviteTeamMember />}
+            )?.userRole === "owner" &&
+              verificationStatus === "verified" && <InviteTeamMember />}
+            {verificationStatus !== "verified" && (
+              <span className="font-bold text-xs text-red-600">
+                Complete verification to invite team members
+              </span>
+            )}
           </div>
         </div>
         <DataTable<OrganizationTeamMembersCredentials>

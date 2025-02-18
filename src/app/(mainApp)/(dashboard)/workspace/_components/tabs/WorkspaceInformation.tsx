@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -26,8 +26,219 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Facebook, Instagram, Linkedin } from "styled-icons/bootstrap";
 import { useMutateData } from "@/hooks/services/request";
+import { countryList } from "@/components/onboarding/Onboarding";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+
+const verifySchema = z.object({
+  address: z.string().min(1),
+  country: z.string(),
+  year: z.number(),
+  document: z.object({
+    url: z.string().url("Enter a valid URL"),
+    name: z.string().min(1),
+  }),
+});
+
+const VerifyOrganization = () => {
+  const { organization, setOrganization } = useOrganizationStore();
+
+  const [documentUploading, setDocumentUploading] = useState<boolean>(false);
+
+  const clsBtnRef = useRef<HTMLButtonElement>(null);
+
+  const {
+    mutateData: verifyOrganization,
+    isLoading: verifyOrganizationIsLoading,
+  } = useMutateData(`/workspaces/${organization?.id}/verify`);
+
+  const form = useForm<z.infer<typeof verifySchema>>({
+    resolver: zodResolver(verifySchema),
+    defaultValues: {
+      address: organization?.BillingAddress,
+      country: "",
+      year: new Date().getFullYear(),
+      document: {
+        url: "https://",
+        name: "",
+      },
+    },
+  });
+
+  const onSubmit = async (data: z.infer<typeof verifySchema>) => {
+    console.log(data);
+    await verifyOrganization({
+      payload: {
+        ...data,
+        status: "pending",
+        workspaceAlias: organization?.organizationAlias,
+      },
+    });
+  };
+
+  const uploadDocumentFn = async (e, field) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Allowed file types: PNG, JPEG, and PDF
+    const allowedTypes = ["image/png", "image/jpeg", "application/pdf"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Please upload a PDF, PNG, or JPEG file");
+      return;
+    }
+
+    // Check file size (limit: 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size should be less than 5MB");
+      return;
+    }
+
+    setDocumentUploading(true);
+
+    // Determine folder based on file type
+    const folder = file.type === "application/pdf" ? "pdf" : "image";
+
+    const { url, error } = await uploadFile(file, folder);
+
+    if (error) {
+      toast.error(error);
+      setDocumentUploading(false);
+      return;
+    }
+
+    if (url) {
+      field.onChange({ url, name: file.name });
+    }
+
+    setDocumentUploading(false);
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className="bg-basePrimary text-white">
+          Verify Organization
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="px-4 py-6 z-[1000]">
+        <DialogHeader className="px-3">
+          <DialogTitle>Verify your organization</DialogTitle>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <InputOffsetLabel label="Corporate Address">
+                  <div className="relative w-full">
+                    <Input
+                      placeholder="enter address"
+                      type="text"
+                      {...field}
+                      className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+                    />
+                  </div>
+                </InputOffsetLabel>
+              )}
+            />
+            <div className="grid grid-cols-2 gap-4 items-center flex-1">
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <InputOffsetLabel label="Country">
+                    <div className="relative w-full">
+                      <Select
+                        onValueChange={(value) => field.onChange(value)}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="w-full rounded-md text-xs font-medium bg-transparent">
+                          <SelectValue placeholder={"Select country"} />
+                        </SelectTrigger>
+                        <SelectContent className="z-[1001]">
+                          {countryList?.map((country) => (
+                            <SelectItem value={country} key={country}>
+                              {country}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </InputOffsetLabel>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="year"
+                render={({ field }) => (
+                  <InputOffsetLabel label="Year">
+                    <div className="relative w-full">
+                      <Input
+                        placeholder="year"
+                        type="text"
+                        {...field}
+                        className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+                      />
+                    </div>
+                  </InputOffsetLabel>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="document"
+              render={({ field }) => (
+                <InputOffsetLabel label="Document">
+                  {field.value.name ? (
+                    <p className="text-gray-700 text-xs text-center my-4">
+                      {field.value.name}
+                    </p>
+                  ) : !documentUploading ? (
+                    <div className="relative bg-basePrimary/10 rounded-md p-8 flex flex-col gap-2 items-center">
+                      <b className="text-sm">
+                        Upload a legal business document of your organization
+                      </b>
+                      <label className="text-basePrimary underline text-sm">
+                        <span>Upload Document</span>
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="image/png, image/jpeg, application/pdf"
+                          onChange={(e) => uploadDocumentFn(e, field)}
+                          disabled={documentUploading}
+                        />
+                      </label>
+                      <p className="text-gray-700 text-xs">pdf, png, jpeg.</p>
+                    </div>
+                  ) : (
+                    <div className="size-8 border-2 border-gray-300 rounded-full animate-spin border-t-black mx-auto my-8" />
+                  )}
+                </InputOffsetLabel>
+              )}
+            />
+            <Button className="bg-basePrimary text-white" type="submit">
+              Save
+            </Button>
+          </form>
+        </Form>
+        <DialogClose asChild>
+          <button className="hidden" ref={clsBtnRef}>
+            close
+          </button>
+        </DialogClose>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const WorkspaceSchema = z.object({
   organizationName: z.string().min(3, "Name is required"),
@@ -49,6 +260,13 @@ const WorkspaceInformation = () => {
       eventContactEmail: organization?.eventContactEmail,
     },
   });
+
+  useEffect(() => {
+    if (!organization) return;
+    form.setValue("organizationName", organization?.organizationName);
+    form.setValue("organizationLogo", organization?.organizationLogo);
+    form.setValue("eventContactEmail", organization?.eventContactEmail);
+  }, [organization]);
 
   const onSubmit = async (data: z.infer<typeof WorkspaceSchema>) => {
     console.log(data);
@@ -105,6 +323,17 @@ const WorkspaceInformation = () => {
       </Dialog>
     );
   };
+
+  console.log(organization?.verification);
+
+  const verificationStatus =
+    organization?.verification &&
+    organization?.verification?.length > 0 &&
+    organization?.verification.every((v) => v.status !== "rejected")
+      ? organization?.verification.some((v) => v.status === "verified")
+        ? "verified"
+        : "pending"
+      : "unverified";
 
   return (
     <div className="space-y-6">
@@ -205,6 +434,32 @@ const WorkspaceInformation = () => {
           </Button>
         </form>
       </Form>
+      <div className="bg-basePrimary/10 rounded-md p-8 flex flex-col gap-4 items-center font-medium">
+        <div className="flex flex-col gap-1 text-center">
+          <span className="text-sm">organization status:</span>
+
+          <b
+            className={cn(
+              "text-xl capitalize",
+              verificationStatus === "verified"
+                ? "text-green-500"
+                : verificationStatus === "pending"
+                ? "text-amber-500"
+                : "text-gray-800"
+            )}
+          >
+            {verificationStatus}
+          </b>
+        </div>
+        <p className="text-gray-800 text-sm">
+          {verificationStatus === "unverified"
+            ? "Your organization is unverified and will not have the verified badge on the credential verification page"
+            : verificationStatus === "pending"
+            ? "Your organization verification is being reviewed"
+            : "Your organization has been verified and will have the verified badge on the credential verification page"}
+        </p>
+        {verificationStatus === "unverified" && <VerifyOrganization />}
+      </div>
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <Trash className="size-4" />

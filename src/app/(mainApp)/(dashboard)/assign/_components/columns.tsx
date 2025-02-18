@@ -173,7 +173,7 @@ export const issueesColumns = (
       return (
         <div className="flex items-center gap-2 justify-center">
           <Link
-            href={`credentials/verify/certificate/${certificateId}`}
+            href={`/assign/admin/view/${certificateId}`}
             className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center"
           >
             <Eye className="size-6" />

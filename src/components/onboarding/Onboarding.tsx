@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { generateAlias } from "@/utils/helpers";
 
-const countryList = [
+export const countryList = [
   "Afghanistan",
   "Åland Islands",
   "Albania",

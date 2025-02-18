@@ -32,7 +32,11 @@ import { profile } from "console";
 import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
 import { ImageIcon, X } from "lucide-react";
-import { replaceSpecialText, uploadFile } from "@/utils/helpers";
+import {
+  getTextColorFromBackground,
+  replaceSpecialText,
+  uploadFile,
+} from "@/utils/helpers";
 import { Facebook, Instagram, Linkedin, Twitter } from "styled-icons/bootstrap";
 import {
   Dialog,
@@ -44,6 +48,12 @@ import {
 } from "@/components/ui/dialog";
 import { TOrganization } from "@/types/organization";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
+import { ColorPicker } from "@/components/editor/components/color-picker";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
@@ -54,6 +64,11 @@ const sendEmailSchema = z.object({
   logoUrl: z.string().url().optional(),
   showSocialLinks: z.boolean().optional(),
   templateName: z.string().nonempty("Template name is required"),
+  buttonProps: z.object({
+    text: z.string(),
+    backgroundColor: z.string(),
+    textColor: z.string(),
+  }),
 });
 
 // const CreateTemplateDialog = ({
@@ -156,6 +171,11 @@ const TemplatePage = ({ templateAlias }: { templateAlias: string }) => {
       showLogo: true,
       logoUrl: organization?.organizationLogo || "",
       showSocialLinks: true,
+      buttonProps: {
+        text: "View",
+        backgroundColor: "rgba(156, 39, 176, 1)",
+        textColor: "white",
+      },
     },
   });
 
@@ -202,6 +222,15 @@ const TemplatePage = ({ templateAlias }: { templateAlias: string }) => {
   const body = form.watch("body");
   const showLogo = form.watch("showLogo");
   const showSocialLinks = form.watch("showSocialLinks");
+  const buttonProps = form.watch("buttonProps");
+
+  useEffect(() => {
+    const color = getTextColorFromBackground(buttonProps.backgroundColor);
+    console.log(color, "Color");
+    form.setValue("buttonProps.textColor", color);
+  }, [buttonProps.backgroundColor]);
+
+  console.log(buttonProps);
 
   const onSubmit = async (values: z.infer<typeof sendEmailSchema>) => {
     if (!organization) return toast.error("Please select an organization");
@@ -228,6 +257,7 @@ const TemplatePage = ({ templateAlias }: { templateAlias: string }) => {
     form.setValue("body", template.body);
     form.setValue("showLogo", template.showLogo);
     form.setValue("showSocialLinks", template.showSocialLinks);
+    form.setValue("buttonProps", template.buttonProps);
   }, [templateIsLoading]);
 
   if (templateIsLoading) return <div>Loading...</div>;
@@ -401,6 +431,50 @@ const TemplatePage = ({ templateAlias }: { templateAlias: string }) => {
                 )}
               />
             </div>
+            <div className="flex justify-between items-end gap-2">
+              <FormField
+                name={"buttonProps.text" as const}
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-1 flex-1">
+                    <FormLabel className="text-gray-600">Button Text</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Button Text"
+                        defaultValue={"View"}
+                        className="w-full"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name={"buttonProps.backgroundColor" as const}
+                render={({ field }) => (
+                  <FormItem className="!space-y-0">
+                    <FormControl>
+                      <Popover>
+                        <PopoverTrigger>
+                          <div
+                            style={{ backgroundColor: field.value }}
+                            className="size-12 rounded-md"
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-fit px-8 py-4">
+                          <ColorPicker
+                            value={field.value}
+                            onChange={(value) => {
+                              field.onChange(value);
+                            }}
+                            disableTransparent
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
             <div className="flex justify-between items-center">
               <span className="text-lg text-gray-800 font-medium">
                 Social Links
@@ -462,8 +536,8 @@ const TemplatePage = ({ templateAlias }: { templateAlias: string }) => {
                     href={"#"}
                     style={{
                       display: "inline-block",
-                      backgroundColor: "#9D00FF",
-                      color: "white",
+                      backgroundColor: buttonProps.backgroundColor,
+                      color: buttonProps.textColor,
                       textDecoration: "none",
                       padding: "12px 24px",
                       borderRadius: "5px",
@@ -472,7 +546,7 @@ const TemplatePage = ({ templateAlias }: { templateAlias: string }) => {
                       fontWeight: "bold",
                     }}
                   >
-                    View
+                    {buttonProps.text}
                   </a>
                 </div>
                 {showSocialLinks && (
@@ -489,6 +563,12 @@ const TemplatePage = ({ templateAlias }: { templateAlias: string }) => {
                     <div className="flex items-center gap-2">
                       <Instagram className="size-4" />
                     </div>
+                    {organization?.socialLinks &&
+                      organization?.socialLinks.map((link: string) => (
+                        <div className="flex items-center gap-2">
+                          <Link2 className="size-4" />
+                        </div>
+                      ))}
                   </div>
                 )}
               </div>
