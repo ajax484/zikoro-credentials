@@ -503,7 +503,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                     <h4 className="font-medium">Your progress:</h4>
 
                     <div>
-                      <div className="flex gap-2 ">
+                      <div className="flex gap-2">
                         <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
                           <Image
                             src={NibIcon}

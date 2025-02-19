@@ -257,7 +257,7 @@ const TemplatePage = ({ templateAlias }: { templateAlias: string }) => {
     form.setValue("body", template.body);
     form.setValue("showLogo", template.showLogo);
     form.setValue("showSocialLinks", template.showSocialLinks);
-    form.setValue("buttonProps", template.buttonProps);
+    template.buttonProps && form.setValue("buttonProps", template.buttonProps);
   }, [templateIsLoading]);
 
   if (templateIsLoading) return <div>Loading...</div>;

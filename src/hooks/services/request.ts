@@ -242,9 +242,9 @@ export const useUpdateData = <TData, TReturnData = any>(
       return data.data;
     } catch (error) {
       setError(true);
-      // console.log(error.response, "here");
+      console.log(error, "here");
       toast({
-        description: error.response.data.error,
+        description: error?.response?.data?.error || "an error occurred",
         variant: "destructive",
       });
     } finally {

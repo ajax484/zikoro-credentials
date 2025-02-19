@@ -6,7 +6,7 @@ import { TOrganization } from "@/types/organization";
 import { replaceSpecialText, replaceURIVariable } from "@/utils/helpers";
 import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
-import { Eye, Send, SendIcon, Trash } from "lucide-react";
+import { DownloadIcon, Eye, Send, Trash } from "lucide-react";
 import Link from "next/link";
 import Information from "./tabs/Information";
 import History from "./tabs/History";
@@ -31,13 +31,21 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import SendIcon from "@/public/icons/fa_send.svg";
 
 interface TTab {
   label: string;
-  Component: React.FC;
+  Component: React.FC<{
+    recipient: CertificateRecipient & {
+      originalCertificate: TCertificate & {
+        workspace: TOrganization;
+      };
+    };
+    getCertificate: () => Promise<void>;
+  }>;
 }
 
-const tabs = [
+const tabs: TTab[] = [
   {
     label: "information",
     Component: Information,
@@ -54,12 +62,14 @@ const tabs = [
 
 const CertificateView = ({
   certificate,
+  getCertificate,
 }: {
   certificate: CertificateRecipient & {
     originalCertificate: TCertificate & {
       workspace: TOrganization;
     };
   };
+  getCertificate: () => Promise<void>;
 }) => {
   const router = useRouter();
 
@@ -163,7 +173,7 @@ const CertificateView = ({
           <button
             className={cn(
               "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
-              certificate.isValid
+              !certificate.isValid
                 ? "border-gray-600 text-gray-600"
                 : "border-red-600  text-red-600"
             )}
@@ -213,14 +223,10 @@ const CertificateView = ({
                 }}
                 className={cn(
                   "px-4 mx-auto",
-                  certificate.isValid
-                    ? "bg-red-600"
-                    : "bg-basePrimary"
+                  certificate.isValid ? "bg-red-600" : "bg-basePrimary"
                 )}
               >
-                {certificate.isValid
-                  ? "Revoke"
-                  : "Reissue"}
+                {certificate.isValid ? "Revoke" : "Reissue"}
               </Button>
             </div>
           </div>
@@ -291,7 +297,7 @@ const CertificateView = ({
               "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm border-basePrimary text-basePrimary"
             )}
           >
-            <Download className="size-4" />
+            <DownloadIcon className="size-4" />
             <span>Download</span>
           </button>
         </PopoverTrigger>
@@ -411,7 +417,10 @@ const CertificateView = ({
             </TabsList>
             {tabs.map(({ label, Component }) => (
               <TabsContent key={label} value={label} className="p-4">
-                <Component />
+                <Component
+                  recipient={certificate}
+                  getCertificate={getCertificate}
+                />
               </TabsContent>
             ))}
           </Tabs>
@@ -448,7 +457,11 @@ const CertificateView = ({
 };
 
 const AdminView = ({ certificateId }: { certificateId: string }) => {
-  const { data: certificate, isLoading } = useGetData<
+  const {
+    data: certificate,
+    isLoading,
+    getData: getCertificate,
+  } = useGetData<
     CertificateRecipient & {
       originalCertificate: TCertificate & {
         workspace: TOrganization;
@@ -460,7 +473,10 @@ const AdminView = ({ certificateId }: { certificateId: string }) => {
     <section>
       {!isLoading && certificate ? (
         <div className="w-[90%] mx-auto">
-          <CertificateView certificate={certificate} />
+          <CertificateView
+            certificate={certificate}
+            getCertificate={getCertificate}
+          />
         </div>
       ) : !isLoading && !certificate ? (
         <div>this certificate does not exist</div>

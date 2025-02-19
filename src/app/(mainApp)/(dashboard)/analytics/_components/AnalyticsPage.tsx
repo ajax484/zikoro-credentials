@@ -54,9 +54,9 @@ import {
 import "react-circular-progressbar/dist/styles.css";
 import { useRouter } from "next/navigation";
 
-type TimePeriod = "this week" | "this month" | "this year" | "all time";
+export type TimePeriod = "this week" | "this month" | "this year" | "all time";
 
-const chartConfig = {
+export const chartConfig = {
   count: {
     label: "count",
     color: "#1B41FF",
@@ -109,7 +109,7 @@ const OverviewCard = ({
   );
 };
 
-const generateChartData = (
+export const generateChartData = (
   data: { created_at: string }[],
   timePeriod: string,
   organizationCreateDate: Date
@@ -176,7 +176,7 @@ const generateChartData = (
   }));
 };
 
-function calculateChange(
+export function calculateChange(
   data: { created_at: string }[],
   timePeriod: TimePeriod
 ) {
