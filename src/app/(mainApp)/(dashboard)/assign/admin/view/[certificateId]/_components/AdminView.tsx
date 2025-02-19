@@ -125,6 +125,8 @@ const CertificateView = ({
       initialContainer: containerRef.current!,
     });
 
+    setLink(editor?.generateLink(true) || "");
+
     return () => {
       canvas.dispose();
     };
@@ -383,6 +385,8 @@ const CertificateView = ({
       </Popover>
     );
   };
+
+  const [link, setLink] = useState("");
 
   return (
     <section className="space-y-4">

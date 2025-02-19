@@ -429,7 +429,7 @@ const WorkspaceInformation = () => {
               )}
             />
           </div>
-          <Button className="bg-basePrimary text-white" type="submit">
+          <Button className="bg-basePrimary text-white mx-auto" type="submit">
             Save
           </Button>
         </form>

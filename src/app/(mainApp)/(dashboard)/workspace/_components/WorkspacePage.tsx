@@ -44,7 +44,9 @@ const tabs: Tabs[] = [
 const WorkspacePage = () => {
   return (
     <section className="space-y-4">
-      <SelectOrganization />
+      <div className="flex justify-end w-full">
+        <SelectOrganization />
+      </div>
       <div className="bg-white rounded-lg">
         <Tabs defaultValue="Workspace information" className="w-full !p-0">
           <TabsList className="bg-white border-b-2 !p-0 !px-12 w-full !flex !h-fit !rounded-none !justify-start">
