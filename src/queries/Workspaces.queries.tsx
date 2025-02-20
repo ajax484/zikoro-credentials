@@ -7,10 +7,11 @@ import { toast } from "react-toastify";
 
 export function useFetchWorkspaces() {
   const { user } = useUserStore();
-  
+
   const { data, isFetching, status, error, refetch } = useQuery({
-    queryKey: ["workspaces", user.userEmail],
+    queryKey: ["workspaces", user?.userEmail],
     queryFn: async () => {
+      if (!user) return [];
       const searchParams = new URLSearchParams();
       searchParams.set("userEmail", user.userEmail);
 
