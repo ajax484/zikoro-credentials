@@ -500,7 +500,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                   </Link>
 
                   <div className="flex-[60%] space-y-4">
-                    <h4 className="font-medium">Your progress:</h4>
+                    <h4 className="font-medium text-gray-800">Your progress:</h4>
 
                     <div>
                       <div className="flex gap-2">
@@ -513,7 +513,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                           />
                         </div>
                         <div className="flex flex-col justify-between">
-                          <span className="font-medium">
+                          <span className="font-medium text-gray-700">
                             Continue editing {recentCertificate?.name}
                           </span>
                           {recentCertificate && (
@@ -617,7 +617,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                         </div>
                         <CreateCertificateDialog
                           triggerButton={
-                            <Button className="bg-basePrimary text-white rounded-md">
+                            <Button className="rounded-md">
                               Start Designing
                             </Button>
                           }

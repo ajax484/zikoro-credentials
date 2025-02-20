@@ -65,7 +65,8 @@ const SelectOrganization = () => {
         />
         <Button
           onClick={() => setDialogIsOpen(true)}
-          className="bg-basePrimary gap-x-2 py-1 text-gray-50 font-medium flex items-center justify-center rounded-lg w-fit text-xs"
+          size="sm"
+          className="gap-x-2 font-medium flex items-center justify-center rounded-lg w-fit text-xs"
         >
           <span>New Workspace</span>
           <PlusCircle className="w-4 h-4" />

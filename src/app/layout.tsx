@@ -4,7 +4,7 @@ import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Toaster } from "@/components/ui/toaster";
-import logo from "@/public/logo.png"
+import MainLayout from "@/components/layout/Main.layout";
 
 export const metadata: Metadata = {
   title: "Zikoro - Credentials",
@@ -43,7 +43,9 @@ export default function RootLayout({
       <body className={`${montserrat.className} antialiased`}>
         <ToastContainer />
         <Toaster />
+        <MainLayout>
         {children}
+        </MainLayout>
       </body>
     </html>
   );

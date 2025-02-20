@@ -1,43 +1,32 @@
+"use client";
+import useUserStore from "@/store/globalUserStore";
+import { TOrganization } from "@/types/organization";
 import { getRequest } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
-export function useFetchWorkspaces({
-  search,
-  role,
-  location,
-  page,
-  limit,
-}: {
-  search: string;
-  role: string;
-  location: string;
-  page: number;
-  limit: number;
-}) {
+export function useFetchWorkspaces() {
+  const { user } = useUserStore();
+  
   const { data, isFetching, status, error, refetch } = useQuery({
-    queryKey: ["workspaces", search, role, location, page],
+    queryKey: ["workspaces", user.userEmail],
     queryFn: async () => {
-      const { data } = await getRequest({
+      const searchParams = new URLSearchParams();
+      searchParams.set("userEmail", user.userEmail);
+
+      const { data, status } = await getRequest<TOrganization[]>({
         endpoint: "/workspaces",
-        searchParams: {
-          limit: 10,
-          search,
-          role,
-          location,
-          page,
-        },
+        searchParams,
       });
 
-      if (!data.success) {
-        toast.error(data.message);
-        throw new Error(data.message);
+      if (status !== 200) {
+        toast.error(data.error);
+        throw new Error(data.error);
       }
 
-      console.log(data.totalDocs);
-
-      return { users: data.data, totalDocs: data.totalDocs };
+      return data.data;
     },
+    initialData: [],
   });
 
   return {

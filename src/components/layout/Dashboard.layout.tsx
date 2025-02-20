@@ -9,27 +9,22 @@ import {
   DialogHeader,
 } from "../ui/dialog";
 import { TOrganization } from "@/types/organization";
-import { useGetData } from "@/hooks/services/request";
 import GradientBorderSelect from "../CustomSelect/GradientSelectBorder";
 import useUserStore from "@/store/globalUserStore";
 import { Button } from "../ui/button";
 import { PlusCircle } from "lucide-react";
 import { CreateOrganization } from "../CreateOrganisation/createOrganisation";
+import { useFetchWorkspaces } from "@/queries/Workspaces.queries";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useUserStore();
-
   const { organization, setOrganization } = useOrganizationStore();
 
   const {
     data: workspaces,
-    isLoading: workspacesIsLoading,
+    isFetching: workspacesIsLoading,
+    refetch: refetchWorkspaces,
     error: workspacesError,
-    getData: refetchWorkspaces,
-  } = useGetData<TOrganization[]>(
-    `/workspaces?userEmail=${user?.userEmail || "ubahyusuf484@gmail.com"}`,
-    []
-  );
+  } = useFetchWorkspaces();
 
   const [workspace, setWorkspace] = useState<TOrganization | null>(
     organization
@@ -59,57 +54,53 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <main className="min-h-screen relative bg-[#f7f8ff] flex w-full">
-      {/* if organization is not set, show dialog */}
-
-      <>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent>
-            <DialogHeader className="px-3">
-              <h1 className="text-2xl capitalize font-semibold text-gray-800">
-                Select Workspace
-              </h1>
-            </DialogHeader>
-            <div className="flex flex-col gap-1">
-              <span className="text-xs text-gray-600">Workspace:</span>
-              <div className="flex items-center gap-4">
-                <GradientBorderSelect
-                  placeholder={
-                    workspacesIsLoading ? "Loading..." : "Select Organization"
-                  }
-                  value={String(workspace?.id)}
-                  onChange={(value) => updateOrganization(value)}
-                  options={workspaces?.map(({ organizationName, id }) => ({
-                    label: organizationName,
-                    value: String(id),
-                  }))}
-                />
-                <Button
-                  onClick={() => {
-                    setOpen(false);
-                    setDialogIsOpen(true);
-                  }}
-                  className="bg-basePrimary gap-x-2 py-1 text-gray-50 font-medium flex items-center justify-center rounded-lg w-fit text-xs"
-                >
-                  <span>New Workspace</span>
-                  <PlusCircle className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-            <DialogFooter>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader className="px-3">
+            <h1 className="text-2xl capitalize font-semibold text-gray-800">
+              Select Workspace
+            </h1>
+          </DialogHeader>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-gray-600">Workspace:</span>
+            <div className="flex items-center gap-4">
+              <GradientBorderSelect
+                placeholder={
+                  workspacesIsLoading ? "Loading..." : "Select Organization"
+                }
+                value={String(workspace?.id)}
+                onChange={(value) => updateOrganization(value)}
+                options={workspaces?.map(({ organizationName, id }) => ({
+                  label: organizationName,
+                  value: String(id),
+                }))}
+              />
               <Button
                 onClick={() => {
                   setOpen(false);
-                  setOrganization(workspace);
+                  setDialogIsOpen(true);
                 }}
-                className="bg-basePrimary text-white"
-                type="button"
+                className="bg-basePrimary gap-x-2 py-1 text-gray-50 font-medium flex items-center justify-center rounded-lg w-fit text-xs"
               >
-                Select
+                <span>New Workspace</span>
+                <PlusCircle className="w-4 h-4" />
               </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                setOpen(false);
+                setOrganization(workspace);
+              }}
+              className="bg-basePrimary text-white"
+              type="button"
+            >
+              Select
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {dialogIsOpen && (
         <CreateOrganization

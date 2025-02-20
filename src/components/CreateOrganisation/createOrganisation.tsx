@@ -362,7 +362,6 @@ export function CreateOrganization({
               <div className="w-full flex items-center justify-center">
                 <Button
                   type="submit"
-                  className="w-full gap-x-2 bg-basePrimary text-gray-50 font-medium"
                 >
                   {loading ? (
                     <LoaderAlt size={20} className="animate-spin" />

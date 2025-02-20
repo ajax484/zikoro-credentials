@@ -58,7 +58,6 @@ const buildEditor = ({
   toggleQRCode,
 }: BuildEditorProps): Editor => {
   const generateSaveOptions = () => {
-    console.log(getWorkspace());
     const { width, height, left, top } = getWorkspace() as fabric.Rect;
 
     return {
@@ -311,7 +310,9 @@ const buildEditor = ({
             .filter(
               (object) => object instanceof fabric.Image && object.isBackground
             )
-            .forEach((bgImage) => canvas.remove(bgImage));
+            .forEach((bgImage) => {
+              canvas.remove(bgImage);
+            });
 
           // Mark the image as a background
           image.set({ isBackground: true });
@@ -924,6 +925,17 @@ export const useEditor = ({
 
       setCanvas(initialCanvas);
       setContainer(initialContainer);
+
+      initialCanvas
+        .getObjects()
+        .filter(
+          (object) => object instanceof fabric.Image && object.isBackground
+        )
+        .forEach((bgImage) => {
+          initialCanvas.sendToBack(bgImage);
+          bgImage.scaleToWidth(initialWorkspace.width || 1200);
+          bgImage.scaleToHeight(initialWorkspace.height || 900);
+        });
 
       const currentState = JSON.stringify(initialCanvas.toJSON(JSON_KEYS));
       canvasHistory.current = [currentState];

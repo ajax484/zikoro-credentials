@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
 
       const { data: organizations, error: organizationsError } = await supabase
         .from("organization")
-        .select("*, verification:organizationVerification(*)") // Use left join by removing !inner
+        .select("*, verification:organizationVerification(*)")
         .order("created_at", { ascending: false })
         .in("organizationAlias", workspaceAliases);
 
