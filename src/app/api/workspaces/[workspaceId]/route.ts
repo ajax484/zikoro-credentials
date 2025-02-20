@@ -15,7 +15,7 @@ export async function POST(
       const payload = await req.json();
 
       const { data, error } = await supabase
-        .from("organization, verification:organizationVerification!inner(*)")
+        .from("organization")
         .update(payload)
         .eq("id", workspaceId)
         .select("*");
