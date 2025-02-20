@@ -199,7 +199,7 @@ const VerifyOrganization = () => {
                             { length: new Date().getFullYear() - 1900 + 1 },
                             (_, i) => 1900 + i
                           )
-                            .sort((a, b) => a - b)
+                            .sort((a, b) => b - a)
                             .map((year) => (
                               <SelectItem value={String(year)} key={year}>
                                 {year}
