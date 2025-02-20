@@ -36,11 +36,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import useUserStore from "@/store/globalUserStore";
 
 const verifySchema = z.object({
   address: z.string().min(1),
   country: z.string(),
-  year: z.number(),
+  incorporationYear: z.number().min(1900).max(2025),
   document: z.object({
     url: z.string().url("Enter a valid URL"),
     name: z.string().min(1),
@@ -49,6 +50,7 @@ const verifySchema = z.object({
 
 const VerifyOrganization = () => {
   const { organization, setOrganization } = useOrganizationStore();
+  const { user } = useUserStore();
 
   const [documentUploading, setDocumentUploading] = useState<boolean>(false);
 
@@ -64,7 +66,7 @@ const VerifyOrganization = () => {
     defaultValues: {
       address: organization?.BillingAddress,
       country: "",
-      year: new Date().getFullYear(),
+      incorporationYear: new Date().getFullYear(),
       document: {
         url: "https://",
         name: "",
@@ -79,6 +81,7 @@ const VerifyOrganization = () => {
         ...data,
         status: "pending",
         workspaceAlias: organization?.organizationAlias,
+        createdBy: user.id,
       },
     });
   };
@@ -178,16 +181,32 @@ const VerifyOrganization = () => {
               />
               <FormField
                 control={form.control}
-                name="year"
+                name="incorporationYear"
                 render={({ field }) => (
-                  <InputOffsetLabel label="Year">
+                  <InputOffsetLabel label="Incorporation Year">
                     <div className="relative w-full">
-                      <Input
-                        placeholder="year"
-                        type="text"
-                        {...field}
-                        className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-                      />
+                      <Select
+                        onValueChange={(value) =>
+                          field.onChange(parseInt(value))
+                        }
+                        value={String(field.value)}
+                      >
+                        <SelectTrigger className="w-full rounded-md text-xs font-medium bg-transparent">
+                          <SelectValue placeholder={"Select year"} />
+                        </SelectTrigger>
+                        <SelectContent className="z-[1001]">
+                          {Array.from(
+                            { length: new Date().getFullYear() - 1900 + 1 },
+                            (_, i) => 1900 + i
+                          )
+                            .sort((a, b) => a - b)
+                            .map((year) => (
+                              <SelectItem value={String(year)} key={year}>
+                                {year}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </InputOffsetLabel>
                 )}
