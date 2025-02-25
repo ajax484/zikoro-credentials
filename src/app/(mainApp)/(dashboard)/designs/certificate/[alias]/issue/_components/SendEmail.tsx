@@ -407,22 +407,22 @@ const SendEmail = ({
                     )}
                   />
                 </div>
-                <FormField
-                  name={"header" as const}
-                  render={({ field }) => (
-                    <FormItem className="space-y-1">
-                      <FormLabel className="text-gray-700">Header</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Header"
-                          value={field.value}
-                          onChange={(e) => field.onChange(e.target.value)}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
               </div>
+              <FormField
+                name={"header" as const}
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-gray-700">Header</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Header"
+                        value={field.value}
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
               <FormField
                 name={"body" as const}
                 render={({ field }) => (
