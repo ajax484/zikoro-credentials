@@ -1,22 +1,17 @@
+import { RecipientType } from "@/app/(mainApp)/(dashboard)/designs/certificate/[alias]/issue/_components/Recipients";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-type recipient = {
-  recipientFirstName: string;
-  recipientLastName: string;
-  recipientEmail: string;
-};
-
 type recipientStore = {
-  recipients: recipient[];
-  setRecipients: (recipients: recipient[]) => void;
+  recipients: RecipientType[];
+  setRecipients: (recipients: RecipientType[]) => void;
 };
 
 export const useRecipientsStore = create<recipientStore>()(
   persist(
     (set) => ({
       recipients: [],
-      setRecipients: (recipients: recipient[]) => set({ recipients }),
+      setRecipients: (recipients: RecipientType[]) => set({ recipients }),
     }),
     {
       name: "recipients",

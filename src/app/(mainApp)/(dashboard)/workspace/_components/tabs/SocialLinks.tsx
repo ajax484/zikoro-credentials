@@ -11,13 +11,26 @@ import useOrganizationStore from "@/store/globalOrganizationStore";
 import { Facebook, Instagram, Linkedin } from "styled-icons/bootstrap";
 import { useMutateData } from "@/hooks/services/request";
 
+export const optionalUrl = z
+  .string()
+  .trim()
+  .optional()
+  .refine((val) => !val || z.string().url().safeParse(val).success, {
+    message: "Enter a valid URL",
+  });
+
 const socialLinksSchema = z.object({
-  linkedIn: z.string().url("Enter a valid URL").optional(),
-  instagram: z.string().url("Enter a valid URL").optional(),
-  facebook: z.string().url("Enter a valid URL").optional(),
-  x: z.string().url("Enter a valid URL").optional(),
+  linkedIn: optionalUrl,
+  instagram: optionalUrl,
+  facebook: optionalUrl,
+  x: optionalUrl,
   socialLinks: z
-    .array(z.string().url("Enter a valid URL").optional())
+    .array(
+      z.object({
+        title: z.string().min(1),
+        url: optionalUrl,
+      })
+    )
     .optional(),
 });
 
@@ -34,7 +47,7 @@ const SocialLinks = () => {
       instagram: organization?.instagram,
       facebook: organization?.facebook,
       x: organization?.x,
-      socialLinks: [],
+      socialLinks: organization?.socialLinks || [],
     },
   });
 
@@ -46,19 +59,19 @@ const SocialLinks = () => {
   const onSubmit = async (data: z.infer<typeof socialLinksSchema>) => {
     console.log(data);
     const updatedOrganization = await updateWorkspace({
-      payload: { ...organization, ...data },
+      payload: { ...data },
     });
     console.log(updatedOrganization);
-    setOrganization(updatedOrganization);
+    updatedOrganization && setOrganization(updatedOrganization);
   };
 
   return (
     <div className="space-y-6">
-      <h2 className="text-sm font-medium text-gray-600 text-center">
+      <h2 className="font-medium text-gray-600 text-center">
         Edit your workspace information
       </h2>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-2 gap-4 items-center flex-1">
             <FormField
               control={form.control}
@@ -152,48 +165,67 @@ const SocialLinks = () => {
                 </InputOffsetLabel>
               )}
             />
-            {fields.map((field, index) => (
-              <FormField
-                key={field.id}
-                control={form.control}
-                name={`socialLinks.${index}`}
-                render={({ field }) => (
-                  <InputOffsetLabel
-                    label={`socialLink${index + 1}`}
-                    append={
-                      <div className="bg-white p-1 rounded-md">
-                        <Link className="size-6" />
-                      </div>
-                    }
-                  >
-                    <div className="relative w-full flex">
-                      <Input
-                        placeholder="X"
-                        type="text"
-                        {...field}
-                        className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-                      />
-                      <button
-                        type="button"
-                        aria-label="Delete social link"
-                        className="text-red-600"
-                        onClick={() => remove(index)}
-                      >
-                        <Trash className="size-4" />
-                      </button>
-                    </div>
-                  </InputOffsetLabel>
-                )}
-              />
-            ))}
           </div>
-          <button
-            type="button"
-            className="text-sm text-sky-600 hover:text-sky-700 underline block"
-            onClick={() => append("https://")}
-          >
-            <span>Add new social link</span>
-          </button>
+          <div className="space-y-4">
+            <h1 className="text-lg font-bold text-center text-gray-800">
+              Custom Links
+            </h1>
+            <div className="grid grid-cols-2 gap-4 items-center flex-1">
+              {fields.map((field, index) => (
+                <div className="flex flex-col gap-1 border p-2 rounded-md relative">
+                  <button
+                    type="button"
+                    aria-label="Delete link"
+                    className="absolute top-1 right-1 z-10"
+                    onClick={() => remove(index)}
+                  >
+                    <X className="size-6 text-red-600" />
+                  </button>
+                  <FormField
+                    key={field.id}
+                    control={form.control}
+                    name={`socialLinks.${index}.title`}
+                    render={({ field }) => (
+                      <InputOffsetLabel label={`Link title`}>
+                        <div className="relative w-full flex">
+                          <Input
+                            placeholder="link title"
+                            type="text"
+                            {...field}
+                            className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+                          />
+                        </div>
+                      </InputOffsetLabel>
+                    )}
+                  />
+                  <FormField
+                    key={field.id}
+                    control={form.control}
+                    name={`socialLinks.${index}.url`}
+                    render={({ field }) => (
+                      <InputOffsetLabel label={`Link Url`}>
+                        <div className="relative w-full flex">
+                          <Input
+                            placeholder="link url"
+                            type="text"
+                            {...field}
+                            className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+                          />
+                        </div>
+                      </InputOffsetLabel>
+                    )}
+                  />
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="text-sm text-blue-500 hover:text-blue-700 underline w-full flex justify-center font-medium"
+              onClick={() => append({ title: "", url: "" })}
+            >
+              <span>Add custom link</span>
+            </button>
+          </div>
 
           <Button className="bg-basePrimary text-white" type="submit">
             Save

@@ -12,9 +12,13 @@ import { useUpdateData } from "@/hooks/services/request";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { TOrganization } from "@/types/organization";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Pen } from "lucide-react";
+import { toast } from "react-toastify";
+import { uploadFile } from "@/utils/helpers";
 
 // Create Zod schema for recipient form validation
 const recipientSchema = z
@@ -112,9 +116,66 @@ const Information = ({
 
   console.log(metadata);
 
+  const [profilePictureUploading, setProfilePictureUploading] =
+    useState<boolean>(false);
+
+    const newProfilePicture = form.watch("profilePicture");
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          name={"profilePicture" as const}
+          render={({ field }) => (
+            <FormItem className="flex gap-4 w-full">
+              <FormControl className="relative w-fit">
+                <div className="relative h-fit">
+                  <Avatar className="w-24 h-24">
+                    <AvatarImage src={newProfilePicture} />
+                    <AvatarFallback>
+                      {(recipient.recipientFirstName[0] || "#") +
+                        (recipient.recipientLastName[0] || "#")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <label className="absolute bottom-0 right-0 p-1 transition-colors bg-white rounded-full shadow-lg cursor-pointer hover:bg-gray-50">
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        if (!file.type.startsWith("image/")) {
+                          toast.error("Please upload an image file");
+                          return;
+                        }
+                        if (file.size > 5 * 1024 * 1024) {
+                          toast.error("Image size should be less than 5MB");
+                          return;
+                        }
+                        setProfilePictureUploading(true);
+                        const { url, error } = await uploadFile(file, "image");
+
+                        if (error) return toast.error(error);
+                        // alert("File uploaded successfully");
+
+                        url && field.onChange(url);
+
+                        setProfilePictureUploading(false);
+                      }}
+                      disabled={profilePictureUploading}
+                    />
+                    {profilePictureUploading ? (
+                      <div className="w-4 h-4 border-2 border-gray-300 rounded-full animate-spin border-t-black" />
+                    ) : (
+                      <Pen className="w-4 h-4" />
+                    )}
+                  </label>
+                </div>
+              </FormControl>
+            </FormItem>
+          )}
+        />
         {Object.keys(rest).map((key) => {
           return (
             <FormField

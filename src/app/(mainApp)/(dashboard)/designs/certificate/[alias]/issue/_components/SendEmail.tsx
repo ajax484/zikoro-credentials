@@ -162,7 +162,7 @@ const SendEmail = ({
     []
   );
   const { mutateData, isLoading } = useMutateData(
-    `/certificates/${certificate.certificateAlias}/recipients/release`
+    `/certificates/${certificate?.certificateAlias}/recipients/release`
   );
   const { mutateData: createTemplate, isLoading: templateIsCreating } =
     useMutateData(`/certificates/recipients/templates`);
@@ -211,6 +211,7 @@ const SendEmail = ({
   };
 
   const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
+    if (!user) return toast.error("Please login to send certificate");
     if (
       creditBalance[creditType] === 0 ||
       creditBalance[creditType] < recipients.length
@@ -227,6 +228,8 @@ const SendEmail = ({
             recipientEmail,
             recipientFirstName,
             recipientLastName,
+            recipientAlias,
+            profilePicture,
             logoUrl,
             ...metadata
           }) => ({
@@ -234,6 +237,7 @@ const SendEmail = ({
             recipientEmail: recipientEmail.trim(),
             recipientFirstName: recipientFirstName.trim(),
             recipientLastName: recipientLastName.trim(),
+            profilePicture,
             logoUrl,
           })
         ),
@@ -250,7 +254,7 @@ const SendEmail = ({
   const creditType =
     certificate?.attributes && certificate?.attributes.length > 0
       ? "gold"
-      : certificate.hasQRCode
+      : certificate?.hasQRCode
       ? "silver"
       : "bronze";
 
@@ -263,10 +267,11 @@ const SendEmail = ({
   const buttonProps = form.watch("buttonProps");
 
   useEffect(() => {
-    const color = getTextColorFromBackground(buttonProps.backgroundColor);
+    if (!buttonProps) return;
+    const color = getTextColorFromBackground(buttonProps?.backgroundColor);
     console.log(color, "Color");
     form.setValue("buttonProps.textColor", color);
-  }, [buttonProps.backgroundColor]);
+  }, [buttonProps?.backgroundColor]);
 
   const [open, setOpen] = useState(false);
 
@@ -291,6 +296,9 @@ const SendEmail = ({
 
   const [currentTemplate, setTemplate] =
     useState<RecipientEmailTemplate | null>(null);
+
+  console.log(certificate);
+  console.log(form.formState.errors);
 
   return (
     <Form {...form}>
@@ -591,8 +599,8 @@ const SendEmail = ({
                     href={"#"}
                     style={{
                       display: "inline-block",
-                      backgroundColor: buttonProps.backgroundColor,
-                      color: buttonProps.textColor,
+                      backgroundColor: buttonProps?.backgroundColor,
+                      color: buttonProps?.textColor,
                       textDecoration: "none",
                       padding: "12px 24px",
                       borderRadius: "5px",
@@ -601,7 +609,7 @@ const SendEmail = ({
                       fontWeight: "bold",
                     }}
                   >
-                    {buttonProps.text}
+                    {buttonProps?.text}
                   </a>
                 </div>
                 {showSocialLinks && (
@@ -620,9 +628,12 @@ const SendEmail = ({
                     </div>
                     {/* social links */}
                     {organization?.socialLinks &&
-                      organization?.socialLinks.map((link: string) => (
-                        <div className="flex items-center gap-2">
+                      organization?.socialLinks.map((link) => (
+                        <div className="flex items-center gap-0.5">
                           <Link2 className="size-4" />
+                          <span className="text-sm text-gray-700">
+                            {link.title}
+                          </span>
                         </div>
                       ))}
                   </div>

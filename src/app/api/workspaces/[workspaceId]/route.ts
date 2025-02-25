@@ -18,7 +18,8 @@ export async function POST(
         .from("organization")
         .update(payload)
         .eq("id", workspaceId)
-        .select("*");
+        .select("*")
+        .maybeSingle();
 
       console.log(data);
 

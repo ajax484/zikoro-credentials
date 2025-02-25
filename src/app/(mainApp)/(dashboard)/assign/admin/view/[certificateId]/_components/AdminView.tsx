@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import SendIcon from "@/public/icons/fa_send.svg";
+import { ActionModal } from "@/app/(mainApp)/credentials/verify/certificate/[certificateId]/page";
 
 interface TTab {
   label: string;
@@ -124,8 +125,6 @@ const CertificateView = ({
       initialCanvas: canvas,
       initialContainer: containerRef.current!,
     });
-
-    setLink(editor?.generateLink(true) || "");
 
     return () => {
       canvas.dispose();
@@ -386,7 +385,21 @@ const CertificateView = ({
     );
   };
 
-  const [link, setLink] = useState("");
+  const btnRef = useRef<HTMLButtonElement>(null);
+
+  function toggleShareDropDown() {
+    showShareDropDown((prev) => !prev);
+  }
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      toggleShareDropDown();
+    }, 1500);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
 
   return (
     <section className="space-y-4">
@@ -456,6 +469,107 @@ const CertificateView = ({
           </div>
         </div>
       </section>
+      <div className="relative flex gap-4 items-center opacity-0">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button className="bg-basePrimary text-white hover:bg-basePrimary/20 py-1 px-2 h-fit">
+              <h3 className="font-medium text-[10px]">Share Credential</h3>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[300px] p-2">
+            <ActionModal
+              recordShare={() => {}}
+              close={toggleShareDropDown}
+              url={window.location.href}
+              shareText={"text"}
+            />
+          </PopoverContent>
+        </Popover>
+        <Popover>
+          <PopoverTrigger>
+            <Download className="size-4" />
+          </PopoverTrigger>
+          <PopoverContent className="p-4 flex w-[150px] items-center justify-between gap-2 bg-white rounded-md text-basePrimary">
+            <button
+              aria-label="Download pdf"
+              onClick={() =>
+                editor?.savePdf(
+                  {
+                    width: initialData?.width ?? 900,
+                    height: initialData?.height ?? 1200,
+                  },
+                  `${
+                    certificate?.recipientFirstName +
+                    "_" +
+                    certificate?.recipientLastName
+                  }_${certificate?.originalCertificate.name}.pdf`
+                )
+              }
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                xmlnsXlink="http://www.w3.org/1999/xlink"
+                aria-hidden="true"
+                role="img"
+                className="iconify iconify--carbon"
+                width="1.5em"
+                height="1.5em"
+                preserveAspectRatio="xMidYMid meet"
+                viewBox="0 0 32 32"
+              >
+                <path
+                  fill="currentColor"
+                  d="M30 11V9h-8v14h2v-6h5v-2h-5v-4zM8 9H2v14h2v-5h4a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2m0 7H4v-5h4zm8 7h-4V9h4a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4m-2-2h2a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-2z"
+                />
+              </svg>
+            </button>
+            <button aria-label="Download png" onClick={() => editor?.savePng()}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                xmlnsXlink="http://www.w3.org/1999/xlink"
+                aria-hidden="true"
+                role="img"
+                className="iconify iconify--tabler"
+                width="1.5em"
+                height="1.5em"
+                preserveAspectRatio="xMidYMid meet"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 8h-2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h2v-4h-1M3 16V8h2a2 2 0 1 1 0 4H3m7 4V8l4 8V8"
+                />
+              </svg>
+            </button>
+            <button aria-label="Download jpg" onClick={() => editor?.saveSvg()}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                xmlnsXlink="http://www.w3.org/1999/xlink"
+                aria-hidden="true"
+                role="img"
+                className="iconify iconify--tabler"
+                width="1.5em"
+                height="1.5em"
+                preserveAspectRatio="xMidYMid meet"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 8h-2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h2v-4h-1M7 8H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H3m7-8l1.5 8h1L14 8"
+                />
+              </svg>
+            </button>
+          </PopoverContent>
+        </Popover>
+      </div>
     </section>
   );
 };
@@ -471,7 +585,9 @@ const AdminView = ({ certificateId }: { certificateId: string }) => {
         workspace: TOrganization;
       };
     }
-  >(`/certificates/verify/${certificateId}`);
+  >(`/certificates/recipients/${certificateId}`);
+
+  console.log(certificate);
 
   return (
     <section>

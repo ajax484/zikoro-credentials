@@ -27,7 +27,7 @@ export interface TOrganization {
   certificateAsset: TCertificateAsset;
   teamMembers: TOrganizationTeamMember[];
   subscriptionExpiryDate: string;
-  socialLinks: string[];
+  socialLinks: { title: string; url: string }[];
   verification: OrganizationVerification[];
 }
 
@@ -70,7 +70,7 @@ export interface CredentialsWorkspaceInvite {
 
 export interface OrganizationVerification {
   id: number;
-  createdAt: string; // ISO timestamp (with time zone)
+  createdAt: string;
   workspaceAlias?: string | null;
   address?: string | null;
   country?: string | null;

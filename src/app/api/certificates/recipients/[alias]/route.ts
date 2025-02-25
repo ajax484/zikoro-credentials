@@ -1,25 +1,29 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import { CertificateRecipient } from "@/types/certificates";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { certificateAlias: string } }
+  { params }: { params: { alias: string } }
 ) {
-  const { certificateAlias } = params;
   const supabase = createRouteHandlerClient({ cookies });
   if (req.method === "GET") {
     try {
+      const { alias } = params;
+
+      let certificate: CertificateRecipient | null = null;
+
       const { data, error, status } = await supabase
         .from("certificateRecipients")
         .select(
           "*, originalCertificate:certificate!inner(*, workspace:organization!inner(*))"
         )
-        .eq("certificateAlias", certificateAlias)
+        .eq("certificateId", alias)
+        .eq("isValid", true)
         .maybeSingle();
 
-      console.log(data, certificateAlias);
+      console.log(data);
 
       if (error) throw error;
 

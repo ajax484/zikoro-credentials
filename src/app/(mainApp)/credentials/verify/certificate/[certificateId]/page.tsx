@@ -28,6 +28,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // import { ShareSocial } from "react-share-social";
 
@@ -49,7 +55,8 @@ const CertificateView = ({
   const canvasRef = useRef(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  console.log(certificate?.originalCertificate, "initialData");
+  // console.log(certificate?.originalCertificate, "initialData");
+  console.log(certificate, "initialData");
 
   let newState = JSON.parse(
     replaceURIVariable(
@@ -328,16 +335,26 @@ const CertificateView = ({
                 <Instagram className="size-4" />
               </Link>
             )}
-            {certificate?.originalCertificate?.workspace?.socialLinks &&
+            {certificate?.originalCertificate?.workspace?.socialLinks.length >
+              0 &&
               certificate?.originalCertificate?.workspace?.socialLinks.map(
-                (link) => (
-                  <Link
-                    key={link}
-                    href={link}
-                    className="bg-[#f7f8f9] p-2 border rounded"
-                  >
-                    <Link2 className="size-4" />
-                  </Link>
+                (link, index) => (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link
+                          key={index}
+                          href={link.url}
+                          className="bg-[#f7f8f9] p-2 border rounded"
+                        >
+                          <Link2 className="size-4" />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-[#F7F8FF] p-2 rounded-lg border border-gray-200 text-gray-700">
+                        <p>{link.title}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 )
               )}
           </div>
@@ -477,30 +494,32 @@ const CertificateView = ({
           </div>
         </div>
       </section>
-      {certificate?.originalCertificate?.certificateSettings?.skills && (
-        <div className="bg-white p-4 border rounded-md w-full h-full space-y-2 flex flex-col items-center gap-4">
-          <GradientText className="font-bold" Tag={"h1"}>
-            Earned Skills
-          </GradientText>
-          <div className="flex flex-wrap gap-2">
-            {certificate?.originalCertificate?.certificateSettings?.skills.map(
-              ({ value, color }) => (
-                <div
-                  className="relative text-xs flex items-center gap-1.5 p-2 rounded w-fit md:text-sm"
-                  style={{
-                    backgroundColor: color + "22",
-                    color: color,
-                    borderWidth: "2px",
-                    borderColor: color + "22",
-                  }}
-                >
-                  <span className="font-medium capitalize">{value}</span>
-                </div>
-              )
-            )}
+      {certificate?.originalCertificate?.certificateSettings?.skills &&
+        certificate?.originalCertificate?.certificateSettings?.skills.length >
+          0 && (
+          <div className="bg-white p-4 border rounded-md w-full h-full space-y-2 flex flex-col items-center gap-4">
+            <GradientText className="font-bold" Tag={"h1"}>
+              Earned Skills
+            </GradientText>
+            <div className="flex flex-wrap gap-2">
+              {certificate?.originalCertificate?.certificateSettings?.skills.map(
+                ({ value, color }) => (
+                  <div
+                    className="relative text-xs flex items-center gap-1.5 p-2 rounded w-fit md:text-sm"
+                    style={{
+                      backgroundColor: color + "22",
+                      color: color,
+                      borderWidth: "2px",
+                      borderColor: color + "22",
+                    }}
+                  >
+                    <span className="font-medium capitalize">{value}</span>
+                  </div>
+                )
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </section>
   );
 };
@@ -572,7 +591,7 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
 
 export default Page;
 
-function ActionModal({
+export function ActionModal({
   close,
   url,
   shareText,

@@ -225,7 +225,9 @@ const buildEditor = ({
       canvas
         .getObjects()
         .filter(
-          (object) => object instanceof fabric.Image && object.isBackground
+          (object) =>
+            object instanceof fabric.Image &&
+            (object.isBackground || !object.selectable)
         )
         .forEach((bgImage) => canvas.remove(bgImage));
       workspace?.set({ fill: value });
@@ -308,7 +310,9 @@ const buildEditor = ({
           canvas
             .getObjects()
             .filter(
-              (object) => object instanceof fabric.Image && object.isBackground
+              (object) =>
+                object instanceof fabric.Image &&
+                (object.isBackground || !object.selectable)
             )
             .forEach((bgImage) => {
               canvas.remove(bgImage);
@@ -929,7 +933,9 @@ export const useEditor = ({
       initialCanvas
         .getObjects()
         .filter(
-          (object) => object instanceof fabric.Image && object.isBackground
+          (object) =>
+            object instanceof fabric.Image &&
+            (object.isBackground || !object.selectable)
         )
         .forEach((bgImage) => {
           initialCanvas.sendToBack(bgImage);

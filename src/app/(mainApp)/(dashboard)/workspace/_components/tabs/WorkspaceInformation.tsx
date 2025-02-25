@@ -76,6 +76,7 @@ const VerifyOrganization = () => {
 
   const onSubmit = async (data: z.infer<typeof verifySchema>) => {
     console.log(data);
+    if (!user) return;
     await verifyOrganization({
       payload: {
         ...data,
@@ -91,9 +92,9 @@ const VerifyOrganization = () => {
     if (!file) return;
 
     // Allowed file types: PNG, JPEG, and PDF
-    const allowedTypes = ["image/png", "image/jpeg", "application/pdf"];
+    const allowedTypes = ["image/png", "image/jpeg"];
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Please upload a PDF, PNG, or JPEG file");
+      toast.error("Please upload a PNG or JPEG file");
       return;
     }
 
@@ -105,10 +106,7 @@ const VerifyOrganization = () => {
 
     setDocumentUploading(true);
 
-    // Determine folder based on file type
-    const folder = file.type === "application/pdf" ? "pdf" : "image";
-
-    const { url, error } = await uploadFile(file, folder);
+    const { url, error } = await uploadFile(file, "image");
 
     if (error) {
       toast.error(error);
@@ -231,12 +229,14 @@ const VerifyOrganization = () => {
                         <input
                           type="file"
                           className="hidden"
-                          accept="image/png, image/jpeg, application/pdf"
+                          accept="image/png, image/jpeg"
                           onChange={(e) => uploadDocumentFn(e, field)}
                           disabled={documentUploading}
                         />
                       </label>
-                      <p className="text-gray-700 text-xs">pdf, png, jpeg.</p>
+                      <p className="text-gray-700 text-xs">
+                        accepts png, jpeg.
+                      </p>
                     </div>
                   ) : (
                     <div className="size-8 border-2 border-gray-300 rounded-full animate-spin border-t-black mx-auto my-8" />

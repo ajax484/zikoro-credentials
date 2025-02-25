@@ -17,7 +17,7 @@ export async function GET(
         .eq("certificateAlias", certificateAlias)
         .maybeSingle();
 
-      // console.log(data, "certificate");
+      console.log(data, "certificate");
 
       if (error) throw error;
 

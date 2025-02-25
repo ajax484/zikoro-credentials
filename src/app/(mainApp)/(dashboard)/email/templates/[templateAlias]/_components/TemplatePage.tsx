@@ -31,7 +31,7 @@ import { toast } from "react-toastify";
 import { profile } from "console";
 import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
-import { ImageIcon, X } from "lucide-react";
+import { ImageIcon, Link2, X } from "lucide-react";
 import {
   getTextColorFromBackground,
   replaceSpecialText,
@@ -54,6 +54,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { optionalUrl } from "@/app/(mainApp)/(dashboard)/workspace/_components/tabs/SocialLinks";
 
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
@@ -61,7 +62,7 @@ const sendEmailSchema = z.object({
   senderName: z.string().nonempty("Sender name is required"),
   replyTo: z.string().optional(),
   showLogo: z.boolean().optional(),
-  logoUrl: z.string().url().optional(),
+  logoUrl: optionalUrl,
   showSocialLinks: z.boolean().optional(),
   templateName: z.string().nonempty("Template name is required"),
   buttonProps: z.object({
@@ -140,7 +141,6 @@ const sendEmailSchema = z.object({
 const TemplatePage = ({ templateAlias }: { templateAlias: string }) => {
   const { user } = useUserStore();
   const { organization } = useOrganizationStore();
-  const router = useRouter();
   const {
     data: template,
     isLoading: templateIsLoading,
@@ -564,9 +564,12 @@ const TemplatePage = ({ templateAlias }: { templateAlias: string }) => {
                       <Instagram className="size-4" />
                     </div>
                     {organization?.socialLinks &&
-                      organization?.socialLinks.map((link: string) => (
-                        <div className="flex items-center gap-2">
+                      organization?.socialLinks.map((link) => (
+                        <div className="flex items-center gap-0.5">
                           <Link2 className="size-4" />
+                          <span className="text-sm text-gray-700">
+                            {link.title}
+                          </span>
                         </div>
                       ))}
                   </div>

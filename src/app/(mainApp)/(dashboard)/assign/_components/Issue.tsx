@@ -553,7 +553,7 @@ const Issue = ({
 
     return certificate?.attributes.length > 0
       ? "gold"
-      : certificate.hasQRCode
+      : certificate?.hasQRCode
       ? "silver"
       : "bronze";
   }, [selectedCertificate]);

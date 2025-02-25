@@ -147,12 +147,12 @@ const RecipientsPage = ({
     updatePage(1);
   };
 
-  console.log(certificate.hasQRCode);
+  console.log(certificate?.hasQRCode);
 
   const creditType =
     certificate?.attributes && certificate?.attributes.length > 0
       ? "gold"
-      : certificate.hasQRCode
+      : certificate?.hasQRCode
       ? "silver"
       : "bronze";
 
@@ -291,9 +291,9 @@ const RecipientsPage = ({
                         }
                       />
                     </FormControl>
-                    {certificate.attributes &&
-                      certificate.attributes.length > 0 &&
-                      certificate.attributes.map((attribute) => (
+                    {certificate?.attributes &&
+                      certificate?.attributes.length > 0 &&
+                      certificate?.attributes.map((attribute) => (
                         <FormControl>
                           <Input
                             placeholder={`enter ${attribute}`}

@@ -14,6 +14,8 @@ const IssuePage = ({ alias, from }: { alias: string; from: string }) => {
     true
   );
 
+  console.log(certificate);
+
   const { recipients: importedRecipients } = useRecipientsStore();
 
   useEffect(() => {
