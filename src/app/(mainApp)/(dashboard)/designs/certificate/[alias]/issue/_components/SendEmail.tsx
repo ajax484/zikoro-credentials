@@ -63,6 +63,7 @@ import {
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
   subject: z.string().nonempty("Subject is required"),
+  header: z.string().nonempty("Header is required"),
   senderName: z.string().nonempty("Sender name is required"),
   replyTo: z.string().optional(),
   showLogo: z.boolean().optional(),
@@ -181,6 +182,7 @@ const SendEmail = ({
 
         Team.`,
       subject: "Your certificate is ready for download",
+      header: "Your certificate is ready for download",
       senderName: "Event team",
       replyTo: "",
       showLogo: true,
@@ -262,6 +264,7 @@ const SendEmail = ({
 
   const logoUrl = form.watch("logoUrl");
   const body = form.watch("body");
+  const header = form.watch("header");
   const showLogo = form.watch("showLogo");
   const showSocialLinks = form.watch("showSocialLinks");
   const buttonProps = form.watch("buttonProps");
@@ -321,6 +324,7 @@ const SendEmail = ({
               form.setValue("replyTo", template.replyTo || "");
               form.setValue("logoUrl", template.logoUrl || "");
               form.setValue("body", template.body);
+              form.setValue("header", "Your certificate is ready for download");
               form.setValue("showLogo", template.showLogo);
               form.setValue("showSocialLinks", template.showSocialLinks);
               form.setValue("buttonProps", template.buttonProps);
@@ -403,6 +407,21 @@ const SendEmail = ({
                     )}
                   />
                 </div>
+                <FormField
+                  name={"header" as const}
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-gray-700">Header</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Header"
+                          value={field.value}
+                          onChange={(e) => field.onChange(e.target.value)}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
               </div>
               <FormField
                 name={"body" as const}
@@ -579,17 +598,20 @@ const SendEmail = ({
                     <Image src={logoUrl} alt="logo" width={100} height={50} />
                   )}
                 </div>
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: replaceSpecialText(body, {
-                      recipient: {
-                        ...recipients[0],
-                        certificateId: 12345678,
-                      },
-                      organization,
-                    }),
-                  }}
-                />
+                <div>
+                  <h1 className="text-2xl font-medium">{header}</h1>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: replaceSpecialText(body, {
+                        recipient: {
+                          ...recipients[0],
+                          certificateId: 12345678,
+                        },
+                        organization,
+                      }),
+                    }}
+                  />
+                </div>
                 <div
                   style={{
                     textAlign: "center",

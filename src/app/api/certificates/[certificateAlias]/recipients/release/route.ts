@@ -35,6 +35,7 @@ export async function POST(
       showSocialLinks,
       organization,
       buttonProps,
+      header,
     } = bodyParams;
 
     console.log(
@@ -158,6 +159,7 @@ export async function POST(
     <div style="margin-top: 20px; border: 1px solid ${
       buttonProps.backgroundColor
     }; padding: 20px; background-color: white; border-radius: 5px; text-align: center;">
+    <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 10px;">${header}</h1>
       ${replaceSpecialText(body, {
         recipient,
         organization,
