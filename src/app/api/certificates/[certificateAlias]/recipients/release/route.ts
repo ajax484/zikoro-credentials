@@ -36,6 +36,7 @@ export async function POST(
       organization,
       buttonProps,
       header,
+      showCustomLinks,
     } = bodyParams;
 
     console.log(
@@ -196,8 +197,15 @@ export async function POST(
                  )
                  .join("")}
              </tr>
-           </table>
-           <table role="presentation" style="width: 100%; margin-top: 20px; text-align: center;">
+           </table>           
+           `
+        : ""
+    }
+
+    ${
+      showCustomLinks
+        ? `
+      <table role="presentation" style="width: 100%; margin-top: 20px; text-align: center;">
            <tr>
            <td style="padding: 5px;">
              <a href="${
@@ -229,7 +237,7 @@ export async function POST(
                     </td>
                   </tr>
            </table>
-           `
+      `
         : ""
     }
 

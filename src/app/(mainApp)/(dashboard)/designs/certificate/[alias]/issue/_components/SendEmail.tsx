@@ -68,6 +68,7 @@ const sendEmailSchema = z.object({
   replyTo: z.string().optional(),
   showLogo: z.boolean().optional(),
   logoUrl: z.string().url().optional(),
+  showCustomLinks: z.boolean().optional(),
   showSocialLinks: z.boolean().optional(),
   buttonProps: z.object({
     text: z.string(),
@@ -188,6 +189,7 @@ const SendEmail = ({
       showLogo: true,
       logoUrl: organization?.organizationLogo || "",
       showSocialLinks: true,
+      showCustomLinks: true,
       buttonProps: {
         text: "View",
         backgroundColor: "rgba(156, 39, 176, 1)",
@@ -266,6 +268,7 @@ const SendEmail = ({
   const body = form.watch("body");
   const header = form.watch("header");
   const showLogo = form.watch("showLogo");
+  const showCustomLinks = form.watch("showCustomLinks");
   const showSocialLinks = form.watch("showSocialLinks");
   const buttonProps = form.watch("buttonProps");
 
@@ -559,17 +562,39 @@ const SendEmail = ({
                 )}
               />
             </div>
+            <div className="flex justify-between items-center">
+              <span className="text-lg text-gray-800 font-medium">
+                Social Links
+              </span>
+              <FormField
+                name={"showSocialLinks" as const}
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-2">
+                    <FormLabel className="text-gray-600">
+                      Show Social Links
+                    </FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={() => field.onChange(!field.value)}
+                        className="data-[state=checked]:bg-basePrimary"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-lg text-gray-800 font-medium">
-                  Social Links
+                  Custom Links
                 </span>
                 <FormField
-                  name={"showSocialLinks" as const}
+                  name={"showCustomLinks" as const}
                   render={({ field }) => (
                     <FormItem className="flex items-center gap-2">
                       <FormLabel className="text-gray-600">
-                        Show Social Links
+                        Show Custom Links
                       </FormLabel>
                       <FormControl>
                         <Switch
@@ -639,6 +664,18 @@ const SendEmail = ({
                     {buttonProps?.text}
                   </a>
                 </div>
+                {showCustomLinks && (
+                  <div className="flex items-center justify-center gap-4 text-gray-600">
+                    {organization?.socialLinks &&
+                      organization?.socialLinks.map((link) => (
+                        <div className="flex items-center gap-0.5 underline">
+                          <span className="text-sm text-gray-700">
+                            {link.title}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                )}
                 {showSocialLinks && (
                   <div className="flex items-center justify-center gap-4 text-gray-600">
                     <div className="flex items-center gap-2">
@@ -653,16 +690,6 @@ const SendEmail = ({
                     <div className="flex items-center gap-2">
                       <Instagram className="size-4" />
                     </div>
-                    {/* social links */}
-                    {organization?.socialLinks &&
-                      organization?.socialLinks.map((link) => (
-                        <div className="flex items-center gap-0.5">
-                          <Link2 className="size-4" />
-                          <span className="text-sm text-gray-700">
-                            {link.title}
-                          </span>
-                        </div>
-                      ))}
                   </div>
                 )}
               </div>
