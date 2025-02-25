@@ -241,7 +241,7 @@ export async function POST(
         : ""
     }
 
-    <table role="presentation" style="width: 50%; margin: 20px auto; margin-bottom: 0px; text-align: center;">
+    <table role="presentation" style="width: 60%; margin: 20px auto; margin-bottom: 0px; text-align: center;">
            <tr>
            <td style="padding: 5px;">
       <span style="font-size: 14px; font-weight: 700;">Powered by</span>
