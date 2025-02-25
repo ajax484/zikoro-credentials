@@ -173,15 +173,28 @@ const SendEmail = ({
     resolver: zodResolver(sendEmailSchema),
     defaultValues: {
       body: `
-      Dear #{first_name#},\n
+      Dear #{first_name#}, 
 
-        Great news, your certificate is ready for download. Access it now through this link: View Certificate\n
+<br/>
+<br/>
 
-        Congratulations!\n
+Great news, your certificate is ready for download. 
 
-        Best,\n
+<br/>
+<br/>
 
-        Team.`,
+Click the button to access your certificate.
+
+<br/>
+<br/>
+<br/>
+
+Congratulations! 
+
+<br/>
+<br/>
+
+Event Team.`,
       subject: "Your certificate is ready for download",
       header: "Your certificate is ready for download",
       senderName: "Event team",

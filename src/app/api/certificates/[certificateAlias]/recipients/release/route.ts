@@ -147,8 +147,8 @@ export async function POST(
             ],
             subject,
             htmlbody: `
-            <div style="background-color: #f7f8ff; width: 100%; margin: 0 auto; text-align: center; padding: 20px;">
-  <div style="width: 500px; margin: 0 auto; text-align: center;">
+            <div style="background-color: #f7f8ff; width: 100%; margin: 0 auto; padding: 20px;">
+  <div style="width: 500px; margin: 0 auto;">
     <div style="margin: 20px auto; display: table;">
       ${
         showLogo && logoUrl
