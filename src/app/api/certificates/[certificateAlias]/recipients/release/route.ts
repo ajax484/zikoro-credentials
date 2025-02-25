@@ -146,7 +146,7 @@ export async function POST(
             subject,
             htmlbody: `
             <div style="background-color: f7f8f9; width: 100%; margin: 0 auto;">
-              <div style="width: 75%; margin: 0 auto;">
+              <div style="width: 500px; margin: 0 auto;">
                 <div style="margin: 20px auto; width: fit-content;">
                   ${
                     showLogo && logoUrl
@@ -156,7 +156,7 @@ export async function POST(
                 </div>
                 <div style="margin-top: 20px; border: 1px solid ${
                   buttonProps.backgroundColor
-                }; padding: 20px; background-color: white;">
+                }; padding: 20px; background-color: white; border-radius: 5px;">
                   ${replaceSpecialText(body, {
                     recipient,
                     organization,
