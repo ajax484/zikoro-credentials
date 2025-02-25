@@ -171,7 +171,7 @@ export async function POST(
                         background-color: ${buttonProps.backgroundColor};
                         color: ${buttonProps.textColor};
                         text-decoration: none;
-                        padding: 12px 24px;
+                        padding: 6px 12px;
                         border-radius: 5px;
                         font-family: Arial, sans-serif;
                         font-size: 16px;
