@@ -167,15 +167,15 @@ export async function POST(
         asset: recipient.certificate,
       })}
 
-      <div style="margin-top: 20px; border-top: 1px solid #e5e5e5; padding-top: 20px;">
+      <div style="width: fit-content; margin: 20px auto; border-top: 1px solid #e5e5e5; padding-top: 20px;">
         <p style="margin-bottom: 10px; font-style: italic;">View on a desktop for the best experience</p>
         <a href="https://credentials.zikoro.com/credentials/verify/certificate/${certificateId}"
           style="display: inline-block; background-color: ${
             buttonProps.backgroundColor
           };
                  color: ${buttonProps.textColor}; text-decoration: none;
-                 padding: 6px 12px; border-radius: 5px;
-                 font-family: Arial, sans-serif; font-size: 16px; font-weight: bold;">
+                 padding: 3px 12px; border-radius: 5px;
+                 font-family: Arial, sans-serif; font-size: 14px; font-weight: bold;">
           ${buttonProps.text}
         </a>
       </div>
