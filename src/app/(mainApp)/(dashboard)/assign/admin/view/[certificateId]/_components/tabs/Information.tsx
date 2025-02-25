@@ -94,9 +94,10 @@ const Information = ({
       recipient.profilePicture ??
         "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg"
     );
-    Object.keys(metadata).forEach((key) => {
-      form.setValue(key, recipient.metadata[key]);
-    });
+    metadata &&
+      Object.keys(metadata).forEach((key) => {
+        form.setValue(key, recipient.metadata[key]);
+      });
   }, [recipient]);
 
   const {
@@ -119,7 +120,7 @@ const Information = ({
   const [profilePictureUploading, setProfilePictureUploading] =
     useState<boolean>(false);
 
-    const newProfilePicture = form.watch("profilePicture");
+  const newProfilePicture = form.watch("profilePicture");
 
   return (
     <Form {...form}>
