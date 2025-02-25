@@ -324,7 +324,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
 
   return (
     <section className="space-y-4">
-      {claimCreditIsOpen && (
+      {/* {claimCreditIsOpen && (
         <div className="p-4 bg-basePrimary rounded-md flex items-center justify-center text-white gap-4 relative">
           <button
             aria-label="Close"
@@ -348,7 +348,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
             <span>Claim</span>
           </Button>
         </div>
-      )}
+      )} */}
       <div className="flex items-center justify-between">
         <div className="text-gray-700">
           <p>
