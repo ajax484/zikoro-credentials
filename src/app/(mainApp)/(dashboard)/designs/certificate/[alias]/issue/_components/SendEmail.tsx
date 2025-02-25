@@ -540,27 +540,32 @@ const SendEmail = ({
                 )}
               />
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-lg text-gray-800 font-medium">
-                Social Links
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-lg text-gray-800 font-medium">
+                  Social Links
+                </span>
+                <FormField
+                  name={"showSocialLinks" as const}
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-2">
+                      <FormLabel className="text-gray-600">
+                        Show Social Links
+                      </FormLabel>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={() => field.onChange(!field.value)}
+                          className="data-[state=checked]:bg-basePrimary"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <span className="text-xs text-gray-600 font-medium">
+                Add custom links in your workspace settings
               </span>
-              <FormField
-                name={"showSocialLinks" as const}
-                render={({ field }) => (
-                  <FormItem className="flex items-center gap-2">
-                    <FormLabel className="text-gray-600">
-                      Show Social Links
-                    </FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={() => field.onChange(!field.value)}
-                        className="data-[state=checked]:bg-basePrimary"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
             </div>
           </section>
           <section className="space-y-2">
