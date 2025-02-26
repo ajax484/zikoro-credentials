@@ -495,7 +495,7 @@ const CertificateView = ({
         </div>
       </section>
       {certificate?.originalCertificate?.certificateSettings?.skills &&
-        certificate?.originalCertificate?.certificateSettings?.skills.length >
+        certificate?.originalCertificate?.certificateSettings?.skills?.length >
           0 && (
           <div className="bg-white p-4 border rounded-md w-full h-full space-y-2 flex flex-col items-center gap-4">
             <GradientText className="font-bold" Tag={"h1"}>

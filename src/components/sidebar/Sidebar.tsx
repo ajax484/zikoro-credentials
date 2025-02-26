@@ -166,7 +166,7 @@ const Sidebar = () => {
         </ul>
       </nav>
 
-      <div className="flex items-center gap-2 p-3">
+      {/* <div className="flex items-center gap-2 p-3">
         <Image
           src={user?.profilePicture ? user?.profilePicture : profile}
           alt={"user avatar"}
@@ -177,7 +177,7 @@ const Sidebar = () => {
         <p className="font-medium group-hover:block hidden capitalize text-mobile sm:text-sm bg-gray-50 delay-300 transition-all">
           {user?.firstName ?? "User"}
         </p>
-      </div>
+      </div> */}
 
       <button
         onClick={() => {
