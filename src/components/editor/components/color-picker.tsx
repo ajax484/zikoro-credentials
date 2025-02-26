@@ -26,9 +26,11 @@ export const ColorPicker = ({
       />
       <CirclePicker
         color={value}
-        colors={colors.filter(
-          (color) => disableTransparent && color !== "transparent"
-        )}
+        colors={
+          disableTransparent
+            ? colors.filter((color) => color !== "transparent")
+            : colors
+        }
         onChangeComplete={(color: { rgb: any }) => {
           const formattedValue = rgbaObjectToString(color.rgb);
           onChange(formattedValue);
