@@ -335,8 +335,9 @@ const CertificateView = ({
                 <Instagram className="size-4" />
               </Link>
             )}
-            {certificate?.originalCertificate?.workspace?.socialLinks.length >
-              0 &&
+            {certificate?.originalCertificate?.workspace?.socialLinks &&
+              certificate?.originalCertificate?.workspace?.socialLinks.length >
+                0 &&
               certificate?.originalCertificate?.workspace?.socialLinks.map(
                 (link, index) => (
                   <TooltipProvider>
