@@ -11,8 +11,6 @@ export async function GET(
     try {
       const { certificateId } = params;
 
-      
-
       const query = supabase
         .from("attendeeCertificates")
         .select(
@@ -22,7 +20,8 @@ export async function GET(
         .maybeSingle();
 
       const { data, error } = await query;
-      
+
+      console.log(data);
 
       if (error) throw error;
 

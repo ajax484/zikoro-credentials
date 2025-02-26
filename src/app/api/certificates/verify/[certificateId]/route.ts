@@ -21,13 +21,13 @@ export async function GET(
         )
         .eq("certificateId", certificateId)
         .eq("isValid", true)
-        .maybeSingle();
+        // .maybeSingle();
 
-      console.log(data);
+      console.log(data, certificateId);
 
       if (error) throw error;
 
-      certificate = data;
+      certificate = data[0];
 
       if (data.status !== "email opened" || data.status !== "revoked") {
         const { data: updatedCertificate, error: updateError } = await supabase
@@ -45,14 +45,14 @@ export async function GET(
           .eq("certificateId", certificateId)
           .select(
             "*, originalCertificate:certificate!inner(*, workspace:organization!inner(*))"
-          )
-          .maybeSingle();
+          );
+        // .maybeSingle();
 
         console.log(updatedCertificate);
 
         if (updateError) throw updateError;
 
-        certificate = updatedCertificate;
+        certificate = updatedCertificate[0];
       }
 
       return NextResponse.json(

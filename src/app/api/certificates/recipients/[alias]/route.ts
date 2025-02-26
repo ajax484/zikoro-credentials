@@ -20,15 +20,15 @@ export async function GET(
           "*, originalCertificate:certificate!inner(*, workspace:organization!inner(*))"
         )
         .eq("certificateId", alias)
-        .eq("isValid", true)
-        .maybeSingle();
+        .eq("isValid", true);
+      // .maybeSingle();
 
       console.log(data);
 
       if (error) throw error;
 
       return NextResponse.json(
-        { data },
+        { data: data[0] },
         {
           status: 200,
         }
