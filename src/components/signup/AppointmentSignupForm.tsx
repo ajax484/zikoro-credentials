@@ -7,11 +7,13 @@ import { useRegistration } from "@/hooks/services/auth";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import logoFooter from "@/public/appointments/logoFooter.png";
 
-const AppointmentSignupForm = () => {
+const AppointmentSignupForm = ({
+  workspaceAlias,
+}: {
+  workspaceAlias?: string;
+}) => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const searchParams = useSearchParams();
-  const workspaceAlias = searchParams.get("workspaceAlias");
   const { loading, register } = useRegistration();
   const [formData, setFormData] = useState({
     email: "",

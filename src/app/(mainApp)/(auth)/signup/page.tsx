@@ -3,7 +3,11 @@ import AppointmentSignupForm from "@/components/signup/AppointmentSignupForm";
 import Banner from "@/public/appointments/signupBanner.png";
 import Image from "next/image";
 
-const AppointmentSignupPage = () => {
+const AppointmentSignupPage = ({
+  searchParams,
+}: {
+  searchParams: { workspaceAlias?: string };
+}) => {
   return (
     <div className="flex items-center w-full h-screen ">
       <div className="w-[50%] hidden lg:flex items-center bg-gradient-to-tr from-concert-gradient-start to-concert-gradient-end">
@@ -15,7 +19,7 @@ const AppointmentSignupPage = () => {
         />
       </div>
       <div className="w-full lg:w-[50%]">
-        <AppointmentSignupForm />
+        <AppointmentSignupForm workspaceAlias={searchParams?.workspaceAlias} />
       </div>
     </div>
   );
