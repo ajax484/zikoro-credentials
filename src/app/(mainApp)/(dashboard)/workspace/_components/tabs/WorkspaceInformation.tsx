@@ -290,7 +290,7 @@ const WorkspaceInformation = () => {
   const onSubmit = async (data: z.infer<typeof WorkspaceSchema>) => {
     console.log(data);
     const updatedOrganization = await updateWorkspace({
-      payload: { ...organization, ...data },
+      payload: { ...data },
     });
     console.log(updatedOrganization);
     setOrganization(updatedOrganization);

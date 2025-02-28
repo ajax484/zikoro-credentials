@@ -59,7 +59,7 @@ export async function PATCH(req: NextRequest) {
 
       const { data, error } = await supabase
         .from("organization")
-        .upsert(params, { onConflict: "id" })
+        .update(params)
         .select("*");
 
       if (error) throw error;
