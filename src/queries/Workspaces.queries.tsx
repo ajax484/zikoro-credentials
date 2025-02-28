@@ -5,15 +5,12 @@ import { getRequest } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
-export function useFetchWorkspaces() {
-  const { user } = useUserStore();
-
+export function useFetchWorkspaces(userEmail: string) {
   const { data, isFetching, status, error, refetch } = useQuery({
-    queryKey: ["workspaces", user?.userEmail],
+    queryKey: ["workspaces", userEmail],
     queryFn: async () => {
-      if (!user) return [];
       const searchParams = new URLSearchParams();
-      searchParams.set("userEmail", user.userEmail);
+      searchParams.set("userEmail", userEmail);
 
       const { data, status } = await getRequest<TOrganization[]>({
         endpoint: "/workspaces",
@@ -25,13 +22,14 @@ export function useFetchWorkspaces() {
         throw new Error(data.error);
       }
 
+      console.log(data.data);
+
       return data.data;
     },
-    initialData: [],
   });
 
   return {
-    data,
+    data: data || [],
     isFetching,
     status,
     error,

@@ -8,6 +8,7 @@ import { OrganizationVerification, TOrganization } from "@/types/organization";
 import { patchRequest, postRequest } from "@/utils/api";
 import { toast } from "react-toastify";
 import useOrganizationStore from "@/store/globalOrganizationStore";
+import useUserStore from "@/store/globalUserStore";
 
 export function useUpdateWorkspaces(workspaceId: string) {
   const { organization, setOrganization } = useOrganizationStore();
@@ -92,7 +93,7 @@ export function useVerifyWorkspace(workspaceId: string) {
       });
 
       if (response.status !== 201) {
-        throw new Error(response.data as unknown as string); // Ensure proper error handling
+        throw new Error(response.data as unknown as string);
       }
 
       return response.data.data; // The updated verification entry
@@ -101,45 +102,44 @@ export function useVerifyWorkspace(workspaceId: string) {
       return toast.loading("Verifying workspace...");
     },
     onSuccess: (newVerification, _, toastId) => {
-      console.log(newVerification);
+      console.log("onSuccess triggered", newVerification);
 
-      // Updating the cache to reflect the new verification
+      // Get all current queries (for debugging)
+      console.log("Existing Queries:", queryClient.getQueryCache().getAll());
+
       queryClient.setQueriesData<TOrganization | TOrganization[]>(
         {
-          predicate: (query) =>
-            query.queryKey.some(
-              (key) =>
-                key === "workspaces" || key === newVerification.workspaceAlias
-            ),
+          predicate: (query) => query.queryKey.includes("workspaces"),
         },
         (oldData) => {
           if (!oldData) return oldData;
 
-          console.log(oldData);
+          console.log("Before update:", oldData);
 
-          if (Array.isArray(oldData)) {
-            return oldData.map((workspace) =>
-              workspace.organizationAlias === workspaceId
-                ? {
-                    ...workspace,
-                    verification: [
-                      ...(workspace.verification ?? []),
-                      newVerification,
-                    ],
-                  }
-                : workspace
-            );
-          } else {
-            return oldData.organizationAlias === workspaceId
-              ? {
-                  ...oldData,
-                  verification: [
-                    ...(oldData.verification ?? []),
-                    newVerification,
-                  ],
-                }
-              : oldData;
-          }
+          const updatedData = Array.isArray(oldData)
+            ? oldData.map((workspace) =>
+                workspace.organizationAlias === workspaceId
+                  ? {
+                      ...workspace,
+                      verification: [
+                        ...(workspace.verification ?? []),
+                        newVerification,
+                      ],
+                    }
+                  : workspace
+              )
+            : oldData.organizationAlias === workspaceId
+            ? {
+                ...oldData,
+                verification: [
+                  ...(oldData.verification ?? []),
+                  newVerification,
+                ],
+              }
+            : oldData;
+
+          console.log("After update:", updatedData);
+          return updatedData;
         }
       );
 
@@ -151,7 +151,7 @@ export function useVerifyWorkspace(workspaceId: string) {
       });
     },
     onError: (error, _, toastId) => {
-      console.error(error);
+      console.error("Mutation Error:", error);
       toast.update(toastId, {
         render: "Failed to verify workspace. Please try again.",
         type: "error",

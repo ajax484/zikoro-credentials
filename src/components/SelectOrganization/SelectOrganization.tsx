@@ -11,6 +11,7 @@ import { Dialog, DialogTrigger } from "../ui/dialog";
 import { DialogContent } from "@radix-ui/react-dialog";
 import { CreateOrganization } from "../CreateOrganisation/createOrganisation";
 import { useSearchParams } from "next/navigation";
+import { useFetchWorkspaces } from "@/queries/Workspaces.queries";
 
 const SelectOrganization = () => {
   const searchParams = useSearchParams();
@@ -20,13 +21,10 @@ const SelectOrganization = () => {
 
   const {
     data: workspaces,
-    isLoading: workspacesIsLoading,
+    isFetching: workspacesIsLoading,
+    refetch: refetchWorkspaces,
     error: workspacesError,
-    getData: refetchWorkspaces,
-  } = useGetData<TOrganization[]>(
-    `/workspaces?userEmail=${user?.userEmail}`,
-    []
-  );
+  } = useFetchWorkspaces(user?.userEmail!);
 
   console.log(workspaces);
 
@@ -38,11 +36,21 @@ const SelectOrganization = () => {
       if (!workspace) return;
       setOrganization(workspace);
     }
-  }, [workspaceAlias, workspaces]);
+  }, [workspaceAlias]);
+
+  useEffect(() => {
+    const workspace = workspaces?.find(
+      (workspace) =>
+        workspace.organizationAlias === organization?.organizationAlias
+    );
+    console.log(workspace);
+    if (!workspace) return;
+    setOrganization(workspace);
+  }, [workspaces]);
 
   const updateOrganization = (value: string) => {
     setOrganization(
-      workspaces?.find((workspace) => String(workspace.id) === value)
+      workspaces?.find((workspace) => String(workspace.id) === value)!
     );
   };
 
