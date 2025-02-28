@@ -4,7 +4,11 @@ import AppointmentLoginForm from "@/components/login/AppointmentLoginForm";
 import Banner from "@/public/appointments/signupBanner.png";
 import Image from "next/image";
 
-const AppointmentLoginPage = () => {
+const AppointmentLoginPage = ({
+  searchParams,
+}: {
+  searchParams: { redirectedFrom?: string };
+}) => {
   return (
     <div className=" flex items-center w-full h-screen ">
       <div className="w-[50%] hidden lg:flex items-center bg-gradient-to-tr from-concert-gradient-start to-concert-gradient-end">
@@ -16,7 +20,7 @@ const AppointmentLoginPage = () => {
         />
       </div>
       <div className="w-full lg:w-[50%]">
-        <AppointmentLoginForm />
+        <AppointmentLoginForm redirectedFrom={searchParams?.redirectedFrom} />
       </div>
     </div>
   );

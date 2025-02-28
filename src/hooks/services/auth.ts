@@ -68,7 +68,7 @@ export function useLogin() {
 
   async function logIn(
     values: z.infer<typeof loginSchema>,
-    redirectTo: string | null
+    redirectTo?: string
   ) {
     setLoading(true);
     try {

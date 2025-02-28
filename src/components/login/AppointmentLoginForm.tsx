@@ -7,10 +7,14 @@ import { useLogin } from "@/hooks/services/auth";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import logoFooter from "@/public/appointments/logoFooter.png";
 
-const AppointmentLoginForm = () => {
+const AppointmentLoginForm = (
+  {
+    redirectedFrom,
+  }: {
+    redirectedFrom?: string;
+  }
+) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirectedFrom = searchParams.get("redirectedFrom");
   const [showPassword, setShowPassword] = useState(false);
   const { loading, logIn } = useLogin();
 
