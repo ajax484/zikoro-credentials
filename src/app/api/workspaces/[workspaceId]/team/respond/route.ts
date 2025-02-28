@@ -85,6 +85,17 @@ export async function GET(req: NextRequest) {
       throw new Error(`Failed to add user to team: ${insertError.message}`);
     }
 
+    //delete invite
+    const { error: deleteInviteError } = await supabase
+      .from("credentialsWorkspaceInvites")
+      .delete()
+      .eq("workspaceAlias", workspaceAlias)
+      .eq("email", userEmail);
+
+    if (deleteInviteError) {
+      throw new Error(`Failed to delete invite: ${deleteInviteError.message}`);
+    }
+
     // Redirect based on user presence
     const redirectUrl = user
       ? `/home?workspaceAlias=${workspaceAlias}`

@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import useUserStore from "@/store/globalUserStore";
+import { optionalUrl } from "./SocialLinks";
 
 const verifySchema = z.object({
   address: z.string().min(1),
@@ -244,9 +245,11 @@ const VerifyOrganization = () => {
                 </InputOffsetLabel>
               )}
             />
-            <Button className="bg-basePrimary text-white" type="submit">
-              Save
-            </Button>
+            <DialogClose asChild>
+              <Button className="bg-basePrimary text-white" type="submit">
+                Save
+              </Button>
+            </DialogClose>
           </form>
         </Form>
         <DialogClose asChild>
@@ -261,7 +264,7 @@ const VerifyOrganization = () => {
 
 const WorkspaceSchema = z.object({
   organizationName: z.string().min(3, "Name is required"),
-  organizationLogo: z.string().url("Enter a valid URL"),
+  organizationLogo: optionalUrl,
   eventContactEmail: z.string().email("Enter a valid Email address"),
 });
 
