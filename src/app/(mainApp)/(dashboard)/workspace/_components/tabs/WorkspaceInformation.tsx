@@ -217,9 +217,19 @@ const VerifyOrganization = () => {
               render={({ field }) => (
                 <InputOffsetLabel label="Document">
                   {field.value.name ? (
-                    <p className="text-gray-700 text-xs text-center my-4">
-                      {field.value.name}
-                    </p>
+                    <div className="flex">
+                      <p className="text-gray-700 text-xs text-center my-4 ml-auto">
+                        {field.value.name}
+                      </p>
+                      <button
+                        type="button"
+                        aria-label="Delete link"
+                        className="ml-auto"
+                        onClick={() => field.onChange({ url: "", name: "" })}
+                      >
+                        <X className="size-4 text-red-600" />
+                      </button>
+                    </div>
                   ) : !documentUploading ? (
                     <div className="relative bg-basePrimary/10 rounded-md p-8 flex flex-col gap-2 items-center">
                       <b className="text-sm">
