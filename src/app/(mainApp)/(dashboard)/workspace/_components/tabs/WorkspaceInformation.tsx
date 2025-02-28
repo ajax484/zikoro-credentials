@@ -38,6 +38,10 @@ import {
 import { cn } from "@/lib/utils";
 import useUserStore from "@/store/globalUserStore";
 import { optionalUrl } from "./SocialLinks";
+import {
+  useUpdateWorkspaces,
+  useVerifyWorkspace,
+} from "@/mutations/workspaces.mutations";
 
 const verifySchema = z.object({
   address: z.string().min(1),
@@ -58,9 +62,9 @@ const VerifyOrganization = () => {
   const clsBtnRef = useRef<HTMLButtonElement>(null);
 
   const {
-    mutateData: verifyOrganization,
-    isLoading: verifyOrganizationIsLoading,
-  } = useMutateData(`/workspaces/${organization?.id}/verify`);
+    mutateAsync: verifyOrganization,
+    isPending: verifyOrganizationIsLoading,
+  } = useVerifyWorkspace(organization?.organizationAlias!);
 
   const form = useForm<z.infer<typeof verifySchema>>({
     resolver: zodResolver(verifySchema),
@@ -77,14 +81,11 @@ const VerifyOrganization = () => {
 
   const onSubmit = async (data: z.infer<typeof verifySchema>) => {
     console.log(data);
-    if (!user) return;
     await verifyOrganization({
-      payload: {
-        ...data,
-        status: "pending",
-        workspaceAlias: organization?.organizationAlias,
-        createdBy: user.id,
-      },
+      ...data,
+      status: "pending",
+      workspaceAlias: organization?.organizationAlias,
+      createdBy: user.id!,
     });
   };
 
@@ -281,8 +282,8 @@ const WorkspaceSchema = z.object({
 const WorkspaceInformation = () => {
   const { organization, setOrganization } = useOrganizationStore();
 
-  const { mutateData: updateWorkspace, isLoading: updateWorkspaceIsLoading } =
-    useMutateData(`/workspaces/${organization?.id}`);
+  const { mutateAsync: updateWorkspace, isPending: updateWorkspaceIsLoading } =
+    useUpdateWorkspaces(organization?.organizationAlias!);
 
   const form = useForm<z.infer<typeof WorkspaceSchema>>({
     resolver: zodResolver(WorkspaceSchema),
@@ -302,11 +303,7 @@ const WorkspaceInformation = () => {
 
   const onSubmit = async (data: z.infer<typeof WorkspaceSchema>) => {
     console.log(data);
-    const updatedOrganization = await updateWorkspace({
-      payload: { ...data },
-    });
-    console.log(updatedOrganization);
-    setOrganization(updatedOrganization);
+    await updateWorkspace(data);
   };
 
   const [profilePictureUploading, setProfilePictureUploading] =
@@ -461,7 +458,11 @@ const WorkspaceInformation = () => {
               )}
             />
           </div>
-          <Button className="bg-basePrimary text-white mx-auto" type="submit">
+          <Button
+            disabled={updateWorkspaceIsLoading}
+            className="bg-basePrimary text-white mx-auto"
+            type="submit"
+          >
             Save
           </Button>
         </form>

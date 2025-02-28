@@ -10,7 +10,6 @@ import {
 } from "../ui/dialog";
 import { TOrganization } from "@/types/organization";
 import GradientBorderSelect from "../CustomSelect/GradientSelectBorder";
-import useUserStore from "@/store/globalUserStore";
 import { Button } from "../ui/button";
 import { PlusCircle } from "lucide-react";
 import { CreateOrganization } from "../CreateOrganisation/createOrganisation";
@@ -36,7 +35,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   const updateOrganization = (value: string) => {
     setWorkspace(
-      workspaces?.find((workspace) => String(workspace.id) === value)
+      workspaces?.find((workspace) => String(workspace.id) === value)!
     );
   };
 

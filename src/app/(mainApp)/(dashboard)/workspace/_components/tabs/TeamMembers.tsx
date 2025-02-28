@@ -27,7 +27,6 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { toast } from "react-toastify";
 import useUserStore from "@/store/globalUserStore";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DialogTitle } from "@radix-ui/react-dialog";
 
 const TeamMembers = () => {

@@ -51,7 +51,10 @@ export async function POST(
   }
 }
 
-export async function PATCH(req: NextRequest) {
+export async function PATCH(
+  req: NextRequest,
+  { params: { workspaceId } }: { params: { workspaceId: string } }
+) {
   const supabase = createRouteHandlerClient({ cookies });
   if (req.method === "PATCH") {
     try {
@@ -60,12 +63,14 @@ export async function PATCH(req: NextRequest) {
       const { data, error } = await supabase
         .from("organization")
         .update(params)
-        .select("*");
+        .eq("organizationAlias", workspaceId)
+        .select("*, verification:organizationVerification(*)")
+        .maybeSingle();
 
       if (error) throw error;
 
       return NextResponse.json(
-        { msg: "event updated successfully", data },
+        { msg: "workspace updated successfully", data },
         {
           status: 200,
         }
@@ -98,7 +103,7 @@ export async function GET(
     try {
       const { data, error, status } = await supabase
         .from("organization")
-        .select("*")
+        .select("*, verification:organizationVerification(*)")
         .eq("id", workspaceId)
         .maybeSingle();
 

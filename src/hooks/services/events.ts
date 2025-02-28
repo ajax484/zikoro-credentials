@@ -213,11 +213,11 @@ export function useCreateOrganisation() {
   const [loading, setLoading] = useState(false);
 
   async function organisation(
-    values: Partial<z.infer<typeof organizationSchema>>,
+    values: Partial<z.infer<typeof organizationSchema>> & { userId: number },
     exp?: string
   ) {
     setLoading(true);
-    const { firstName, lastName, userEmail, id, ...restData } = values;
+    const { firstName, lastName, userEmail, userId, ...restData } = values;
     try {
       const { data, error, status } = await supabase
         .from("organization")
@@ -225,12 +225,12 @@ export function useCreateOrganisation() {
           {
             ...restData,
             organizationOwner: userEmail,
-            organizationOwnerId: id,
+            organizationOwnerId: userId,
             eventContactEmail: userEmail,
             subscriptionExpiryDate: exp || null,
             teamMembers: [
               {
-                userId: id,
+                userId,
                 userFirstName: firstName,
                 userLastName: lastName,
                 userEmail: userEmail,
@@ -256,7 +256,7 @@ export function useCreateOrganisation() {
           userEmail: userEmail,
           userRole: "owner",
           workspaceAlias: data?.organizationAlias,
-          userId: id,
+          userId,
         });
 
       if (insertError) {

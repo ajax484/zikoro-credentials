@@ -90,6 +90,8 @@ export function CreateOrganization({
       firstName: user?.firstName,
       lastName: user?.lastName,
       organizationType: "Private",
+      // remove first
+      eventPhoneNumber: user?.phoneNumber.slice(1),
     },
   });
   const [isDiscount, setIsDiscount] = useState(false);
@@ -128,7 +130,7 @@ export function CreateOrganization({
   }, [selectedPricing, isMonthly, currencyConverter, selectedCurrency]);
 
   async function onSubmit(values: z.infer<typeof organizationSchema>) {
-    const newWorkspace = await organisation(values);
+    const newWorkspace = await organisation({ ...values, userId: user?.id! });
 
     console.log(newWorkspace);
 
@@ -225,6 +227,25 @@ export function CreateOrganization({
                     <Input
                       type="text"
                       placeholder="Enter Workspace Name"
+                      {...field}
+                      className="placeholder:text-sm h-11  text-zinv-700"
+                    />
+                  </InputOffsetLabel>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="eventPhoneNumber"
+                render={({ field }) => (
+                  <InputOffsetLabel label="Phone Number" append={<p>+</p>}>
+                    <Input
+                      type="tel"
+                      placeholder="Enter Phone Number"
+                      id=""
+                      autoComplete="off"
+                      min={11}
+                      max={13}
+                      required
                       {...field}
                       className="placeholder:text-sm h-11  text-zinv-700"
                     />
@@ -360,9 +381,7 @@ export function CreateOrganization({
                 </div>
               )}
               <div className="w-full flex items-center justify-center">
-                <Button
-                  type="submit"
-                >
+                <Button type="submit">
                   {loading ? (
                     <LoaderAlt size={20} className="animate-spin" />
                   ) : (

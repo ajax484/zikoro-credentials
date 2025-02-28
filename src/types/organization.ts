@@ -77,4 +77,5 @@ export interface OrganizationVerification {
   year?: string | null;
   documentLink?: string | null;
   status?: string | null;
+  createdBy: number;
 }

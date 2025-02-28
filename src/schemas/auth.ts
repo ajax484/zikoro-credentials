@@ -13,7 +13,6 @@ export const loginSchema = z.object({
 });
 
 export const onboardingSchema = z.object({
-
   firstName: z.string().min(1, { message: "Username is required" }),
   lastName: z.string().min(1, { message: "Username is required" }),
   phoneNumber: z.string().refine((value) => value && /^\d{10,}$/.test(value), {
@@ -22,15 +21,22 @@ export const onboardingSchema = z.object({
   city: z.string().min(1, { message: "City is required" }),
   country: z.string().min(1, { message: "Country is required" }),
   referralCode: z.string(),
-  referredBy: z.any()
+  referredBy: z.any(),
 });
 
 export const organizationSchema = z.object({
-  organizationName: z.string().min(1, { message: "Organisation name is required"}),
-  organizationType: z.string().min(1, { message: "Organisation type is required"}),
-  subscriptionPlan: z.string().min(1, { message: "Subscription plan is required"}),
+  organizationName: z
+    .string()
+    .min(1, { message: "Organisation name is required" }),
+  organizationType: z
+    .string()
+    .min(1, { message: "Organisation type is required" }),
+  subscriptionPlan: z
+    .string()
+    .min(1, { message: "Subscription plan is required" }),
   userEmail: z.string(),
   lastName: z.string(),
   firstName: z.string(),
-  organizationAlias: z.string()
-})
+  organizationAlias: z.string(),
+  eventPhoneNumber: z.string().min(11).max(13),
+});

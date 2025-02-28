@@ -427,7 +427,10 @@ export default function OnboardingForm({
         organizationAlias: generateAlias(),
         firstName: user.firstName,
         lastName: user.lastName,
-        id: user.id,
+        userId: user.id,
+        eventPhoneNumber: values.phoneNumber
+          ? `+${values.phoneNumber.replace(/^(\+)?/, "")}`
+          : "",
       });
       handleNext();
     } catch (error) {

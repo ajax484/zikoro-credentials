@@ -10,11 +10,11 @@ import { Button } from "@/components/ui/button";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { Facebook, Instagram, Linkedin } from "styled-icons/bootstrap";
 import { useMutateData } from "@/hooks/services/request";
+import { useUpdateWorkspaces } from "@/mutations/workspaces.mutations";
 
 export const optionalUrl = z
   .string()
   .trim()
-  .optional()
   .refine((val) => !val || z.string().url().safeParse(val).success, {
     message: "Enter a valid URL",
   });
@@ -37,16 +37,16 @@ const socialLinksSchema = z.object({
 const SocialLinks = () => {
   const { organization, setOrganization } = useOrganizationStore();
 
-  const { mutateData: updateWorkspace, isLoading: updateWorkspaceIsLoading } =
-    useMutateData(`/workspaces/${organization?.id}`);
+  const { mutateAsync: updateWorkspace, isPending: updateWorkspaceIsLoading } =
+    useUpdateWorkspaces(organization?.organizationAlias!);
 
   const form = useForm<z.infer<typeof socialLinksSchema>>({
     resolver: zodResolver(socialLinksSchema),
     defaultValues: {
-      linkedIn: organization?.linkedIn,
-      instagram: organization?.instagram,
-      facebook: organization?.facebook,
-      x: organization?.x,
+      linkedIn: organization?.linkedIn || "",
+      instagram: organization?.instagram || "",
+      facebook: organization?.facebook || "",
+      x: organization?.x || "",
       socialLinks: organization?.socialLinks || [],
     },
   });
@@ -58,11 +58,7 @@ const SocialLinks = () => {
 
   const onSubmit = async (data: z.infer<typeof socialLinksSchema>) => {
     console.log(data);
-    const updatedOrganization = await updateWorkspace({
-      payload: { ...data },
-    });
-    console.log(updatedOrganization);
-    updatedOrganization && setOrganization(updatedOrganization);
+    await updateWorkspace(data);
   };
 
   return (
@@ -227,7 +223,11 @@ const SocialLinks = () => {
             </button>
           </div>
 
-          <Button className="bg-basePrimary text-white" type="submit">
+          <Button
+            className="bg-basePrimary text-white"
+            type="submit"
+            disabled={updateWorkspaceIsLoading}
+          >
             Save
           </Button>
         </form>
