@@ -17,11 +17,11 @@ export async function GET(
       const { data, error, status } = await supabase
         .from("certificateRecipients")
         .select(
-          "*, originalCertificate:certificate!inner(*, workspace:organization!inner(*))"
+          "*, originalCertificate:certificate!inner(*, workspace:organization!inner(*, verification:organizationVerification(*)))"
         )
         .eq("certificateId", certificateId)
-        .eq("isValid", true)
-        // .maybeSingle();
+        .eq("isValid", true);
+      // .maybeSingle();
 
       console.log(data, certificateId);
 

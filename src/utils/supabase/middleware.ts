@@ -1,13 +1,20 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
-
-const includedPaths:string[] = [
-
-]
+const includedPaths: string[] = [
+  "/home",
+  "/designs",
+  "/assign",
+  "/analytics",
+  "/email",
+  "/workspace",
+  "/refer",
+  "/support",
+  "/feedback",
+  "/credits",
+];
 
 export const updateSession = async (request: NextRequest) => {
-
   try {
     // Create an unmodified response
     let response = NextResponse.next({
@@ -26,37 +33,39 @@ export const updateSession = async (request: NextRequest) => {
           },
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value }) =>
-              request.cookies.set(name, value),
+              request.cookies.set(name, value)
             );
             response = NextResponse.next({
               request,
             });
             cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options),
+              response.cookies.set(name, value, options)
             );
           },
         },
-      },
+      }
     );
-  
+
     const path = request.nextUrl.pathname;
 
     const {
       data: { user },
     } = await supabase.auth.getUser();
-  
+
+    console.log(user);
+
     // Check if the request path starts with /workspace
     if (path.startsWith("/workspace") && !user) {
       const redirectUrl = new URL("/login", request.url);
       redirectUrl.searchParams.set("redirectedFrom", path);
       return NextResponse.redirect(redirectUrl);
     }
-  
+
     // Check if the request path is included in the protected paths
     const isIncludedPath = includedPaths.some((includedPath) =>
       path.startsWith(includedPath)
     );
-  
+
     if (isIncludedPath && !user) {
       // If user is not authenticated and path is included, redirect to the login page
       if (path.startsWith("/api")) {

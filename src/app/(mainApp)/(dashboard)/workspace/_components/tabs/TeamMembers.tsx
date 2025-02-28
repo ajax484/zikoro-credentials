@@ -19,6 +19,7 @@ import {
   Dialog,
   DialogContent,
   DialogFooter,
+  DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "react-toastify";
 import useUserStore from "@/store/globalUserStore";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 const TeamMembers = () => {
   const { organization } = useOrganizationStore();
@@ -122,6 +124,11 @@ const TeamMembers = () => {
           </Button>
         </DialogTrigger>
         <DialogContent className="w-full flex flex-col gap-6">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold">
+              Invite Team Member
+            </DialogTitle>
+          </DialogHeader>
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium leading-none tracking-tight">
               Email
@@ -132,7 +139,7 @@ const TeamMembers = () => {
               placeholder="Enter email"
               type={"email"}
               required
-              className=" placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+              className=" placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-white text-gray-700 bg-basePrimary/20 border"
             />
           </div>
           <div className="space-y-2">

@@ -14,13 +14,11 @@ type SearchParams = {
   message: string;
   content: any;
   type: any;
+  workspaceAlias: string;
 };
 
-export default function Page({
-  searchParams: { message, content, email, type },
-}: {
-  searchParams: SearchParams;
-}) {
+export default function Page({ searchParams }: { searchParams: SearchParams }) {
+  const { message, content, email, type } = searchParams;
   const [secondsLeft, setSecondsLeft] = useState(60);
   const { loading, resendLink } = useResendLink();
   const { loading: isVerifying, verifyCode } = useVerifyCode();
@@ -41,8 +39,9 @@ export default function Page({
   }, []);
 
   async function verify() {
-    await verifyCode(email!, code, type);
+    await verifyCode(email!, code, type, searchParams?.workspaceAlias);
   }
+
   return (
     <div className="w-full h-full inset-0 fixed">
       <div className="w-fit h-fit m-auto inset-0 absolute flex flex-col gap-y-2 items-center justify-center px-4">

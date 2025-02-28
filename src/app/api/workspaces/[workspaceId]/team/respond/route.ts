@@ -48,7 +48,9 @@ export async function GET(req: NextRequest) {
     }
 
     if (teamMembers.some((member) => member.userEmail === userEmail)) {
-      return NextResponse.redirect("/");
+      return NextResponse.redirect(
+        new URL(`/home?workspaceAlias=${workspaceAlias}`, req.url)
+      );
     }
 
     // Check for existing invitation and get the role
@@ -84,7 +86,9 @@ export async function GET(req: NextRequest) {
     }
 
     // Redirect based on user presence
-    const redirectUrl = user ? `/home?workspaceAlias=${workspaceAlias}` : "/";
+    const redirectUrl = user
+      ? `/home?workspaceAlias=${workspaceAlias}`
+      : `/signup?workspaceAlias=${workspaceAlias}`;
     return NextResponse.redirect(new URL(redirectUrl, req.url));
   } catch (error) {
     console.error(error);

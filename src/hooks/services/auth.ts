@@ -16,7 +16,10 @@ export function useRegistration() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  async function register(values: z.infer<typeof loginSchema>) {
+  async function register(
+    values: z.infer<typeof loginSchema>,
+    workspaceAlias?: string
+  ) {
     setLoading(true);
 
     try {
@@ -40,7 +43,11 @@ export function useRegistration() {
         //  saveCookie("user", data);
         toast.success("Registration Successful");
         router.push(
-          `/verify-email?message=Verify your Account&content= Thank you for signing up! A verification code has been sent to your registered email address. Please check your inbox and enter the code to verify your account.&email=${values.email}&type=verify`
+          `/verify-email?message=Verify your Account&content= Thank you for signing up! A verification code has been sent to your registered email address. Please check your inbox and enter the code to verify your account.&email=${
+            values.email
+          }&type=verify${
+            workspaceAlias ? `&workspaceAlias=${workspaceAlias}` : ""
+          }`
         );
       }
     } catch (error) {
@@ -65,7 +72,6 @@ export function useLogin() {
   ) {
     setLoading(true);
     try {
-      console.log("here");
       const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
@@ -224,7 +230,12 @@ export function useVerifyCode() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  async function verifyCode(email: string, token: string, type: string | null) {
+  async function verifyCode(
+    email: string,
+    token: string,
+    type: string | null,
+    workspaceAlias?: string
+  ) {
     try {
       setLoading(true);
       const { data, error } = await supabase.auth.verifyOtp({
@@ -243,7 +254,9 @@ export function useVerifyCode() {
         router.push(
           `${
             window.location.origin
-          }/onboarding?email=${email}&createdAt=${new Date().toISOString()}`
+          }/onboarding?email=${email}&createdAt=${new Date().toISOString()}${
+            workspaceAlias ? `&workspaceAlias=${workspaceAlias}` : ""
+          }`
         );
       }
     } catch (error: any) {

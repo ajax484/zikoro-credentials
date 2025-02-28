@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import useUserStore from "@/store/globalUserStore";
 import { LogOutIcon } from "lucide-react";
+import { logout } from "@/app/actions/auth";
 
 type Navlinks = {
   name: string;
@@ -145,7 +146,7 @@ const Sidebar = () => {
                 target={href === "/live-events" ? "_blank" : ""}
                 className={cn(
                   "p-3 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit",
-                  href === pathname && " bg-basePrimary/10 text-[#1F1F1F]"
+                  href.includes(pathname) && " bg-basePrimary/10 text-[#1F1F1F]"
                 )}
               >
                 {Icon && (
@@ -180,13 +181,10 @@ const Sidebar = () => {
       </div> */}
 
       <button
-        onClick={() => {
-          if (typeof window !== "undefined") {
-            localStorage.removeItem("user");
-            setTimeout(() => {
-              window.open("/", "_self");
-            }, 2000);
-          }
+        onClick={async () => {
+          await logout();
+          localStorage.removeItem("user");
+          window.location.href = "/";
         }}
         className="flex items-center h-fit gap-x-2 p-3"
       >

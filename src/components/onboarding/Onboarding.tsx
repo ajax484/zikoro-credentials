@@ -307,6 +307,7 @@ const industryList = [
 type SearchParamsType = {
   email: string;
   createdAt: string;
+  workspaceAlias: string;
 };
 
 type FormData = {
@@ -347,10 +348,11 @@ function generateOrgAlias(length?: number): string {
 }
 
 export default function OnboardingForm({
-  searchParams: { email, createdAt },
+  searchParams,
 }: {
   searchParams: SearchParamsType;
 }) {
+  const { email, createdAt } = searchParams;
   const [isReferralCode, setIsReferralCode] = useState<boolean>(false);
   const { loading, registration } = useOnboarding();
   const [workspaceName, setWorkspaceName] = useState<string>();
@@ -386,13 +388,19 @@ export default function OnboardingForm({
 
   const handleNext = () => {
     if (currentIndex < stages.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+      setCurrentIndex(
+        currentIndex +
+          (searchParams.workspaceAlias && currentIndex === 0 ? 2 : 1)
+      );
     }
   };
   //Handlers for previous
   const handlePrev = () => {
     if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
+      setCurrentIndex(
+        currentIndex -
+          (searchParams.workspaceAlias && currentIndex === 2 ? 2 : 1)
+      );
     }
   };
 
@@ -792,7 +800,11 @@ export default function OnboardingForm({
             {/* buttons */}
             <div className="flex justify-center gap-x-4 mx-auto mt-[52px] ">
               <button
-                onClick={() => updateWorkspaceId()}
+                onClick={() =>
+                  searchParams?.workspaceAlias
+                    ? router.push("/home?" + searchParams?.workspaceAlias)
+                    : updateWorkspaceId()
+                }
                 className="text-white font-semibold text-base bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end py-3 px-4 rounded-[8px]"
               >
                 Start Exploring

@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
-import { toast } from "react-toastify";
 import { Input } from "@/components/ui/input";
 import { useUpdateData } from "@/hooks/services/request";
 
@@ -331,7 +330,7 @@ export const inviteTeamMemberColumns: ColumnDef<CredentialsWorkspaceInvite>[] =
           <span
             className={cn(
               "capitalize",
-              status === "accepted"
+              status === "verified"
                 ? "text-green-500"
                 : status === "rejected"
                 ? "text-red-500"

@@ -21,7 +21,12 @@ import { TOrganization } from "@/types/organization";
 import GradientText from "@/components/GradientText";
 import Image from "next/image";
 import Link from "next/link";
-import { Facebook, Instagram, Linkedin } from "styled-icons/bootstrap";
+import {
+  Facebook,
+  InfoCircle,
+  Instagram,
+  Linkedin,
+} from "styled-icons/bootstrap";
 import { Calendar, Download, Link2, X } from "lucide-react";
 import {
   Popover,
@@ -124,140 +129,25 @@ const CertificateView = ({
 
   const shareText = `Excited to share my ${certificate?.originalCertificate.name} certificate with you! Check it out here: ${window.location.href}`;
 
+  const verificationStatus =
+    certificate?.originalCertificate?.workspace?.verification &&
+    certificate?.originalCertificate?.workspace?.verification?.length > 0 &&
+    certificate?.originalCertificate?.workspace?.verification.every(
+      (v) => v.status !== "rejected"
+    )
+      ? certificate?.originalCertificate?.workspace?.verification.some(
+          (v) => v.status === "verified"
+        )
+        ? "verified"
+        : "pending"
+      : "unverified";
+
   return (
     <section className="space-y-6">
-      <div className="bg-white p-4 border rounded-md w-full">
-        {/* <div className="hidden md:flex gap-2 flex-col md:flex-row items-center justify-between">
-        <Button
-          onClick={() =>
-            editor?.savePdf(
-              {
-                width: initialData?.width ?? 900,
-                height: initialData?.height ?? 1200,
-              },
-              `${
-                certificate?.recipientFirstName +
-                "_" +
-                certificate?.recipientLastName
-              }_${certificate?.originalCertificate.name}.pdf`
-            )
-          }
-          className="bg-basePrimary"
-        >
-          Download PDF
-        </Button>
-        <Button
-          onClick={() => editor?.savePng()}
-          className="border-basePrimary border-2 text-basePrimary bg-transparent hover:bg-basePrimary/20"
-        >
-          Download PNG
-        </Button>
-        <Button
-          onClick={() => editor?.saveSvg()}
-          className="border-basePrimary border-2 text-basePrimary bg-transparent hover:bg-basePrimary/20"
-        >
-          Download SVG
-        </Button>
-        <div className="relative">
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleShareDropDown();
-            }}
-            className="border-basePrimary border-2 text-basePrimary bg-transparent hover:bg-basePrimary/20"
-          >
-            <svg
-              stroke="currentColor"
-              fill="currentColor"
-              strokeWidth={0}
-              viewBox="0 0 24 24"
-              height="1em"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle fill="none" cx="17.5" cy="18.5" r="1.5" />
-              <circle fill="none" cx="5.5" cy="11.5" r="1.5" />
-              <circle fill="none" cx="17.5" cy="5.5" r="1.5" />
-              <path d="M5.5,15c0.91,0,1.733-0.358,2.357-0.93l6.26,3.577C14.048,17.922,14,18.204,14,18.5c0,1.93,1.57,3.5,3.5,3.5 s3.5-1.57,3.5-3.5S19.43,15,17.5,15c-0.91,0-1.733,0.358-2.357,0.93l-6.26-3.577c0.063-0.247,0.103-0.502,0.108-0.768l6.151-3.515 C15.767,8.642,16.59,9,17.5,9C19.43,9,21,7.43,21,5.5S19.43,2,17.5,2S14,3.57,14,5.5c0,0.296,0.048,0.578,0.117,0.853L8.433,9.602 C7.808,8.64,6.729,8,5.5,8C3.57,8,2,9.57,2,11.5S3.57,15,5.5,15z M17.5,17c0.827,0,1.5,0.673,1.5,1.5S18.327,20,17.5,20 S16,19.327,16,18.5S16.673,17,17.5,17z M17.5,4C18.327,4,19,4.673,19,5.5S18.327,7,17.5,7S16,6.327,16,5.5S16.673,4,17.5,4z M5.5,10C6.327,10,7,10.673,7,11.5S6.327,13,5.5,13S4,12.327,4,11.5S4.673,10,5.5,10z" />
-            </svg>
-            <h3 className="font-medium">Share this Certificate</h3>
-            {isShareDropDown && (
-              <ActionModal
-                recordShare={recordShare}
-                close={toggleShareDropDown}
-                url={window.location.href}
-                shareText={shareText}
-              />
-            )}
-          </Button>
+      <div className="bg-white py-2 border rounded-md w-full">
+        <div className="flex flex-col gap-y-2 items-center justify-center text-green-600 py-2 border-b-2 text-sm">
+          ID: {certificate?.certificateId}
         </div>
-      </div>
-      <div className="md:hidden w-full flex gap-2 justify-around items-center">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="bg-basePrimary w-fit px-4">Download</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-full">
-            <DropdownMenuItem
-              onClick={() =>
-                editor?.savePdf(
-                  {
-                    width: initialData?.width ?? 900,
-                    height: initialData?.height ?? 1200,
-                  },
-                  `${
-                    certificate?.recipientFirstName +
-                    "_" +
-                    certificate?.recipientLastName
-                  }_${certificate?.originalCertificate.name}.pdf`
-                )
-              }
-            >
-              Download PDF
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor?.savePng()}>
-              Download PNG
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor?.saveSvg()}>
-              Download SVG
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <div className="relative">
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleShareDropDown();
-            }}
-            className="border-basePrimary border-2 text-basePrimary bg-transparent hover:bg-basePrimary/20"
-          >
-            <svg
-              stroke="currentColor"
-              fill="currentColor"
-              strokeWidth={0}
-              viewBox="0 0 24 24"
-              height="1em"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle fill="none" cx="17.5" cy="18.5" r="1.5" />
-              <circle fill="none" cx="5.5" cy="11.5" r="1.5" />
-              <circle fill="none" cx="17.5" cy="5.5" r="1.5" />
-              <path d="M5.5,15c0.91,0,1.733-0.358,2.357-0.93l6.26,3.577C14.048,17.922,14,18.204,14,18.5c0,1.93,1.57,3.5,3.5,3.5 s3.5-1.57,3.5-3.5S19.43,15,17.5,15c-0.91,0-1.733,0.358-2.357,0.93l-6.26-3.577c0.063-0.247,0.103-0.502,0.108-0.768l6.151-3.515 C15.767,8.642,16.59,9,17.5,9C19.43,9,21,7.43,21,5.5S19.43,2,17.5,2S14,3.57,14,5.5c0,0.296,0.048,0.578,0.117,0.853L8.433,9.602 C7.808,8.64,6.729,8,5.5,8C3.57,8,2,9.57,2,11.5S3.57,15,5.5,15z M17.5,17c0.827,0,1.5,0.673,1.5,1.5S18.327,20,17.5,20 S16,19.327,16,18.5S16.673,17,17.5,17z M17.5,4C18.327,4,19,4.673,19,5.5S18.327,7,17.5,7S16,6.327,16,5.5S16.673,4,17.5,4z M5.5,10C6.327,10,7,10.673,7,11.5S6.327,13,5.5,13S4,12.327,4,11.5S4.673,10,5.5,10z" />
-            </svg>
-            <h3 className="font-medium">Share This Certificate</h3>
-            {isShareDropDown && (
-              <ActionModal
-                recordShare={recordShare}
-                close={toggleShareDropDown}
-                url={window.location.href}
-                shareText={shareText}
-              />
-            )}
-          </Button>
-        </div>
-      </div> */}
-
         <div
           className="relative h-[500px] md:h-[calc(100%-124px)] w-full hidden"
           ref={containerRef}
@@ -266,7 +156,7 @@ const CertificateView = ({
           <canvas ref={canvasRef} />
         </div>
 
-        <div className="relative h-full w-full flex justify-center items-center flex-1">
+        <div className="relative h-full w-full flex justify-center items-center flex-1 px-4 py-4">
           <img
             alt="certificate"
             src={editor?.generateLink(true)}
@@ -281,7 +171,11 @@ const CertificateView = ({
             <GradientText className="font-bold" Tag={"h1"}>
               Issued by
             </GradientText>
-            <div>i</div>
+            {}
+            <div className="flex gap-2 items-center text-green-600">
+              <InfoCircle className="size-3" />
+              <span className="font-medium text-xs">verified organisation</span>
+            </div>
           </div>
           <Image
             src={
@@ -292,7 +186,7 @@ const CertificateView = ({
             width={100}
             height={50}
           />
-          <span className="text-gray-600 font-medium">
+          <span className="text-gray-600 font-medium capitalize">
             {certificate?.originalCertificate?.workspace?.organizationName}
           </span>
 

@@ -1,7 +1,7 @@
 "use client";
 import { CrossedEye } from "@/constants/icons";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useLogin } from "@/hooks/services/auth";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
@@ -9,6 +9,8 @@ import logoFooter from "@/public/appointments/logoFooter.png";
 
 const AppointmentLoginForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectedFrom = searchParams.get("redirectedFrom");
   const [showPassword, setShowPassword] = useState(false);
   const { loading, logIn } = useLogin();
 
@@ -24,7 +26,7 @@ const AppointmentLoginForm = () => {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    await logIn(formData, "/home");
+    await logIn(formData, redirectedFrom);
   }
 
   return (
@@ -44,7 +46,9 @@ const AppointmentLoginForm = () => {
       </p>
       <p className="mt-4 font-normal text-center">
         Take Charge of Your Progress –{" "}
-        <span className="block"> Log In, Manage, and Issue Certificates with Ease!
+        <span className="block">
+          {" "}
+          Log In, Manage, and Issue Certificates with Ease!
         </span>
       </p>
 
