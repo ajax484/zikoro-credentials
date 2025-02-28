@@ -274,17 +274,17 @@ const WorkspaceInformation = () => {
   const form = useForm<z.infer<typeof WorkspaceSchema>>({
     resolver: zodResolver(WorkspaceSchema),
     defaultValues: {
-      organizationName: organization?.organizationName,
-      organizationLogo: organization?.organizationLogo,
-      eventContactEmail: organization?.eventContactEmail,
+      organizationName: organization?.organizationName || "",
+      organizationLogo: organization?.organizationLogo || "",
+      eventContactEmail: organization?.eventContactEmail || "",
     },
   });
 
   useEffect(() => {
     if (!organization) return;
-    form.setValue("organizationName", organization?.organizationName);
-    form.setValue("organizationLogo", organization?.organizationLogo);
-    form.setValue("eventContactEmail", organization?.eventContactEmail);
+    form.setValue("organizationName", organization?.organizationName || "");
+    form.setValue("organizationLogo", organization?.organizationLogo || "");
+    form.setValue("eventContactEmail", organization?.eventContactEmail || "");
   }, [organization]);
 
   const onSubmit = async (data: z.infer<typeof WorkspaceSchema>) => {
