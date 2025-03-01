@@ -47,6 +47,13 @@ import Assign from "@/public/icons/clarity_certificate-solid-alerted (1).svg";
 import Analytics from "@/public/icons/ic_twotone-analytics.svg";
 import { InfoCircle } from "styled-icons/bootstrap";
 import { generateAlphanumericHash } from "@/utils/helpers";
+import { useFetchWorkspaces } from "@/queries/Workspaces.queries";
+import {
+  useFetchCertificates,
+  useFetchRecentCertificate,
+} from "@/queries/certificates.queries";
+import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
+import { useUpdateWorkspaceCredits } from "@/mutations/credits.mutations";
 
 const CreateCertificateDialog = ({
   open,
@@ -166,36 +173,24 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
 
   const {
     data: workspaces,
-    isLoading: workspacesIsLoading,
-    getData: refetchWorkspaces,
-  } = useGetData<TOrganization[]>(
-    `/workspaces?userEmail=${user?.userEmail}`,
-
-    []
-  );
+    isFetching: workspacesIsLoading,
+    refetch: refetchWorkspaces,
+    error: workspacesError,
+  } = useFetchWorkspaces(user?.userEmail!);
 
   const { mutateData: updateUser, isLoading: updateUserIsLoading } =
     useMutateData(`/users/${user?.id}`, true);
 
-  const { mutateData: claimCredits, isLoading: claimCreditsIsLoading } =
-    useMutateData(`/workspaces/credits/buy`);
+  const { mutateAsync: claimCredits, isPending: claimCreditsIsLoading } =
+    useUpdateWorkspaceCredits();
 
   console.log(organization);
 
-  const {
-    data: certificates,
-    isLoading: certificatesIsLoading,
-    error,
-  } = useGetData<TCertificate[]>(
-    `/certificates?workspaceAlias=${organization?.organizationAlias}`,
-    []
-  );
+  const { data: certificates, isFetching: certificatesIsLoading } =
+    useFetchCertificates(organization?.organizationAlias!);
 
-  const { data: recentCertificate, isLoading: recentCertificateIsLoading } =
-    useGetData<TCertificate>(
-      `/workspaces/${organization?.organizationAlias}/certificates/recent`,
-      {}
-    );
+  const { data: recentCertificate, isFetching: recentCertificateIsLoading } =
+    useFetchRecentCertificate(organization?.organizationAlias!);
 
   //fetch recipients
   const { data: recipients, isLoading: recipientsIsLoading } = useGetData<
@@ -208,14 +203,8 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
   console.log(recentCertificate);
   console.log(recipients);
 
-  const {
-    data: credits,
-    isLoading: creditsIsLoading,
-    getData: getCredits,
-  } = useGetData<CredentialsWorkspaceToken[]>(
-    `/workspaces/${organization?.id}/credits`,
-    []
-  );
+  const { data: credits, isFetching: creditsIsLoading } =
+    useFetchWorkspaceCredits(organization?.id!);
 
   const { createCertificate, isLoading: certificateIsCreating } =
     useCreateCertificate();
@@ -281,37 +270,33 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
       generateAlphanumericHash(12);
 
     const data = await claimCredits({
-      payload: {
-        credits: {
-          bronze: {
-            amount: 5,
-            price: 0,
-          },
-          silver: {
-            amount: 3,
-            price: 0,
-          },
-          gold: {
-            amount: 2,
-            price: 0,
-          },
+      credits: {
+        bronze: {
+          amount: 5,
+          price: 0,
         },
-        workspaceId: organization?.id,
-        email: user?.userEmail,
-        name: user?.firstName,
-        workspaceName: organization?.organizationName,
-        reference,
-        currency: "NGN",
-        workspaceAlias: organization?.organizationAlias,
-        activityBy: user?.id,
+        silver: {
+          amount: 3,
+          price: 0,
+        },
+        gold: {
+          amount: 2,
+          price: 0,
+        },
       },
+      workspaceId: organization?.id,
+      email: user?.userEmail,
+      name: user?.firstName,
+      workspaceName: organization?.organizationName,
+      reference,
+      currency: "NGN",
+      workspaceAlias: organization?.organizationAlias,
+      activityBy: user?.id,
     });
 
     if (!data) return;
 
     setClaimCreditIsOpen(false);
-
-    await getCredits();
 
     const updatedUser = await updateUser({
       payload: {
@@ -500,7 +485,9 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                   </Link>
 
                   <div className="flex-[60%] space-y-4">
-                    <h4 className="font-medium text-gray-800">Your progress:</h4>
+                    <h4 className="font-medium text-gray-800">
+                      Your progress:
+                    </h4>
 
                     <div>
                       <div className="flex gap-2">

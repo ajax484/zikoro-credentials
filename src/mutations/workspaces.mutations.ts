@@ -109,7 +109,9 @@ export function useVerifyWorkspace(workspaceId: string) {
 
       queryClient.setQueriesData<TOrganization | TOrganization[]>(
         {
-          predicate: (query) => query.queryKey.includes("workspaces"),
+          predicate: (query) =>
+            query.queryKey.includes("workspaces") ||
+            query.queryKey.includes(workspaceId),
         },
         (oldData) => {
           if (!oldData) return oldData;
