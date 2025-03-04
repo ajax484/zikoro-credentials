@@ -203,7 +203,7 @@ const EmailTemplates = () => {
                 className="bg-basePrimary text-white"
                 disabled={isLoadingTemplates || templateIsCreating}
               >
-                New template
+                Create New template
               </Button>
             }
           />
