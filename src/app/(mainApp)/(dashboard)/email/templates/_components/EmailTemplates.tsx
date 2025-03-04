@@ -53,7 +53,7 @@ const CreateTemplateDialog = ({
       <DialogTrigger asChild>{triggerButton}</DialogTrigger>
       <DialogContent className="max-w-[50%]">
         <DialogHeader>
-          <DialogTitle>Create Template</DialogTitle>
+          <DialogTitle>Create Email Template</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
           <div className="flex flex-col gap-2 w-full">

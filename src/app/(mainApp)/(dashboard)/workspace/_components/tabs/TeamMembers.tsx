@@ -205,7 +205,7 @@ const TeamMembers = () => {
           <DialogFooter>
             <Button
               onClick={onSubmit}
-              disabled={selected === "" && !email && !selected}
+              disabled={selected === "" || !email || !selected}
               className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 w-fit text-sm"
             >
               Add Team Member
