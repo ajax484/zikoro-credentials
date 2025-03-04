@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
       const { searchParams } = new URL(req.url);
       const userEmail = searchParams.get("userEmail");
 
-      // get all teams for the user
+      // Get all workspace aliases for the user
       const { data, error } = await supabase
         .from("organizationTeamMembers_Credentials")
         .select("workspaceAlias")
@@ -23,17 +23,24 @@ export async function GET(req: NextRequest) {
         ({ workspaceAlias }) => workspaceAlias
       );
 
+      // Fetch organizations with only the current user's role
       const { data: organizations, error: organizationsError } = await supabase
         .from("organization")
-        .select("*, verification:organizationVerification(*)")
+        .select(
+          `
+          *,
+          verification:organizationVerification(*),
+          role:organizationTeamMembers_Credentials(userRole)
+        `
+        )
+        .eq("organizationTeamMembers_Credentials.userEmail", userEmail) // Filter by current user
         .order("created_at", { ascending: false })
         .in("organizationAlias", workspaceAliases);
 
       console.log(userEmail);
-
       console.log(organizations);
 
-      if (organizationsError) throw error;
+      if (organizationsError) throw organizationsError;
 
       return NextResponse.json(
         {

@@ -18,7 +18,9 @@ export async function POST(
         .from("organization")
         .update(payload)
         .eq("id", workspaceId)
-        .select("*")
+        .select(
+          "*, verification:organizationVerification(*), role:organizationTeamMembers_Credentials(userRole)"
+        )
         .maybeSingle();
 
       console.log(data);
@@ -64,7 +66,9 @@ export async function PATCH(
         .from("organization")
         .update(params)
         .eq("organizationAlias", workspaceId)
-        .select("*, verification:organizationVerification(*)")
+        .select(
+          "*, verification:organizationVerification(*), role:organizationTeamMembers_Credentials(userRole)"
+        )
         .maybeSingle();
 
       if (error) throw error;
@@ -103,7 +107,9 @@ export async function GET(
     try {
       const { data, error, status } = await supabase
         .from("organization")
-        .select("*, verification:organizationVerification(*)")
+        .select(
+          "*, verification:organizationVerification(*), role:organizationTeamMembers_Credentials(userRole)"
+        )
         .eq("id", workspaceId)
         .maybeSingle();
 

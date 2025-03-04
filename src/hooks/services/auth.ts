@@ -4,11 +4,12 @@ import { loginSchema, onboardingSchema } from "@/schemas/auth";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import * as z from "zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { postRequest } from "@/utils/api";
 import useUserStore from "@/store/globalUserStore";
 import { createClient } from "@/utils/supabase/client";
 import { TUser } from "@/types/user";
+import { nanoid } from "nanoid";
 
 const supabase = createClient();
 
@@ -30,6 +31,10 @@ export function useRegistration() {
           emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback/${
             values?.email
           }/${new Date().toISOString()}`,
+          data: {
+            platform: "credentials",
+            verification_token: nanoid(),
+          },
         },
       });
 
@@ -296,6 +301,7 @@ export const getUser = async (email: string | null) => {
 export function useOnboarding() {
   const [loading, setLoading] = useState(false);
   const { setUser } = useUserStore();
+  const params = useSearchParams();
 
   type CreateUser = {
     values: z.infer<typeof onboardingSchema>;
@@ -319,6 +325,16 @@ export function useOnboarding() {
   ) {
     try {
       setLoading(true);
+      if (params.get("token")) {
+        const token = params.get("token");
+        const userId = params.get("userId");
+
+        const { data, status } = await postRequest<any>({
+          endpoint: `/verifyuser/${userId}/${token}`,
+          payload: "",
+        });
+      }
+      
       const { data, error, status } = await supabase
         .from("users")
         .insert({

@@ -54,6 +54,7 @@ import {
 } from "@/queries/certificates.queries";
 import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
 import { useUpdateWorkspaceCredits } from "@/mutations/credits.mutations";
+import { useFetchRecipients } from "@/queries/recipients.queries";
 
 const CreateCertificateDialog = ({
   open,
@@ -193,12 +194,10 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
     useFetchRecentCertificate(organization?.organizationAlias!);
 
   //fetch recipients
-  const { data: recipients, isLoading: recipientsIsLoading } = useGetData<
-    CertificateRecipient[]
-  >(
-    `/workspaces/${organization?.organizationAlias}/certificates/recipients`,
-    []
-  );
+  const {
+    data: recipients,
+    isFetching: recipientsIsLoading,
+  } = useFetchRecipients(organization?.organizationAlias!);
 
   console.log(recentCertificate);
   console.log(recipients);

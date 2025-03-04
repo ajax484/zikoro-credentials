@@ -29,6 +29,7 @@ export interface TOrganization {
   subscriptionExpiryDate: string;
   socialLinks: { title: string; url: string }[];
   verification: OrganizationVerification[];
+  role: { userRole: string }[];
 }
 
 export interface IPayoutAccountDetails {

@@ -17,12 +17,14 @@ import { usePathname, useRouter } from "next/navigation";
 import useUserStore from "@/store/globalUserStore";
 import { LogOutIcon } from "lucide-react";
 import { logout } from "@/app/actions/auth";
+import useOrganizationStore from "@/store/globalOrganizationStore";
 
 type Navlinks = {
   name: string;
   href: string;
   Icon: string;
   disabled?: boolean;
+  restricted?: string[];
 };
 
 const navlinks: Navlinks[] = [
@@ -35,11 +37,13 @@ const navlinks: Navlinks[] = [
     name: "Designs",
     href: "/designs",
     Icon: Design,
+    restricted: ["assign"],
   },
   {
     name: "Assign",
     href: "/assign",
     Icon: Assign,
+    restricted: ["create"],
   },
   {
     name: "Analytics",
@@ -50,11 +54,13 @@ const navlinks: Navlinks[] = [
     name: "Templates",
     href: "/email/templates",
     Icon: EmailTemplate,
+    restricted: ["create"],
   },
   {
     name: "Workspace",
     href: "/workspace",
     Icon: Workspace,
+    restricted: ["create", "assign"],
   },
 ];
 
@@ -79,12 +85,15 @@ const navlinks2: Navlinks[] = [
 
 const Sidebar = () => {
   const { user, setUser } = useUserStore();
+  const { organization, setOrganization } = useOrganizationStore();
   const pathname = usePathname();
   const router = useRouter();
 
   const close = () => {
     router.push("/");
   };
+
+  console.log(organization?.role);
 
   return (
     <div className="px-4 py-6 flex flex-col justify-between h-full w-[100px] group-hover:w-[200px] transition-all duration-300 ease-in-out">
@@ -104,34 +113,41 @@ const Sidebar = () => {
 
       <nav className="my-6">
         <ul className="flex flex-col gap-y-2">
-          {navlinks.map(({ name, href, Icon, disabled }) => (
-            <li key={name} className="w-full">
-              <Link
-                aria-disabled={disabled}
-                onClick={close}
-                prefetch={false}
-                href={disabled ? {} : href}
-                target={href === "/live-events" ? "_blank" : ""}
-                className={cn(
-                  "text-gray-800 p-3 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit",
-                  href === pathname && " bg-basePrimary/10 text-[#1F1F1F]"
-                )}
-              >
-                {Icon && (
-                  <Image
-                    src={Icon}
-                    width={20}
-                    height={20}
-                    alt={name}
-                    className={cn(disabled && "grayscale")}
-                  />
-                )}
-                <span className="group-hover:block hidden text-sm delay-300 transition-all">
-                  {name}
-                </span>
-              </Link>
-            </li>
-          ))}
+          {navlinks
+            .filter(
+              (navlink) =>
+                !navlink.restricted?.includes(
+                  organization?.role?.[0]?.userRole!
+                )
+            )
+            .map(({ name, href, Icon, disabled }) => (
+              <li key={name} className="w-full">
+                <Link
+                  aria-disabled={disabled}
+                  onClick={close}
+                  prefetch={false}
+                  href={disabled ? {} : href}
+                  target={href === "/live-events" ? "_blank" : ""}
+                  className={cn(
+                    "text-gray-800 p-3 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit",
+                    href === pathname && " bg-basePrimary/10 text-[#1F1F1F]"
+                  )}
+                >
+                  {Icon && (
+                    <Image
+                      src={Icon}
+                      width={20}
+                      height={20}
+                      alt={name}
+                      className={cn(disabled && "grayscale")}
+                    />
+                  )}
+                  <span className="group-hover:block hidden text-sm delay-300 transition-all">
+                    {name}
+                  </span>
+                </Link>
+              </li>
+            ))}
         </ul>
       </nav>
 

@@ -14,16 +14,18 @@ import { Button } from "../ui/button";
 import { PlusCircle } from "lucide-react";
 import { CreateOrganization } from "../CreateOrganisation/createOrganisation";
 import { useFetchWorkspaces } from "@/queries/Workspaces.queries";
+import useUserStore from "@/store/globalUserStore";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const { organization, setOrganization } = useOrganizationStore();
+  const { user } = useUserStore();
 
   const {
     data: workspaces,
     isFetching: workspacesIsLoading,
     refetch: refetchWorkspaces,
     error: workspacesError,
-  } = useFetchWorkspaces();
+  } = useFetchWorkspaces(user?.userEmail!);
 
   const [workspace, setWorkspace] = useState<TOrganization | null>(
     organization
