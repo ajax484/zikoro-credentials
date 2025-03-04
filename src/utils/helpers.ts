@@ -426,7 +426,7 @@ export function formatNumber(num: number): string {
 
 export function getTextColorFromBackground(backgroundColor: string): string {
   // Convert rgba color to RGB
-  
+
   const rgbaToRgb = (rgba: string): { r: number; g: number; b: number } => {
     const match = rgba.match(/^rgba?\((\d+), (\d+), (\d+), (\d?\.?\d+)\)$/);
     if (match) {
@@ -455,4 +455,31 @@ export function getTextColorFromBackground(backgroundColor: string): string {
 
   // Return 'light' or 'dark' based on luminance
   return colorLuminance > 0.5 ? "black" : "white";
+}
+
+/**
+ * Generates a WhatsApp URL with a pre-filled message.
+ * @param phoneNumber - The recipient's phone number in international format (e.g., +1234567890).
+ * @param message - The message to pre-fill.
+ * @returns The WhatsApp URL.
+ */
+export function generateWhatsAppUrl(
+  phoneNumber: string,
+  message: string
+): string {
+  // Encode the message for use in a URL
+  const encodedMessage = encodeURIComponent(message);
+  // Create the WhatsApp URL
+  return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+}
+
+/**
+ * Opens WhatsApp with a pre-filled message.
+ * @param phoneNumber - The recipient's phone number in international format (e.g., +1234567890).
+ * @param message - The message to pre-fill.
+ */
+export function openWhatsApp(phoneNumber: string, message: string): void {
+  const url = generateWhatsAppUrl(phoneNumber, message);
+  // Open the URL in a new tab or window
+  window.open(url, "_blank");
 }
