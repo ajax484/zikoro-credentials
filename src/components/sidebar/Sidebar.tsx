@@ -51,7 +51,7 @@ const navlinks: Navlinks[] = [
     Icon: Analytics,
   },
   {
-    name: "Templates",
+    name: "Email-Templates",
     href: "/email/templates",
     Icon: EmailTemplate,
     restricted: ["create"],
