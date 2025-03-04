@@ -166,11 +166,9 @@ const Sidebar = () => {
     router.push("/");
   };
 
-  console.log(organization?.role);
-
   return (
-    <div className="px-4 py-6 flex flex-col justify-between h-full w-[100px] group-hover:w-[200px] transition-all duration-300 ease-in-out">
-      <div className="flex items-center gap-x-2 p-3">
+    <div className="pl-2 pr-1 py-4 flex flex-col justify-between h-full w-[75px] group-hover:w-[175px] transition-all duration-300 ease-in-out">
+      <div className="flex items-center group-hover:gap-x-2 p-2.5 gap-x-0">
         <Image
           src={logo}
           width={40}
@@ -185,7 +183,7 @@ const Sidebar = () => {
       </div>
 
       <nav className="my-6">
-        <ul className="flex flex-col gap-y-2">
+        <ul className="flex flex-col gap-y-3">
           {navlinks
             .filter(
               (navlink) =>
@@ -202,7 +200,7 @@ const Sidebar = () => {
                   href={disabled ? {} : href}
                   target={href === "/live-events" ? "_blank" : ""}
                   className={cn(
-                    "text-gray-800 p-3 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit",
+                    "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit",
                     href === pathname && " bg-basePrimary/10 text-[#1F1F1F]"
                   )}
                 >
@@ -224,13 +222,13 @@ const Sidebar = () => {
         </ul>
       </nav>
 
-      <nav className="border-y py-4">
+      <nav className="border-y py-4 space-y-3">
         <Popover>
           <PopoverTrigger asChild>
             <button
               type="button"
               className={cn(
-                "text-gray-800 p-3 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit"
+                "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit"
               )}
             >
               <AppIcon />
@@ -244,7 +242,7 @@ const Sidebar = () => {
             <div
               role="button"
               onClick={() => window.open("https://www.zikoro.com", "_blank")}
-              className="w-full flex items-center gap-x-4 hover:bg-basePrimary/10 p-3"
+              className="w-full flex items-center gap-x-4 hover:bg-basePrimary/10 p-2.5"
             >
               {/* left */}
               <div>
@@ -268,7 +266,7 @@ const Sidebar = () => {
               onClick={() =>
                 window.open("https://engagements.zikoro.com/", "_blank")
               }
-              className="w-full flex items-center gap-x-4 hover:bg-basePrimary/10 p-3"
+              className="w-full flex items-center gap-x-4 hover:bg-basePrimary/10 p-2.5"
             >
               {/* left */}
               <div>
@@ -292,7 +290,7 @@ const Sidebar = () => {
               onClick={() =>
                 window.open("https://bookings.zikoro.com/", "_blank")
               }
-              className="w-full flex items-center gap-x-4 hover:bg-basePrimary/10 p-3"
+              className="w-full flex items-center gap-x-4 hover:bg-basePrimary/10 p-2.5"
             >
               {/* left */}
               <div>
@@ -312,7 +310,7 @@ const Sidebar = () => {
             </div>
           </PopoverContent>
         </Popover>
-        <ul className="flex flex-col gap-y-4">
+        <ul className="flex flex-col gap-y-3">
           {navlinks2.map(({ name, href, Icon, disabled }) => (
             <li key={name} className="w-full">
               <Link
@@ -321,7 +319,7 @@ const Sidebar = () => {
                 href={disabled ? {} : href}
                 target={href === "/live-events" ? "_blank" : ""}
                 className={cn(
-                  "p-3 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit",
+                  "p-2.5 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit",
                   href.includes(pathname) && " bg-basePrimary/10 text-[#1F1F1F]"
                 )}
               >
@@ -365,12 +363,46 @@ const Sidebar = () => {
       </nav>
 
       <button
+        type="button"
+        className={cn(
+          "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit"
+        )}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={20}
+          height={20}
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="#000"
+            d="M20.94 22H3.06a1 1 0 0 1-.994-1.108a9.995 9.995 0 0 1 19.868 0A1 1 0 0 1 20.94 22"
+            opacity="0.5"
+          />
+          <path
+            fill="#000"
+            d="m12.708 18.307l4.706-4.715a10 10 0 0 0-10.833.003l4.712 4.712A1 1 0 0 0 12 18.6a1 1 0 0 0 .708-.293"
+            opacity="0.25"
+          />
+          <path
+            fill="#000"
+            d="M11.995 14a6 6 0 1 1 6-6a6.007 6.007 0 0 1-6 6"
+            opacity="0.25"
+          />
+          <path fill="#000" d="M6.09 9a5.993 5.993 0 0 0 11.82 0Z" />
+        </svg>
+        <span className="group-hover:block hidden text-sm delay-300 transition-all">
+          {user?.firstName}
+        </span>
+      </button>
+
+      <button
         onClick={async () => {
           await logout();
           localStorage.removeItem("user");
           window.location.href = "/";
         }}
-        className="flex items-center h-fit gap-x-2 p-3"
+        className="flex items-center h-fit gap-x-2 p-2.5"
       >
         <LogOutIcon />
         <span className="text-[#EC2D30] group-hover:block hidden font-medium text-mobile sm:text-sm">
