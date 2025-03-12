@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import ZikoroForm from "@/public/icons/zikoro form.svg";
 import ZikoroQuiz from "@/public/icons/zikoro quiz.svg";

@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Info from "@/public/icons/info.svg";
 import Image from "next/image";

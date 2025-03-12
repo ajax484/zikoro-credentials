@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Zikoro from "@/public/icons/zikoro2a 1.svg";
 import Image from "next/image";
