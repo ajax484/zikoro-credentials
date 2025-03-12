@@ -199,7 +199,7 @@ const ConnectIntegrations = () => {
       <h1 className="text-2xl font-bold text-center text-gray-800">
         {steps[step].heading}
       </h1>
-      <section className="bg-white border rounded-md p-4 min-h-[500px] space-y-6">
+      {/* <section className="bg-white border rounded-md p-4 min-h-[500px] space-y-6">
         <Timeline
           steps={[
             "connect",
@@ -234,7 +234,7 @@ const ConnectIntegrations = () => {
           selectSchedule={selectSchedule}
           selectScheduleDate={selectScheduleDate}
         />
-      </section>
+      </section> */}
     </section>
   );
 };
