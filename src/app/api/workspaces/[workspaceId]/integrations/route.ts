@@ -31,7 +31,7 @@ export async function GET(
       const query = supabase
         .from("credentialsIntegration")
         .select("*")
-        // .eq("workspaceAlias", workspaceId)
+        .eq("workspaceAlias", workspaceId)
         .order("created_at", { ascending: false })
         .range(from, to);
 

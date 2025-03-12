@@ -38,11 +38,11 @@ const Integrations = () => {
       <h1 className="text-2xl font-bold text-center text-gray-800">
         Credential Integration
       </h1>
-      <section className="bg-white border rounded-md p-4 flex flex-col items-center justify-center gap-3 h-[500px]">
+      <section className="bg-white border rounded-md p-4 min-h-[500px]">
         {integrationsIsLoading ? (
           <div>Loading...</div>
         ) : data.data.length === 0 ? (
-          <>
+          <div className="flex flex-col items-center justify-center gap-3 h-[500px] w-full">
             <GradientText className="font-bold text-2xl" Tag={"h1"}>
               No Integrations Yet
             </GradientText>
@@ -54,9 +54,17 @@ const Integrations = () => {
             <CustomLink href="/integrations/connect">
               Add Integration
             </CustomLink>
-          </>
+          </div>
         ) : (
-          <div className="w-full">
+          <div className="w-full space-y-4">
+            <div className="flex justify-between items-center">
+              <h1 className="text-xl font-bold text-gray-800">
+                Your Integrations
+              </h1>
+              <CustomLink href="/integrations/connect">
+                Add Integration
+              </CustomLink>
+            </div>
             <DataTable
               columns={columns}
               data={data?.data}

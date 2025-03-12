@@ -57,6 +57,7 @@ import {
 import { optionalUrl } from "@/app/(mainApp)/(dashboard)/workspace/_components/tabs/SocialLinks";
 import { IntegrationComponentProps } from "./ConnectIntegrations";
 import { disconnect } from "process";
+import { useCreateIntegration } from "@/mutations/integrations.mutations";
 
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
@@ -164,9 +165,9 @@ const EmailTemplate: React.FC<IntegrationComponentProps> = ({
     `/workspaces/${organization?.organizationAlias}/certificates/recipients/templates`,
     []
   );
-  const { mutateData, isLoading } = useMutateData(
-    `/workspaces/${organization?.organizationAlias}/integrations`
-  );
+
+  const { mutateAsync: createIntegration, isPending: integrationIsCreating } =
+    useCreateIntegration(workspace?.organizationAlias!);
 
   const { mutateData: createTemplate, isLoading: templateIsCreating } =
     useMutateData(`/certificates/recipients/templates`);
@@ -231,7 +232,7 @@ Event Team.`,
     });
 
     !template &&
-      (await mutateData({
+      (await createIntegration({
         payload: {
           integrationType: selectedIntegration,
           integrationAlias: generateAlphanumericHash(10),
@@ -287,29 +288,27 @@ Event Team.`,
 
     console.log(data);
 
-    await mutateData({
-      payload: {
-        integrationType: selectedIntegration,
-        integrationAlias: generateAlphanumericHash(12),
-        integrationName: "integration form",
-        integrationSettings: {
-          credentialType: "certificate",
-          credentialId: certificate?.id,
-          schedule,
-          scheduleDate,
-          mapping: Array.from(headers).reduce((acc, [key, value]) => {
-            acc[value] = key.value;
-            return acc;
-          }, {} as Record<any, string>),
-        },
-        disconnect: false,
-        templateId: data?.id,
-        integratedId,
-        workspaceAlias: workspace?.organizationAlias,
+    await createIntegration({
+      integrationType: selectedIntegration,
+      integrationAlias: generateAlphanumericHash(12),
+      integrationName: name,
+      credentialId: certificate?.id,
+      integrationSettings: {
+        credentialType: "certificate",
+        schedule,
+        scheduleDate,
+        mapping: Array.from(headers).reduce((acc, [key, value]) => {
+          acc[value] = key.value;
+          return acc;
+        }, {} as Record<any, string>),
       },
+      disconnect: false,
+      templateId: data?.id,
+      integratedId,
+      workspaceAlias: workspace?.organizationAlias,
     });
 
-    // router.push("/integrations");
+    router.push("/integrations");
   };
 
   const [currentTemplate, setTemplate] =
@@ -357,7 +356,7 @@ Event Team.`,
             </SelectContent>
           </Select>
           <Button
-            disabled={isLoading}
+            disabled={integrationIsCreating}
             className="bg-basePrimary text-white"
             type="button"
             onClick={() => setStep(3)}
@@ -720,7 +719,7 @@ Event Team.`,
               <Button
                 type="button"
                 className="text-basePrimary text-sm border border-basePrimary bg-white hover:bg-white"
-                disabled={isLoading}
+                disabled={integrationIsCreating}
               >
                 Create Integration
               </Button>

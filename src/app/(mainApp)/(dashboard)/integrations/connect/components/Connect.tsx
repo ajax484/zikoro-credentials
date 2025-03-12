@@ -2,7 +2,7 @@ import React from "react";
 import ZikoroForm from "@/public/icons/zikoro form.svg";
 import ZikoroQuiz from "@/public/icons/zikoro quiz.svg";
 import ZikoroEvents from "@/public/icons/zikoro events.svg";
-import Document from "@/public/icons/document.svg";
+import File from "@/public/icons/document.svg";
 import { IntegrationComponentProps } from "./ConnectIntegrations";
 import Image from "next/image";
 import GradientText from "@/components/GradientText";
@@ -39,7 +39,7 @@ const options: Option[] = [
     value: "event",
   },
   {
-    logo: Document,
+    logo: File,
     label: "Google Form",
     value: "google form",
   },

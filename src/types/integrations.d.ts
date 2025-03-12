@@ -9,6 +9,7 @@ export interface CredentialsIntegration {
   integrationSettings: Record<string, unknown> | null;
   workspaceAlias: string;
   templateId: number;
+  credentialId: string;
 }
 
 export interface Quiz {

@@ -129,7 +129,7 @@ export function DataTable<TData>({
                   className={cn("bg-white", onClick && "cursor-pointer")}
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  onClick={() => onClick(row.original)}
+                  onClick={() => onClick && onClick(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
