@@ -1,9 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {
-  RecipientEmailTemplate,
-  TCertificate,
-} from "@/types/certificates";
+import { RecipientEmailTemplate, TCertificate } from "@/types/certificates";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -18,7 +15,6 @@ import {
 import { Input } from "@/components/ui/input";
 import TextEditor from "@/components/textEditor/Editor";
 import { useGetData, useMutateData } from "@/hooks/services/request";
-import { RecipientType } from "./Recipients";
 import { useRouter } from "next/navigation";
 import useUserStore from "@/store/globalUserStore";
 import { CredentialsWorkspaceToken } from "@/types/token";
@@ -59,6 +55,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { optionalUrl } from "@/app/(mainApp)/(dashboard)/workspace/_components/tabs/SocialLinks";
+import { IntegrationComponentProps } from "./ConnectIntegrations";
+import { disconnect } from "process";
 
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
@@ -109,11 +107,13 @@ const CreateTemplateDialog = ({
       <DialogTrigger asChild>{triggerButton}</DialogTrigger>
       <DialogContent className="max-w-[50%]">
         <DialogHeader>
-          <DialogTitle>Save Template</DialogTitle>
+          <DialogTitle>Save Integration</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
           <div className="flex flex-col gap-2 w-full">
-            <label className="font-medium text-gray-700">Template Name</label>
+            <label className="font-medium text-gray-700">
+              Integration Name
+            </label>
             <Input
               type="text"
               placeholder="Enter template name"
@@ -135,7 +135,7 @@ const CreateTemplateDialog = ({
             {templateIsCreating && (
               <LoaderAlt size={22} className="animate-spin" />
             )}
-            <span>Create Template</span>
+            <span>Create Integration</span>
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -143,14 +143,15 @@ const CreateTemplateDialog = ({
   );
 };
 
-const SendEmail = ({
+const EmailTemplate: React.FC<IntegrationComponentProps> = ({
   certificate,
-  updatePage,
-  recipients,
-}: {
-  certificate: TCertificate;
-  updatePage: (page: number) => void;
-  recipients: RecipientType;
+  setStep,
+  workspace,
+  integratedId,
+  headers,
+  schedule,
+  scheduleDate,
+  selectedIntegration,
 }) => {
   const { user } = useUserStore();
   const { organization } = useOrganizationStore();
@@ -164,8 +165,9 @@ const SendEmail = ({
     []
   );
   const { mutateData, isLoading } = useMutateData(
-    `/certificates/${certificate?.certificateAlias}/recipients/release`
+    `/workspaces/${organization?.organizationAlias}/integrations`
   );
+
   const { mutateData: createTemplate, isLoading: templateIsCreating } =
     useMutateData(`/certificates/recipients/templates`);
 
@@ -211,70 +213,42 @@ Event Team.`,
     },
   });
 
-  const { data: credits, isLoading: creditsIsLoading } = useGetData<
-    CredentialsWorkspaceToken[]
-  >(`/workspaces/${organization?.id}/credits`, []);
-
-  const creditBalance = {
-    bronze: credits
-      .filter((v) => v.tokenId === 1)
-      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
-    silver: credits
-      .filter((v) => v.tokenId === 2)
-      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
-    gold: credits
-      .filter((v) => v.tokenId === 3)
-      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
-  };
-
   const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
-    if (!user) return toast.error("Please login to send certificate");
-    if (
-      creditBalance[creditType] === 0 ||
-      creditBalance[creditType] < recipients.length
-    )
-      return toast.error(`Insufficient ${creditType} credits`);
+    // if (!user) return toast.error("Please login to send certificate");
+    // if (
+    //   creditBalance[creditType] === 0 ||
+    //   creditBalance[creditType] < recipients.length
+    // )
+    //   return toast.error(`Insufficient ${creditType} credits`);
 
-    await mutateData({
+    const template = await createTemplate({
       payload: {
-        certificateGroupId: certificate.id,
         ...data,
-        action: "release",
-        recipients: recipients.map(
-          ({
-            recipientEmail,
-            recipientFirstName,
-            recipientLastName,
-            recipientAlias,
-            profilePicture,
-            logoUrl,
-            ...metadata
-          }) => ({
-            metadata,
-            recipientEmail: recipientEmail.trim(),
-            recipientFirstName: recipientFirstName.trim(),
-            recipientLastName: recipientLastName.trim(),
-            recipientAlias: recipientAlias.trim(),
-            profilePicture,
-            logoUrl,
-          })
-        ),
-        status: "email sent",
-        createdBy: user?.id,
         workspaceAlias: organization?.organizationAlias,
-        workspaceId: organization?.id,
-        organization,
+        templateName: name,
+        createdBy: user?.id,
       },
     });
+
+    !template &&
+      (await mutateData({
+        payload: {
+          integrationType: selectedIntegration,
+          integrationAlias: generateAlphanumericHash(10),
+          integrationName: "integration form",
+          integrationSettings: {
+            credentialType: "certificate",
+            credentialId: certificate?.id,
+            schedule,
+            scheduleDate,
+          },
+          disconnect: false,
+          templateId: template?.id,
+        },
+      }));
+
     router.push("/assign");
   };
-
-  const creditType =
-    certificate?.attributes && certificate?.attributes.length > 0
-      ? "gold"
-      : certificate?.hasQRCode
-      ? "silver"
-      : "bronze";
 
   const [logoUrlUploading, setLogoUrlUploading] = useState<boolean>(false);
 
@@ -298,12 +272,12 @@ Event Team.`,
   const createTemplateFn = async ({ name }: { name: string }) => {
     if (!organization) return toast.error("Please select an organization");
     const templateAlias = generateAlphanumericHash(12);
-    const values = form.getValues();
+    const { header, showCustomLinks, ...values } = form.getValues();
     const data = await createTemplate({
       payload: {
         ...values,
-        workspaceAlias: organization.organizationAlias,
-        templateName: name,
+        workspaceAlias: workspace?.organizationAlias,
+        templateName: name + " template",
         createdBy: user?.id,
         templateAlias,
       },
@@ -311,7 +285,31 @@ Event Team.`,
 
     if (!data) return;
 
-    await getTemplates();
+    console.log(data);
+
+    await mutateData({
+      payload: {
+        integrationType: selectedIntegration,
+        integrationAlias: generateAlphanumericHash(12),
+        integrationName: "integration form",
+        integrationSettings: {
+          credentialType: "certificate",
+          credentialId: certificate?.id,
+          schedule,
+          scheduleDate,
+          mapping: Array.from(headers).reduce((acc, [key, value]) => {
+            acc[value] = key.value;
+            return acc;
+          }, {} as Record<any, string>),
+        },
+        disconnect: false,
+        templateId: data?.id,
+        integratedId,
+        workspaceAlias: workspace?.organizationAlias,
+      },
+    });
+
+    // router.push("/integrations");
   };
 
   const [currentTemplate, setTemplate] =
@@ -362,7 +360,7 @@ Event Team.`,
             disabled={isLoading}
             className="bg-basePrimary text-white"
             type="button"
-            onClick={() => updatePage(0)}
+            onClick={() => setStep(3)}
           >
             Back
           </Button>
@@ -643,10 +641,12 @@ Event Team.`,
                     dangerouslySetInnerHTML={{
                       __html: replaceSpecialText(body, {
                         recipient: {
-                          ...recipients[0],
-                          certificateId: 12345678,
+                          recipientEmail: "johndoe@gmail.com",
+                          recipientFirstName: "John",
+                          recipientLastName: "Doe",
+                          certificateId: "12345678",
                         },
-                        organization,
+                        organization: workspace,
                       }),
                     }}
                   />
@@ -722,21 +722,22 @@ Event Team.`,
                 className="text-basePrimary text-sm border border-basePrimary bg-white hover:bg-white"
                 disabled={isLoading}
               >
-                Save as template
+                Create Integration
               </Button>
             }
           />
-          <Button
+          {/* <Button
             className="bg-basePrimary text-white"
             type="submit"
             disabled={isLoading}
           >
+            Create Integration
             Send email ({recipients.length} {creditType} credits)
-          </Button>
+          </Button> */}
         </div>
       </form>
     </Form>
   );
 };
 
-export default SendEmail;
+export default EmailTemplate;

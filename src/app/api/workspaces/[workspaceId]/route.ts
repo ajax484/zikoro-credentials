@@ -64,7 +64,7 @@ export async function PATCH(
 
       const { data, error } = await supabase
         .from("organization")
-        .update(params)
+        .update({ ...params, subscriptionPlan: "free" })
         .eq("organizationAlias", workspaceId)
         .select(
           "*, verification:organizationVerification(*), role:organizationTeamMembers_Credentials(userRole)"
@@ -151,7 +151,7 @@ export async function DELETE(
       const { data, error } = await supabase
         .from("organization")
         .delete()
-        .eq("id", workspaceId);
+        .eq("organizationAlias", workspaceId);
 
       if (error) throw error;
       return NextResponse.json(

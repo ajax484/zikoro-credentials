@@ -101,6 +101,7 @@ export interface CertificateRecipient {
   recipientAlias: string;
   isValid: boolean;
   hasQRCode: boolean;
+  certificate: TCertificate;
 }
 
 export interface CertificateTemplate {

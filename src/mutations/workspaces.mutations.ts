@@ -5,10 +5,11 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { OrganizationVerification, TOrganization } from "@/types/organization";
-import { patchRequest, postRequest } from "@/utils/api";
+import { deleteRequest, patchRequest, postRequest } from "@/utils/api";
 import { toast } from "react-toastify";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import useUserStore from "@/store/globalUserStore";
+import { useRouter } from "next/navigation";
 
 export function useUpdateWorkspaces(workspaceId: string) {
   const { organization, setOrganization } = useOrganizationStore();
@@ -68,6 +69,76 @@ export function useUpdateWorkspaces(workspaceId: string) {
         isLoading: false,
         autoClose: 3000,
       });
+    },
+    onError: (error, _, toastId) => {
+      console.error(error);
+      // Update toast to error
+      toast.update(toastId, {
+        render: "Failed to update workspace. Please try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    },
+  });
+}
+
+export function useDeleteWorkspace(workspaceId: string) {
+  const { organization, setOrganization } = useOrganizationStore();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const { status } = await deleteRequest<TOrganization>({
+        endpoint: `/workspaces/${workspaceId}`,
+      });
+
+      if (status !== 200) {
+        throw new Error();
+      }
+
+      return workspaceId;
+    },
+    onMutate: () => {
+      // Show loading toast
+      return toast.loading("Updating workspace...");
+    },
+    onSuccess: (workspaceId, _, toastId) => {
+      setOrganization(null);
+      // Update workspace in any query where it exists
+      queryClient.setQueriesData<TOrganization | TOrganization[]>(
+        {
+          predicate: (query) =>
+            query.queryKey.includes("workspaces") ||
+            query.queryKey.includes(workspaceId),
+        },
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          console.log(oldData);
+
+          if (Array.isArray(oldData)) {
+            // Update the workspace in a list of workspaces
+            return oldData.filter(
+              (workspace) => workspace.organizationAlias !== workspaceId
+            );
+          } else {
+            // Update a single workspace
+            return null;
+          }
+        }
+      );
+
+      // Update toast to success
+      toast.update(toastId, {
+        render: "Workspace deleted successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      router.push("/home");
     },
     onError: (error, _, toastId) => {
       console.error(error);

@@ -1,7 +1,13 @@
 "use client";
-import { TCertificate } from "@/types/certificates";
+import { CertificateRecipient, TCertificate } from "@/types/certificates";
+import { PaginatedData } from "@/types/request";
 import { getRequest } from "@/utils/api";
-import { useQuery } from "@tanstack/react-query";
+import {
+  InfiniteData,
+  QueryKey,
+  useInfiniteQuery,
+  useQuery,
+} from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 export function useFetchCertificates(workspaceAlias: string) {
@@ -42,6 +48,39 @@ export function useFetchRecentCertificate(workspaceAlias: string) {
     queryFn: async () => {
       const { data, status } = await getRequest<TCertificate>({
         endpoint: `/workspaces/${workspaceAlias}/certificates/recent`,
+      });
+
+      if (status !== 200) {
+        toast.error(data.error);
+        throw new Error(data.error);
+      }
+
+      console.log(data.data);
+
+      return data.data;
+    },
+  });
+
+  return {
+    data,
+    isFetching,
+    status,
+    error,
+    refetch,
+  };
+}
+
+export function useFetchCertificateRecipients(
+  workspaceAlias: string,
+  pagination: { page: number; limit: number }
+) {
+  const { data, isFetching, status, error, refetch } = useQuery({
+    queryKey: ["certificates recipients", workspaceAlias],
+    queryFn: async () => {
+      const { data, status } = await getRequest<
+        PaginatedData<CertificateRecipient>
+      >({
+        endpoint: `/certificates/recipients?workspaceAlias=${workspaceAlias}&limit=${pagination.limit}&page=${pagination.page}`,
       });
 
       if (status !== 200) {

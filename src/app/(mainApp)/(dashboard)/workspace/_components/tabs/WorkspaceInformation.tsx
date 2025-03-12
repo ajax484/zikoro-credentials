@@ -39,6 +39,7 @@ import { cn } from "@/lib/utils";
 import useUserStore from "@/store/globalUserStore";
 import { optionalUrl } from "./SocialLinks";
 import {
+  useDeleteWorkspace,
   useUpdateWorkspaces,
   useVerifyWorkspace,
 } from "@/mutations/workspaces.mutations";
@@ -309,6 +310,12 @@ const WorkspaceInformation = () => {
   const [profilePictureUploading, setProfilePictureUploading] =
     useState<boolean>(false);
 
+  const {
+    mutateAsync: deleteWorkspace,
+    isPending: deleteWorkspaceIsLoading,
+    error: deleteWorkspaceError,
+  } = useDeleteWorkspace(organization?.organizationAlias!);
+
   const DeleteWorkspaceDialog = () => {
     const [workspaceName, setWorkspaceName] = useState<string>("");
 
@@ -339,14 +346,19 @@ const WorkspaceInformation = () => {
             />
           </div>
           <DialogFooter>
-            <Button
-              disabled={workspaceName !== organization?.organizationName}
-              // onClick={deleteWorkspace}
-              className="bg-basePrimary text-white"
-              type="button"
-            >
-              Confirm
-            </Button>
+            <DialogClose>
+              <Button
+                disabled={
+                  workspaceName !== organization?.organizationName ||
+                  deleteWorkspaceIsLoading
+                }
+                onClick={async () => deleteWorkspace()}
+                className="bg-basePrimary text-white"
+                type="button"
+              >
+                Confirm
+              </Button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -459,7 +471,7 @@ const WorkspaceInformation = () => {
             />
           </div>
           <Button
-            disabled={updateWorkspaceIsLoading}
+            disabled={updateWorkspaceIsLoading || deleteWorkspaceIsLoading}
             className="bg-basePrimary text-white mx-auto"
             type="submit"
           >

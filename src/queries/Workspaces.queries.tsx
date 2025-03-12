@@ -36,31 +36,3 @@ export function useFetchWorkspaces(userEmail: string) {
     refetch,
   };
 }
-
-export function useFetchUser({ id }: { id: string }) {
-  const { data, isFetching, status, error, refetch } = useQuery({
-    queryKey: ["user", id],
-    queryFn: async () => {
-      const { data } = await getRequest({
-        endpoint: `/admin/users/${id}`,
-      });
-
-      if (!data.success) {
-        toast.error(data.message);
-        throw new Error(data.message);
-      }
-
-      console.log(data.data);
-
-      return data.data.user as Users;
-    },
-  });
-
-  return {
-    data,
-    isFetching,
-    status,
-    error,
-    refetch,
-  };
-}

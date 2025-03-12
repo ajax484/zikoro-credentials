@@ -173,6 +173,7 @@ interface PaginationProps {
   setCurrentPage: (page: number) => void;
   limit: number;
 }
+
 const Pagination = ({
   totalDocs,
   currentPage,

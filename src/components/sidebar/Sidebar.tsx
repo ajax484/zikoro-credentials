@@ -25,6 +25,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { NavModalIcon } from "@/constants";
+import Integrations from "@/public/icons/stash_integrations-duotone.svg";
 
 export function SupportMailIcon() {
   return (
@@ -130,6 +131,12 @@ const navlinks: Navlinks[] = [
     restricted: ["create"],
   },
   {
+    name: "Integrations",
+    href: "/integrations",
+    Icon: Integrations,
+    restricted: ["create", "assign"],
+  },
+  {
     name: "Workspace",
     href: "/workspace",
     Icon: Workspace,
@@ -166,13 +173,15 @@ const Sidebar = () => {
     router.push("/");
   };
 
+  console.log(pathname);
+
   return (
     <div className="pl-2 pr-1 py-4 flex flex-col justify-between h-full w-[75px] group-hover:w-[175px] transition-all duration-300 ease-in-out">
       <div className="flex items-center group-hover:gap-x-2 p-2.5 gap-x-0">
         <Image
           src={logo}
-          width={40}
-          height={40}
+          width={30}
+          height={30}
           alt="logo"
           className="cursor-pointer"
         />
@@ -182,8 +191,8 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <nav className="my-6">
-        <ul className="flex flex-col gap-y-3">
+      <nav className="my-4">
+        <ul className="flex flex-col gap-y-2.5">
           {navlinks
             .filter(
               (navlink) =>
@@ -201,7 +210,8 @@ const Sidebar = () => {
                   target={href === "/live-events" ? "_blank" : ""}
                   className={cn(
                     "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit",
-                    href === pathname && " bg-basePrimary/10 text-[#1F1F1F]"
+                    pathname.includes(href) &&
+                      "bg-basePrimary/10 text-[#1F1F1F]"
                   )}
                 >
                   {Icon && (
@@ -222,7 +232,7 @@ const Sidebar = () => {
         </ul>
       </nav>
 
-      <nav className="border-y py-4 space-y-3">
+      <nav className="border-y py-4 space-y-2.5">
         <Popover>
           <PopoverTrigger asChild>
             <button
@@ -310,7 +320,7 @@ const Sidebar = () => {
             </div>
           </PopoverContent>
         </Popover>
-        <ul className="flex flex-col gap-y-3">
+        <ul className="flex flex-col gap-y-2.5">
           {navlinks2.map(({ name, href, Icon, disabled }) => (
             <li key={name} className="w-full">
               <Link

@@ -46,6 +46,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Nib from "@/public/icons/iconoir_design-nib-solid2.svg";
 import GradientText from "@/components/GradientText";
+import { useFetchWorkspaces } from "@/queries/Workspaces.queries";
+import { useFetchCertificates } from "@/queries/certificates.queries";
 
 const CreateCertificateDialog = ({
   open,
@@ -165,12 +167,10 @@ const Designs = () => {
 
   const {
     data: workspaces,
-    isLoading: workspacesIsLoading,
-    getData: refetchWorkspaces,
-  } = useGetData<TOrganization[]>(
-    `/workspaces?userEmail=${user?.userEmail}`,
-    []
-  );
+    isFetching: workspacesIsLoading,
+    refetch: refetchWorkspaces,
+    error: workspacesError,
+  } = useFetchWorkspaces(user?.userEmail!);
 
   const { createCertificate, isLoading: certificateIsCreating } =
     useCreateCertificate();
@@ -207,15 +207,8 @@ const Designs = () => {
 
   console.log(organization);
 
-  const {
-    data: certificates,
-    isLoading: certificatesIsLoading,
-    error,
-    getData: getCertificates,
-  } = useGetData<TCertificate[]>(
-    `/certificates?workspaceAlias=${organization?.organizationAlias}`,
-    []
-  );
+  const { data: certificates, isFetching: certificatesIsLoading } =
+    useFetchCertificates(organization?.organizationAlias!);
 
   const { data: credits, isLoading: creditsIsLoading } = useGetData<
     CredentialsWorkspaceToken[]
@@ -405,7 +398,6 @@ const Designs = () => {
               <div className="flex flex-col justify-center items-center h-[250px] gap-4">
                 <div className="bg-basePrimary rounded-full p-6">
                   <Image
-                  
                     src={Nib}
                     alt="nib"
                     width={30}
@@ -419,7 +411,7 @@ const Designs = () => {
                 <p className="text-gray-800 text-sm font-medium">
                   Get started by creating your first certificate
                 </p>
-                {/* <CreateCertificateDialog
+                <CreateCertificateDialog
                   open={open}
                   setOpen={setOpen}
                   createCertificateFn={createCertificateFn}
@@ -439,7 +431,7 @@ const Designs = () => {
                       Start Creating
                     </Button>
                   }
-                /> */}
+                />
               </div>
             </>
           ) : (

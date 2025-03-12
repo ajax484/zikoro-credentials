@@ -4,31 +4,33 @@ import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import React, { useState } from "react";
 import Issue from "./Issue";
 import useOrganizationStore from "@/store/globalOrganizationStore";
+import {
+  useFetchCertificateRecipients,
+  useFetchCertificates,
+} from "@/queries/certificates.queries";
 
 const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
   const { organization, setOrganization } = useOrganizationStore();
-
-  const { data: certificates, isLoading } = useGetData<TCertificate[]>(
-    `/certificates?workspaceAlias=${organization?.organizationAlias}`,
-
-    []
+  const [pagination, setPagination] = useState<{ page: number; limit: number }>(
+    { page: 1, limit: 10 }
   );
+
+  const { data: certificates, isFetching: certificatesIsLoading } =
+    useFetchCertificates(organization?.organizationAlias!);
 
   const searchParams = new URLSearchParams({
     workspaceAlias: organization?.organizationAlias || "",
   });
 
   const {
-    data: certificateIssuees,
-    isLoading: certificateIssueesIsLoading,
-    total,
-    totalPages,
-    pagination,
-    setPagination,
-    getData
-  } = useGetPaginatedData<CertificateRecipient & { certificate: TCertificate }>(
-    `/certificates/recipients`,
-    searchParams
+    data,
+    isFetching: certificateIssueesIsLoading,
+    status,
+    error,
+    refetch,
+  } = useFetchCertificateRecipients(
+    organization?.organizationAlias!,
+    pagination
   );
 
   const updatePage = (page: number) => {
@@ -39,19 +41,19 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
     setPagination({ page: 1, limit });
   };
 
-  console.log(certificateIssuees);
+  console.log(data);
 
   return (
     <section>
       <Issue
-        refetch={getData}
+        refetch={refetch}
         certificateAlias={certificateAlias}
         certificates={certificates}
-        certificateIssuees={certificateIssuees}
+        certificateIssuees={data?.data}
         updatePage={updatePage}
         updateLimit={updateLimit}
-        total={total}
-        totalPages={totalPages}
+        total={data?.total}
+        totalPages={data?.totalPages}
         pagination={pagination}
         isLoading={certificateIssueesIsLoading}
       />

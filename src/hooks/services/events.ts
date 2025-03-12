@@ -250,8 +250,8 @@ export function useCreateOrganisation() {
 
       console.log(data);
 
-      const { data: insertedEvent, error: insertError } = await supabase
-        .from("organizationTeamMembers_Credentials")
+      const { error: insertError } = await supabase
+        .from("organizationTeamMembers")
         .insert({
           userEmail: userEmail,
           userRole: "owner",
@@ -260,8 +260,36 @@ export function useCreateOrganisation() {
         });
 
       if (insertError) {
-        console.log(insertError);
-        return toast.error(insertError.message);
+        throw new Error(`Failed to add user to team: ${insertError.message}`);
+      }
+
+      const { error: insertCredentialsError } = await supabase
+        .from("organizationTeamMembers_Credentials")
+        .insert({
+          userEmail: userEmail,
+          userRole: "owner",
+          workspaceAlias: data?.organizationAlias,
+          userId,
+        });
+
+      if (insertCredentialsError) {
+        throw new Error(
+          `Failed to add user to team: ${insertCredentialsError.message}`
+        );
+      }
+      const { error: insertEngagementsError } = await supabase
+        .from("organizationTeamMembers_Engagement")
+        .insert({
+          userEmail: userEmail,
+          userRole: "owner",
+          workspaceAlias: data?.organizationAlias,
+          userId,
+        });
+
+      if (insertEngagementsError) {
+        throw new Error(
+          `Failed to add user to team: ${insertEngagementsError.message}`
+        );
       }
 
       setLoading(false);

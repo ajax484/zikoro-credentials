@@ -76,7 +76,7 @@ const MapRecipients = ({
 
     setStep(3);
   };
-
+  
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-4">
