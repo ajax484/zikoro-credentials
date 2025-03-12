@@ -4,10 +4,8 @@ import Info from "@/public/icons/info.svg";
 import Image from "next/image";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import Calendar from "react-calendar";
 import { Button } from "@/components/ui/button";
 import { IntegrationComponentProps } from "./ConnectIntegrations";
-import "react-calendar/dist/Calendar.css";
 import { Input } from "@/components/ui/input";
 
 const DeliverySettings: React.FC<IntegrationComponentProps> = ({
