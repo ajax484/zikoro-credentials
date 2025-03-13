@@ -56,7 +56,7 @@ const MapRecipients: React.FC<IntegrationComponentProps> = ({
 
   return (
     <section className="flex flex-col gap-y-4">
-      {formIsLoading && <LoaderAlt className="mx-auto" />}
+      {formIsLoading && <LoaderAlt className="mx-auto size-4" />}
       <div className="flex gap-2 items-center justify-center">
         <Image alt="zikoro" src={Info} height={30} width={30} />
         <h1 className="font-bold text-center text-gray-800">

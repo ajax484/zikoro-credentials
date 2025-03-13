@@ -39,8 +39,6 @@ export async function GET(
 
       console.log(data);
 
-      console.log(data);
-
       if (error) {
         return NextResponse.json(
           {
@@ -106,18 +104,22 @@ export async function POST(
 
       if (error) throw error;
 
-      const { error: updateError } = await supabase
+      const { data: returnData, error: updateError } = await supabase
         .from(
-          body.selectedIntegration === "form"
+          body.integrationType === "form"
             ? "forms"
-            : body.selectedIntegration === "quiz"
+            : body.integrationType === "quiz"
             ? "quiz"
             : "events"
         )
         .update({
           integrationAlias: data?.integrationAlias,
         })
-        .eq("id", integratedId);
+        .eq("id", integratedId)
+        .select("*")
+        .maybeSingle();
+
+      console.log(returnData, integratedId);
 
       if (updateError) throw updateError;
 

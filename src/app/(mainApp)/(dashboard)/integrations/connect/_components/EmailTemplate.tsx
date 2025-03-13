@@ -289,7 +289,7 @@ Event Team.`,
       integrationType: selectedIntegration,
       integrationAlias: generateAlphanumericHash(12),
       integrationName: name,
-      credentialId: certificate?.id,
+      credentialId: certificate?.id!,
       integrationSettings: {
         credentialType: "certificate",
         schedule,

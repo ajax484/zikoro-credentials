@@ -1,3 +1,5 @@
+import { TCertificate } from "./certificates";
+
 export interface CredentialsIntegration {
   id: number;
   created_at: Date;
@@ -9,7 +11,8 @@ export interface CredentialsIntegration {
   integrationSettings: Record<string, unknown> | null;
   workspaceAlias: string;
   templateId: number;
-  credentialId: string;
+  credentialId: number;
+  certificate: TCertificate;
 }
 
 export interface Quiz {
