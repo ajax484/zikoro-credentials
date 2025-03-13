@@ -95,7 +95,13 @@ export function useFetchCertificateRecipients(
   });
 
   return {
-    data,
+    data: data || {
+      data: [],
+      limit: pagination.limit,
+      total: 0,
+      totalPages: 0,
+      page: pagination.page,
+    },
     isFetching,
     status,
     error,

@@ -12,6 +12,8 @@ import SelectIntegration from "./SelectIntegration";
 import MapRecipients from "./MapRecipients";
 import DeliverySettings from "./DeliverySettings";
 import EmailTemplate from "./EmailTemplate";
+import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 
 export interface IntegrationComponentProps {
   selectedIntegration: string;
@@ -209,11 +211,18 @@ const ConnectIntegrations = () => {
     });
   };
 
+  const router = useRouter();
+
   return (
     <section className="space-y-4">
-      <h1 className="text-2xl font-bold text-center text-gray-800">
-        {steps[step].heading}
-      </h1>
+      <div className="flex items-center">
+        <button onClick={() => router.back()} aria-label="back">
+          <ArrowLeft className="text-gray-800 hover:text-basePrimary size-6" />
+        </button>
+        <h1 className="text-2xl font-bold text-center text-gray-800 mx-auto">
+          {steps[step].heading}
+        </h1>
+      </div>
       <section className="bg-white border rounded-md p-4 min-h-[500px] space-y-6">
         <Timeline
           steps={[
