@@ -80,7 +80,7 @@ const steps: Steps = {
   },
   4: {
     heading: "Email Template",
-    Component: EmailTemplates,
+    Component: EmailTemplate,
   },
 };
 
