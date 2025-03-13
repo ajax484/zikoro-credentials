@@ -30,7 +30,7 @@ export async function GET(
 
       const query = supabase
         .from("credentialsIntegration")
-        .select("*")
+        .select("*, certificate(*), template:recipientEmailTemplate(*)")
         .eq("workspaceAlias", workspaceId)
         .order("created_at", { ascending: false })
         .range(from, to);

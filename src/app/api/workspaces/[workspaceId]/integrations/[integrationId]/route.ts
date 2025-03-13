@@ -68,7 +68,7 @@ export async function PATCH(
         .from("credentialsIntegration")
         .update(params)
         .eq("integrationAlias", integrationId)
-        .select("*")
+        .select("*, certificate(*), template:recipientEmailTemplate(*)")
         .maybeSingle();
 
       if (error) throw error;
@@ -107,7 +107,7 @@ export async function GET(
     try {
       const { data, error, status } = await supabase
         .from("credentialsIntegration")
-        .select("*, template:recipientEmailTemplate(*)")
+        .select("*, certificate(*), template:recipientEmailTemplate(*)")
         .eq("integrationAlias", integrationId)
         .maybeSingle();
 

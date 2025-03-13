@@ -173,6 +173,7 @@ export function useDeleteIntegration(
       return toast.loading("deleting integration...");
     },
     onSuccess: (integrationAlias, _, toastId) => {
+      console.log(integrationAlias);
       // Update integration in any query where it exists
       queryClient.setQueriesData<
         CredentialsIntegration | PaginatedData<CredentialsIntegration>
@@ -198,7 +199,7 @@ export function useDeleteIntegration(
             };
           } else {
             // Update a single integration
-            return null;
+            return undefined;
           }
         }
       );

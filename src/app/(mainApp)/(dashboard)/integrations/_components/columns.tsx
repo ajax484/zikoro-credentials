@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import CustomLink from "@/components/CustomLink/CustomLink";
 
 export const columns: ColumnDef<CredentialsIntegration>[] = [
   {
@@ -25,8 +26,8 @@ export const columns: ColumnDef<CredentialsIntegration>[] = [
     header: "Integration Name",
   },
   {
-    accessorKey: "integrationAlias",
-    header: "Integration Alias",
+    accessorKey: "certificate.name",
+    header: "Credential Name",
   },
   {
     accessorKey: "integrationType",
@@ -92,6 +93,8 @@ export const columns: ColumnDef<CredentialsIntegration>[] = [
     id: "actions",
     cell: ({ row }) => {
       const integration = row.original as CredentialsIntegration;
+
+      console.log(integration.template);
 
       const {
         mutateAsync: updateIntegration,
@@ -203,13 +206,13 @@ export const columns: ColumnDef<CredentialsIntegration>[] = [
 
       return (
         <div className="flex gap-1 items-center">
-          <Button
-            disabled={integrationIsDeleting}
+          <CustomLink
             className="bg-basePrimary w-fit rounded-l-xl rounded-r-none flex gap-2 items-center"
+            href={`/email/templates/${integration?.template?.templateAlias}`}
           >
             Edit
             <Edit className="size-5" />
-          </Button>
+          </CustomLink>
           <Delete />
         </div>
       );

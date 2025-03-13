@@ -1,4 +1,4 @@
-import { TCertificate } from "./certificates";
+import { RecipientEmailTemplate, TCertificate } from "./certificates";
 
 export interface CredentialsIntegration {
   id: number;
@@ -13,6 +13,7 @@ export interface CredentialsIntegration {
   templateId: number;
   credentialId: number;
   certificate: TCertificate;
+  template: RecipientEmailTemplate;
 }
 
 export interface Quiz {
