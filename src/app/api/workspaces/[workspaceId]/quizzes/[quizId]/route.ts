@@ -4,23 +4,36 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { workspaceId: number } }
+  { params }: { params: { workspaceId: number; quizId: string } }
 ) {
   const supabase = createRouteHandlerClient({ cookies });
 
   if (req.method === "GET") {
     try {
-      const { workspaceId } = params;
+      const { workspaceId, quizId } = params;
 
-      console.log(workspaceId);
+      console.log(workspaceId, quizId);
 
-      const { data, error, status } = await supabase
+      const query = supabase
         .from("quiz")
-        .select("*, form:forms(*)")
-        .eq("workspaceAlias", workspaceId)
-        // .neq("formAlias", null);
+        .select("*")
+        .eq("id", quizId)
+        .maybeSingle();
 
-      console.log(data, error);
+      const { data, error, status } = await query;
+
+      console.log(data);
+
+      if (error) {
+        return NextResponse.json(
+          {
+            error: error?.message,
+          },
+          {
+            status: 400,
+          }
+        );
+      }
 
       if (error) throw error;
 

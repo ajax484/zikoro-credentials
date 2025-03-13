@@ -22,14 +22,14 @@ export const TextEditor = ({
 
   return (
     <div className="text-editor">
-      <EditorToolbar />
+      {/* <EditorToolbar />  */}
       <ReactQuill
         theme="snow"
         value={state}
         onChange={handleChange}
         placeholder={"Enter message"}
-        modules={modules}
-        formats={formats}
+        // modules={modules}
+        // formats={formats}
         className="w-full bg-white ql-container focus:ring-1 ring-black"
       />
     </div>

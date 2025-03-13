@@ -3,7 +3,7 @@ import React from "react";
 import ZikoroForm from "@/public/icons/zikoro form.svg";
 import ZikoroQuiz from "@/public/icons/zikoro quiz.svg";
 import ZikoroEvents from "@/public/icons/zikoro events.svg";
-import File from "@/public/icons/document.svg";
+import File from "@/public/icons/file.svg";
 import { IntegrationComponentProps } from "./ConnectIntegrations";
 import Image from "next/image";
 import GradientText from "@/components/GradientText";

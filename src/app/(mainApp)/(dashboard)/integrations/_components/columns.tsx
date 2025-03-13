@@ -17,6 +17,7 @@ import {
 } from "@/mutations/integrations.mutations";
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 export const columns: ColumnDef<CredentialsIntegration>[] = [
   {
@@ -54,6 +55,36 @@ export const columns: ColumnDef<CredentialsIntegration>[] = [
         <span className="text-center">
           {value ? value.toLocaleString() : 0}
         </span>
+      );
+    },
+  },
+  {
+    header: "Active",
+    accessorKey: "disconnect",
+    cell: ({ row }) => {
+      const integration = row.original as CredentialsIntegration;
+
+      const {
+        mutateAsync: updateIntegration,
+        isPending: integrationIsUpdating,
+      } = useUpdateIntegration(
+        integration.workspaceAlias,
+        integration.integrationAlias
+      );
+
+      return (
+        <div className="flex items-center justify-center">
+          <Switch
+            onClick={() =>
+              updateIntegration({
+                disconnect: !integration.disconnect,
+              })
+            }
+            checked={!integration.disconnect}
+            disabled={integrationIsUpdating}
+            className="data-[state=unchecked]:bg-gray-200 data-[state=checked]:bg-basePrimary"
+          />
+        </div>
       );
     },
   },

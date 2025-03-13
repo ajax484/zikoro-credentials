@@ -1,17 +1,17 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
-import Connect from "./Connect";
-import MapRecipients from "./MapRecipients";
-import DeliverySettings from "./DeliverySettings";
-import EmailTemplate from "./EmailTemplate";
+import React, { useEffect, useState } from "react";
 import { Timeline } from "@/components/Timeline/Timeline";
 import { useFetchCertificates } from "@/queries/certificates.queries";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { TCertificate } from "@/types/certificates";
-import SelectForm from "./SelectForm";
 import useUserStore from "@/store/globalUserStore";
 import { useFetchWorkspaces } from "@/queries/Workspaces.queries";
 import { TOrganization } from "@/types/organization";
+import Connect from "./Connect";
+import SelectIntegration from "./SelectIntegration";
+import MapRecipients from "./MapRecipients";
+import DeliverySettings from "./DeliverySettings";
+import EmailTemplate from "./EmailTemplate";
 
 export interface IntegrationComponentProps {
   selectedIntegration: string;
@@ -68,7 +68,7 @@ const steps: Steps = {
   },
   1.5: {
     heading: "Connect",
-    Component: SelectForm,
+    Component: SelectIntegration,
   },
   2: {
     heading: "Map Recipients",
@@ -80,7 +80,7 @@ const steps: Steps = {
   },
   4: {
     heading: "Email Template",
-    Component: EmailTemplate,
+    Component: EmailTemplates,
   },
 };
 
@@ -160,10 +160,25 @@ const ConnectIntegrations = () => {
   const selectIntegration = (value: string) => {
     setIntegration(value);
     if (value === "event") {
-      setStep(3);
-    } else {
-      setStep(1.5);
+      updateHeader(
+        {
+          label: "First name",
+          value: "recipientFirstName",
+          isRequired: true,
+        },
+        "firstName"
+      );
+      updateHeader(
+        { label: "Last name", value: "recipientLastName", isRequired: true },
+        "lastName"
+      );
+      updateHeader(
+        { label: "Email", value: "recipientEmail", isRequired: true },
+        "email"
+      );
     }
+
+    setStep(1.5);
   };
 
   const Component = steps[step].Component;
@@ -199,7 +214,7 @@ const ConnectIntegrations = () => {
       <h1 className="text-2xl font-bold text-center text-gray-800">
         {steps[step].heading}
       </h1>
-      {/* <section className="bg-white border rounded-md p-4 min-h-[500px] space-y-6">
+      <section className="bg-white border rounded-md p-4 min-h-[500px] space-y-6">
         <Timeline
           steps={[
             "connect",
@@ -234,7 +249,7 @@ const ConnectIntegrations = () => {
           selectSchedule={selectSchedule}
           selectScheduleDate={selectScheduleDate}
         />
-      </section> */}
+      </section>
     </section>
   );
 };

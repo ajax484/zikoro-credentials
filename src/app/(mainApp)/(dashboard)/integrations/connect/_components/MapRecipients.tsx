@@ -23,13 +23,16 @@ const MapRecipients: React.FC<IntegrationComponentProps> = ({
   deleteHeader,
   integratedId,
   workspace,
+  selectedIntegration,
 }) => {
+  if (selectedIntegration === "event") setStep(1.5);
+
   const { data: form, isFetching: formIsLoading } = useFetchForm(
     workspace?.organizationAlias!,
     integratedId
   );
 
-  console.log(form?.questions);
+  console.log(form?.questions, integratedId);
 
   const onSubmit = () => {
     for (let [key, value] of Array.from(headers)) {

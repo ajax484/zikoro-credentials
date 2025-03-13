@@ -1,5 +1,6 @@
 "use client";
-import { CredentialsIntegration, Forms } from "@/types/integrations";
+import { Event } from "@/types/events";
+import { CredentialsIntegration, Forms, Quiz } from "@/types/integrations";
 import { TOrganization } from "@/types/organization";
 import { PaginatedData } from "@/types/request";
 import { getRequest } from "@/utils/api";
@@ -34,12 +35,96 @@ export function useFetchForm(organizationId: string, formId: string) {
   };
 }
 
+export function useFetchQuiz(organizationId: string, quizId: string) {
+  const { data, isFetching, status, error, refetch } = useQuery({
+    queryKey: ["quiz", organizationId, quizId],
+    queryFn: async () => {
+      const { data, status } = await getRequest<Forms>({
+        endpoint: `/workspaces/${organizationId}/quizzes/${quizId}`,
+      });
+
+      if (status !== 200) {
+        toast.error(data.error);
+        throw new Error(data.error);
+      }
+
+      console.log(data.data);
+
+      return data.data;
+    },
+  });
+
+  return {
+    data: data || null,
+    isFetching,
+    status,
+    error,
+    refetch,
+  };
+}
+
+export function useFetchEvent(organizationId: string, eventId: string) {
+  const { data, isFetching, status, error, refetch } = useQuery({
+    queryKey: ["event", organizationId, eventId],
+    queryFn: async () => {
+      const { data, status } = await getRequest<Forms>({
+        endpoint: `/workspaces/${organizationId}/event/${eventId}`,
+      });
+
+      if (status !== 200) {
+        toast.error(data.error);
+        throw new Error(data.error);
+      }
+
+      console.log(data.data);
+
+      return data.data;
+    },
+  });
+
+  return {
+    data: data || null,
+    isFetching,
+    status,
+    error,
+    refetch,
+  };
+}
+
 export function useFetchForms(organizationId: string) {
   const { data, isFetching, status, error, refetch } = useQuery({
     queryKey: ["forms", organizationId],
     queryFn: async () => {
       const { data, status } = await getRequest<Forms[]>({
         endpoint: `/workspaces/${organizationId}/forms`,
+      });
+
+      if (status !== 200) {
+        toast.error(data.error);
+        throw new Error(data.error);
+      }
+
+      console.log(data.data);
+
+      return data.data;
+    },
+  });
+
+  return {
+    data: data || [],
+    isFetching,
+    status,
+    error,
+    refetch,
+  };
+}
+
+export function useFetchEvents(organizationId: string) {
+  const { data, isFetching, status, error, refetch } = useQuery({
+    queryKey: ["events", organizationId],
+    queryFn: async () => {
+      const { data, status } = await getRequest<Event[]>({
+        endpoint: `/workspaces/${organizationId}/events`,
       });
 
       if (status !== 200) {
@@ -98,11 +183,11 @@ export function useFetchIntegrations(
   };
 }
 
-export function useFetchQuizzes(organizationId: number) {
+export function useFetchQuizzes(organizationId: string) {
   const { data, isFetching, status, error, refetch } = useQuery({
     queryKey: ["quizzes", organizationId],
     queryFn: async () => {
-      const { data, status } = await getRequest<TOrganization[]>({
+      const { data, status } = await getRequest<Quiz[]>({
         endpoint: `/workspaces/${organizationId}/quizzes`,
       });
 

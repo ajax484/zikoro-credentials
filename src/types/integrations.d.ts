@@ -35,6 +35,7 @@ export interface Quiz {
   createdBy: number;
   integrationAlias: string;
   templateId: number;
+  form: Forms;
 }
 
 export interface Forms {

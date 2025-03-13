@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { RecipientEmailTemplate, TCertificate } from "@/types/certificates";
+import { RecipientEmailTemplate } from "@/types/certificates";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -17,20 +17,18 @@ import TextEditor from "@/components/textEditor/Editor";
 import { useGetData, useMutateData } from "@/hooks/services/request";
 import { useRouter } from "next/navigation";
 import useUserStore from "@/store/globalUserStore";
-import { CredentialsWorkspaceToken } from "@/types/token";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { toast } from "react-toastify";
-import { profile } from "console";
 import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
-import { ImageIcon, Link2, X } from "lucide-react";
+import { ImageIcon, X } from "lucide-react";
 import {
   generateAlphanumericHash,
   getTextColorFromBackground,
   replaceSpecialText,
   uploadFile,
 } from "@/utils/helpers";
-import { Facebook, Instagram, Linkedin, Twitter } from "styled-icons/bootstrap";
+import { Facebook, Instagram, Linkedin } from "styled-icons/bootstrap";
 import {
   Dialog,
   DialogContent,
@@ -56,7 +54,6 @@ import {
 } from "@/components/ui/popover";
 import { optionalUrl } from "@/app/(mainApp)/(dashboard)/workspace/_components/tabs/SocialLinks";
 import { IntegrationComponentProps } from "./ConnectIntegrations";
-import { disconnect } from "process";
 import { useCreateIntegration } from "@/mutations/integrations.mutations";
 
 const sendEmailSchema = z.object({
@@ -324,7 +321,7 @@ Event Team.`,
           <h1 className="text-xl font-semibold text-gray-800">
             Send {certificate?.name} to recipients
           </h1>
-          <Select
+          {/* <Select
             disabled={templatesIsLoading}
             value={String(currentTemplate?.id)}
             onValueChange={(value) => {
@@ -354,7 +351,7 @@ Event Team.`,
                 </SelectItem>
               ))}
             </SelectContent>
-          </Select>
+          </Select> */}
           <Button
             disabled={integrationIsCreating}
             className="bg-basePrimary text-white"
@@ -442,10 +439,12 @@ Event Team.`,
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <TextEditor
-                        value={field.value}
-                        onChangeContent={(content) => field.onChange(content)}
-                      />
+                      {typeof window !== undefined && (
+                        <TextEditor
+                          value={field.value}
+                          onChangeContent={(content) => field.onChange(content)}
+                        />
+                      )}
                     </FormControl>
                   </FormItem>
                 )}
@@ -716,11 +715,7 @@ Event Team.`,
             setOpen={setOpen}
             createTemplateFn={createTemplateFn}
             triggerButton={
-              <Button
-                type="button"
-                className="text-basePrimary text-sm border border-basePrimary bg-white hover:bg-white"
-                disabled={integrationIsCreating}
-              >
+              <Button type="button" disabled={integrationIsCreating}>
                 Create Integration
               </Button>
             }

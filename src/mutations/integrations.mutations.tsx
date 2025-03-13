@@ -11,6 +11,7 @@ import useOrganizationStore from "@/store/globalOrganizationStore";
 import useUserStore from "@/store/globalUserStore";
 import { useRouter } from "next/navigation";
 import { CredentialsIntegration } from "@/types/integrations";
+import { PaginatedData } from "@/types/request";
 
 export function useCreateIntegration(workspaceId: string) {
   const queryClient = useQueryClient();
@@ -94,7 +95,7 @@ export function useUpdateIntegration(
     onSuccess: (updatedIntegration, _, toastId) => {
       // Update integration in any query where it exists
       queryClient.setQueriesData<
-        CredentialsIntegration | CredentialsIntegration[]
+        CredentialsIntegration | PaginatedData<CredentialsIntegration>
       >(
         {
           predicate: (query) =>
@@ -106,13 +107,18 @@ export function useUpdateIntegration(
 
           console.log(oldData);
 
-          if (Array.isArray(oldData)) {
+          if ("data" in oldData) {
             // Update the integration in a list of integrations
-            return oldData.map((integration) =>
+            const newData = oldData.data.map((integration) =>
               integration.id === updatedIntegration.id
                 ? updatedIntegration
                 : integration
             );
+
+            return {
+              ...oldData,
+              data: newData,
+            };
           } else {
             // Update a single integration
             return oldData.id === updatedIntegration.id
@@ -169,7 +175,7 @@ export function useDeleteIntegration(
     onSuccess: (integrationAlias, _, toastId) => {
       // Update integration in any query where it exists
       queryClient.setQueriesData<
-        CredentialsIntegration | CredentialsIntegration[]
+        CredentialsIntegration | PaginatedData<CredentialsIntegration>
       >(
         {
           predicate: (query) =>
@@ -181,11 +187,15 @@ export function useDeleteIntegration(
 
           console.log(oldData);
 
-          if (Array.isArray(oldData)) {
+          if ("data" in oldData) {
             // Update the integration in a list of integrations
-            return oldData.filter(
-              (integration) => integration.integrationAlias !== integrationAlias
-            );
+            return {
+              ...oldData,
+              data: oldData.data.filter(
+                (integration) =>
+                  integration.integrationAlias !== integrationAlias
+              ),
+            };
           } else {
             // Update a single integration
             return null;

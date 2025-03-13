@@ -52,8 +52,6 @@ export const updateSession = async (request: NextRequest) => {
       data: { user },
     } = await supabase.auth.getUser();
 
-    console.log(user);
-
     // Check if the request path starts with /workspace
     if (path.startsWith("/workspace") && !user) {
       const redirectUrl = new URL("/login", request.url);
@@ -81,7 +79,7 @@ export const updateSession = async (request: NextRequest) => {
     }
 
     // if user is not allowed in a route, redirect to home page
-    const {data: userMember, error: userMemberError} = await supabase
+    const { data: userMember, error: userMemberError } = await supabase
       .from("organizationTeamMembers_Credentials")
       .select("userRole")
       .eq("userEmail", user?.email)

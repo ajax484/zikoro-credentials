@@ -68,7 +68,7 @@ export async function PATCH(
         .from("credentialsIntegration")
         .update(params)
         .eq("integrationAlias", integrationId)
-        .select("*, template:recipientEmailTemplate(*)")
+        .select("*")
         .maybeSingle();
 
       if (error) throw error;
