@@ -39,11 +39,11 @@ const options: Option[] = [
     label: "Zikoro Events",
     value: "event",
   },
-  {
-    logo: File,
-    label: "Google Form",
-    value: "google form",
-  },
+  // {
+  //   logo: File,
+  //   label: "Google Form",
+  //   value: "google form",
+  // },
 ];
 
 const Connect: React.FC<IntegrationComponentProps> = ({
