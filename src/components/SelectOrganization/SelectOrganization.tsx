@@ -7,8 +7,6 @@ import useOrganizationStore from "@/store/globalOrganizationStore";
 import { TOrganization } from "@/types/organization";
 import { PlusCircle } from "lucide-react";
 import { Button } from "../ui/button";
-import { Dialog, DialogTrigger } from "../ui/dialog";
-import { DialogContent } from "@radix-ui/react-dialog";
 import { CreateOrganization } from "../CreateOrganisation/createOrganisation";
 import { useSearchParams } from "next/navigation";
 import { useFetchWorkspaces } from "@/queries/Workspaces.queries";

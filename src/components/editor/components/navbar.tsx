@@ -32,7 +32,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { FaCertificate } from "react-icons/fa6";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import DetailsForm from "./detailsForm";
 
 interface NavbarProps {
   id: string;
@@ -42,6 +50,9 @@ interface NavbarProps {
   setName: (name: string) => void;
   name: string;
   save: () => void;
+  onChangeSettings: (settings: any) => void;
+  settings: any;
+  saveSettings: () => void;
   isSaving: boolean;
   isError: boolean;
   eventAlias: string;
@@ -58,11 +69,14 @@ export const Navbar = ({
   setName,
   name,
   save,
-  isSaving,
   isError,
   eventAlias,
   type,
   alias,
+  onChangeSettings,
+  settings,
+  saveSettings,
+  isSaving,
 }: NavbarProps) => {
   const router = useRouter();
   const { openFilePicker } = useFilePicker({
@@ -206,6 +220,21 @@ export const Navbar = ({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu> */}
+          <Sheet>
+            <SheetTrigger>Open</SheetTrigger>
+            <SheetContent className="w-[50vw] h-[100vh] overflow-auto">
+              <SheetHeader>
+                <SheetTitle>Credential Details</SheetTitle>
+              </SheetHeader>
+
+              <DetailsForm
+                onChangeSettings={onChangeSettings}
+                saveSettings={saveSettings}
+                settings={settings}
+                isSaving={isSaving}
+              />
+            </SheetContent>
+          </Sheet>
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button size="sm" variant="ghost">

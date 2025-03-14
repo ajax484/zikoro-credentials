@@ -14,6 +14,7 @@ import {
   getPublicCloudinaryId,
   uploadFile,
 } from "@/utils/helpers";
+import { TCertificateSettings } from "@/types/certificates";
 
 const CreateCredentialsPage = ({
   alias,
@@ -57,7 +58,7 @@ const CreateCredentialsPage = ({
     },
     url: string
   ) => {
-    console.log("here");
+    console.log(settings);
     if (previewUrl !== "")
       await deletePreviousUrl({
         payload: {},
@@ -66,16 +67,17 @@ const CreateCredentialsPage = ({
     const { url: imageUrl, error } = await uploadFile(url, "image");
     if (error) return;
     if (!imageUrl) return;
+    
     const data = await saveCertificate({
       payload: {
         certificateAlias: alias,
         name,
-        JSON: values,
         certificateSettings: settings,
         previewUrl: imageUrl,
         attributes,
         hasQRCode,
         lastEdited: new Date(),
+        JSON: values,
       },
     });
   };
@@ -95,9 +97,10 @@ const CreateCredentialsPage = ({
 
   const toggleQRCode = (value: boolean) => setHasQRCode(value);
 
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<TCertificateSettings>({
     skills: [],
-    publishOn: new Date(),
+    expiryDate: new Date(),
+    description: "",
   });
 
   useEffect(() => {
@@ -122,7 +125,8 @@ const CreateCredentialsPage = ({
     } else {
       setSettings({
         skills: [],
-        publishOn: event?.endDateTime,
+        expiryDate: event?.endDateTime,
+        description: "",
       });
     }
   }, [data]);

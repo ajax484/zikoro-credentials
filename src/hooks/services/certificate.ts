@@ -25,12 +25,13 @@ export const useSaveCertificate = ({
   const [isLoading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
-  const saveCertificate = async ({ payload }: { payload: TCertificate }) => {
+  const saveCertificate = async ({ payload }: { payload: Partial<TCertificate> }) => {
     setLoading(true);
     // toast({
     //   description: "saving certificate...",
     // });
     try {
+      console.log(payload);
       const { data, status } = await patchRequest<TCertificate>({
         endpoint: "/certificates/" + certificateAlias,
         payload,

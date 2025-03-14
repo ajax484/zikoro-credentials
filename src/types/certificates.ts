@@ -47,18 +47,9 @@ export interface TCertificate {
 }
 
 export interface TCertificateSettings {
-  canReceive: {
-    eventAttendees: boolean;
-    trackAttendees: boolean;
-    sessionAttendees: boolean;
-    quizParticipants: boolean;
-    exceptions?: number[];
-  };
-  criteria: number;
-  canExpire: boolean;
   expiryDate: Date;
   skills: { color: string; value: string }[];
-  publishOn: Date;
+  description: string;
 }
 
 export type TFullCertificate = TAttendeeCertificate & {

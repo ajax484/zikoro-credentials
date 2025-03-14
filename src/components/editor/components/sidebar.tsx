@@ -1,22 +1,17 @@
 "use client";
-
 import {
   LayoutTemplate,
   ImageIcon,
-  Pencil,
   Settings,
   Shapes,
-  Sparkles,
   Type,
   Lock,
   QrCode,
 } from "lucide-react";
-
 import { ActiveTool } from "@/components/editor/types";
 import { SidebarItem } from "@/components/editor/components/sidebar-item";
 import { Signature } from "styled-icons/fluentui-system-filled";
 import { PiSelectionBackground } from "react-icons/pi";
-
 
 interface SidebarProps {
   activeTool: ActiveTool;

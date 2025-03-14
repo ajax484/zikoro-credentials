@@ -184,6 +184,11 @@ export const Editor = ({
         isError={isError}
         type={type}
         manualSave={saveFn}
+        onChangeSettings={(value: any) => {
+          setSettings((prev) => ({ ...prev, ...value }));
+        }}
+        saveSettings={debouncedSave}
+        settings={settings}
       />
       <div className="absolute top-[68px] flex h-[calc(100%-68px)] w-full">
         <Sidebar

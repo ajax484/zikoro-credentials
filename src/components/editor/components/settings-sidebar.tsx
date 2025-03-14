@@ -53,12 +53,6 @@ export const SettingsSidebar = ({
   const [width, setWidth] = useState(initialWidth);
   const [height, setHeight] = useState(initialHeight);
   const [background, setBackground] = useState(initialBackground);
-  const [skills, setSkills] = useState<{ value: string; color: string }[]>(
-    settings.skills
-  );
-
-  const [newSkill, setNewSkill] = useState<string>("");
-  const [color, setColor] = useState<string>("");
 
   useEffect(() => {
     setWidth(initialWidth);
@@ -148,112 +142,6 @@ export const SettingsSidebar = ({
               className="flex-1"
               onChange={(e) => changeWidth(e.target.value)}
             />
-          </div>
-          <div className="space-y-4 pt-4  pb-12">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="border-basePrimary border-2 text-basePrimary bg-transparent flex gap-2 hover:bg-basePrimary/20">
-                  <svg
-                    stroke="currentColor"
-                    fill="currentColor"
-                    strokeWidth={0}
-                    viewBox="0 0 1024 1024"
-                    height="1.5em"
-                    width="1.5em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M696 480H544V328c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v152H328c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8h152v152c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V544h152c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8z" />
-                    <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z" />
-                  </svg>
-                  <span>Earned Skills</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="px-3">
-                <DialogHeader>
-                  <DialogTitle>
-                    <span className="capitalize">Add Skills</span>
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div className="relative py-4">
-                    <span className="text-tiny text-gray-500 font-medium absolute top-2 left-2">
-                      skill
-                    </span>
-                    <Input
-                      type="text"
-                      className="placeholder:text-sm placeholder:text-gray-200 text-gray-700 focus-visible:ring-0"
-                      value={newSkill}
-                      onInput={(e) => setNewSkill(e.currentTarget.value)}
-                    />
-                  </div>
-                  <div className="flex gap-2 flex-wrap">
-                    {COLORTAG.map((colorValue) => (
-                      <button
-                        className={`
-              h-8 w-8 rounded-full
-              ${color === colorValue ? "opacity-100" : "opacity-25"}
-              `}
-                        style={{ backgroundColor: colorValue }}
-                        key={colorValue}
-                        onClick={() => setColor(colorValue)}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <DialogClose asChild>
-                  <Button
-                    disabled={
-                      !newSkill ||
-                      !color ||
-                      skills.some(({ value }) => newSkill === value)
-                    }
-                    onClick={() => {
-                      const newSkills = [...skills, { value: newSkill, color }];
-                      setSkills(newSkills);
-                      setNewSkill("");
-                      setColor("");
-                      onChangeSettings({ skills: newSkills });
-                    }}
-                    className="bg-basePrimary"
-                  >
-                    Add Skill
-                  </Button>
-                </DialogClose>
-              </DialogContent>
-            </Dialog>
-            <div className="flex flex-wrap justify-start gap-2">
-              {skills.map(({ value, color }) => (
-                <div
-                  className="relative text-sm flex items-center gap-1.5 p-2 rounded w-fit"
-                  style={{
-                    backgroundColor: color + "22",
-                    color: color,
-                    borderWidth: "2px",
-                    borderColor:
-                      skills && skills.includes({ value, color })
-                        ? color
-                        : color + "22",
-                  }}
-                >
-                  <button
-                    onClick={() => {
-                      const newSkills = skills.filter(
-                        (skill) => skill.value !== value
-                      );
-                      setSkills(newSkills);
-                    }}
-                    style={{
-                      backgroundColor: color + "55",
-                      color: color,
-                    }}
-                    className="bg-white h-4 w-4 flex items-center justify-center text-[8px] absolute -right-2 -top-2 rounded-full"
-                  >
-                    x
-                  </button>
-                  <span className="font-medium capitalize">{value}</span>
-                </div>
-              ))}
-            </div>
           </div>
           <Button
             onClick={saveSettings}
