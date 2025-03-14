@@ -17,6 +17,7 @@ import {
 } from "@/types/token";
 import useUserStore from "@/store/globalUserStore";
 import useOrganizationStore from "@/store/globalOrganizationStore";
+import { useFetchWorkspaces } from "@/queries/Workspaces.queries";
 
 const BuyCreditPage = () => {
   const { user } = useUserStore();
@@ -69,12 +70,10 @@ const BuyCreditPage = () => {
 
   const {
     data: workspaces,
-    isLoading: workspacesIsLoading,
+    isFetching: workspacesIsLoading,
+    refetch: refetchWorkspaces,
     error: workspacesError,
-  } = useGetData<TOrganization[]>(
-    `/workspaces?userEmail=${user?.userEmail || "ubahyusuf484@gmail.com"}`,
-    []
-  );
+  } = useFetchWorkspaces(user?.userEmail!);
 
   console.log(user?.userEmail);
 
