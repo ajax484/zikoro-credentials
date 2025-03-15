@@ -67,7 +67,7 @@ const CreateCredentialsPage = ({
     const { url: imageUrl, error } = await uploadFile(url, "image");
     if (error) return;
     if (!imageUrl) return;
-    
+
     const data = await saveCertificate({
       payload: {
         certificateAlias: alias,
@@ -78,6 +78,15 @@ const CreateCredentialsPage = ({
         hasQRCode,
         lastEdited: new Date(),
         JSON: values,
+      },
+    });
+  };
+
+  const saveSettings = async () => {
+    await saveCertificate({
+      payload: {
+        ...data,
+        certificateSettings: settings,
       },
     });
   };
@@ -176,6 +185,7 @@ const CreateCredentialsPage = ({
         event={event}
         settings={settings}
         setSettings={setSettings}
+        saveSettings={saveSettings}
         type={type}
         alias={alias}
         creditBalance={creditBalance}

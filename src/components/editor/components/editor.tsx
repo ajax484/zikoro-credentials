@@ -82,6 +82,7 @@ export const Editor = ({
   isError,
   settings,
   setSettings,
+  saveSettings,
   type,
   alias,
   getCredits,
@@ -187,7 +188,7 @@ export const Editor = ({
         onChangeSettings={(value: any) => {
           setSettings((prev) => ({ ...prev, ...value }));
         }}
-        saveSettings={debouncedSave}
+        saveSettings={saveSettings}
         settings={settings}
       />
       <div className="absolute top-[68px] flex h-[calc(100%-68px)] w-full">
