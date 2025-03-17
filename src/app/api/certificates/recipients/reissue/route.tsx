@@ -39,17 +39,16 @@ export async function POST(req: NextRequest) {
           ],
         }))
       )
-      .in("id", ids);
+      .in("id", ids)
+      .select("*, certificate!inner(*)");
 
-    const { error } = await query;
+    const { data, error } = await query;
 
     if (error) throw error;
 
     return NextResponse.json(
       {
-        data: {
-          msg: `Certificates reissued successfully`,
-        },
+        data,
       },
       { status: 201 }
     );

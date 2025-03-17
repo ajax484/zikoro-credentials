@@ -207,7 +207,7 @@ const EmailTemplates = () => {
               </Button>
             }
           />
-        </div>
+      </div>
       </div>
       <DataTable<RecipientEmailTemplate & { user: TUser }>
         columns={templateColumns}

@@ -11,6 +11,7 @@ import {
 
 const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
   const { organization, setOrganization } = useOrganizationStore();
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [pagination, setPagination] = useState<{ page: number; limit: number }>(
     { page: 1, limit: 10 }
   );
@@ -30,7 +31,8 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
     refetch,
   } = useFetchCertificateRecipients(
     organization?.organizationAlias!,
-    pagination
+    pagination,
+    searchTerm
   );
 
   const updatePage = (page: number) => {
@@ -46,7 +48,6 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
   return (
     <section>
       <Issue
-        refetch={refetch}
         certificateAlias={certificateAlias}
         certificates={certificates}
         certificateIssuees={data?.data}
@@ -56,6 +57,8 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
         totalPages={data?.totalPages}
         pagination={pagination}
         isLoading={certificateIssueesIsLoading}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
       />
     </section>
   );

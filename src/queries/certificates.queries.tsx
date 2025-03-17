@@ -4,6 +4,7 @@ import { PaginatedData } from "@/types/request";
 import { getRequest } from "@/utils/api";
 import {
   InfiniteData,
+  keepPreviousData,
   QueryKey,
   useInfiniteQuery,
   useQuery,
@@ -72,15 +73,16 @@ export function useFetchRecentCertificate(workspaceAlias: string) {
 
 export function useFetchCertificateRecipients(
   workspaceAlias: string,
-  pagination: { page: number; limit: number }
+  pagination: { page: number; limit: number },
+  searchTerm: string
 ) {
   const { data, isFetching, status, error, refetch } = useQuery({
-    queryKey: ["certificates recipients", workspaceAlias],
+    queryKey: ["certificates recipients", workspaceAlias, pagination],
     queryFn: async () => {
       const { data, status } = await getRequest<
         PaginatedData<CertificateRecipient>
       >({
-        endpoint: `/certificates/recipients?workspaceAlias=${workspaceAlias}&limit=${pagination.limit}&page=${pagination.page}`,
+        endpoint: `/certificates/recipients?workspaceAlias=${workspaceAlias}&limit=${pagination.limit}&page=${pagination.page}&searchTerm=${searchTerm}`,
       });
 
       if (status !== 200) {
@@ -92,6 +94,7 @@ export function useFetchCertificateRecipients(
 
       return data.data;
     },
+    placeholderData: keepPreviousData,
   });
 
   return {

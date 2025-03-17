@@ -85,9 +85,7 @@ export async function POST(
 
     return NextResponse.json(
       {
-        data: {
-          msg: `Certificates resent successfully`,
-        },
+        data: recipientData,
       },
       { status: 201 }
     );

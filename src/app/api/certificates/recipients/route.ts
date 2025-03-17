@@ -11,6 +11,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
     const { searchParams } = new URL(req.url || "");
+    const searchTerm = searchParams.get("searchTerm");
     const workspaceAlias = searchParams.get("workspaceAlias");
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
@@ -30,6 +31,12 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
       .from("certificateRecipients")
       .select("*, certificate!inner(*)", { count: "exact" })
       .eq("certificate.workspaceAlias", workspaceAlias)
+      .or(
+        `recipientFirstName.ilike.%${searchTerm}%,
+        recipientLastName.ilike.%${searchTerm}%,
+        recipientEmail.ilike.%${searchTerm}%,
+        status.ilike.%${searchTerm}%,`
+      )
       .order("created_at", { ascending: false })
       .range(from, to);
 

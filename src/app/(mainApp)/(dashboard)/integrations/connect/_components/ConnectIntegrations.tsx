@@ -87,7 +87,7 @@ const steps: Steps = {
 };
 
 const ConnectIntegrations = () => {
-  const { organization } = useOrganizationStore();
+  const { organization, setOrganization } = useOrganizationStore();
   const { user } = useUserStore();
   const [step, setStep] = useState(1);
   const [certificate, setCertificate] = useState<TCertificate | null>(null);
@@ -152,6 +152,7 @@ const ConnectIntegrations = () => {
 
   const updateWorkspace = (workspace: TOrganization | null) => {
     setWorkspace(workspace);
+    setOrganization(workspace);
   };
 
   const { data: workspaces, isFetching: workspacesIsLoading } =

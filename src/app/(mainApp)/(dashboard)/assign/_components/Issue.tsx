@@ -42,6 +42,12 @@ import ExportFill from "@/public/icons/ph_export-fill.svg";
 import SendIcon from "@/public/icons/fa_send.svg";
 import GradientText from "@/components/GradientText";
 import { Input } from "@/components/ui/input";
+import {
+  useRecallCertificates,
+  useReIssueCertificates,
+  useResendCertificates,
+} from "@/mutations/certificates.mutations";
+import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
 
 const issueesFilter: TFilter<
   CertificateRecipient & { certificate: TCertificate }
@@ -94,12 +100,12 @@ const Issue = ({
   certificateIssuees,
   updatePage,
   total,
-  totalPages,
   pagination,
   isLoading,
   certificateAlias,
   updateLimit,
-  refetch,
+  searchTerm,
+  setSearchTerm,
 }: {
   certificates: TCertificate[];
   certificateIssuees: (CertificateRecipient & { certificate: TCertificate })[];
@@ -110,7 +116,8 @@ const Issue = ({
   isLoading: boolean;
   certificateAlias: string;
   updateLimit: (limit: number) => void;
-  refetch: () => void;
+  searchTerm: string;
+  setSearchTerm: (searchTerm: string) => void;
 }) => {
   const router = useRouter();
 
@@ -118,25 +125,15 @@ const Issue = ({
 
   console.log(certificateIssuees);
 
-  const { filteredData, filters, selectedFilters, applyFilter, setOptions } =
-    useFilter<CertificateRecipient & { certificate: TCertificate }>({
-      data: certificateIssuees,
-      dataFilters: issueesFilter,
-    });
-
   const {
-    searchTerm,
-    searchedData: filteredIssuees,
-    setSearchTerm,
-  } = useSearch<CertificateRecipient & { certificate: TCertificate }>({
-    data: filteredData || [],
-    accessorKey: [
-      "recipientFirstName",
-      "recipientLastName",
-      "recipientEmail",
-      "status",
-      "certificate.name",
-    ],
+    filteredData: filteredIssuees,
+    filters,
+    selectedFilters,
+    applyFilter,
+    setOptions,
+  } = useFilter<CertificateRecipient & { certificate: TCertificate }>({
+    data: certificateIssuees,
+    dataFilters: issueesFilter,
   });
 
   useEffect(() => {
@@ -182,14 +179,14 @@ const Issue = ({
     }
   };
 
-  const { mutateData: recallCertificates, isLoading: isLoadingRecall } =
-    useMutateData(`/certificates/recipients/recall`);
+  const { mutateAsync: recallCertificates, isPending: isLoadingRecall } =
+    useRecallCertificates(organization?.organizationAlias!);
 
-  const { mutateData: reIssueCertificates, isLoading: isLoadingReissue } =
-    useMutateData(`/certificates/recipients/reissue`);
+  const { mutateAsync: reIssueCertificates, isPending: isLoadingReissue } =
+    useReIssueCertificates(organization?.organizationAlias!);
 
-  const { mutateData: resendCertificates, isLoading: isLoadingResend } =
-    useMutateData(`/certificates/recipients/resend`);
+  const { mutateAsync: resendCertificates, isPending: isLoadingResend } =
+    useResendCertificates(organization?.organizationAlias!);
 
   const ToggleStatus = () => {
     const clsBtnRef = useRef<HTMLButtonElement>(null);
@@ -449,25 +446,21 @@ const Issue = ({
       : reIssueCertificates;
 
     await toggleFn({
-      payload: {
-        ids: filteredIssuees
-          .filter(({ id }) => rowSelection[id])
-          .map(({ id }) => id),
-      },
+      ids: filteredIssuees
+        .filter(({ id }) => rowSelection[id])
+        .map(({ id }) => id),
     });
     updatePage(1);
   };
 
   const resendCertificatesFn = async () => {
     await resendCertificates({
-      payload: {
-        recipients: filteredIssuees
-          .filter(({ id }) => rowSelection[id])
-          .map(({ id, statusDetails }) => ({
-            id,
-            statusDetails,
-          })),
-      },
+      recipients: filteredIssuees
+        .filter(({ id }) => rowSelection[id])
+        .map(({ id, statusDetails }) => ({
+          id,
+          statusDetails,
+        })),
     });
     updatePage(1);
   };
@@ -525,9 +518,8 @@ const Issue = ({
     XLSX.writeFile(workbook, `${name}.xlsx`);
   };
 
-  const { data: credits, isLoading: creditsIsLoading } = useGetData<
-    CredentialsWorkspaceToken[]
-  >(`/workspaces/${organization?.id}/credits`, []);
+  const { data: credits, isFetching: creditsIsLoading } =
+    useFetchWorkspaceCredits(organization?.id!);
 
   const creditBalance = {
     bronze: credits
@@ -542,8 +534,6 @@ const Issue = ({
   };
 
   console.log(filteredIssuees);
-
-  const columns = issueesColumns(refetch);
 
   const creditType = useMemo(() => {
     const certificate = certificates.find(
@@ -759,7 +749,7 @@ const Issue = ({
             />
           </div>
           <DataTable<CertificateRecipient & { certificate: TCertificate }>
-            columns={columns}
+            columns={issueesColumns}
             data={filteredIssuees}
             currentPage={pagination.page}
             setCurrentPage={updatePage}

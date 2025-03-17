@@ -12,10 +12,14 @@ import { useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import { Switch } from "@/components/ui/switch";
 import { useMutateData } from "@/hooks/services/request";
+import {
+  useRecallCertificates,
+  useReIssueCertificates,
+} from "@/mutations/certificates.mutations";
 
-export const issueesColumns = (
-  refetch: () => void
-): ColumnDef<CertificateRecipient & { certificate: TCertificate }>[] => [
+export const issueesColumns: ColumnDef<
+  CertificateRecipient & { certificate: TCertificate }
+>[] = [
   {
     accessorKey: "select",
     header: ({ table }) => (
@@ -100,17 +104,18 @@ export const issueesColumns = (
     accessorKey: "isValid",
     header: "Validity",
     cell: ({ getValue, row }) => {
+      const { organization } = useOrganizationStore();
       const isValid = getValue() as boolean;
 
-      const { mutateData: recallCertificates, isLoading: isLoadingRecall } =
-        useMutateData(`/certificates/recipients/recall`);
-      const { mutateData: reIssueCertificates, isLoading: isLoadingReissue } =
-        useMutateData(`/certificates/recipients/reissue`);
+      const { mutateAsync: recallCertificates, isPending: isLoadingRecall } =
+        useRecallCertificates(organization?.organizationAlias!);
+
+      const { mutateAsync: reIssueCertificates, isPending: isLoadingReissue } =
+        useReIssueCertificates(organization?.organizationAlias!);
 
       const toggleCertificatesFn = async () => {
         const toggleFn = isValid ? recallCertificates : reIssueCertificates;
-        await toggleFn({ payload: { ids: [row.original.id] } });
-        await refetch();
+        await toggleFn({ ids: [row.original.id] });
       };
 
       return (

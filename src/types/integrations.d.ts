@@ -14,6 +14,8 @@ export interface CredentialsIntegration {
   credentialId: number;
   certificate: TCertificate;
   template: RecipientEmailTemplate;
+  schedule: string;
+  scheduleDate: string | null;
 }
 
 export interface Quiz {

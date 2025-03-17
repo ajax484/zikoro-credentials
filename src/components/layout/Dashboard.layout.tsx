@@ -69,7 +69,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                 placeholder={
                   workspacesIsLoading ? "Loading..." : "Select Organization"
                 }
-                value={String(workspace?.id)}
+                value={String(workspace?.id || "")}
                 onChange={(value) => updateOrganization(value)}
                 options={workspaces?.map(({ organizationName, id }) => ({
                   label: organizationName,

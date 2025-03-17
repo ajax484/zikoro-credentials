@@ -237,9 +237,9 @@ Event Team.`,
           integrationSettings: {
             credentialType: "certificate",
             credentialId: certificate?.id,
-            schedule,
-            scheduleDate,
           },
+          schedule,
+          scheduleDate,
           disconnect: false,
           templateId: template?.id,
         },
@@ -290,10 +290,10 @@ Event Team.`,
       integrationAlias: generateAlphanumericHash(12),
       integrationName: name,
       credentialId: certificate?.id!,
+      schedule,
+      scheduleDate,
       integrationSettings: {
         credentialType: "certificate",
-        schedule,
-        scheduleDate,
         mapping: Array.from(headers).reduce((acc, [key, value]) => {
           acc[value] = key.value;
           return acc;

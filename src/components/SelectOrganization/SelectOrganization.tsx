@@ -62,7 +62,7 @@ const SelectOrganization = () => {
           placeholder={
             workspacesIsLoading ? "Loading..." : "Select Organization"
           }
-          value={String(organization?.id)}
+          value={String(organization?.id || "")}
           onChange={(value) => updateOrganization(value)}
           options={workspaces?.map(({ organizationName, id }) => ({
             label: organizationName,
