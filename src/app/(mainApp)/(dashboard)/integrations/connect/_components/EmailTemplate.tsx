@@ -293,6 +293,8 @@ Event Team.`,
       schedule,
       scheduleDate,
       integrationSettings: {
+        schedule,
+        scheduleDate,
         credentialType: "certificate",
         mapping: Array.from(headers).reduce((acc, [key, value]) => {
           acc[value] = key.value;

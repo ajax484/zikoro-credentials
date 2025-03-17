@@ -25,6 +25,8 @@ export async function GET(
         .filter("certificate.workspaceAlias", "eq", workspaceAlias)
         .order("created_at", { ascending: false });
 
+      console.log(data);
+
       if (error) {
         throw error;
       }

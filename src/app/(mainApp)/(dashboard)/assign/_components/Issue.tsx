@@ -7,7 +7,13 @@ import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { TFilter } from "@/types/filter";
 import { convertCamelToNormal, extractUniqueTypes } from "@/utils/helpers";
 import { Send, Trash } from "lucide-react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import { PiExport } from "react-icons/pi";
 import { issueesColumns } from "./columns";
 import logo from "@/public/icons/logo.svg";
@@ -48,6 +54,7 @@ import {
   useResendCertificates,
 } from "@/mutations/certificates.mutations";
 import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
+import debounce from "lodash.debounce";
 
 const issueesFilter: TFilter<
   CertificateRecipient & { certificate: TCertificate }
@@ -550,6 +557,13 @@ const Issue = ({
 
   const [open, setOpen] = useState(false);
 
+  const debouncedSearch = useCallback(
+    (searchTerm: string) => {
+      setSearchTerm(searchTerm);
+    },
+    [searchTerm]
+  );
+
   return (
     <section className="space-y-4">
       <div className="flex items-end justify-between">
@@ -701,7 +715,7 @@ const Issue = ({
           </Dialog>
         </div>
       </div>
-      {!isLoading && certificateIssuees.length === 0 ? (
+      {!isLoading && certificateIssuees.length === 0 && searchTerm === "" ? (
         <div className="flex flex-col items-center justify-center gap-4 text-gray-600 h-[500px]">
           <div className="bg-basePrimary rounded-full p-6">
             <Image src={AccountCancel} width={40} height={40} alt="logo" />
@@ -727,7 +741,9 @@ const Issue = ({
               type="text"
               placeholder="Search"
               value={searchTerm}
-              onInput={(event) => setSearchTerm(event.currentTarget.value)}
+              onInput={(event) => {
+                debouncedSearch(event.currentTarget.value);
+              }}
               className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 w-1/3 border-b focus-visible:outline-none"
             />
             <Filter

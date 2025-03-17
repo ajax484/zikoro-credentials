@@ -1,33 +1,29 @@
-import { createServerClient, serializeCookieHeader } from "@supabase/ssr";
+import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { type NextApiRequest, type NextApiResponse } from "next";
 
-export default function createClient(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const supabase = createServerClient(
+export const createClient = () => {
+  const cookieStore = cookies();
+
+  return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {
-          return Object.keys(req.cookies).map((name) => ({
-            name,
-            value: req.cookies[name] || "",
-          }));
+          return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
-          res.setHeader(
-            "Set-Cookie",
-            cookiesToSet.map(({ name, value, options }) =>
-              serializeCookieHeader(name, value, options)
-            )
-          );
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options);
+            });
+          } catch (error) {
+            // The `set` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
         },
       },
-    }
+    },
   );
-
-  return supabase;
-}
+};

@@ -1,9 +1,9 @@
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { NextResponse } from "next/server";
-import { type NextApiRequest, type NextApiResponse } from "next";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(req: NextApiRequest, res: NextApiResponse) {
-  const supabase = createClient(req, res);
+export async function DELETE(req: NextRequest) {
+  const supabase = createRouteHandlerClient({ cookies });
 
   if (req.method !== "POST") {
     return NextResponse.json({ error: "Method not allowed" }, { status: 405 });

@@ -27,16 +27,18 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     const to = from + limit - 1;
 
     // Fetch certificate recipients with the workspace alias filter
-    const { data, error, count } = await supabase
+    let query = supabase
       .from("certificateRecipients")
       .select("*, certificate!inner(*)", { count: "exact" })
-      .eq("certificate.workspaceAlias", workspaceAlias)
-      .or(
-        `recipientFirstName.ilike.%${searchTerm}%,
-        recipientLastName.ilike.%${searchTerm}%,
-        recipientEmail.ilike.%${searchTerm}%,
-        status.ilike.%${searchTerm}%,`
-      )
+      .eq("certificate.workspaceAlias", workspaceAlias);
+
+    if (searchTerm) {
+      query = query.or(
+        `recipientFirstName.ilike.%${searchTerm}%,recipientLastName.ilike.%${searchTerm}%,recipientEmail.ilike.%${searchTerm}%,status.ilike.%${searchTerm}%`
+      );
+    }
+
+    const { data, error, count } = await query
       .order("created_at", { ascending: false })
       .range(from, to);
 

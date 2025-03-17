@@ -77,7 +77,12 @@ export function useFetchCertificateRecipients(
   searchTerm: string
 ) {
   const { data, isFetching, status, error, refetch } = useQuery({
-    queryKey: ["certificates recipients", workspaceAlias, pagination],
+    queryKey: [
+      "certificates recipients",
+      workspaceAlias,
+      pagination,
+      searchTerm,
+    ],
     queryFn: async () => {
       const { data, status } = await getRequest<
         PaginatedData<CertificateRecipient>

@@ -1,13 +1,13 @@
-import createClient from "@/utils/supabase/server";
-import { NextResponse } from "next/server";
-import { type NextApiRequest, type NextApiResponse } from "next";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
-  const supabase = createClient(req, res);
+export async function GET(req: NextRequest) {
+  const supabase = createRouteHandlerClient({ cookies });
 
   if (req.method === "GET") {
     try {
-      const { searchParams } = new URL(req.url!);
+      const { searchParams } = new URL(req.url);
       const userEmail = searchParams.get("userEmail");
 
       // Get all workspace aliases for the user
