@@ -165,6 +165,23 @@ const CertificateView = ({
           />{" "}
         </div>
       </div>
+      <div className="bg-white p-4 border rounded-md w-full h-full space-y-2 flex flex-col items-center gap-4">
+        <GradientText className="font-bold" Tag={"h1"}>
+          Description
+        </GradientText>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: replaceSpecialText(
+              certificate?.originalCertificate?.certificateSettings
+                ?.description,
+              {
+                recipient: certificate,
+                organization: certificate?.originalCertificate?.workspace,
+              }
+            ),
+          }}
+        />
+      </div>
       <section className="grid grid-cols-2 gap-4">
         <div className="bg-white p-4 border rounded-md w-full h-full space-y-2 flex flex-col items-center gap-2">
           <div className="flex justify-between items-center w-full">

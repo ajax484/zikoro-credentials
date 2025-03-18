@@ -6,7 +6,7 @@ import { TOrganization } from "@/types/organization";
 import { replaceSpecialText, replaceURIVariable } from "@/utils/helpers";
 import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
-import { DownloadIcon, Eye, Send, Trash } from "lucide-react";
+import { DownloadIcon, Eye, PrinterIcon, Send, Trash } from "lucide-react";
 import Link from "next/link";
 import Information from "./tabs/Information";
 import History from "./tabs/History";
@@ -401,6 +401,57 @@ const CertificateView = ({
     };
   }, []);
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handlePrint = async () => {
+    const imageUrl = editor?.generateLink(true);
+    if (!imageUrl || typeof window === undefined) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Fetch the image to ensure it exists
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error("Failed to fetch image.");
+      }
+
+      // Open a new window with the image
+      const printWindow = window.open("", "_blank");
+      if (!printWindow) {
+        throw new Error("Failed to open print window.");
+      }
+
+      // Write the image to the new window
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print Image</title>
+            <style>
+              body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+              img { max-width: 100%; max-height: 100%; }
+            </style>
+          </head>
+          <body>
+            <img src="${imageUrl}" alt="Printable Image" onload="window.print()" />
+          </body>
+        </html>
+      `);
+
+      // Close the window after printing
+      printWindow.document.close();
+      printWindow.onbeforeunload = () => {
+        printWindow.close();
+      };
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <section className="space-y-4">
       <section className="flex items-center justify-between">
@@ -414,6 +465,16 @@ const CertificateView = ({
           <ToggleStatus />
           <Resend />
           <Download />
+          <button
+            onClick={handlePrint}
+            disabled={isLoading}
+            className={cn(
+              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm border-basePrimary text-basePrimary"
+            )}
+          >
+            <PrinterIcon className="size-4" />
+            <span> {isLoading ? "Loading..." : "Print"}</span>
+          </button>
         </div>
       </section>
       <section className="grid grid-cols-12 gap-4">

@@ -112,6 +112,7 @@ const Information = ({
     certificateId,
     recipientAlias,
     profilePicture,
+    integrationAlias,
     ...rest
   } = recipient;
 
