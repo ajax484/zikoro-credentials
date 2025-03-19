@@ -33,6 +33,7 @@ import {
 import { cn } from "@/lib/utils";
 import SendIcon from "@/public/icons/fa_send.svg";
 import { ActionModal } from "@/app/(mainApp)/credentials/verify/certificate/[certificateId]/page";
+import { initialize } from "next/dist/server/lib/render-server";
 
 interface TTab {
   label: string;
@@ -466,7 +467,16 @@ const CertificateView = ({
           <Resend />
           <Download />
           <button
-            onClick={handlePrint}
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                const imageUrl = editor?.generateLink(true);
+                window.open(
+                  imageUrl,
+                  certificate.certificateId!,
+                  `width=${initialData.width},height=${initialData.height}`
+                );
+              }
+            }}
             disabled={isLoading}
             className={cn(
               "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm border-basePrimary text-basePrimary"

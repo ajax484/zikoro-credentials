@@ -42,6 +42,8 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
       .order("created_at", { ascending: false })
       .range(from, to);
 
+    console.log(data);
+
     if (error) {
       throw error;
     }
