@@ -95,6 +95,11 @@ export interface CertificateRecipient {
   certificate: TCertificate;
 }
 
+export interface FailedCertificateRecipient extends CertificateRecipient {
+  reason: string;
+  integrationAlias: string;
+}
+
 export interface CertificateTemplate {
   id: number;
   name: string;

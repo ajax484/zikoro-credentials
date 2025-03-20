@@ -3,7 +3,11 @@ import Filter from "@/components/Filter";
 import { Button } from "@/components/ui/button";
 import { useFilter } from "@/hooks";
 import useSearch from "@/hooks/common/useSearch";
-import { CertificateRecipient, TCertificate } from "@/types/certificates";
+import {
+  CertificateRecipient,
+  FailedCertificateRecipient,
+  TCertificate,
+} from "@/types/certificates";
 import { TFilter } from "@/types/filter";
 import { convertCamelToNormal, extractUniqueTypes } from "@/utils/helpers";
 import { Send, Trash } from "lucide-react";
@@ -15,7 +19,7 @@ import React, {
   useCallback,
 } from "react";
 import { PiExport } from "react-icons/pi";
-import { issueesColumns } from "./columns";
+import { failedColumns, issueesColumns } from "./columns";
 import logo from "@/public/icons/logo.svg";
 import excel from "@/public/icons/vscode-icons_file-type-excel.svg";
 import penPaper from "@/public/icons/clarity_form-line.svg";
@@ -53,12 +57,9 @@ import {
   useReIssueCertificates,
   useResendCertificates,
 } from "@/mutations/certificates.mutations";
-import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
 import debounce from "lodash.debounce";
 
-const issueesFilter: TFilter<
-  CertificateRecipient & { certificate: TCertificate }
->[] = [
+const issueesFilter: TFilter<FailedCertificateRecipient>[] = [
   {
     label: "Issue Date",
     accessor: "created_at",
@@ -102,7 +103,7 @@ const issueesFilter: TFilter<
   },
 ];
 
-const Issue = ({
+const Failed = ({
   certificates,
   certificateIssuees,
   updatePage,
@@ -115,7 +116,7 @@ const Issue = ({
   setSearchTerm,
 }: {
   certificates: TCertificate[];
-  certificateIssuees: (CertificateRecipient & { certificate: TCertificate })[];
+  certificateIssuees: FailedCertificateRecipient[];
   total: number;
   totalPages: number;
   pagination: Pagination;
@@ -138,7 +139,7 @@ const Issue = ({
     selectedFilters,
     applyFilter,
     setOptions,
-  } = useFilter<CertificateRecipient & { certificate: TCertificate }>({
+  } = useFilter<FailedCertificateRecipient>({
     data: certificateIssuees,
     dataFilters: issueesFilter,
   });
@@ -150,41 +151,18 @@ const Issue = ({
       .forEach(({ accessor }) => {
         setOptions(
           accessor,
-          extractUniqueTypes<CertificateRecipient>(certificateIssuees, accessor)
+          extractUniqueTypes<FailedCertificateRecipient>(
+            certificateIssuees,
+            accessor
+          )
         );
       });
     // }, []);
   }, [isLoading]);
 
-  const [selectedOption, setSelectedOption] = useState("manual");
-
-  const [selectedCertificate, setSelectedCertificate] = useState<
-    string | undefined
-  >(certificateAlias);
-
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   console.log(rowSelection);
-
-  const updateSelectedCertificate = (certificateAlias: string) => {
-    setSelectedCertificate(certificateAlias);
-    console.log("Selected Certificate:", certificateAlias);
-  };
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedOption(event.currentTarget.value);
-    console.log("Selected Option:", event.target.value);
-  };
-
-  const selectType = () => {
-    if (selectedOption === "manual") {
-      router.push(`/designs/certificate/${selectedCertificate}/issue/`);
-    } else if (selectedOption === "spreadsheet") {
-      router.push(`/assign/certificate/${selectedCertificate}/excel/`);
-    } else if (selectedOption === "event") {
-      router.push(`/assign/certificate/${selectedCertificate}/fromEvent/`);
-    }
-  };
 
   const { mutateAsync: recallCertificates, isPending: isLoadingRecall } =
     useRecallCertificates(organization?.organizationAlias!);
@@ -525,41 +503,11 @@ const Issue = ({
     XLSX.writeFile(workbook, `${name}.xlsx`);
   };
 
-  const { data: credits, isFetching: creditsIsLoading } =
-    useFetchWorkspaceCredits(organization?.id!);
-
-  const creditBalance = {
-    bronze: credits
-      .filter((v) => v.tokenId === 1)
-      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
-    silver: credits
-      .filter((v) => v.tokenId === 2)
-      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
-    gold: credits
-      .filter((v) => v.tokenId === 3)
-      .reduce((acc, curr) => acc + curr.creditRemaining, 0),
-  };
-
   console.log(filteredIssuees);
-
-  const creditType = useMemo(() => {
-    const certificate = certificates.find(
-      ({ certificateAlias }) => certificateAlias === selectedCertificate
-    );
-    if (!certificate) return "bronze";
-
-    return certificate?.attributes.length > 0
-      ? "gold"
-      : certificate?.hasQRCode
-      ? "silver"
-      : "bronze";
-  }, [selectedCertificate]);
-
-  const [open, setOpen] = useState(false);
 
   const debouncedSearch = useCallback(
     (searchTerm: string) => {
-      setSearchTerm(searchTerm);
+      debounce(setSearchTerm(searchTerm), 300);
     },
     [searchTerm]
   );
@@ -567,152 +515,18 @@ const Issue = ({
   return (
     <section className="space-y-4">
       <div className="flex items-end justify-between">
-        <div className="flex gap-2 items-center">
+        {/* <div className="flex gap-2 items-center">
           <ToggleStatus />
           <ExportRecipients />
           <Resend />
-        </div>
-        <div className="flex items-center justify-center gap-2">
+        </div> */}
+        <div className="flex items-center justify-center gap-2 ml-auto">
           <Link
             href={"/credits/buy"}
             className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize text-sm"
           >
             Buy more credits
           </Link>
-          <Dialog
-            defaultOpen={!!certificateAlias}
-            open={open}
-            onOpenChange={setOpen}
-          >
-            <DialogTrigger asChild>
-              <Button
-                onClick={() => setOpen(true)}
-                disabled={isLoadingRecall || isLoadingReissue}
-                className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 w-fit text-sm"
-              >
-                Assign Credential
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-[50%]">
-              <DialogHeader>
-                <DialogTitle>How would you like to add recipients?</DialogTitle>
-              </DialogHeader>
-              <div className="grid grid-cols-3 gap-4">
-                <label
-                  htmlFor="manual"
-                  className={cn(
-                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
-                    selectedOption === "manual" && "border-basePrimary"
-                  )}
-                >
-                  <input
-                    type="radio"
-                    id="manual"
-                    name="options"
-                    value="manual"
-                    checked={selectedOption === "manual"}
-                    onChange={handleChange}
-                  />
-                  <div className="my-auto flex gap-2 flex-col items-center w-full">
-                    <Image
-                      src={penPaper}
-                      width={40}
-                      height={40}
-                      alt="excel"
-                      className="cursor-pointer"
-                    />
-                    <span>Add Manually</span>
-                  </div>
-                </label>
-                <label
-                  htmlFor="spreadsheet"
-                  className={cn(
-                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
-                    selectedOption === "spreadsheet" && "border-basePrimary"
-                  )}
-                >
-                  <input
-                    type="radio"
-                    id="spreadsheet"
-                    name="recipientType"
-                    value="spreadsheet"
-                    checked={selectedOption === "spreadsheet"}
-                    onChange={handleChange}
-                  />
-                  <div className="my-auto flex gap-2 flex-col items-center w-full">
-                    <Image
-                      src={excel}
-                      width={40}
-                      height={40}
-                      alt="excel"
-                      className="cursor-pointer"
-                    />
-                    <span className="text-center">
-                      Upload using a spreadsheet
-                    </span>
-                  </div>
-                </label>
-                <label
-                  className={cn(
-                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
-                    selectedOption === "event" && "border-basePrimary"
-                  )}
-                  htmlFor="event"
-                >
-                  <input
-                    type="radio"
-                    id="event"
-                    name="recipientType"
-                    value="event"
-                    checked={selectedOption === "event"}
-                    onChange={handleChange}
-                  />
-                  <div className="my-auto flex gap-2 flex-col items-center w-full">
-                    <Image
-                      src={logo}
-                      width={40}
-                      height={40}
-                      alt="logo"
-                      className="cursor-pointer"
-                    />
-                    <span>Add from Zikoro event</span>
-                  </div>
-                </label>
-              </div>
-              {selectedCertificate && (
-                <div className="flex flex-col items-center gap-2 text-xs text-gray-600">
-                  <span>
-                    Assigning this certificate costs <b>1 {creditType} token</b>{" "}
-                    per recipient
-                  </span>
-                  <span>
-                    You have <b>{creditBalance[creditType]}</b> {creditType}{" "}
-                    tokens
-                  </span>
-                </div>
-              )}
-              <GradientBorderSelect
-                placeholder="Select Credential"
-                value={selectedCertificate || ""}
-                onChange={(value: string) => updateSelectedCertificate(value)}
-                options={certificates.map(({ certificateAlias, name }) => ({
-                  label: name,
-                  value: certificateAlias || "",
-                }))}
-              />
-
-              <DialogFooter>
-                {selectedCertificate && (
-                  <Button
-                    onClick={selectType}
-                    className="bg-basePrimary text-white rounded-md"
-                  >
-                    Add recipients
-                  </Button>
-                )}
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
         </div>
       </div>
       {!isLoading && certificateIssuees.length === 0 && searchTerm === "" ? (
@@ -721,18 +535,11 @@ const Issue = ({
             <Image src={AccountCancel} width={40} height={40} alt="logo" />
           </div>
           <GradientText className="font-bold text-2xl" Tag={"h1"}>
-            No Assignments Yet
+            No Failed Assignments Yet
           </GradientText>
           <p className="text-gray-800 text-sm font-medium">
-            You haven't issued any certificates yet. Once you have assigned
-            certificates, the list of recipients will appear here
+            the list of failed assignments will appear here
           </p>
-          <Button
-            className="bg-basePrimary text-white"
-            onClick={() => setOpen(true)}
-          >
-            Assign Credentials
-          </Button>
         </div>
       ) : (
         <>
@@ -764,8 +571,8 @@ const Issue = ({
               }))}
             />
           </div>
-          <DataTable<CertificateRecipient & { certificate: TCertificate }>
-            columns={issueesColumns}
+          <DataTable<FailedCertificateRecipient>
+            columns={failedColumns}
             data={filteredIssuees}
             currentPage={pagination.page}
             setCurrentPage={updatePage}
@@ -783,4 +590,4 @@ const Issue = ({
   );
 };
 
-export default Issue;
+export default Failed;

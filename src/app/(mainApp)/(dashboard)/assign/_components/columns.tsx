@@ -2,7 +2,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { MailSend } from "styled-icons/boxicons-regular";
 import { Check, Download, Eye, MailOpen, Timer, X } from "lucide-react";
-import { CertificateRecipient, TCertificate } from "@/types/certificates";
+import {
+  CertificateRecipient,
+  FailedCertificateRecipient,
+  TCertificate,
+} from "@/types/certificates";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { replaceSpecialText, replaceURIVariable } from "@/utils/helpers";
@@ -11,7 +15,6 @@ import { useEditor } from "@/components/editor/hooks/use-editor";
 import { useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import { Switch } from "@/components/ui/switch";
-import { useMutateData } from "@/hooks/services/request";
 import {
   useRecallCertificates,
   useReIssueCertificates,
@@ -194,5 +197,75 @@ export const issueesColumns: ColumnDef<
       );
     },
     enableSorting: false,
+  },
+];
+
+export const failedColumns: ColumnDef<FailedCertificateRecipient>[] = [
+  {
+    accessorKey: "select",
+    header: ({ table }) => (
+      <div className="pl-2">
+        <Checkbox
+          className="data-[state=checked]:bg-basePrimary"
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="pl-2">
+        <Checkbox
+          className="data-[state=checked]:bg-basePrimary"
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          disabled={!row.getCanSelect()}
+        />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "recipientFirstName",
+    header: "First Name",
+    sortingFn: "alphanumeric",
+  },
+  {
+    accessorKey: "recipientLastName",
+    header: "Last Name",
+    sortingFn: "alphanumeric",
+  },
+  {
+    accessorKey: "recipientEmail",
+    header: "Email",
+  },
+  {
+    accessorKey: "certificate.name",
+    header: "Credential",
+    sortingFn: "alphanumeric",
+  },
+  {
+    accessorKey: "created_at",
+    header: "Date Issued",
+    cell: ({ getValue }) => {
+      const date = getValue() as Date;
+      return format(date, "MMMM do, yyyy");
+    },
+    sortingFn: "datetime",
+  },
+  {
+    accessorKey: "reason",
+    header: "Reason",
+    sortingFn: "alphanumeric",
+  },
+  {
+    accessorKey: "integrationAlias",
+    header: "Integration",
+    sortingFn: "alphanumeric",
   },
 ];

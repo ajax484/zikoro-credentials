@@ -1,9 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {
-  RecipientEmailTemplate,
-  TCertificate,
-} from "@/types/certificates";
+import { RecipientEmailTemplate, TCertificate } from "@/types/certificates";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -59,6 +56,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { optionalUrl } from "@/app/(mainApp)/(dashboard)/workspace/_components/tabs/SocialLinks";
+import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
 
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
@@ -211,9 +209,8 @@ Event Team.`,
     },
   });
 
-  const { data: credits, isLoading: creditsIsLoading } = useGetData<
-    CredentialsWorkspaceToken[]
-  >(`/workspaces/${organization?.id}/credits`, []);
+  const { data: credits, isFetching: creditsIsLoading } =
+    useFetchWorkspaceCredits(organization?.id!);
 
   const creditBalance = {
     bronze: credits
@@ -227,7 +224,10 @@ Event Team.`,
       .reduce((acc, curr) => acc + curr.creditRemaining, 0),
   };
 
+  console.log(creditBalance);
+
   const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
+    console.log(creditBalance[creditType], recipients.length);
     if (!user) return toast.error("Please login to send certificate");
     if (
       creditBalance[creditType] === 0 ||
