@@ -20,7 +20,7 @@ import Link from "next/link";
 import { replaceSpecialText, replaceURIVariable } from "@/utils/helpers";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { useEditor } from "@/components/editor/hooks/use-editor";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -203,6 +203,73 @@ export const issueesColumns: ColumnDef<
 
       if (!row.original?.isValid) return null;
 
+      const [isLoading, setIsLoading] = useState(false);
+
+      const handlePrint = async () => {
+        const imageUrl = editor?.generateLink(true);
+        if (!imageUrl || typeof window === undefined) {
+          return;
+        }
+
+        setIsLoading(true);
+
+        try {
+          // Fetch the image to ensure it exists
+          const response = await fetch(imageUrl);
+          if (!response.ok) {
+            throw new Error("Failed to fetch image.");
+          }
+
+          // Open a new window with the image
+          const printWindow = window.open("", "_blank");
+          if (!printWindow) {
+            throw new Error("Failed to open print window.");
+          }
+
+          // Write the image to the new window
+          printWindow.document.write(`
+            <html>
+              <head>
+                <title>Print Image</title>
+                <style>
+                  /* Remove default margins and padding */
+                  body, html { 
+                    margin: 0 !important; 
+                    padding: 0 !important; 
+                    height: 100% !important; 
+                    width: 100% !important; 
+                  }
+                  /* Ensure the image takes up the full page */
+                  img { 
+                    width: 100% !important; 
+                    height: 100% !important; 
+                    object-fit: contain; /* Ensures the image fits within the page */
+                  }
+                  /* Hide print metadata (headers and footers) */
+                  @page { 
+                    size: auto; /* Use the size of the image */
+                    margin: 0 !important; /* Remove default margins */
+                  }
+                </style>
+              </head>
+              <body>
+                <img src="${imageUrl}" alt="Printable Image" onload="window.print()" />
+              </body>
+            </html>
+          `);
+
+          // Close the window after printing
+          printWindow.document.close();
+          printWindow.onbeforeunload = () => {
+            printWindow.close();
+          };
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
       return (
         <div className="flex items-center gap-2 justify-center">
           <TooltipProvider>
@@ -240,19 +307,8 @@ export const issueesColumns: ColumnDef<
             <Tooltip>
               <TooltipTrigger>
                 <button
-                  onClick={() =>
-                    editor?.savePdf(
-                      {
-                        width: initialData?.width ?? 900,
-                        height: initialData?.height ?? 1200,
-                      },
-                      `${
-                        recipient?.recipientFirstName +
-                        "_" +
-                        recipient?.recipientLastName
-                      }_${certificate?.name}.pdf`
-                    )
-                  }
+                  aria-label="Print"
+                  onClick={handlePrint}
                   className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center hover:bg-basePrimary/20 hover:text-basePrimary"
                 >
                   <PrinterIcon className="size-5" />
