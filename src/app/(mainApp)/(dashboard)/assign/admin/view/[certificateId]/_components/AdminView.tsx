@@ -431,8 +431,24 @@ const CertificateView = ({
           <head>
             <title>Print Image</title>
             <style>
-              body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-              img { max-width: 100%; max-height: 100%; }
+              /* Remove default margins and padding */
+              body, html { 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                height: 100% !important; 
+                width: 100% !important; 
+              }
+              /* Ensure the image takes up the full page */
+              img { 
+                width: 100% !important; 
+                height: 100% !important; 
+                object-fit: contain; /* Ensures the image fits within the page */
+              }
+              /* Hide print metadata (headers and footers) */
+              @page { 
+                size: auto; /* Use the size of the image */
+                margin: 0 !important; /* Remove default margins */
+              }
             </style>
           </head>
           <body>
@@ -467,16 +483,17 @@ const CertificateView = ({
           <Resend />
           <Download />
           <button
-            onClick={() => {
-              if (typeof window !== "undefined") {
-                const imageUrl = editor?.generateLink(true);
-                window.open(
-                  imageUrl,
-                  certificate.certificateId!,
-                  `width=${initialData.width},height=${initialData.height}`
-                );
-              }
-            }}
+            onClick={handlePrint}
+            // onClick={() => {
+            //   if (typeof window !== "undefined") {
+            //     const imageUrl = editor?.generateLink(true);
+            //     window.open(
+            //       imageUrl,
+            //       certificate.certificateId!,
+            //       `width=${initialData.width},height=${initialData.height}`
+            //     );
+            //   }
+            // }}
             disabled={isLoading}
             className={cn(
               "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm border-basePrimary text-basePrimary"
