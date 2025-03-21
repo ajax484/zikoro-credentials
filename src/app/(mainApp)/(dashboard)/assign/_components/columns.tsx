@@ -1,7 +1,15 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { MailSend } from "styled-icons/boxicons-regular";
-import { Check, Download, Eye, MailOpen, Timer, X } from "lucide-react";
+import {
+  Check,
+  Download,
+  Eye,
+  MailOpen,
+  PrinterIcon,
+  Timer,
+  X,
+} from "lucide-react";
 import {
   CertificateRecipient,
   FailedCertificateRecipient,
@@ -19,6 +27,21 @@ import {
   useRecallCertificates,
   useReIssueCertificates,
 } from "@/mutations/certificates.mutations";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const issueesColumns: ColumnDef<
   CertificateRecipient & { certificate: TCertificate }
@@ -141,6 +164,8 @@ export const issueesColumns: ColumnDef<
 
       const { organization } = useOrganizationStore();
 
+      const initialData = certificate.JSON;
+
       const newState = JSON.parse(
         replaceURIVariable(
           replaceSpecialText(JSON.stringify(certificate?.JSON?.json || ""), {
@@ -180,19 +205,64 @@ export const issueesColumns: ColumnDef<
 
       return (
         <div className="flex items-center gap-2 justify-center">
-          <Link
-            href={`/assign/admin/view/${certificateId}`}
-            className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center"
-          >
-            <Eye className="size-6" />
-          </Link>
-          <button
-            aria-label="Download"
-            onClick={() => editor?.savePng()}
-            className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center"
-          >
-            <Download className="size-6" />
-          </button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Link
+                  href={`/assign/admin/view/${certificateId}`}
+                  className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center hover:bg-basePrimary/20 hover:text-basePrimary"
+                >
+                  <Eye className="size-5" />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span>View</span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <button
+                  aria-label="Download"
+                  onClick={() => editor?.savePng()}
+                  className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center hover:bg-basePrimary/20 hover:text-basePrimary"
+                >
+                  <Download className="size-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span>Save as PNG</span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <button
+                  onClick={() =>
+                    editor?.savePdf(
+                      {
+                        width: initialData?.width ?? 900,
+                        height: initialData?.height ?? 1200,
+                      },
+                      `${
+                        certificate?.recipientFirstName +
+                        "_" +
+                        certificate?.recipientLastName
+                      }_${certificate?.originalCertificate.name}.pdf`
+                    )
+                  }
+                  className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center hover:bg-basePrimary/20 hover:text-basePrimary"
+                >
+                  <PrinterIcon className="size-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span>Download as PDF</span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       );
     },
@@ -259,13 +329,61 @@ export const failedColumns: ColumnDef<FailedCertificateRecipient>[] = [
     sortingFn: "datetime",
   },
   {
-    accessorKey: "reason",
+    accessorKey: "failureReason",
     header: "Reason",
-    sortingFn: "alphanumeric",
+    cell: ({ getValue }) => {
+      const reason = getValue() as string;
+      return <span>{reason}</span>;
+    },
   },
   {
-    accessorKey: "integrationAlias",
-    header: "Integration",
-    sortingFn: "alphanumeric",
+    header: "Actions",
+    cell: ({ row }) => {
+      const { id, certificateId, recipientAlias, failureReason, isValid } =
+        row.original;
+
+      const ReissueModal = () => {
+        return (
+          <Dialog>
+            <DialogTrigger asChild>
+              <button
+                className="w-full hover:bg-gray-100 text-red-700 hover:underline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <span className="p-2">Reissue</span>
+              </button>
+            </DialogTrigger>
+            <DialogContent className="px-4 py-6 z-[1000]">
+              <DialogHeader className="px-3">
+                <DialogTitle>Reissue Certificate</DialogTitle>
+              </DialogHeader>
+
+              <div className="space-y-4"></div>
+              <DialogFooter>
+                <Button
+                  onClick={() => {
+                    row.original.isValid = true;
+                    row.original.failureReason = null;
+                    updateRecipient(row.original);
+                    clsBtnRef.current?.click();
+                  }}
+                  className="bg-basePrimary w-full"
+                >
+                  Reissue
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        );
+      };
+
+      return (
+        <div className="flex justify-center">
+          <ReissueModal />
+        </div>
+      );
+    },
   },
 ];

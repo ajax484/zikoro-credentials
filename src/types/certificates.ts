@@ -96,7 +96,7 @@ export interface CertificateRecipient {
 }
 
 export interface FailedCertificateRecipient extends CertificateRecipient {
-  reason: string;
+  failureReason: string;
   integrationAlias: string;
 }
 

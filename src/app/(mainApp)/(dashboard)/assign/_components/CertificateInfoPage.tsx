@@ -1,6 +1,4 @@
 "use client";
-import { useGetData, useGetPaginatedData } from "@/hooks/services/request";
-import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import React, { useState } from "react";
 import Issue from "./Issue";
 import useOrganizationStore from "@/store/globalOrganizationStore";
