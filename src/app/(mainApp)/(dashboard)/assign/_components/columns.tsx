@@ -160,7 +160,7 @@ export const issueesColumns: ColumnDef<
     header: "",
     cell: ({ getValue, row }) => {
       const certificateId = getValue() as number;
-      const certificate = row.original.certificate;
+      const { certificate, ...recipient } = row.original;
 
       const { organization } = useOrganizationStore();
 
@@ -247,10 +247,10 @@ export const issueesColumns: ColumnDef<
                         height: initialData?.height ?? 1200,
                       },
                       `${
-                        certificate?.recipientFirstName +
+                        recipient?.recipientFirstName +
                         "_" +
-                        certificate?.recipientLastName
-                      }_${certificate?.originalCertificate.name}.pdf`
+                        recipient?.recipientLastName
+                      }_${certificate?.name}.pdf`
                     )
                   }
                   className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center hover:bg-basePrimary/20 hover:text-basePrimary"
