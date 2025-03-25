@@ -5,11 +5,26 @@ import React, { useEffect } from "react";
 import GradientBorderSelect from "../CustomSelect/GradientSelectBorder";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { TOrganization } from "@/types/organization";
-import { PlusCircle } from "lucide-react";
+import { Check, ChevronsUpDown, PlusCircle } from "lucide-react";
 import { Button } from "../ui/button";
 import { CreateOrganization } from "../CreateOrganisation/createOrganisation";
 import { useSearchParams } from "next/navigation";
 import { useFetchWorkspaces } from "@/queries/Workspaces.queries";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import GradientText from "../GradientText";
 
 const SelectOrganization = () => {
   const searchParams = useSearchParams();
@@ -54,11 +69,83 @@ const SelectOrganization = () => {
 
   const [dialogIsOpen, setDialogIsOpen] = React.useState<boolean>(false);
 
+  const [position, setPosition] = React.useState("bottom");
+
+  const [open, setOpen] = React.useState(false);
+
   return (
     <div className="flex flex-col gap-1">
       <span className="text-xs text-gray-600">Workspace:</span>
       <div className="flex items-center gap-4">
-        <GradientBorderSelect
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className="w-fit rounded-md bg-white text-xs font-medium justify-between border-basePrimary"
+            >
+              <GradientText Tag={"span"}>
+                {organization
+                  ? workspaces.find(
+                      (option) =>
+                        option.organizationAlias ===
+                        organization.organizationAlias
+                    )?.organizationName
+                  : `Select Workspace...`}
+              </GradientText>
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[250px] p-0">
+            <Command>
+              <CommandInput
+                placeholder={`enter Workspace...`}
+                className="text-sm"
+              />
+              <CommandList>
+                <CommandEmpty>No workspace found.</CommandEmpty>
+                <CommandGroup heading={"Worskpaces"}>
+                  {workspaces?.map((option) => (
+                    <CommandItem
+                      key={option.id}
+                      value={String(option.id)}
+                      onSelect={(currentValue: string) => {
+                        updateOrganization(currentValue);
+                        setOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          organization && organization.id === option.id
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                      {option.organizationName}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+            <div className="w-full px-1 pb-1 pt-4">
+              <Button
+                onClick={() => {
+                  setOpen(false);
+                  setDialogIsOpen(true);
+                }}
+                size="sm"
+                className="gap-x-2 font-semibold flex items-center justify-center rounded-lg w-full"
+              >
+                <PlusCircle className="size-6" />
+                <span>New Workspace</span>
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        {/* <GradientBorderSelect
           placeholder={
             workspacesIsLoading ? "Loading..." : "Select Organization"
           }
@@ -68,15 +155,15 @@ const SelectOrganization = () => {
             label: organizationName,
             value: String(id),
           }))}
-        />
-        <Button
+        /> */}
+        {/* <Button
           onClick={() => setDialogIsOpen(true)}
           size="sm"
           className="gap-x-2 font-medium flex items-center justify-center rounded-lg w-fit text-xs"
         >
           <span>New Workspace</span>
           <PlusCircle className="w-4 h-4" />
-        </Button>
+        </Button> */}
         {dialogIsOpen && (
           <CreateOrganization
             close={() => setDialogIsOpen(false)}

@@ -35,7 +35,7 @@ export function useCreateIntegration(workspaceId: string) {
     },
     onSuccess: (newIntegration, _, toastId) => {
       // Update integration in any query where it exists
-      queryClient.setQueriesData<PaginatedData<CredentialsIntegration>[]>(
+      queryClient.setQueriesData<PaginatedData<CredentialsIntegration>>(
         {
           predicate: (query) => query.queryKey.includes("integrations"),
         },
@@ -44,7 +44,15 @@ export function useCreateIntegration(workspaceId: string) {
 
           console.log(oldData);
 
-          return { ...oldData, data: [...oldData.data, newIntegration] };
+          return {
+            ...oldData,
+            data: oldData.data.find(
+              (integration) =>
+                integration.integrationAlias === newIntegration.integrationAlias
+            )
+              ? oldData.data
+              : [...oldData.data, newIntegration],
+          };
         }
       );
 

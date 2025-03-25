@@ -52,7 +52,7 @@ const SelectIntegration: React.FC<IntegrationComponentProps> = ({
     selectedIntegration
   );
 
-  console.log(options);
+  console.log(integratedId);
 
   return (
     <section className="space-y-6">
@@ -114,9 +114,7 @@ const SelectIntegration: React.FC<IntegrationComponentProps> = ({
             {options?.map((option) => (
               <SelectItem
                 value={String(
-                  selectedIntegration === "quiz"
-                    ? option.form.id
-                    : option.id
+                  selectedIntegration === "quiz" ? option.form.id : option.id
                 )}
                 key={option.id}
               >

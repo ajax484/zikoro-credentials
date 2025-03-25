@@ -75,7 +75,7 @@ export async function POST(request: Request) {
   try {
     const { data, error } = await supabase
       .from("recipientEmailTemplate")
-      .insert(payload)
+      .upsert(payload)
       .select("*")
       .maybeSingle();
 

@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   try {
     const { data, error } = await supabase
       .from("certificateTemplateNew")
-      .insert(payload)
+      .upsert(payload)
       .select("*");
 
     if (error) throw error;

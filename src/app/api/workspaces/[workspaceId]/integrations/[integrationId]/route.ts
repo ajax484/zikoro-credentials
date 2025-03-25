@@ -111,6 +111,8 @@ export async function GET(
         .eq("integrationAlias", integrationId)
         .maybeSingle();
 
+      console.log(data, error);
+
       if (error) throw error;
 
       return NextResponse.json(

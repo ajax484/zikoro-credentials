@@ -92,11 +92,11 @@ export async function POST(
       const { workspaceId } = params;
       console.log(workspaceId);
       //
-      const { integratedId, ...body } = await req.json();
+      const body = await req.json();
 
       const { data, error } = await supabase
         .from("credentialsIntegration")
-        .insert(body)
+        .upsert(body)
         .select("*")
         .maybeSingle();
 
@@ -115,11 +115,11 @@ export async function POST(
         .update({
           integrationAlias: data?.integrationAlias,
         })
-        .eq("id", integratedId)
+        .eq("id", body.integrationSettings.integratedId)
         .select("*")
         .maybeSingle();
 
-      console.log(returnData, integratedId);
+      console.log(returnData, body.integrationSettings.integratedId);
 
       if (updateError) throw updateError;
 

@@ -208,7 +208,7 @@ export const columns: ColumnDef<CredentialsIntegration>[] = [
         <div className="flex gap-1 items-center">
           <CustomLink
             className="bg-basePrimary w-fit rounded-l-xl rounded-r-none flex gap-2 items-center"
-            href={`/email/templates/${integration?.template?.templateAlias}`}
+            href={`/integrations/connect?integrationAlias=${integration?.integrationAlias}`}
           >
             Edit
             <Edit className="size-5" />

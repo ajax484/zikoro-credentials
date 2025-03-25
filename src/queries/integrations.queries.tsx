@@ -183,6 +183,37 @@ export function useFetchIntegrations(
   };
 }
 
+export function useFetchIntegration(
+  organizationId: string,
+  integrationAlias: string
+) {
+  const { data, isFetching, status, error, refetch } = useQuery({
+    queryKey: ["integration", integrationAlias],
+    queryFn: async () => {
+      const { data, status } = await getRequest<CredentialsIntegration>({
+        endpoint: `/workspaces/${organizationId}/integrations/${integrationAlias}`,
+      });
+
+      if (status !== 200) {
+        toast.error(data.error);
+        throw new Error(data.error);
+      }
+
+      console.log(data.data);
+
+      return data.data;
+    },
+  });
+
+  return {
+    data,
+    isFetching,
+    status,
+    error,
+    refetch,
+  };
+}
+
 export function useFetchQuizzes(organizationId: string) {
   const { data, isFetching, status, error, refetch } = useQuery({
     queryKey: ["quizzes", organizationId],

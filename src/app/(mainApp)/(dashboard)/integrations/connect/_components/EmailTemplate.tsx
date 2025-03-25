@@ -79,6 +79,7 @@ const CreateTemplateDialog = ({
   createTemplateFn,
   templateIsCreating,
   triggerButton,
+  previousName,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -91,6 +92,7 @@ const CreateTemplateDialog = ({
   }) => void;
   templateIsCreating: boolean;
   triggerButton: React.ReactNode;
+  previousName: string;
 }) => {
   const { organization, setOrganization } = useOrganizationStore();
 
@@ -98,7 +100,7 @@ const CreateTemplateDialog = ({
     organization
   );
 
-  const [name, setName] = useState<string>("Untitled Certificate");
+  const [name, setName] = useState<string>(previousName);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -150,18 +152,12 @@ const EmailTemplate: React.FC<IntegrationComponentProps> = ({
   schedule,
   scheduleDate,
   selectedIntegration,
+  template,
+  integration,
 }) => {
   const { user } = useUserStore();
   const { organization } = useOrganizationStore();
   const router = useRouter();
-  const {
-    data: templates,
-    isLoading: templatesIsLoading,
-    getData: getTemplates,
-  } = useGetData<RecipientEmailTemplate[]>(
-    `/workspaces/${organization?.organizationAlias}/certificates/recipients/templates`,
-    []
-  );
 
   const { mutateAsync: createIntegration, isPending: integrationIsCreating } =
     useCreateIntegration(workspace?.organizationAlias!);
@@ -210,6 +206,19 @@ Event Team.`,
       },
     },
   });
+
+  useEffect(() => {
+    if (!template) return;
+    form.setValue("subject", template.subject);
+    form.setValue("senderName", template.senderName);
+    form.setValue("replyTo", template.replyTo || "");
+    form.setValue("logoUrl", template.logoUrl || "");
+    form.setValue("body", template.body);
+    form.setValue("header", "Your certificate is ready for download");
+    form.setValue("showLogo", template.showLogo);
+    form.setValue("showSocialLinks", template.showSocialLinks);
+    form.setValue("buttonProps", template.buttonProps);
+  }, [template]);
 
   const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
     // if (!user) return toast.error("Please login to send certificate");
@@ -271,14 +280,21 @@ Event Team.`,
     if (!organization) return toast.error("Please select an organization");
     const templateAlias = generateAlphanumericHash(12);
     const { header, showCustomLinks, ...values } = form.getValues();
+    let payload = {
+      ...values,
+      workspaceAlias: workspace?.organizationAlias,
+    };
+
+    if (template) {
+      payload = {
+        ...payload,
+        ...template,
+        id: template.id,
+      };
+    }
+
     const data = await createTemplate({
-      payload: {
-        ...values,
-        workspaceAlias: workspace?.organizationAlias,
-        templateName: name + " template",
-        createdBy: user?.id,
-        templateAlias,
-      },
+      payload,
     });
 
     if (!data) return;
@@ -286,8 +302,8 @@ Event Team.`,
     console.log(data);
 
     await createIntegration({
+      ...integration,
       integrationType: selectedIntegration,
-      integrationAlias: generateAlphanumericHash(12),
       integrationName: name,
       credentialId: certificate?.id!,
       schedule,
@@ -300,18 +316,15 @@ Event Team.`,
           acc[value] = key.value;
           return acc;
         }, {} as Record<any, string>),
+        integratedId,
       },
       disconnect: false,
       templateId: data?.id,
-      integratedId,
       workspaceAlias: workspace?.organizationAlias,
     });
 
     router.push("/integrations");
   };
-
-  const [currentTemplate, setTemplate] =
-    useState<RecipientEmailTemplate | null>(null);
 
   console.log(certificate);
   console.log(form.formState.errors);
@@ -712,6 +725,7 @@ Event Team.`,
         </section>
         <div className="flex items-center justify-center gap-4">
           <CreateTemplateDialog
+            previousName={integration?.integrationName || "untitled integration"}
             templateIsCreating={templateIsCreating}
             open={open}
             setOpen={setOpen}

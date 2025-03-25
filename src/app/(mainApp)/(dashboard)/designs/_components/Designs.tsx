@@ -380,7 +380,7 @@ const Designs = () => {
             value="certificates"
           >
             <span>Certificates</span>
-            <span className="rounded-full text-xs items-center justify-center group-data-[state=active]:bg-white group-data-[state=active]:text-blue-700 px-2 py-1 bg-gray-300 text-gray-600">
+            <span className="rounded-full text-sm items-center justify-center group-data-[state=active]:bg-white group-data-[state=active]:text-blue-700 px-3 py-1 bg-gray-300 text-gray-600">
               {certificates?.length}
             </span>
           </TabsTrigger>

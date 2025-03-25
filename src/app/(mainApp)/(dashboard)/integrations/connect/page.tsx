@@ -6,8 +6,12 @@ export const metadata: Metadata = {
   title: "Credentials - Connect Integrations",
 };
 
-const page = () => {
-  return <ConnectIntegrations />;
+const page = ({
+  searchParams: { integrationAlias },
+}: {
+  searchParams: { integrationAlias: string };
+}) => {
+  return <ConnectIntegrations integrationAlias={integrationAlias} />;
 };
 
 export default page;

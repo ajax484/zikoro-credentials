@@ -1,13 +1,10 @@
 "use client";
 import useUserStore from "@/store/globalUserStore";
 import React, { useEffect, useState } from "react";
-import Badge from "@/public/icons/iconamoon_certificate-badge-duotone.svg";
+import Badge from "@/public/icons/badge.svg";
 import Certificate from "@/public/icons/ph_certificate-duotone.svg";
 import Image from "next/image";
-import { useGetData, useMutateData } from "@/hooks/services/request";
-import { CertificateRecipient, TCertificate } from "@/types/certificates";
-import Email from "@/public/icons/mdi_email-sent.svg";
-import Calendar from "@/public/icons/duo-icons_calendar.svg";
+import { useMutateData } from "@/hooks/services/request";
 import { format } from "date-fns";
 import Link from "next/link";
 import { useCreateCertificate } from "@/hooks";
@@ -55,6 +52,7 @@ import {
 import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
 import { useUpdateWorkspaceCredits } from "@/mutations/credits.mutations";
 import { useFetchRecipients } from "@/queries/recipients.queries";
+import { motion } from "framer-motion";
 
 const CreateCertificateDialog = ({
   open,
@@ -194,10 +192,8 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
     useFetchRecentCertificate(organization?.organizationAlias!);
 
   //fetch recipients
-  const {
-    data: recipients,
-    isFetching: recipientsIsLoading,
-  } = useFetchRecipients(organization?.organizationAlias!);
+  const { data: recipients, isFetching: recipientsIsLoading } =
+    useFetchRecipients(organization?.organizationAlias!);
 
   console.log(recentCertificate);
   console.log(recipients);
@@ -306,6 +302,24 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
     if (updatedUser) setUser(updatedUser);
   };
 
+  const slideIn = {
+    animate: {
+      opacity: 0,
+      width: 0,
+      transition: {
+        duration: 0,
+      },
+    },
+    initial: {
+      opacity: 1,
+      width: "100%",
+      transition: {
+        duration: 0.5,
+        ease: "easeInOut",
+      },
+    },
+  };
+
   return (
     <section className="space-y-4">
       {/* {claimCreditIsOpen && (
@@ -334,9 +348,9 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
         </div>
       )} */}
       <div className="flex items-center justify-between">
-        <div className="text-gray-700">
+        <div className="text-gray-700 font-medium">
           <p>
-            Hello, <b>{user?.firstName}</b>
+            Hello <b className="text-xl">{user?.firstName}</b>,
           </p>
           <p className="text-sm text-gray-600">
             What will you be working on today?
@@ -361,13 +375,11 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                     <Image
                       src={Certificate}
                       alt={"certificate"}
-                      width={30}
-                      height={30}
+                      width={32}
+                      height={32}
                       className="rounded-full"
                     />
-                    <p className="font-medium text-sm">
-                      Create new certificate
-                    </p>
+                    <p className="font-medium">Create new certificate</p>
                   </button>
                 }
                 open={open}
@@ -383,17 +395,18 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
               />
               <button
                 disabled
-                className="rounded flex flex-col items-center justify-center px-2 py-12 bg-white border"
+                className="rounded flex flex-col items-center justify-center px-2 py-12 bg-white border relative"
               >
+                <div className="absolute inset-0 bg-white/50 rounded" />
                 <Image
                   src={Badge}
                   alt={"badge certificate"}
-                  width={30}
-                  height={30}
+                  width={32}
+                  height={32}
                   className="rounded-full"
                 />
-                <p className="font-medium text-sm">Create new badge</p>
-                <small className="text-xs text-gray-600">Coming soon</small>
+                <p className="font-medium">Create new event badge</p>
+                <small className="text-sm text-gray-600">Coming soon</small>
               </button>
               <div className="bg-white text-[#1F1F1F] px-1 py-4 rounded-xl flex flex-col justify-center items-center gap-y-2 border">
                 <div className="">
@@ -404,7 +417,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                         <div className="rounded-full p-0.5 [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]">
                           <div className="rounded-full size-5 [box-shadow:_0px_8px_12px_0px_#C2AF9B66;] [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]" />
                         </div>
-                        <span className="font-semibold text-sm">
+                        <span className="font-semibold">
                           {creditBalance.bronze}
                         </span>
                       </div>
@@ -415,7 +428,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                         <div className="rounded-full p-0.5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1));]">
                           <div className="rounded-full size-5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1));]" />
                         </div>
-                        <span className="font-semibold text-sm">
+                        <span className="font-semibold">
                           {creditBalance.silver}
                         </span>
                       </div>
@@ -426,19 +439,19 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                         <div className="rounded-full p-0.5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%);]">
                           <div className="rounded-full size-5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%);]" />
                         </div>
-                        <span className="font-semibold text-sm">
+                        <span className="font-semibold">
                           {creditBalance.gold}
                         </span>
                       </div>
                     </div>
                   </div>
                 </div>
-                <p className="text-center font-medium text-gray-800 text-xs">
+                <p className="text-center font-medium text-gray-800 text-sm">
                   You need credits to issue credentials.
                 </p>
                 <Link
                   href={"/credits/buy"}
-                  className="text-xs bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize"
+                  className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize"
                 >
                   Buy more credits
                 </Link>
@@ -448,9 +461,9 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
             <div className="grid grid-cols-9 gap-4">
               <div className="rounded-lg border border-gray-200 bg-white col-span-6 p-4 space-y-4">
                 <h3 className="font-semibold">📍Pick up where you left off</h3>
-                <div className="flex gap-2">
+                <div className="flex gap-4">
                   <Link
-                    className="flex-[40%] flex justify-center items-center p-8 border-basePrimary/10 border rounded-lg relative group"
+                    className="flex-[40%] flex justify-center items-center p-8 border-basePrimary/10 border rounded-lg relative group bg-[#f7f8f9]"
                     href={
                       recentCertificate?.JSON
                         ? "/credentials/create/" +
@@ -483,23 +496,19 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                     )}
                   </Link>
 
-                  <div className="flex-[60%] space-y-4">
-                    <h4 className="font-medium text-gray-800">
-                      Your progress:
-                    </h4>
-
+                  <div className="flex-[60%] space-y-4 text-sm">
                     <div>
                       <div className="flex gap-2">
                         <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
                           <Image
                             src={NibIcon}
                             alt="Nib Icon"
-                            width={20}
-                            height={20}
+                            width={32}
+                            height={32}
                           />
                         </div>
-                        <div className="flex flex-col justify-between">
-                          <span className="font-medium text-gray-700">
+                        <div className="flex flex-col justify-evenly">
+                          <span className="font-semibold text-gray-700">
                             Continue editing {recentCertificate?.name}
                           </span>
                           {recentCertificate && (
@@ -516,26 +525,26 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                               }
                               className="flex gap-2 items-center"
                             >
-                              <span className="text-basePrimary underline">
+                              <span className="text-basePrimary underline font-medium">
                                 Proceed
                               </span>
-                              <ArrowRight className="text-basePrimary size-4" />
+                              <ArrowRight className="text-basePrimary size-5" />
                             </Link>
                           )}
                         </div>
                       </div>
                       <div className="ml-[25px] h-10 w-[2px] bg-basePrimary" />
-                      <div className="flex gap-2 items-end">
+                      <div className="flex gap-2">
                         <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
                           <Image
                             src={Assign}
                             alt="Assign Icon"
-                            width={20}
-                            height={20}
+                            width={32}
+                            height={32}
                           />
                         </div>
-                        <div className="flex flex-col justify-between">
-                          <span className="font-medium">
+                        <div className="flex flex-col justify-evenly">
+                          <span className="font-semibold text-gray-700">
                             Assigned To Recipients
                           </span>
                           {recentCertificate && (
@@ -553,10 +562,10 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                               }
                               className="flex gap-2 items-center"
                             >
-                              <span className="text-basePrimary underline">
+                              <span className="text-basePrimary underline font-medium">
                                 Proceed
                               </span>
-                              <ArrowRight className="text-basePrimary size-4" />
+                              <ArrowRight className="text-basePrimary size-5" />
                             </Link>
                           )}
                         </div>
@@ -567,12 +576,14 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                           <Image
                             src={Analytics}
                             alt="analytics icon"
-                            width={20}
-                            height={20}
+                            width={32}
+                            height={32}
                           />
                         </div>
-                        <div className="flex flex-col h-full">
-                          <span className="font-medium">Track Usage</span>
+                        <div className="flex flex-col justify-evenly">
+                          <span className="font-semibold text-gray-700">
+                            Track Usage
+                          </span>
                           {recentCertificate && (
                             <Link
                               href={
@@ -583,10 +594,10 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                               }
                               className="flex gap-2 items-center"
                             >
-                              <span className="text-basePrimary underline">
+                              <span className="text-basePrimary underline font-medium">
                                 Proceed
                               </span>
-                              <ArrowRight className="text-basePrimary size-4" />
+                              <ArrowRight className="text-basePrimary size-5" />
                             </Link>
                           )}
                         </div>
@@ -642,7 +653,9 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
               </div>
               <div className="border rounded-md bg-white p-4 col-span-3 space-y-6 w-full">
                 <div className="flex justify-between">
-                  <h3 className="font-semibold">📊 Analytics</h3>
+                  <h3 className="font-semibold">
+                    <span className="text-[18.75px]">📊</span> Analytics
+                  </h3>
                 </div>
                 <div className="space-y-4 divide-y divide-gray-200 [&>*]:pt-4">
                   <div className="flex justify-between items-center">
@@ -650,12 +663,12 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                       <Image
                         src={CertificateIcon2}
                         alt={"certificate"}
-                        width={30}
-                        height={30}
+                        width={24}
+                        height={24}
                       />
                       <span className="text-sm">Created Credentials</span>
                     </div>
-                    <span className="font-bold text-xl">
+                    <span className="font-semibold text-xl">
                       {certificates.length}
                     </span>
                   </div>
@@ -664,8 +677,8 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                       <Image
                         src={CertificateAssignIcon}
                         alt={"assigned"}
-                        width={30}
-                        height={30}
+                        width={24}
+                        height={24}
                       />
                       <span className="text-sm">Assigned Credentials</span>
                     </div>
@@ -678,12 +691,12 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                       <Image
                         src={EmailOpenedIcon}
                         alt={"assigned"}
-                        width={30}
-                        height={30}
+                        width={24}
+                        height={24}
                       />
                       <span className="text-sm">Viewed</span>
                     </div>
-                    <span className="font-bold text-xl">
+                    <span className="font-semibold text-xl">
                       {
                         recipients.filter(
                           (recipient) =>
@@ -700,12 +713,12 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                       <Image
                         src={ShareIcon}
                         alt={"assigned"}
-                        width={30}
-                        height={30}
+                        width={24}
+                        height={24}
                       />
                       <span className="text-sm">Shared On Socials</span>
                     </div>
-                    <span className="font-bold text-xl">
+                    <span className="font-semibold text-xl">
                       {
                         recipients.filter(
                           (recipient) =>
@@ -720,9 +733,20 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                 </div>
                 <div className="flex justify-center items-center gap-2">
                   <Link href={"/analytics"}>
-                    <span className="text-basePrimary mx-auto underline text-xs">
-                      See all
-                    </span>
+                    <motion.div
+                      initial="initial"
+                      animate="animate"
+                      whileHover="initial"
+                      className="space-y-0"
+                    >
+                      <span className="bg-gradient-to-r from-[#001FCC] to-[#9D00FF] bg-clip-text text-transparent mx-auto">
+                        See all
+                      </span>
+                      <motion.div
+                        // variants={slideIn}
+                        className="bg-basePrimary h-0.5 w-full"
+                      />
+                    </motion.div>
                   </Link>
                 </div>
               </div>
