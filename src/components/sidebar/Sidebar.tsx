@@ -157,7 +157,10 @@ const Sidebar = () => {
   console.log(pathname);
 
   return (
-    <div className="pl-2 pr-1 py-4 flex flex-col justify-between h-full w-[75px] group-hover:w-[175px] transition-all duration-300 ease-in-out">
+    <div
+      className="pl-2 pr-1 py-4 flex flex-col justify-between h-full w-[75px] group-hover:w-[175px] transition-all duration-300 ease-in-out"
+      id="sidebar"
+    >
       <div className="flex items-center group-hover:gap-x-2 p-2.5 gap-x-0">
         <Image
           src={logo}
@@ -184,6 +187,7 @@ const Sidebar = () => {
             .map(({ name, href, Icon, disabled }) => (
               <li key={name} className="w-full">
                 <Link
+                  id={name + "-link"}
                   aria-disabled={disabled}
                   onClick={close}
                   prefetch={false}

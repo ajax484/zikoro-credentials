@@ -206,6 +206,8 @@ const ConnectIntegrations = ({
     setScheduleDate(value);
   };
 
+
+  
   const [headers, setHeaders] = useState<Map<Header, any>>(
     new Map([
       [

@@ -74,9 +74,9 @@ const SelectOrganization = () => {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1" id="step1">
       <span className="text-xs text-gray-600">Workspace:</span>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4" id="step2">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button

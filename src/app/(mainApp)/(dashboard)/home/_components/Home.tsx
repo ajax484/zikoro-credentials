@@ -743,7 +743,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                         See all
                       </span>
                       <motion.div
-                        // variants={slideIn}
+                        variants={slideIn}
                         className="bg-basePrimary h-0.5 w-full"
                       />
                     </motion.div>
