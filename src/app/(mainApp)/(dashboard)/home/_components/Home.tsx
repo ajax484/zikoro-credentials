@@ -533,7 +533,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                           )}
                         </div>
                       </div>
-                      <div className="ml-[25px] h-10 w-[2px] bg-basePrimary" />
+                      <div className="ml-[32px] h-10 w-[2px] bg-basePrimary" />
                       <div className="flex gap-2">
                         <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
                           <Image
@@ -570,7 +570,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                           )}
                         </div>
                       </div>
-                      <div className="ml-[25px] h-10 w-[2px] bg-basePrimary" />
+                      <div className="ml-[32px] h-10 w-[2px] bg-basePrimary" />
                       <div className="flex gap-2">
                         <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
                           <Image
