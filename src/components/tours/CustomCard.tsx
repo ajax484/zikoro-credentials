@@ -1,9 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Step } from "nextstepjs";
 import { SkipBack, SkipForward } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
+import { useUpdateUser } from "@/mutations/user.mutations";
+import useUserStore from "@/store/globalUserStore";
+import { Checkbox } from "../ui/checkbox";
 
 interface ShadcnCustomCardProps {
   step: Step;
@@ -24,11 +27,19 @@ const CustomCard = ({
   skipTour,
   arrow,
 }: ShadcnCustomCardProps) => {
+  const { user } = useUserStore();
+  const { mutateAsync: updateUser, isPending: updateUserIsLoading } =
+    useUpdateUser(user?.id!);
+
+  const [disableTour, setDisableTour] = useState(false);
+
+  console.log(currentStep, totalSteps);
+
   return (
     <div className="w-[500px] bg-white rounded-xl shadow-lg">
       {step.content}
 
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between px-4 pt-4 pb-2">
         <button
           className={cn(
             "flex gap-1 items-center text-gray-600",
@@ -61,7 +72,14 @@ const CustomCard = ({
             currentStep < totalSteps &&
               "cursor-pointer text-basePrimary fill-basePrimary/10"
           )}
-          onClick={nextStep}
+          onClick={() => {
+            currentStep === totalSteps - 1 &&
+              disableTour &&
+              updateUser({
+                completedCredentialWorkthrough: { dashboardTour: true },
+              });
+            nextStep();
+          }}
         >
           <span className="text-sm">
             {currentStep < totalSteps ? "Next" : "Finish"}
@@ -70,7 +88,21 @@ const CustomCard = ({
         </button>
       </div>
 
-      <div className="w-full text-center">
+      <div className="flex items-center justify-between px-4 pt-2 pb-4">
+        {currentStep === totalSteps - 1 ? (
+          <div className="flex items-center gap-2">
+            <Checkbox
+              className="data-[state=checked]:bg-basePrimary"
+              checked={disableTour}
+              onCheckedChange={(value) => setDisableTour(value as boolean)}
+              aria-label="Disabled tour"
+            />
+            <span className="text-sm text-gray-600">Disable tour</span>
+          </div>
+        ) : (
+          <div />
+        )}
+
         <button
           className="text-basePrimary underline underline-offset-2 text-sm"
           onClick={skipTour}

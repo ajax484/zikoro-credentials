@@ -5,3 +5,7 @@ export interface PaginatedData<T> {
   totalPages: number;
   page: number;
 }
+
+export interface UpdateData<T> extends Partial<T> {
+  id: string;
+}

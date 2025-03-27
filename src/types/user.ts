@@ -7,6 +7,9 @@ export type TUser = z.infer<typeof UserSchema> & {
   id: number;
   referralCode: string;
   freeCreditClaimed: boolean;
+  completedCredentialWorkthrough: {
+    dashboardTour: boolean;
+  };
 };
 
 type User = {

@@ -3,13 +3,13 @@ import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { generateAlphanumericHash } from "@/utils/helpers";
 
-export async function POST(
+export async function PATCH(
   req: NextRequest,
 
   { params }: { params: { userId: string } }
 ) {
   const supabase = createRouteHandlerClient({ cookies });
-  if (req.method === "POST") {
+  if (req.method === "PATCH") {
     try {
       const { userId } = params;
       const payload = await req.json();

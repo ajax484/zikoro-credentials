@@ -32,11 +32,13 @@ import CustomCard from "../tours/CustomCard";
 import FirstImage from "@/public/images/dashboard_tour_first.svg";
 import Image from "next/image";
 import { ArrowRight } from "@phosphor-icons/react";
+import { useUpdateUser } from "@/mutations/user.mutations";
 
 const steps: Tour[] = [dashboardTourSteps];
 
 const TourTriggerDialog = () => {
   const { user } = useUserStore();
+
   const {
     startNextStep,
     closeNextStep,
@@ -46,13 +48,19 @@ const TourTriggerDialog = () => {
     isNextStepVisible,
   } = useNextStep();
 
-  const [welcomeTour, setWelcomeTour] = useState(true);
+  const [welcomeTour, setWelcomeTour] = useState(false);
+
+  console.log(user?.completedCredentialWorkthrough?.dashboardTour, welcomeTour);
+
+  useEffect(() => {
+    if (!user) return;
+    if (!user?.completedCredentialWorkthrough?.dashboardTour) {
+      setWelcomeTour(true);
+    }
+  }, [user]);
 
   const nextStep = () => {
     setWelcomeTour(false);
-    const sidebar = document.getElementById("sidebar");
-    console.log(sidebar);
-    sidebar && sidebar.focus();
     startNextStep("dashboardTour");
   };
 

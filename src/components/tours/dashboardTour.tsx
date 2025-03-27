@@ -12,10 +12,12 @@ const StepContent = ({
   image,
   title,
   content,
+  lastStep,
 }: {
   image: StaticImageData;
   title: string;
   content: string[];
+  lastStep?: boolean;
 }) => {
   return (
     <>
@@ -142,6 +144,7 @@ export const dashboardTourSteps: Tour = {
             "Adds and manage team members with different roles and permissions.",
             "Maintain control over your credentialing process in one centralized space.",
           ]}
+          lastStep
         />
       ),
       selector: "#Workspace-link",
