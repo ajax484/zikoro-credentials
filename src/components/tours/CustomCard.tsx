@@ -69,6 +69,15 @@ const CustomCard = ({
           {currentStep < totalSteps && <SkipForward className="size-4" />}
         </button>
       </div>
+
+      <div className="w-full text-center">
+        <button
+          className="text-basePrimary underline underline-offset-2 text-sm"
+          onClick={skipTour}
+        >
+          Skip Tour
+        </button>
+      </div>
     </div>
   );
 };

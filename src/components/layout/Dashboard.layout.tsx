@@ -36,6 +36,7 @@ import { ArrowRight } from "@phosphor-icons/react";
 const steps: Tour[] = [dashboardTourSteps];
 
 const TourTriggerDialog = () => {
+  const { user } = useUserStore();
   const {
     startNextStep,
     closeNextStep,
@@ -62,7 +63,7 @@ const TourTriggerDialog = () => {
 
         <div className="p-6 flex flex-col justify-center items-center gap-4">
           <p className="text-xl font-semibold text-gray-800 text-center">
-            Hello Austin, <br /> Welcome to Zikoro Credentials.
+            Hello {user?.firstName}, <br /> Welcome to Zikoro Credentials.
           </p>
 
           <p className="text-gray-600 text-center">
@@ -123,18 +124,24 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <NextStepProvider>
-      <NextStep steps={steps} cardComponent={CustomCard}>
+      <NextStep
+        steps={steps}
+        cardComponent={CustomCard}
+        onComplete={(tourName) => {
+          console.log(tourName);
+        }}
+      >
         <main className="min-h-screen relative bg-[#f7f8ff] flex w-full">
           {/* tour dialog */}
           <TourTriggerDialog />
 
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent>
-              <DialogHeader className="px-3">
+          <AlertDialog open={open} onOpenChange={setOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader className="px-3">
                 <h1 className="text-2xl capitalize font-semibold text-gray-800">
                   Select Workspace
                 </h1>
-              </DialogHeader>
+              </AlertDialogHeader>
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-gray-600">Workspace:</span>
                 <div className="flex items-center gap-4">
@@ -161,7 +168,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                   </Button>
                 </div>
               </div>
-              <DialogFooter>
+              <AlertDialogFooter>
                 <Button
                   onClick={() => {
                     setOpen(false);
@@ -172,9 +179,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                 >
                   Select
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
 
           {dialogIsOpen && (
             <CreateOrganization

@@ -61,7 +61,6 @@ export const dashboardTourSteps: Tour = {
       ),
       selector: "#Designs-link",
       side: "right",
-      nextRoute: "/assign",
     },
     {
       icon: "😭",
@@ -79,8 +78,6 @@ export const dashboardTourSteps: Tour = {
       ),
       selector: "#Assign-link",
       side: "right",
-      prevRoute: "/designs",
-      nextRoute: "/analytics",
     },
     {
       icon: "😭",
@@ -98,8 +95,6 @@ export const dashboardTourSteps: Tour = {
       ),
       selector: "#Analytics-link",
       side: "right",
-      prevRoute: "/assign",
-      nextRoute: "/email/templates",
     },
     {
       icon: "😭",
@@ -117,8 +112,6 @@ export const dashboardTourSteps: Tour = {
       ),
       selector: "#Templates-link",
       side: "right",
-      prevRoute: "/analytics",
-      nextRoute: "/integrations",
     },
     {
       icon: "😭",
@@ -136,8 +129,6 @@ export const dashboardTourSteps: Tour = {
       ),
       selector: "#Integrations-link",
       side: "right",
-      prevRoute: "/email/templates",
-      nextRoute: "/workspace",
     },
     {
       icon: "😭",
@@ -155,7 +146,6 @@ export const dashboardTourSteps: Tour = {
       ),
       selector: "#Workspace-link",
       side: "right",
-      prevRoute: "/integrations",
     },
   ],
 };
