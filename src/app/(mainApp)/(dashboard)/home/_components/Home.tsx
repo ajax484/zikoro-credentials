@@ -41,7 +41,7 @@ import EmailOpenedIcon from "@/public/icons/line-md_email-opened-alt-twotone.svg
 import ShareIcon from "@/public/icons/ic_twotone-share.svg";
 import NibIcon from "@/public/icons/PenNib.svg";
 import Assign from "@/public/icons/PaperPlaneTilt.svg";
-import Analytics from "@/public/icons/chartBar.svg";
+import Analytics from "@/public/icons/ChartBar.svg";
 import { InfoCircle } from "styled-icons/bootstrap";
 import { generateAlphanumericHash } from "@/utils/helpers";
 import { useFetchWorkspaces } from "@/queries/Workspaces.queries";
