@@ -86,7 +86,7 @@ const ReferralPage = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <div className="p-4 bg-gray-100 flex gap-2 items-center rounded-md">
+            <div className="p-4 bg-gray-100 flex gap-2 items-center rounded-lg">
               <svg
                 stroke="currentColor"
                 fill="none"
@@ -112,7 +112,7 @@ const ReferralPage = () => {
                 </p>
               </div>
             </div>
-            {/* <div className="p-4 bg-gray-100 flex gap-2 items-center rounded-md">
+            {/* <div className="p-4 bg-gray-100 flex gap-2 items-center rounded-lg">
               <svg
                 stroke="currentColor"
                 fill="none"
@@ -208,7 +208,7 @@ const ReferralPage = () => {
           </Button>
           <div className="border p-4 flex flex-col gap-2 rounded">
             <span>Referral Code</span>
-            <div className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm relative">
+            <div className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm relative">
               <span className="absolute top-0 -translate-y-1/2 right-4 bg-white text-gray-600 text-tiny px-1">
                 Share Code
               </span>

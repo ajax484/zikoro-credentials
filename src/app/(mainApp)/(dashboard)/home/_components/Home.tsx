@@ -5,34 +5,14 @@ import Badge from "@/public/icons/badge.svg";
 import Certificate from "@/public/icons/ph_certificate-duotone.svg";
 import Image from "next/image";
 import { useMutateData } from "@/hooks/services/request";
-import { format } from "date-fns";
 import Link from "next/link";
-import { useCreateCertificate } from "@/hooks";
 import { toast } from "react-toastify";
 import useOrganizationStore from "@/store/globalOrganizationStore";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { TOrganization } from "@/types/organization";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { CreateOrganization } from "@/components/CreateOrganisation/createOrganisation";
-import { ArrowRight, Check, Gift, PlusCircle, X } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { CredentialsWorkspaceToken } from "@/types/token";
 import SelectOrganization from "@/components/SelectOrganization/SelectOrganization";
 import CertificateIcon from "@/public/icons/teenyicons_certificate-solid.svg";
 import CertificateIcon2 from "@/public/icons/ph_certificate-duotone.svg";
@@ -53,117 +33,8 @@ import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
 import { useUpdateWorkspaceCredits } from "@/mutations/credits.mutations";
 import { useFetchRecipients } from "@/queries/recipients.queries";
 import { motion } from "framer-motion";
-
-const CreateCertificateDialog = ({
-  open,
-  setOpen,
-  createCertificateFn,
-  certificateIsCreating,
-  setDialogIsOpen,
-  workspaces,
-  workspacesIsLoading,
-  triggerButton,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  createCertificateFn: ({
-    name,
-    workspace,
-  }: {
-    name: string;
-    workspace: TOrganization;
-  }) => void;
-  certificateIsCreating: boolean;
-  setDialogIsOpen: (open: boolean) => void;
-  workspaces: TOrganization[];
-  workspacesIsLoading: boolean;
-  triggerButton: React.ReactNode;
-}) => {
-  const { organization, setOrganization } = useOrganizationStore();
-
-  const [workspace, setWorkspace] = useState<TOrganization | null>(
-    organization
-  );
-
-  const [name, setName] = useState<string>("Untitled Certificate");
-
-  const updateWorkspace = (workspace: TOrganization | null) => {
-    setWorkspace(workspace);
-    setOrganization(workspace);
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{triggerButton}</DialogTrigger>
-      <DialogContent className="max-w-[50%]">
-        <DialogHeader>
-          <DialogTitle>Create Certificate</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-6">
-          <div className="flex flex-col gap-2 w-full">
-            <label className="font-medium text-gray-700">
-              Certificate Name
-            </label>
-            <Input
-              type="text"
-              placeholder="Enter certificate name"
-              className=" placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-              onInput={(e) => setName(e.currentTarget.value)}
-              value={name}
-            />
-          </div>
-          <div className="flex flex-col gap-2 w-full">
-            <label className="font-medium text-gray-700">Workspace</label>
-            <div className="flex items-center gap-4">
-              <Select
-                disabled={workspacesIsLoading}
-                value={String(workspace?.id)}
-                onValueChange={(value) =>
-                  updateWorkspace(
-                    workspaces?.find(({ id }) => id === parseInt(value))
-                  )
-                }
-              >
-                <SelectTrigger className="w-full rounded-md bg-white font-medium">
-                  <SelectValue placeholder={"Select workspace"} />
-                </SelectTrigger>
-                <SelectContent>
-                  {workspaces?.map(({ id, organizationName }) => (
-                    <SelectItem value={String(id)} key={id}>
-                      {organizationName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button
-                onClick={() => setDialogIsOpen(true)}
-                className="bg-basePrimary gap-x-2 py-1 text-gray-50 font-medium flex items-center justify-center rounded-lg w-fit text-xs"
-              >
-                <span>New Workspace</span>
-                <PlusCircle className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-        <DialogFooter>
-          <Button
-            onClick={() => {
-              workspace && createCertificateFn({ name, workspace });
-              setOpen(false);
-            }}
-            disabled={certificateIsCreating || name === "" || !workspace}
-            className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-md text-gray-50 font-medium"
-          >
-            {certificateIsCreating && (
-              <LoaderAlt size={22} className="animate-spin" />
-            )}
-            <span>Create Certificate</span>
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
+import CreateCertificateDialog from "@/components/modals/CreateCertificate.modal";
+import { useCreateCertificate } from "@/mutations/certificates.mutations";
 
 const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
   const { user, setUser } = useUserStore();
@@ -201,25 +72,28 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
   const { data: credits, isFetching: creditsIsLoading } =
     useFetchWorkspaceCredits(organization?.id!);
 
-  const { createCertificate, isLoading: certificateIsCreating } =
+  const { mutateAsync: createCertificate, isPending: certificateIsCreating } =
     useCreateCertificate();
 
   const createCertificateFn = async ({
     name,
     workspace,
+    JSON,
   }: {
     name: string;
     workspace: TOrganization;
+    JSON: Record<string, any> | null;
   }) => {
     if (!organization) return toast.error("Please select an organization");
     const data = await createCertificate({
-      payload: {
-        workspaceAlias: workspace.organizationAlias,
-        name,
-        createdBy: user?.id,
-      },
+      workspaceAlias: workspace.organizationAlias,
+      name,
+      createdBy: user?.id!,
+      JSON,
+      hasQRCode: !!JSON,
     });
 
+    console.log(data)
     if (!data) return;
 
     router.push(
@@ -314,7 +188,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
       opacity: 1,
       width: "100%",
       transition: {
-        duration: 0.5,
+        duration: 0.2,
         ease: "easeInOut",
       },
     },
@@ -323,7 +197,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
   return (
     <section className="space-y-4">
       {/* {claimCreditIsOpen && (
-        <div className="p-4 bg-basePrimary rounded-md flex items-center justify-center text-white gap-4 relative">
+        <div className="p-4 bg-basePrimary rounded-lg flex items-center justify-center text-white gap-4 relative">
           <button
             aria-label="Close"
             onClick={() => setClaimCreditIsOpen(false)}
@@ -371,7 +245,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
             <div className="grid grid-cols-3 gap-4 min-h-fit">
               <CreateCertificateDialog
                 triggerButton={
-                  <button className="rounded flex flex-col items-center justify-center px-2 py-12 bg-white border">
+                  <button className="rounded-lg flex flex-col items-center justify-center px-2 py-12 bg-white border">
                     <Image
                       src={Certificate}
                       alt={"certificate"}
@@ -395,7 +269,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
               />
               <button
                 disabled
-                className="rounded flex flex-col items-center justify-center px-2 py-12 bg-white border relative"
+                className="rounded-lg flex flex-col items-center justify-center px-2 py-12 bg-white border relative"
               >
                 <div className="absolute inset-0 bg-white/50 rounded" />
                 <Image
@@ -499,7 +373,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                   <div className="flex-[60%] space-y-4 text-sm">
                     <div>
                       <div className="flex gap-2">
-                        <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
+                        <div className="border-2 rounded-lg p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
                           <Image
                             src={NibIcon}
                             alt="Nib Icon"
@@ -528,14 +402,25 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                               <span className="text-basePrimary underline font-medium">
                                 Proceed
                               </span>
-                              <ArrowRight className="text-basePrimary size-5" />
+                              <motion.div
+                                transition={{
+                                  duration: 1,
+                                  repeat: Infinity,
+                                  ease: "easeInOut",
+                                }}
+                                animate={{
+                                  x: [0, 10, 0],
+                                }}
+                              >
+                                <ArrowRight className="text-basePrimary size-5" />
+                              </motion.div>
                             </Link>
                           )}
                         </div>
                       </div>
                       <div className="ml-[32px] h-10 w-[2px] bg-basePrimary" />
                       <div className="flex gap-2">
-                        <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
+                        <div className="border-2 rounded-lg p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
                           <Image
                             src={Assign}
                             alt="Assign Icon"
@@ -565,14 +450,25 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                               <span className="text-basePrimary underline font-medium">
                                 Proceed
                               </span>
-                              <ArrowRight className="text-basePrimary size-5" />
+                              <motion.div
+                                transition={{
+                                  duration: 1,
+                                  repeat: Infinity,
+                                  ease: "easeInOut",
+                                }}
+                                animate={{
+                                  x: [0, 10, 0],
+                                }}
+                              >
+                                <ArrowRight className="text-basePrimary size-5" />
+                              </motion.div>
                             </Link>
                           )}
                         </div>
                       </div>
                       <div className="ml-[32px] h-10 w-[2px] bg-basePrimary" />
                       <div className="flex gap-2">
-                        <div className="border-2 rounded-md p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
+                        <div className="border-2 rounded-lg p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
                           <Image
                             src={Analytics}
                             alt="analytics icon"
@@ -597,7 +493,18 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                               <span className="text-basePrimary underline font-medium">
                                 Proceed
                               </span>
-                              <ArrowRight className="text-basePrimary size-5" />
+                              <motion.div
+                                transition={{
+                                  duration: 1,
+                                  repeat: Infinity,
+                                  ease: "easeInOut",
+                                }}
+                                animate={{
+                                  x: [0, 10, 0],
+                                }}
+                              >
+                                <ArrowRight className="text-basePrimary size-5" />
+                              </motion.div>
                             </Link>
                           )}
                         </div>
@@ -614,7 +521,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                         </div>
                         <CreateCertificateDialog
                           triggerButton={
-                            <Button className="rounded-md">
+                            <Button className="rounded-lg">
                               Start Designing
                             </Button>
                           }
@@ -642,7 +549,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                           </div>
                           <Button
                             onClick={() => router.push("/assign")}
-                            className="bg-basePrimary text-white rounded-md"
+                            className="bg-basePrimary text-white rounded-lg"
                           >
                             Assign Recipients
                           </Button>
@@ -651,7 +558,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                   </div>
                 </div>
               </div>
-              <div className="border rounded-md bg-white p-4 col-span-3 space-y-6 w-full">
+              <div className="border rounded-lg bg-white p-4 col-span-3 space-y-6 w-full">
                 <div className="flex justify-between">
                   <h3 className="font-semibold">
                     <span className="text-[18.75px]">📊</span> Analytics
@@ -752,7 +659,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
               </div>
             </div>
 
-            {/* <div className="border rounded-md bg-white">
+            {/* <div className="border rounded-lg bg-white">
             <h2 className="text-sm text-gray-700 font-medium text-center py-2 border-b">
               My designs
             </h2>

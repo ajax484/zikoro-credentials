@@ -113,7 +113,7 @@ const Analytics = ({
           )}
         />
       </div>
-      <div className="space-y-4 p-2 border rounded-md">
+      <div className="space-y-4 p-2 border rounded-lg">
         <div className="space-y-2">
           <h3 className="text-sm font-medium">Opens</h3>
           <div className="flex items-center gap-6">
@@ -189,7 +189,7 @@ const Analytics = ({
             <ChartTooltip
               cursor={false}
               content={(props) => (
-                <div className="bg-basePrimary text-white rounded-md p-2 shadow-lg text-xs">
+                <div className="bg-basePrimary text-white rounded-lg p-2 shadow-lg text-xs">
                   {props.payload ? props.payload[0]?.payload.count : 0}
                 </div>
               )}

@@ -165,7 +165,7 @@ const VerifyOrganization = () => {
                         onValueChange={(value) => field.onChange(value)}
                         value={field.value}
                       >
-                        <SelectTrigger className="w-full rounded-md text-xs font-medium bg-transparent">
+                        <SelectTrigger className="w-full rounded-lg text-xs font-medium bg-transparent">
                           <SelectValue placeholder={"Select country"} />
                         </SelectTrigger>
                         <SelectContent className="z-[1001]">
@@ -192,7 +192,7 @@ const VerifyOrganization = () => {
                         }
                         value={String(field.value)}
                       >
-                        <SelectTrigger className="w-full rounded-md text-xs font-medium bg-transparent">
+                        <SelectTrigger className="w-full rounded-lg text-xs font-medium bg-transparent">
                           <SelectValue placeholder={"Select year"} />
                         </SelectTrigger>
                         <SelectContent className="z-[1001]">
@@ -233,7 +233,7 @@ const VerifyOrganization = () => {
                       </button>
                     </div>
                   ) : !documentUploading ? (
-                    <div className="relative bg-basePrimary/10 rounded-md p-8 flex flex-col gap-2 items-center">
+                    <div className="relative bg-basePrimary/10 rounded-lg p-8 flex flex-col gap-2 items-center">
                       <b className="text-sm">
                         Upload a legal business document of your organization
                       </b>
@@ -323,7 +323,7 @@ const WorkspaceInformation = () => {
       <Dialog>
         <DialogTrigger asChild>
           <button
-            className="bg-red-600 text-white border border-red-600 rounded-md px-4 text-sm transition-colors hover:bg-white hover:text-red-600 py-1"
+            className="bg-red-600 text-white border border-red-600 rounded-lg px-4 text-sm transition-colors hover:bg-white hover:text-red-600 py-1"
             onClick={(e) => e.stopPropagation()}
           >
             <span className="p-2">Delete</span>
@@ -479,7 +479,7 @@ const WorkspaceInformation = () => {
           </Button>
         </form>
       </Form>
-      <div className="bg-basePrimary/10 rounded-md p-8 flex flex-col gap-4 items-center font-medium">
+      <div className="bg-basePrimary/10 rounded-lg p-8 flex flex-col gap-4 items-center font-medium">
         <div className="flex flex-col gap-1 text-center">
           <span className="text-sm">organization status:</span>
 

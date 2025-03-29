@@ -13,7 +13,6 @@ import useSearch from "@/hooks/common/useSearch";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import SelectOrganization from "@/components/SelectOrganization/SelectOrganization";
 import { toast } from "react-toastify";
-import { useCreateCertificate } from "@/hooks";
 import { Button } from "@/components/ui/button";
 import { CredentialsWorkspaceToken } from "@/types/token";
 import { useRouter } from "next/navigation";
@@ -27,16 +26,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { PlusCircle } from "lucide-react";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { CreateOrganization } from "@/components/CreateOrganisation/createOrganisation";
 import useUserStore from "@/store/globalUserStore";
 import {
@@ -48,117 +37,11 @@ import Nib from "@/public/icons/iconoir_design-nib-solid2.svg";
 import GradientText from "@/components/GradientText";
 import { useFetchWorkspaces } from "@/queries/Workspaces.queries";
 import { useFetchCertificates } from "@/queries/certificates.queries";
-
-const CreateCertificateDialog = ({
-  open,
-  setOpen,
-  createCertificateFn,
-  certificateIsCreating,
-  setDialogIsOpen,
-  workspaces,
-  workspacesIsLoading,
-  triggerButton,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  createCertificateFn: ({
-    name,
-    workspace,
-  }: {
-    name: string;
-    workspace: TOrganization;
-  }) => void;
-  certificateIsCreating: boolean;
-  setDialogIsOpen: (open: boolean) => void;
-  workspaces: TOrganization[];
-  workspacesIsLoading: boolean;
-  triggerButton: React.ReactNode;
-}) => {
-  const { organization, setOrganization } = useOrganizationStore();
-
-  const [workspace, setWorkspace] = useState<TOrganization | null>(
-    organization
-  );
-
-  const [name, setName] = useState<string>("Untitled Certificate");
-
-  const updateWorkspace = (workspace: TOrganization | null) => {
-    setWorkspace(workspace);
-    setOrganization(workspace);
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{triggerButton}</DialogTrigger>
-      <DialogContent className="max-w-[50%]">
-        <DialogHeader>
-          <DialogTitle>Create Certificate</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-6">
-          <div className="flex flex-col gap-2 w-full">
-            <label className="font-medium text-gray-700">
-              Certificate Name
-            </label>
-            <Input
-              type="text"
-              placeholder="Enter certificate name"
-              className=" placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-              onInput={(e) => setName(e.currentTarget.value)}
-              value={name}
-            />
-          </div>
-          <div className="flex flex-col gap-2 w-full">
-            <label className="font-medium text-gray-700">Workspace</label>
-            <div className="flex items-center gap-4">
-              <Select
-                disabled={workspacesIsLoading}
-                value={String(workspace?.id)}
-                onValueChange={(value) =>
-                  updateWorkspace(
-                    workspaces?.find(({ id }) => id === parseInt(value))
-                  )
-                }
-              >
-                <SelectTrigger className="w-full rounded-md bg-white font-medium">
-                  <SelectValue placeholder={"Select workspace"} />
-                </SelectTrigger>
-                <SelectContent>
-                  {workspaces?.map(({ id, organizationName }) => (
-                    <SelectItem value={String(id)} key={id}>
-                      {organizationName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button
-                onClick={() => setDialogIsOpen(true)}
-                className="bg-basePrimary gap-x-2 py-1 text-gray-50 font-medium flex items-center justify-center rounded-lg w-fit text-xs"
-              >
-                <span>New Workspace</span>
-                <PlusCircle className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-        <DialogFooter>
-          <Button
-            onClick={() => {
-              workspace && createCertificateFn({ name, workspace });
-              setOpen(false);
-            }}
-            disabled={certificateIsCreating || name === "" || !workspace}
-            className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-md text-gray-50 font-medium"
-          >
-            {certificateIsCreating && (
-              <LoaderAlt size={22} className="animate-spin" />
-            )}
-            <span>Create Certificate</span>
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
+import CreateCertificateDialog from "@/components/modals/CreateCertificate.modal";
+import {
+  useCreateCertificate,
+  useDeleteCertificate,
+} from "@/mutations/certificates.mutations";
 
 const Designs = () => {
   const { user, setUser } = useUserStore();
@@ -172,32 +55,29 @@ const Designs = () => {
     error: workspacesError,
   } = useFetchWorkspaces(user?.userEmail!);
 
-  const { createCertificate, isLoading: certificateIsCreating } =
+  const { mutateAsync: createCertificate, isPending: certificateIsCreating } =
     useCreateCertificate();
 
   const createCertificateFn = async ({
     name,
     workspace,
-    originalCopy = {},
+    JSON,
   }: {
     name: string;
     workspace: TOrganization;
-    originalCopy?: TCertificate | {};
+    JSON: Record<string, any> | null;
   }) => {
     if (!organization) return toast.error("Please select an organization");
-
-    if (user?.id === undefined)
-      return toast.error("Please login to create certificates");
-
+    console.log(JSON);
     const data = await createCertificate({
-      payload: {
-        ...originalCopy,
-        workspaceAlias: workspace.organizationAlias,
-        name,
-        createdBy: user?.id,
-      },
+      workspaceAlias: workspace.organizationAlias,
+      name,
+      createdBy: user?.id!,
+      JSON,
+      hasQRCode: !!JSON,
     });
 
+    console.log(data);
     if (!data) return;
 
     router.push(
@@ -242,10 +122,8 @@ const Designs = () => {
   };
 
   const Delete = ({ certificateAlias }: { certificateAlias: string }) => {
-    const { deleteData: deleteCertificate, isLoading: isDeleting } =
-      useDeleteRequest<{
-        certificateId: number;
-      }>(`/certificates/${certificateAlias}`);
+    const { mutateAsync: deleteCertificate, isPending: isDeleting } =
+      useDeleteCertificate(certificateAlias);
 
     const certificate = filteredCertificates.find(
       (certificate) => certificate.certificateAlias === certificateAlias
@@ -284,7 +162,8 @@ const Designs = () => {
               </svg>
               <div className="text-gray-800 font-medium flex flex-col gap-2 text-center">
                 <span>
-                  Are you sure you want to delete {certificate?.name}?
+                  Are you sure you want to delete {certificate?.name}? This will
+                  delete all related issued certificates.
                 </span>
               </div>
             </div>
@@ -304,7 +183,6 @@ const Designs = () => {
                 onClick={async (e) => {
                   e.stopPropagation();
                   await deleteCertificate();
-                  await getCertificates();
                   clsBtnRef.current?.click();
                 }}
                 className="bg-basePrimary w-full"
@@ -465,7 +343,7 @@ const Designs = () => {
                       triggerButton={
                         <button
                           disabled={certificateIsCreating}
-                          className="rounded-md border bg-white flex flex-col items-center justify-center gap-2 min-h-[250px]"
+                          className="rounded-lg border bg-white flex flex-col items-center justify-center gap-2 min-h-[250px]"
                         >
                           <Image
                             src={Solar}
@@ -596,13 +474,6 @@ const Designs = () => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                               <ul>
-                                <li className="text-center p-2 hover:bg-gray-100 text-red-700">
-                                  <Delete
-                                    certificateAlias={
-                                      certificate.certificateAlias
-                                    }
-                                  />
-                                </li>
                                 <li className="w-full">
                                   <button
                                     className="w-full hover:bg-gray-100 text-gray-700 py-2"
@@ -611,17 +482,19 @@ const Designs = () => {
                                         createCertificateFn({
                                           name: certificate.name + " (copy)",
                                           workspace: organization,
-                                          originalCopy: {
-                                            JSON: certificate.JSON,
-                                            previewUrl: certificate.previewUrl,
-                                            lastEdited: certificate.lastEdited,
-                                            settings: certificate.settings,
-                                          },
+                                          JSON: certificate.JSON,
                                         });
                                     }}
                                   >
                                     <span className="p-2">Make a copy</span>
                                   </button>
+                                </li>
+                                <li className="text-center p-2 hover:bg-gray-100 text-red-700">
+                                  <Delete
+                                    certificateAlias={
+                                      certificate.certificateAlias
+                                    }
+                                  />
                                 </li>
                               </ul>
                             </DropdownMenuContent>

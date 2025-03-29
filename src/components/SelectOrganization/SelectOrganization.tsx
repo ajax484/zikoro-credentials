@@ -83,7 +83,7 @@ const SelectOrganization = () => {
               variant="outline"
               role="combobox"
               aria-expanded={open}
-              className="w-fit rounded-md bg-white text-xs font-medium justify-between border-basePrimary"
+              className="w-fit rounded-lg bg-white text-xs font-medium justify-between border-basePrimary hover:bg-basePrimary/10"
             >
               <GradientText Tag={"span"}>
                 {organization
@@ -94,7 +94,7 @@ const SelectOrganization = () => {
                     )?.organizationName
                   : `Select Workspace...`}
               </GradientText>
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 text-basePrimary" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[250px] p-0">

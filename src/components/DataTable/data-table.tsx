@@ -263,7 +263,7 @@ const Pagination = ({
             <button
               key={index}
               onClick={() => setCurrentPage(page)}
-              className={`w-10 h-10 flex justify-center items-center text-xs font-medium transition-all border rounded-md ${
+              className={`w-10 h-10 flex justify-center items-center text-xs font-medium transition-all border rounded-lg ${
                 page === currentPage
                   ? "bg-basePrimary text-white"
                   : "bg-white hover:bg-gray-50 text-gray-600"

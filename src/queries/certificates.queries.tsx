@@ -1,5 +1,5 @@
 "use client";
-import { CertificateRecipient, FailedCertificateRecipient, TCertificate } from "@/types/certificates";
+import { CertificateRecipient, CertificateTemplate, FailedCertificateRecipient, TCertificate } from "@/types/certificates";
 import { PaginatedData } from "@/types/request";
 import { getRequest } from "@/utils/api";
 import {
@@ -156,6 +156,37 @@ export function useFetchFailedCertificateRecipients(
       totalPages: 0,
       page: pagination.page,
     },
+    isFetching,
+    status,
+    error,
+    refetch,
+  };
+}
+
+export function useFetchCertificateTemplates() {
+  const { data, isFetching, status, error, refetch } = useQuery({
+    queryKey: ["recipient email templates"],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+
+      const { data, status } = await getRequest<CertificateTemplate[]>({
+        endpoint: "/certificates/templates",
+        searchParams,
+      });
+
+      if (status !== 200) {
+        toast.error(data.error);
+        throw new Error(data.error);
+      }
+
+      console.log(data.data);
+
+      return data.data;
+    },
+  });
+
+  return {
+    data: data || [],
     isFetching,
     status,
     error,

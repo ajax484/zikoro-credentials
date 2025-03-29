@@ -303,7 +303,7 @@ const CertificateView = ({
             <span>Download</span>
           </button>
         </PopoverTrigger>
-        <PopoverContent className="p-4 flex w-[150px] items-center justify-between gap-2 bg-white rounded-md text-basePrimary">
+        <PopoverContent className="p-4 flex w-[150px] items-center justify-between gap-2 bg-white rounded-lg text-basePrimary">
           <button
             aria-label="Download pdf"
             onClick={() =>
@@ -505,7 +505,7 @@ const CertificateView = ({
         </div>
       </section>
       <section className="grid grid-cols-12 gap-4">
-        <div className="bg-white p-4 border rounded-md w-full col-span-4">
+        <div className="bg-white p-4 border rounded-lg w-full col-span-4">
           <Tabs defaultValue="information" className="w-full !p-0">
             <TabsList className="bg-white border-b-2 !p-0 w-full !flex !h-fit !rounded-none !justify-start">
               {tabs.map(({ label }) => (
@@ -530,7 +530,7 @@ const CertificateView = ({
             ))}
           </Tabs>
         </div>
-        <div className="bg-white p-4 border rounded-md w-full col-span-8 h-fit">
+        <div className="bg-white p-4 border rounded-lg w-full col-span-8 h-fit">
           <div
             className="relative h-[500px] md:h-[calc(100%-124px)] w-full hidden"
             ref={containerRef}
@@ -542,7 +542,7 @@ const CertificateView = ({
             href={
               "/credentials/verify/certificate/" + certificate.certificateId
             }
-            className="border-basePrimary border-2 text-basePrimary bg-transparent hover:bg-basePrimary/20 flex gap-2 items-center justify-center rounded-md py-2 px-4 ml-auto w-fit text-sm"
+            className="border-basePrimary border-2 text-basePrimary bg-transparent hover:bg-basePrimary/20 flex gap-2 items-center justify-center rounded-lg py-2 px-4 ml-auto w-fit text-sm"
           >
             <Eye className="size-4" />
             <span>User View</span>
@@ -577,7 +577,7 @@ const CertificateView = ({
           <PopoverTrigger>
             <Download className="size-4" />
           </PopoverTrigger>
-          <PopoverContent className="p-4 flex w-[150px] items-center justify-between gap-2 bg-white rounded-md text-basePrimary">
+          <PopoverContent className="p-4 flex w-[150px] items-center justify-between gap-2 bg-white rounded-lg text-basePrimary">
             <button
               aria-label="Download pdf"
               onClick={() =>

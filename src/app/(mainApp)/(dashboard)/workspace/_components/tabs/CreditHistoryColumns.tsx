@@ -13,7 +13,7 @@ export const creditHistoryColumns: ColumnDef<CredentialTokenUsageHistory>[] = [
       return (
         <div
           className={cn(
-            "text-sm font-medium rounded-md text-white p-2 w-fit",
+            "text-sm font-medium rounded-lg text-white p-2 w-fit",
             activity === "credit" ? "bg-green-500" : "bg-red-500"
           )}
         >

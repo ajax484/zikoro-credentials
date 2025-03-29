@@ -590,7 +590,7 @@ export default function OnboardingForm({
                     value={formData.country}
                     onChange={handleChange}
                     id=""
-                    className="w-full  bg-transparent rounded-md border-[1px] text-gray-500 text-base border-none  outline-none "
+                    className="w-full  bg-transparent rounded-lg border-[1px] text-gray-500 text-base border-none  outline-none "
                   >
                     <option
                       disabled
@@ -736,7 +736,7 @@ export default function OnboardingForm({
                     value={formData.industry}
                     onChange={handleChange}
                     id=""
-                    className="w-full  bg-transparent rounded-md border-[1px] text-black text-base border-none  outline-none "
+                    className="w-full  bg-transparent rounded-lg border-[1px] text-black text-base border-none  outline-none "
                   >
                     <option
                       disabled

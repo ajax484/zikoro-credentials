@@ -27,6 +27,7 @@ import {
 import { NavModalIcon } from "@/constants";
 import Integrations from "@/public/icons/PlugsConnected.svg";
 import AppIcon from "@/public/icons/SquaresFour.svg";
+import { motion } from "framer-motion";
 
 export function SupportMailIcon() {
   return (
@@ -156,35 +157,211 @@ const Sidebar = () => {
 
   console.log(pathname);
 
-  return (
-    <div
-      className="pl-2 pr-1 py-4 flex flex-col justify-between h-full w-[75px] group-hover:w-[175px] transition-all duration-300 ease-in-out"
-      id="sidebar"
-    >
-      <div className="flex items-center group-hover:gap-x-2 p-2.5 gap-x-0">
-        <Image
-          src={logo}
-          width={30}
-          height={30}
-          alt="logo"
-          className="cursor-pointer"
-        />
-        <div className="group-hover:flex-col group-hover:justify-center group-hover:flex hidden">
-          <span className="text-2xl font-black leading-6">Zikoro</span>
-          <span className="text-sm font-semibold">Credentials</span>
-        </div>
-      </div>
+  const sidebarVariants = {
+    initial: { width: 75 },
+    hover: {
+      width: 175,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+      },
+    },
+  };
 
-      <nav className="my-4">
-        <ul className="flex flex-col gap-y-2.5">
-          {navlinks
-            .filter(
-              (navlink) =>
-                !navlink.restricted?.includes(
-                  organization?.role?.[0]?.userRole!
-                )
-            )
-            .map(({ name, href, Icon, disabled }) => (
+  const navItemVariants = {
+    initial: { gap: 0 },
+    hover: { gap: "8px" },
+  };
+
+  const childrenVariants = {
+    initial: { opacity: 0, width: 0 },
+    hover: { opacity: 1, width: "100%" },
+  };
+
+  const supportVariants = {
+    initial: { opacity: 0 },
+    hover: { opacity: [0, 0, 0, 1] },
+  };
+
+  return (
+    <motion.div
+      initial="initial"
+      animate="initial"
+      whileHover="hover"
+      className="contents"
+    >
+      <motion.div
+        className="pl-2 pr-1 py-4 flex flex-col justify-between h-full"
+        variants={sidebarVariants}
+        id="sidebar"
+      >
+        <motion.div
+          className="flex items-center p-2.5"
+          variants={navItemVariants}
+        >
+          <Image
+            src={logo}
+            width={30}
+            height={30}
+            alt="logo"
+            className="cursor-pointer"
+          />
+          <motion.div
+            variants={childrenVariants}
+            className="flex flex-col justify-center overflow-hidden truncate"
+          >
+            <span className="text-2xl font-black leading-6 truncate">
+              Zikoro
+            </span>
+            <span className="text-sm font-semibold truncate">Credentials</span>
+          </motion.div>
+        </motion.div>
+
+        <nav className="my-4">
+          <ul className="flex flex-col gap-y-2.5">
+            {navlinks
+              .filter(
+                (navlink) =>
+                  !navlink.restricted?.includes(
+                    organization?.role?.[0]?.userRole!
+                  )
+              )
+              .map(({ name, href, Icon, disabled }) => (
+                <li key={name} className="w-full">
+                  <Link
+                    id={name + "-link"}
+                    aria-disabled={disabled}
+                    onClick={close}
+                    prefetch={false}
+                    href={disabled ? {} : href}
+                    target={href === "/live-events" ? "_blank" : ""}
+                  >
+                    <motion.div
+                      className={cn(
+                        "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg w-full",
+                        pathname.includes(href) &&
+                          "bg-basePrimary/10 text-[#1F1F1F]"
+                      )}
+                      variants={navItemVariants}
+                    >
+                      {Icon && (
+                        <Image
+                          src={Icon}
+                          width={20}
+                          height={20}
+                          alt={name}
+                          className={cn(disabled && "grayscale")}
+                        />
+                      )}
+                      <motion.span
+                        variants={childrenVariants}
+                        className="truncate text-sm"
+                      >
+                        {name}
+                      </motion.span>
+                    </motion.div>
+                  </Link>
+                </li>
+              ))}
+          </ul>
+        </nav>
+
+        <nav className="border-y py-4 space-y-2.5">
+          <Popover>
+            <PopoverTrigger asChild>
+              <motion.button
+                type="button"
+                className={cn(
+                  "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg"
+                )}
+                variants={navItemVariants}
+              >
+                <Image src={AppIcon} width={20} height={20} alt={"Apps"} />
+                <motion.span
+                  variants={childrenVariants}
+                  className="truncate text-sm"
+                >
+                  Apps
+                </motion.span>
+              </motion.button>
+            </PopoverTrigger>
+            <PopoverContent className="w-fit absolute bg-white lg:flex flex-col rounded-[10px] p-0">
+              {/* 1st div */}
+              <div
+                role="button"
+                onClick={() => window.open("https://www.zikoro.com", "_blank")}
+                className="w-full flex items-center gap-x-4 hover:bg-basePrimary/10 p-2.5"
+              >
+                {/* left */}
+                <div>
+                  <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
+                    Zikoro Events
+                  </p>
+                  <p className="text-[12px] font-medium text-[#31353B] w-[282px]">
+                    Create event tickets, check-in attendees, send RSVPs and
+                    more.{" "}
+                  </p>
+                </div>
+
+                {/* right */}
+                <div className="cursor-pointer ">
+                  <NavModalIcon />
+                </div>
+              </div>
+
+              {/* 2nd app */}
+              <div
+                role="button"
+                onClick={() =>
+                  window.open("https://engagements.zikoro.com/", "_blank")
+                }
+                className="w-full flex items-center gap-x-4 hover:bg-basePrimary/10 p-2.5"
+              >
+                {/* left */}
+                <div>
+                  <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
+                    Zikoro Engagements
+                  </p>
+                  <p className="text-[12px] font-medium text-[#31353B] w-[282px]">
+                    Drive interaction with engaging polls, quizzes,and live Q&A{" "}
+                  </p>
+                </div>
+
+                {/* right */}
+                <div className="cursor-pointer ">
+                  <NavModalIcon />
+                </div>
+              </div>
+
+              {/* 3rd app */}
+              <div
+                role="button"
+                onClick={() =>
+                  window.open("https://bookings.zikoro.com/", "_blank")
+                }
+                className="w-full flex items-center gap-x-4 hover:bg-basePrimary/10 p-2.5"
+              >
+                {/* left */}
+                <div>
+                  <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
+                    Zikoro Bookings
+                  </p>
+                  <p className="text-[12px] font-medium text-[#31353B]  w-[282px]">
+                    Simplify appointment booking and scheduling for seamless
+                    coordination.
+                  </p>
+                </div>
+
+                {/* right */}
+                <div className="cursor-pointer ">
+                  <NavModalIcon />
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+          <ul className="flex flex-col gap-y-2.5">
+            {navlinks2.map(({ name, href, Icon, disabled }) => (
               <li key={name} className="w-full">
                 <Link
                   id={name + "-link"}
@@ -193,218 +370,113 @@ const Sidebar = () => {
                   prefetch={false}
                   href={disabled ? {} : href}
                   target={href === "/live-events" ? "_blank" : ""}
-                  className={cn(
-                    "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit",
-                    pathname.includes(href) &&
-                      "bg-basePrimary/10 text-[#1F1F1F]"
-                  )}
                 >
-                  {Icon && (
-                    <Image
-                      src={Icon}
-                      width={20}
-                      height={20}
-                      alt={name}
-                      className={cn(disabled && "grayscale")}
-                    />
-                  )}
-                  <span className="group-hover:block hidden text-sm delay-300 transition-all">
-                    {name}
-                  </span>
+                  <motion.div
+                    className={cn(
+                      "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg w-full",
+                      pathname.includes(href) &&
+                        "bg-basePrimary/10 text-[#1F1F1F]"
+                    )}
+                    variants={navItemVariants}
+                  >
+                    {Icon && (
+                      <Image
+                        src={Icon}
+                        width={20}
+                        height={20}
+                        alt={name}
+                        className={cn(disabled && "grayscale")}
+                      />
+                    )}
+                    <motion.span
+                      variants={childrenVariants}
+                      className="text-sm truncate"
+                    >
+                      {name}
+                    </motion.span>
+                    {name === "Support" && (
+                      <motion.div
+                        variants={supportVariants}
+                        className="overflow-hidden flex items-center gap-x-1"
+                      >
+                        <button
+                          onClick={() =>
+                            openWhatsApp(
+                              "+2347041497076",
+                              `Hello there, my name is ${user?.firstName} and I am having some issues with my account. Can you help me?`
+                            )
+                          }
+                          aria-label="whatsapp"
+                        >
+                          <SupportWhatsappIcon />
+                        </button>
+                        <button
+                          onClick={() => window.open("mailto:admin@zikoro.com")}
+                          aria-label="mail"
+                        >
+                          <SupportMailIcon />
+                        </button>
+                      </motion.div>
+                    )}
+                  </motion.div>
                 </Link>
               </li>
             ))}
-        </ul>
-      </nav>
+          </ul>
+        </nav>
 
-      <nav className="border-y py-4 space-y-2.5">
-        <Popover>
-          <PopoverTrigger asChild>
-            <button
-              type="button"
-              className={cn(
-                "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit"
-              )}
-            >
-              <Image src={AppIcon} width={20} height={20} alt={"Apps"} />
-              <span className="group-hover:block hidden text-sm delay-300 transition-all">
-                Apps
-              </span>
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="w-fit absolute bg-white lg:flex flex-col rounded-[10px] p-0">
-            {/* 1st div */}
-            <div
-              role="button"
-              onClick={() => window.open("https://www.zikoro.com", "_blank")}
-              className="w-full flex items-center gap-x-4 hover:bg-basePrimary/10 p-2.5"
-            >
-              {/* left */}
-              <div>
-                <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
-                  Zikoro Events
-                </p>
-                <p className="text-[12px] font-medium text-[#31353B] w-[282px]">
-                  Create event tickets, check-in attendees, send RSVPs and more.{" "}
-                </p>
-              </div>
-
-              {/* right */}
-              <div className="cursor-pointer ">
-                <NavModalIcon />
-              </div>
-            </div>
-
-            {/* 2nd app */}
-            <div
-              role="button"
-              onClick={() =>
-                window.open("https://engagements.zikoro.com/", "_blank")
-              }
-              className="w-full flex items-center gap-x-4 hover:bg-basePrimary/10 p-2.5"
-            >
-              {/* left */}
-              <div>
-                <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
-                  Zikoro Engagements
-                </p>
-                <p className="text-[12px] font-medium text-[#31353B] w-[282px]">
-                  Drive interaction with engaging polls, quizzes,and live Q&A{" "}
-                </p>
-              </div>
-
-              {/* right */}
-              <div className="cursor-pointer ">
-                <NavModalIcon />
-              </div>
-            </div>
-
-            {/* 3rd app */}
-            <div
-              role="button"
-              onClick={() =>
-                window.open("https://bookings.zikoro.com/", "_blank")
-              }
-              className="w-full flex items-center gap-x-4 hover:bg-basePrimary/10 p-2.5"
-            >
-              {/* left */}
-              <div>
-                <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
-                  Zikoro Bookings
-                </p>
-                <p className="text-[12px] font-medium text-[#31353B]  w-[282px]">
-                  Simplify appointment booking and scheduling for seamless
-                  coordination.
-                </p>
-              </div>
-
-              {/* right */}
-              <div className="cursor-pointer ">
-                <NavModalIcon />
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
-        <ul className="flex flex-col gap-y-2.5">
-          {navlinks2.map(({ name, href, Icon, disabled }) => (
-            <li key={name} className="w-full">
-              <Link
-                onClick={close}
-                prefetch={false}
-                href={disabled ? {} : href}
-                target={href === "/live-events" ? "_blank" : ""}
-                className={cn(
-                  "p-2.5 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit",
-                  href.includes(pathname) && " bg-basePrimary/10 text-[#1F1F1F]"
-                )}
-              >
-                {Icon && (
-                  <Image
-                    src={Icon}
-                    width={20}
-                    height={20}
-                    alt={name}
-                    className={cn(disabled && "grayscale")}
-                  />
-                )}
-                <span className="group-hover:block hidden text-sm delay-300 transition-all">
-                  {name}
-                </span>
-                {name === "Support" && (
-                  <div className="hidden group-hover:flex items-center gap-x-1">
-                    <button
-                      onClick={() =>
-                        openWhatsApp(
-                          "+2347041497076",
-                          `Hello there, my name is ${user?.firstName} and I am having some issues with my account. Can you help me?`
-                        )
-                      }
-                      aria-label="whatsapp"
-                    >
-                      <SupportWhatsappIcon />
-                    </button>
-                    <button
-                      onClick={() => window.open("mailto:admin@zikoro.com")}
-                      aria-label="mail"
-                    >
-                      <SupportMailIcon />
-                    </button>
-                  </div>
-                )}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      <button
-        type="button"
-        className={cn(
-          "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg gap-x-2 group-hover:w-full w-fit"
-        )}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width={20}
-          height={20}
-          viewBox="0 0 24 24"
+        <motion.button
+          type="button"
+          className="flex items-center p-2.5"
+          variants={navItemVariants}
         >
-          <path
-            fill="#000"
-            d="M20.94 22H3.06a1 1 0 0 1-.994-1.108a9.995 9.995 0 0 1 19.868 0A1 1 0 0 1 20.94 22"
-            opacity="0.5"
-          />
-          <path
-            fill="#000"
-            d="m12.708 18.307l4.706-4.715a10 10 0 0 0-10.833.003l4.712 4.712A1 1 0 0 0 12 18.6a1 1 0 0 0 .708-.293"
-            opacity="0.25"
-          />
-          <path
-            fill="#000"
-            d="M11.995 14a6 6 0 1 1 6-6a6.007 6.007 0 0 1-6 6"
-            opacity="0.25"
-          />
-          <path fill="#000" d="M6.09 9a5.993 5.993 0 0 0 11.82 0Z" />
-        </svg>
-        <span className="group-hover:block hidden text-sm delay-300 transition-all">
-          {user?.firstName}
-        </span>
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={20}
+            height={20}
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill="#000"
+              d="M20.94 22H3.06a1 1 0 0 1-.994-1.108a9.995 9.995 0 0 1 19.868 0A1 1 0 0 1 20.94 22"
+              opacity="0.5"
+            />
+            <path
+              fill="#000"
+              d="m12.708 18.307l4.706-4.715a10 10 0 0 0-10.833.003l4.712 4.712A1 1 0 0 0 12 18.6a1 1 0 0 0 .708-.293"
+              opacity="0.25"
+            />
+            <path
+              fill="#000"
+              d="M11.995 14a6 6 0 1 1 6-6a6.007 6.007 0 0 1-6 6"
+              opacity="0.25"
+            />
+            <path fill="#000" d="M6.09 9a5.993 5.993 0 0 0 11.82 0Z" />
+          </svg>
+          <motion.span variants={childrenVariants} className="text-sm truncate">
+            {user?.firstName}
+          </motion.span>
+        </motion.button>
 
-      <button
-        onClick={async () => {
-          await logout();
-          localStorage.removeItem("user");
-          window.location.href = "/";
-        }}
-        className="flex items-center h-fit gap-x-2 p-2.5"
-      >
-        <LogOutIcon />
-        <span className="text-[#EC2D30] group-hover:block hidden font-medium text-mobile sm:text-sm">
-          Log Out
-        </span>
-      </button>
-    </div>
+        <motion.button
+          onClick={async () => {
+            await logout();
+            localStorage.removeItem("user");
+            window.location.href = "/";
+          }}
+          variants={navItemVariants}
+          className="flex items-center h-fit p-2.5"
+        >
+          <LogOutIcon />
+          <motion.span
+            variants={childrenVariants}
+            className="text-[#EC2D30] truncate"
+          >
+            Log Out
+          </motion.span>
+        </motion.button>
+      </motion.div>
+    </motion.div>
   );
 };
 

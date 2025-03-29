@@ -21,9 +21,9 @@ const GradientBorderSelect = ({
   options,
 }: GradientBorderSelectProps) => {
   return (
-    <div className="rounded-md">
+    <div className="rounded-lg">
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full rounded-md bg-white text-xs font-medium">
+        <SelectTrigger className="w-full rounded-lg bg-white text-xs font-medium">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>

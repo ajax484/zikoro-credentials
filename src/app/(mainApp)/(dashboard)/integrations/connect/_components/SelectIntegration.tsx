@@ -84,7 +84,7 @@ const SelectIntegration: React.FC<IntegrationComponentProps> = ({
             !!certificate && setCertificate(certificate);
           }}
         >
-          <SelectTrigger className="w-full rounded-md bg-[#f7f8f9] font-medium">
+          <SelectTrigger className="w-full rounded-lg bg-[#f7f8f9] font-medium">
             <SelectValue placeholder={"Select certificate"} />
           </SelectTrigger>
           <SelectContent>
@@ -107,7 +107,7 @@ const SelectIntegration: React.FC<IntegrationComponentProps> = ({
             selectIntegratedId(value);
           }}
         >
-          <SelectTrigger className="w-full rounded-md bg-[#f7f8f9] font-medium">
+          <SelectTrigger className="w-full rounded-lg bg-[#f7f8f9] font-medium">
             <SelectValue placeholder={"Select " + selectedIntegration} />
           </SelectTrigger>
           <SelectContent>

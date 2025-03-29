@@ -66,7 +66,7 @@ const TourTriggerDialog = () => {
 
   return (
     <AlertDialog open={welcomeTour}>
-      <AlertDialogContent className="!p-0 !rounded-md !w-[800px] !max-w-[800px] !gap-0">
+      <AlertDialogContent className="!p-0 !rounded-lg !w-[800px] !max-w-[800px] !gap-0">
         <Image src={FirstImage} alt="First Step" height={400} width={800} />
 
         <div className="p-6 flex flex-col justify-center items-center gap-4">

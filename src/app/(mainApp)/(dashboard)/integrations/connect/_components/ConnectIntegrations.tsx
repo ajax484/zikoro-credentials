@@ -320,7 +320,7 @@ const ConnectIntegrations = ({
           {steps[step].heading}
         </h1>
       </div>
-      <section className="bg-white border rounded-md p-4 min-h-[500px] space-y-6">
+      <section className="bg-white border rounded-lg p-4 min-h-[500px] space-y-6">
         <Timeline
           steps={[
             "connect",

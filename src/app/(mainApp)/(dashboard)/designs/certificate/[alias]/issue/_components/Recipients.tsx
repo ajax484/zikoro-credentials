@@ -191,7 +191,7 @@ const RecipientsPage = ({
           )}{" "}
         </h3>
 
-        <div className="space-y-8 p-6 rounded-md">
+        <div className="space-y-8 p-6 rounded-lg">
           {recipients.map((recipient, index) => (
             <FormField
               key={index}

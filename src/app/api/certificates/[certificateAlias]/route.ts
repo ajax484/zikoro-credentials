@@ -100,9 +100,7 @@ export async function DELETE(
       const { data, error, status } = await supabase
         .from("certificate")
         .delete()
-        .eq("certificateAlias", certificateAlias);
-
-        
+        .eq("certificateAlias", certificateAlias);     
 
       if (error) throw error;
 

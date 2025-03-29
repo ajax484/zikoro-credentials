@@ -30,7 +30,7 @@ export default function InputOffsetLabel({
       </FormLabel>
       <FormControl className="!mt-0">
         <div
-          className={`w-full bg-basePrimary/10 rounded-md placeholder-gray-500 relative h-fit border flex gap-0.5 p-0.5 items-center`}
+          className={`w-full bg-basePrimary/10 rounded-lg placeholder-gray-500 relative h-fit border flex gap-0.5 p-0.5 items-center`}
         >
           {append && <div>{append}</div>}
           {prepend && <div>{prepend}</div>}

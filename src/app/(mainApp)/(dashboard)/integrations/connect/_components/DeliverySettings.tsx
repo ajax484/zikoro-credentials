@@ -18,7 +18,7 @@ const DeliverySettings: React.FC<IntegrationComponentProps> = ({
 }) => {
   return (
     <section className="flex flex-col gap-y-6">
-      <div className="flex gap-2 items-center justify-center w-1/3 mx-auto p-4 rounded-md bg-basePrimary/10">
+      <div className="flex gap-2 items-center justify-center w-1/3 mx-auto p-4 rounded-lg bg-basePrimary/10">
         <Image alt="zikoro" src={Info} height={30} width={30} />
         <span className="font-medium text-gray-700 text-sm text-left">
           Ensure you have sufficient credit for this action. Triggers will be

@@ -15,7 +15,7 @@ export const ShapeTool = ({
   iconClassName,
 }: ShapeToolProps) => {
   return (
-    <button onClick={onClick} className="aspect-square rounded-md border p-5">
+    <button onClick={onClick} className="aspect-square rounded-lg border p-5">
       <Icon className={cn("h-full w-full", iconClassName)} />
     </button>
   );

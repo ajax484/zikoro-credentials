@@ -217,7 +217,7 @@ export const ImageSidebar = ({
         <Button
           disabled={elementUploading}
           onClick={() => document.getElementById("image-input")?.click()}
-          className="border-basePrimary border-2 text-basePrimary bg-transparent flex gap-4 justify-center items-center rounded-md py-2 px-3 hover:bg-basePrimary/20"
+          className="border-basePrimary border-2 text-basePrimary bg-transparent flex gap-4 justify-center items-center rounded-lg py-2 px-3 hover:bg-basePrimary/20"
         >
           {elementUploading ? (
             <div className="animate-spin">

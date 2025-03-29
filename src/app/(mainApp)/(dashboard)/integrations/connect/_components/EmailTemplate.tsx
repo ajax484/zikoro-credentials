@@ -130,7 +130,7 @@ const CreateTemplateDialog = ({
               setOpen(false);
             }}
             disabled={templateIsCreating || name === "" || !workspace}
-            className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-md text-gray-50 font-medium"
+            className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-lg text-gray-50 font-medium"
           >
             {templateIsCreating && (
               <LoaderAlt size={22} className="animate-spin" />
@@ -356,7 +356,7 @@ Event Team.`,
               form.setValue("buttonProps", template.buttonProps);
             }}
           >
-            <SelectTrigger className="rounded-md bg-white font-medium w-1/2">
+            <SelectTrigger className="rounded-lg bg-white font-medium w-1/2">
               <SelectValue placeholder={"Select a template"} />
             </SelectTrigger>
             <SelectContent>
@@ -378,7 +378,7 @@ Event Team.`,
         </div>
         <section className="grid grid-cols-2 gap-4 bg-white py-6 px-8 ">
           <section className="space-y-6">
-            <div className="space-y-6 rounded-md">
+            <div className="space-y-6 rounded-lg">
               <FormField
                 name={"subject" as const}
                 render={({ field }) => (
@@ -490,7 +490,7 @@ Event Team.`,
                 name={"logoUrl" as const}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="bg-[#f7f8ff] p-4 rounded-md h-[150px] flex justify-center items-center flex-col gap-2 cursor-pointer">
+                    <FormLabel className="bg-[#f7f8ff] p-4 rounded-lg h-[150px] flex justify-center items-center flex-col gap-2 cursor-pointer">
                       {field.value ? (
                         <Image
                           src={field.value}
@@ -569,7 +569,7 @@ Event Team.`,
                         <PopoverTrigger>
                           <div
                             style={{ backgroundColor: field.value }}
-                            className="size-12 rounded-md"
+                            className="size-12 rounded-lg"
                           />
                         </PopoverTrigger>
                         <PopoverContent className="w-fit px-8 py-4">
@@ -641,8 +641,8 @@ Event Team.`,
             <span className="text-sm text-gray-700 font-medium">
               Email Preview
             </span>
-            <section className="bg-[#f7f8ff] p-4 rounded-md border">
-              <div className="bg-white border p-4 rounded-md flex flex-col gap-4 overflow-hidden">
+            <section className="bg-[#f7f8ff] p-4 rounded-lg border">
+              <div className="bg-white border p-4 rounded-lg flex flex-col gap-4 overflow-hidden">
                 <div className="mx-auto">
                   {showLogo && logoUrl && (
                     <Image src={logoUrl} alt="logo" width={100} height={50} />

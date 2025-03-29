@@ -1,15 +1,153 @@
 "use client";
-import {
-  QueryFilters,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { TOrganization } from "@/types/organization";
-import { patchRequest, postRequest } from "@/utils/api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteRequest, postRequest } from "@/utils/api";
 import { toast } from "react-toastify";
-import { CredentialsWorkspaceToken } from "@/types/token";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { PaginatedData } from "@/types/request";
+
+export function useCreateCertificate() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: Partial<TCertificate>) => {
+      const { data, status } = await postRequest<TCertificate>({
+        endpoint: `/certificates`,
+        payload,
+      });
+
+      if (status !== 201) {
+        throw new Error(data.error!);
+      }
+
+      return data.data;
+    },
+    onMutate: ({ name }) => {
+      // Show loading toast
+      return toast.loading(`creating ${name} ...`);
+    },
+    onSuccess: (certificate, _, toastId) => {
+      console.log(certificate);
+      // Update workspace in any query where it exists
+      queryClient.setQueriesData<
+        PaginatedData<TCertificate> | TCertificate[] | TCertificate
+      >(
+        {
+          predicate: (query) => query.queryKey.includes("certificates"),
+        },
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          console.log(oldData);
+
+          if (Array.isArray(oldData)) {
+            return [certificate, ...oldData];
+          } else if ("data" in oldData) {
+            return {
+              ...oldData,
+              data: [certificate, ...oldData.data],
+            };
+          } else {
+            return certificate;
+          }
+        }
+      );
+
+      // Update toast to success
+      toast.update(toastId, {
+        render: `${certificate.name} created successful!`,
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      return certificate;
+    },
+    onError: (error, _, toastId) => {
+      console.error(error);
+      // Update toast to error
+      toastId &&
+        toast.update(toastId, {
+          render: "Failed to create certificate. Please try again.",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+    },
+  });
+}
+
+export function useDeleteCertificate(certificateAlias: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const { status } = await deleteRequest<{ certificateId: string }>({
+        endpoint: `/certificates/${certificateAlias}`,
+      });
+
+      if (status !== 201) {
+        throw new Error();
+      }
+
+      return certificateAlias;
+    },
+    onMutate: () => {
+      // Show loading toast
+      return toast.loading("deleting certificate...");
+    },
+    onSuccess: (integrationAlias, _, toastId) => {
+      console.log(integrationAlias);
+      queryClient.setQueriesData<
+        TCertificate | PaginatedData<TCertificate> | TCertificate[]
+      >(
+        {
+          predicate: (query) =>
+            query.queryKey.includes("certificates") ||
+            query.queryKey.includes(certificateAlias),
+        },
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          console.log(oldData);
+
+          if (Array.isArray(oldData)) {
+            return oldData.filter(
+              (item) => item.certificateAlias !== certificateAlias
+            );
+          } else if ("data" in oldData) {
+            return {
+              ...oldData,
+              data: oldData.data.filter(
+                (item) => item.certificateAlias !== certificateAlias
+              ),
+            };
+          } else {
+            return undefined;
+          }
+        }
+      );
+
+      // Update toast to success
+      toast.update(toastId, {
+        render: "certificate deleted successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    },
+    onError: (error, _, toastId) => {
+      console.error(error);
+      // Update toast to error
+      toastId &&
+        toast.update(toastId, {
+          render: "Failed to delete certificate. Please try again.",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+    },
+  });
+}
 
 export function useRecallCertificates(workspaceAlias: string) {
   const queryClient = useQueryClient();

@@ -76,7 +76,7 @@ const SocialLinks = () => {
                 <InputOffsetLabel
                   label="Linkedin"
                   append={
-                    <div className="bg-white p-1 rounded-md">
+                    <div className="bg-white p-1 rounded-lg">
                       <Linkedin className="size-6" />
                     </div>
                   }
@@ -99,7 +99,7 @@ const SocialLinks = () => {
                 <InputOffsetLabel
                   label="X"
                   append={
-                    <div className="bg-white p-1 rounded-md">
+                    <div className="bg-white p-1 rounded-lg">
                       <X className="size-6" />
                     </div>
                   }
@@ -122,7 +122,7 @@ const SocialLinks = () => {
                 <InputOffsetLabel
                   label="instagram"
                   append={
-                    <div className="bg-white p-1 rounded-md">
+                    <div className="bg-white p-1 rounded-lg">
                       <Instagram className="size-6" />
                     </div>
                   }
@@ -145,7 +145,7 @@ const SocialLinks = () => {
                 <InputOffsetLabel
                   label="Facebook"
                   append={
-                    <div className="bg-white p-1 rounded-md">
+                    <div className="bg-white p-1 rounded-lg">
                       <Facebook className="size-6" />
                     </div>
                   }
@@ -168,7 +168,7 @@ const SocialLinks = () => {
             </h1>
             <div className="grid grid-cols-2 gap-4 items-center flex-1">
               {fields.map((field, index) => (
-                <div className="flex flex-col gap-1 border p-2 rounded-md relative">
+                <div className="flex flex-col gap-1 border p-2 rounded-lg relative">
                   <button
                     type="button"
                     aria-label="Delete link"

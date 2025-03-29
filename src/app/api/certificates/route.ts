@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { generateAlphanumericHash } from "@/utils/helpers";
-import axios from "axios";
 
 export async function GET(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
@@ -16,7 +15,7 @@ export async function GET(req: NextRequest) {
       const query = supabase
         .from("certificate")
         .select("*, recipientCount:certificateRecipients!inner(count)")
-        .order("lastEdited", { ascending: false });
+        .order("lastEdited", { ascending: false, nullsFirst: true });
 
       if (workspaceAlias) query.eq("workspaceAlias", workspaceAlias);
 
@@ -67,7 +66,7 @@ export async function POST(req: NextRequest) {
           name: "untitled certificate",
           ...params,
         })
-        .select()
+        .select("*")
         .maybeSingle();
 
       if (error) throw error;

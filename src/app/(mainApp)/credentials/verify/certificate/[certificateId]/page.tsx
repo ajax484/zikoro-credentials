@@ -144,7 +144,7 @@ const CertificateView = ({
 
   return (
     <section className="space-y-6">
-      <div className="bg-white py-2 border rounded-md w-full">
+      <div className="bg-white py-2 border rounded-lg w-full">
         <div className="flex flex-col gap-y-2 items-center justify-center text-green-600 py-2 border-b-2 text-sm">
           ID: {certificate?.certificateId}
         </div>
@@ -166,7 +166,7 @@ const CertificateView = ({
         </div>
       </div>
       {certificate?.originalCertificate?.certificateSettings?.description && (
-        <div className="bg-white p-4 border rounded-md w-full h-full space-y-2 flex flex-col items-center gap-4">
+        <div className="bg-white p-4 border rounded-lg w-full h-full space-y-2 flex flex-col items-center gap-4">
           <GradientText className="font-bold" Tag={"h1"}>
             Description
           </GradientText>
@@ -185,7 +185,7 @@ const CertificateView = ({
         </div>
       )}
       <section className="grid grid-cols-2 gap-4">
-        <div className="bg-white p-4 border rounded-md w-full h-full space-y-2 flex flex-col items-center gap-2">
+        <div className="bg-white p-4 border rounded-lg w-full h-full space-y-2 flex flex-col items-center gap-2">
           <div className="flex justify-between items-center w-full">
             <GradientText className="font-bold" Tag={"h1"}>
               Issued by
@@ -281,7 +281,7 @@ const CertificateView = ({
             </Link>
           </GradientText>
         </div>
-        <div className="bg-white p-4 border rounded-md w-full h-full space-y-2 flex flex-col items-center gap-4">
+        <div className="bg-white p-4 border rounded-lg w-full h-full space-y-2 flex flex-col items-center gap-4">
           <GradientText className="font-bold" Tag={"h1"}>
             Issued to
           </GradientText>
@@ -319,7 +319,7 @@ const CertificateView = ({
               <PopoverTrigger>
                 <Download className="size-4" />
               </PopoverTrigger>
-              <PopoverContent className="p-4 flex w-[150px] items-center justify-between gap-2 bg-white rounded-md text-basePrimary">
+              <PopoverContent className="p-4 flex w-[150px] items-center justify-between gap-2 bg-white rounded-lg text-basePrimary">
                 <button
                   aria-label="Download pdf"
                   onClick={() =>
@@ -411,7 +411,7 @@ const CertificateView = ({
       {certificate?.originalCertificate?.certificateSettings?.skills &&
         certificate?.originalCertificate?.certificateSettings?.skills?.length >
           0 && (
-          <div className="bg-white p-4 border rounded-md w-full h-full space-y-2 flex flex-col items-center gap-4">
+          <div className="bg-white p-4 border rounded-lg w-full h-full space-y-2 flex flex-col items-center gap-4">
             <GradientText className="font-bold" Tag={"h1"}>
               Earned Skills
             </GradientText>

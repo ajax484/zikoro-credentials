@@ -601,7 +601,7 @@ const Issue = ({
                 <label
                   htmlFor="manual"
                   className={cn(
-                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
+                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-lg cursor-pointer",
                     selectedOption === "manual" && "border-basePrimary"
                   )}
                 >
@@ -627,7 +627,7 @@ const Issue = ({
                 <label
                   htmlFor="spreadsheet"
                   className={cn(
-                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
+                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-lg cursor-pointer",
                     selectedOption === "spreadsheet" && "border-basePrimary"
                   )}
                 >
@@ -654,7 +654,7 @@ const Issue = ({
                 </label>
                 <label
                   className={cn(
-                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-md cursor-pointer",
+                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-lg cursor-pointer",
                     selectedOption === "event" && "border-basePrimary"
                   )}
                   htmlFor="event"
@@ -705,7 +705,7 @@ const Issue = ({
                 {selectedCertificate && (
                   <Button
                     onClick={selectType}
-                    className="bg-basePrimary text-white rounded-md"
+                    className="bg-basePrimary text-white rounded-lg"
                   >
                     Add recipients
                   </Button>

@@ -37,7 +37,7 @@ export interface TCertificate {
   previewUrl?: string;
   certificateHash: Record<string, any>;
   certificateAlias: string;
-  JSON: Record<string, any>;
+  JSON: Record<string, any> | null;
   workspaceAlias: string;
   recipientCount: number;
   createdBy: number;

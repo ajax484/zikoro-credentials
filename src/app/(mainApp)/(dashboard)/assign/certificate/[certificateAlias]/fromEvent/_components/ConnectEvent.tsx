@@ -63,7 +63,7 @@ const ConnectEvent = ({
             )
           }
         >
-          <SelectTrigger className="w-full rounded-md bg-white font-medium">
+          <SelectTrigger className="w-full rounded-lg bg-white font-medium">
             <SelectValue placeholder={"Select workspace"} />
           </SelectTrigger>
           <SelectContent>
@@ -84,7 +84,7 @@ const ConnectEvent = ({
             updateEvent(events?.find(({ id }) => id === parseInt(value)))
           }
         >
-          <SelectTrigger className="w-full rounded-md bg-white font-medium">
+          <SelectTrigger className="w-full rounded-lg bg-white font-medium">
             <SelectValue placeholder={"Select event"} />
           </SelectTrigger>
           <SelectContent>

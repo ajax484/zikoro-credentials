@@ -78,7 +78,7 @@ export const RemoveBgSidebar = ({
           <div className="space-y-4 p-4">
             <div
               className={cn(
-                "relative aspect-square overflow-hidden rounded-md bg-muted transition",
+                "relative aspect-square overflow-hidden rounded-lg bg-muted transition",
                 mutation.isPending && "opacity-50",
               )}
             >

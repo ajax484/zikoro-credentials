@@ -77,7 +77,7 @@ function DateSingleFilter<T>({
         applyFilter(accessor, filterLabel, value, onFilter, type)
       }
       value={date?.value}
-      className="rounded-md border"
+      className="rounded-lg border"
     />
   );
 }
@@ -96,7 +96,7 @@ function DateRangeFilter<T>({
         applyFilter(accessor, filterLabel, value, onFilter, type)
       }
       value={date?.value}
-      className="rounded-md border"
+      className="rounded-lg border"
     />
   );
 }

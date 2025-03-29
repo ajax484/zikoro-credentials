@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CertificateTemplate } from "@/types/certificates";
 import { useGetData } from "@/hooks/services/request";
+import { useFetchCertificateTemplates } from "@/queries/certificates.queries";
 
 interface TemplateSidebarProps {
   editor: Editor | undefined;
@@ -30,10 +31,9 @@ export const TemplateSidebar = ({
 }: TemplateSidebarProps) => {
   const {
     data: templates,
-    isLoading,
+    isFetching: isLoading,
     error,
-  } = useGetData<CertificateTemplate[]>(`/certificates/templates`, []);
-
+  } = useFetchCertificateTemplates();
 
   const onClose = () => {
     onChangeActiveTool("select");

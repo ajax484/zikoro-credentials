@@ -25,7 +25,11 @@ export const useSaveCertificate = ({
   const [isLoading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
-  const saveCertificate = async ({ payload }: { payload: Partial<TCertificate> }) => {
+  const saveCertificate = async ({
+    payload,
+  }: {
+    payload: Partial<TCertificate>;
+  }) => {
     setLoading(true);
     // toast({
     //   description: "saving certificate...",
@@ -59,12 +63,16 @@ export const useCreateCertificate = () => {
   const createCertificate = async ({
     payload,
   }: {
-    payload: { workspaceAlias: string; name: string; createdBy: number };
+    payload: {
+      workspaceAlias: string;
+      name: string;
+      createdBy: number;
+      JSON: Record<string, any> | null;
+      hasQRCode: boolean;
+    };
   }) => {
     setLoading(true);
-    toast({
-      description: "creating certificate...",
-    });
+    toast("creating certificate...");
     try {
       const { data, status } = await postRequest<TCertificate>({
         endpoint: "/certificates",
@@ -72,9 +80,7 @@ export const useCreateCertificate = () => {
       });
 
       if (status !== 201) throw data.data;
-      toast({
-        description: "Certificate Saved Successfully",
-      });
+      toast("Certificate Saved Successfully");
       return data.data;
     } catch (error) {
       setError(true);

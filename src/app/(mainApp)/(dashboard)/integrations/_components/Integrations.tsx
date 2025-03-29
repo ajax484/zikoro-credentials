@@ -38,7 +38,7 @@ const Integrations = () => {
       <h1 className="text-2xl font-bold text-center text-gray-800">
         Credential Integration
       </h1>
-      <section className="bg-white border rounded-md p-4 min-h-[500px]">
+      <section className="bg-white border rounded-lg p-4 min-h-[500px]">
         {integrationsIsLoading ? (
           <div>Loading...</div>
         ) : data.data.length === 0 ? (

@@ -38,7 +38,7 @@ const Details = ({
             )
           }
         >
-          <SelectTrigger className="w-full rounded-md bg-white text-xs font-medium">
+          <SelectTrigger className="w-full rounded-lg bg-white text-xs font-medium">
             <SelectValue placeholder={"Select Workspace"} />
           </SelectTrigger>
           <SelectContent>

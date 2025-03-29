@@ -67,7 +67,7 @@ const Connect: React.FC<IntegrationComponentProps> = ({
             newWorkspace && updateWorkspace(newWorkspace);
           }}
         >
-          <SelectTrigger className="w-full rounded-md bg-[#f7f8f9] font-medium">
+          <SelectTrigger className="w-full rounded-lg bg-[#f7f8f9] font-medium">
             <SelectValue placeholder={"Select workspace"} />
           </SelectTrigger>
           <SelectContent>
@@ -83,7 +83,7 @@ const Connect: React.FC<IntegrationComponentProps> = ({
         {options.map((option) => (
           <div
             className={cn(
-              "rounded-md border p-4 space-y-4 flex-1",
+              "rounded-lg border p-4 space-y-4 flex-1",
               option.value === "google form" && "opacity-50"
             )}
           >
@@ -277,7 +277,7 @@ const Connect: React.FC<IntegrationComponentProps> = ({
                 />
               )}
               {(option.value === "form" || option.value === "quiz") && (
-                <div className="text-xs px-1 py-0.5 border-basePrimary border capitalize rounded-md">
+                <div className="text-xs px-1 py-0.5 border-basePrimary border capitalize rounded-lg">
                   <GradientText Tag={"span"}>{option.value}</GradientText>
                 </div>
               )}

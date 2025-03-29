@@ -83,7 +83,7 @@ const OverviewCard = ({
         <h3 className="font-medium text-gray-700">{title}</h3>
       </div>
       {isLoading ? (
-        <Skeleton className="w-full h-4 rounded-md" />
+        <Skeleton className="w-full h-4 rounded-lg" />
       ) : (
         <p className="text-4xl font-bold">{value}</p>
       )}
@@ -456,7 +456,7 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
       <div className="bg-white rounded-lg border border-gray-200 space-y-4 p-4">
         <h2 className="text-lg font-semibold">Trends</h2>
         <div className="grid grid-cols-1 gap-4">
-          <div className="rounded-md border">
+          <div className="rounded-lg border">
             <div className="space-y-2 p-4">
               <h3 className="text-sm font-medium">Certificate Issued</h3>
               <div className="flex items-center gap-6">
@@ -534,7 +534,7 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
                 <ChartTooltip
                   cursor={false}
                   content={(props) => (
-                    <div className="bg-basePrimary text-white rounded-md p-2 shadow-lg">
+                    <div className="bg-basePrimary text-white rounded-lg p-2 shadow-lg">
                       {props.payload ? props.payload[0]?.payload.count : 0}
                     </div>
                   )}
@@ -556,7 +556,7 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
         <div className="col-span-2 bg-white rounded-lg border border-gray-200 space-y-4 p-4">
           <h2 className="text-lg font-semibold">Engagements</h2>
           <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-md border flex flex-col items-center justify-center p-4 gap-2">
+            <div className="rounded-lg border flex flex-col items-center justify-center p-4 gap-2">
               <div className="w-full h-full max-w-[200px] max-h-[200px]">
                 <CircularProgressbarWithChildren
                   value={openedCredentialsPercentage}
@@ -589,7 +589,7 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
                 <b>{totalOpens}</b> total views
               </p>
             </div>
-            <div className="rounded-md border flex flex-col items-center justify-center p-4 gap-2">
+            <div className="rounded-lg border flex flex-col items-center justify-center p-4 gap-2">
               <div className="w-full h-full max-w-[200px] max-h-[200px]">
                 <CircularProgressbarWithChildren
                   value={sharedRecipientsPercentage}
