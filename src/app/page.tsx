@@ -33,8 +33,8 @@ export default function Home() {
       {
         "@type": "ListItem",
         position: 4,
-        name: "Concerts",
-        item: "https://www.zikoro.com/concerts",
+        name: "Credentials",
+        item: "https://credentials.zikoro.com/",
       },
       {
         "@type": "ListItem",
