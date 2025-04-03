@@ -158,7 +158,7 @@ const Sidebar = () => {
   console.log(pathname);
 
   const sidebarVariants = {
-    initial: { width: 75 },
+    initial: { width: 70 },
     hover: {
       width: 175,
       transition: {
@@ -180,8 +180,8 @@ const Sidebar = () => {
   };
 
   const supportVariants = {
-    initial: { opacity: 0 },
-    hover: { opacity: [0, 0, 0, 1] },
+    initial: { opacity: 0, width: 0 },
+    hover: { opacity: [0, 0, 0, 1], width: "100%" },
   };
 
   return (
@@ -240,8 +240,9 @@ const Sidebar = () => {
                     <motion.div
                       className={cn(
                         "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg w-full",
-                        pathname.includes(href) &&
-                          "bg-basePrimary/10 text-[#1F1F1F]"
+                        pathname.includes(href)
+                          ? "bg-basePrimary/10 text-[#1F1F1F]"
+                          : "hover:bg-basePrimary/5 hover:text-[#1F1F1F]"
                       )}
                       variants={navItemVariants}
                     >
@@ -273,7 +274,7 @@ const Sidebar = () => {
               <motion.button
                 type="button"
                 className={cn(
-                  "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg"
+                  "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg hover:bg-basePrimary/5 hover:text-[#1F1F1F] w-full"
                 )}
                 variants={navItemVariants}
               >
@@ -374,8 +375,9 @@ const Sidebar = () => {
                   <motion.div
                     className={cn(
                       "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg w-full",
-                      pathname.includes(href) &&
-                        "bg-basePrimary/10 text-[#1F1F1F]"
+                      pathname.includes(href)
+                        ? "bg-basePrimary/10 text-[#1F1F1F]"
+                        : "hover:bg-basePrimary/5 hover:text-[#1F1F1F]"
                     )}
                     variants={navItemVariants}
                   >

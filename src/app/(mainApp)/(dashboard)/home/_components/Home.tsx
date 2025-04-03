@@ -93,7 +93,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
       hasQRCode: !!JSON,
     });
 
-    console.log(data)
+    console.log(data);
     if (!data) return;
 
     router.push(
@@ -177,14 +177,11 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
   };
 
   const slideIn = {
-    animate: {
+    initial: {
       opacity: 0,
       width: 0,
-      transition: {
-        duration: 0,
-      },
     },
-    initial: {
+    animate: {
       opacity: 1,
       width: "100%",
       transition: {
@@ -642,8 +639,8 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                   <Link href={"/analytics"}>
                     <motion.div
                       initial="initial"
-                      animate="animate"
-                      whileHover="initial"
+                      animate="initial"
+                      whileHover="animate"
                       className="space-y-0"
                     >
                       <span className="bg-gradient-to-r from-[#001FCC] to-[#9D00FF] bg-clip-text text-transparent mx-auto">
@@ -651,7 +648,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                       </span>
                       <motion.div
                         variants={slideIn}
-                        className="bg-basePrimary h-0.5 w-full"
+                        className="bg-basePrimary h-0.5"
                       />
                     </motion.div>
                   </Link>
