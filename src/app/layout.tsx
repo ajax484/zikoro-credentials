@@ -13,13 +13,13 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: "website",
-    url: '/logo.png',
+    url: "/logo.png",
     title: "Zikoro - Credentials",
     description:
       "Secure and Verifiable Digital Credentials for Achievements. Create, manage and share digital certificates and badges in 5 minutes",
     images: [
       {
-        url: '/zikoro-og.jpeg',
+        url: "/zikoro-og.jpeg",
         width: 115,
         height: 40,
         alt: "Zikoro - Credentials",
@@ -38,14 +38,32 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const websiteStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Zikoro",
+    url: "https://www.zikoro.com/",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://www.zikoro.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteStructuredData),
+          }}
+        />
+      </head>
+
       <body className={`${montserrat.className} antialiased`}>
         <ToastContainer />
         <Toaster />
-        <MainLayout>
-        {children}
-        </MainLayout>
+        <MainLayout>{children}</MainLayout>
       </body>
     </html>
   );
