@@ -19,7 +19,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
           onClick={() => router.push("/")}
         />
       </header>
-      <main className="bg-baseBody pt-12">{children}</main>
+      <main className="bg-background pt-12">{children}</main>
       <footer className="border-t border-t-basePrimary py-4 flex justify-between px-4 md:px-8 items-center">
         <span>
           <span className="hidden md:inline">Copyright</span> ©{" "}

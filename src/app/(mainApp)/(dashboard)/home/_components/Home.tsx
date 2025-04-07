@@ -16,9 +16,9 @@ import { useRouter } from "next/navigation";
 import SelectOrganization from "@/components/SelectOrganization/SelectOrganization";
 import CertificateIcon from "@/public/icons/teenyicons_certificate-solid.svg";
 import CertificateIcon2 from "@/public/icons/ph_certificate-duotone.svg";
-import CertificateAssignIcon from "@/public/icons/clarity_certificate-outline-alerted.svg";
-import EmailOpenedIcon from "@/public/icons/line-md_email-opened-alt-twotone.svg";
-import ShareIcon from "@/public/icons/ic_twotone-share.svg";
+import CertificateAssignIcon from "@/public/icons/PaperPlaneTilt.svg";
+import EmailOpenedIcon from "@/public/icons/EnvelopeSimpleOpen.svg";
+import ShareIcon from "@/public/icons/ShareNetwork.svg";
 import NibIcon from "@/public/icons/PenNib.svg";
 import Assign from "@/public/icons/PaperPlaneTilt.svg";
 import Analytics from "@/public/icons/ChartBar.svg";
@@ -220,10 +220,14 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
       )} */}
       <div className="flex items-center justify-between">
         <div className="text-gray-700 font-medium">
-          <p>
-            Hello <b className="text-xl">{user?.firstName}</b>,
+          <p className="text-zikoroGrey">
+            Hello{" "}
+            <span className="text-xl font-semibold text-zikoroBlack">
+              {user?.firstName}
+            </span>
+            ,
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-zikoroGrey">
             What will you be working on today?
           </p>
         </div>
@@ -239,7 +243,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
       ) : (
         <div className="grid gap-4">
           <div className="space-y-6">
-            <div className="grid grid-cols-3 gap-4 min-h-fit">
+            <div className="grid grid-cols-3 gap-6 min-h-fit">
               <CreateCertificateDialog
                 triggerButton={
                   <button className="rounded-lg flex flex-col items-center justify-center px-2 py-12 bg-white border">
@@ -250,7 +254,9 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                       height={32}
                       className="rounded-full"
                     />
-                    <p className="font-medium">Create new certificate</p>
+                    <p className="font-semibold text-zikoroBlack">
+                      Create new certificate
+                    </p>
                   </button>
                 }
                 open={open}
@@ -276,17 +282,19 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                   height={32}
                   className="rounded-full"
                 />
-                <p className="font-medium">Create new event badge</p>
+                <p className="font-semibold text-zikoroBlack">
+                  Create new event badge
+                </p>
                 <small className="text-sm text-gray-600">Coming soon</small>
               </button>
-              <div className="bg-white text-[#1F1F1F] px-1 py-4 rounded-xl flex flex-col justify-center items-center gap-y-2 border">
+              <div className="bg-white text-zikoroBlack px-1 py-4 rounded-xl flex flex-col justify-center items-center gap-y-2 border">
                 <div className="">
                   <div className="flex gap-8 justify-center">
                     <div>
                       <span className="font-medium text-sm">Bronze</span>
                       <div className="flex gap-x-1 items-center">
-                        <div className="rounded-full p-0.5 [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]">
-                          <div className="rounded-full size-5 [box-shadow:_0px_8px_12px_0px_#C2AF9B66;] [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]" />
+                        <div className="rounded-full p-0.5 [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%)]">
+                          <div className="rounded-full size-5 [box-shadow:_0px_8px_12px_0px_#C2AF9B66] [background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%)]" />
                         </div>
                         <span className="font-semibold">
                           {creditBalance.bronze}
@@ -296,8 +304,8 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                     <div>
                       <span className="font-medium text-sm">Silver</span>
                       <div className="flex gap-x-1">
-                        <div className="rounded-full p-0.5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1));]">
-                          <div className="rounded-full size-5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1));]" />
+                        <div className="rounded-full p-0.5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1))]">
+                          <div className="rounded-full size-5 [background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1))]" />
                         </div>
                         <span className="font-semibold">
                           {creditBalance.silver}
@@ -307,8 +315,8 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                     <div>
                       <span className="font-medium text-sm">Gold</span>
                       <div className="flex gap-x-1">
-                        <div className="rounded-full p-0.5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%);]">
-                          <div className="rounded-full size-5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%);]" />
+                        <div className="rounded-full p-0.5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%)]">
+                          <div className="rounded-full size-5 [background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%)]" />
                         </div>
                         <span className="font-semibold">
                           {creditBalance.gold}
@@ -317,24 +325,26 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                     </div>
                   </div>
                 </div>
-                <p className="text-center font-medium text-gray-800 text-sm">
+                <p className="text-center font-medium text-zikoroGrey text-sm">
                   You need credits to issue credentials.
                 </p>
                 <Link
                   href={"/credits/buy"}
-                  className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize"
+                  className="bg-basePrimary gap-x-2 font-semibold flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit text-white"
                 >
                   Buy more credits
                 </Link>
               </div>
             </div>
 
-            <div className="grid grid-cols-9 gap-4">
+            <div className="grid grid-cols-9 gap-6">
               <div className="rounded-lg border border-gray-200 bg-white col-span-6 p-4 space-y-4">
-                <h3 className="font-semibold">📍Pick up where you left off</h3>
-                <div className="flex gap-4">
+                <h3 className="font-semibold text-zikoroBlack">
+                  📍Pick up where you left off
+                </h3>
+                <div className="flex gap-4 items-center">
                   <Link
-                    className="flex-[40%] flex justify-center items-center p-8 border-basePrimary/10 border rounded-lg relative group bg-[#f7f8f9]"
+                    className="size-[250px] justify-center items-center p-8 border-basePrimary/10 border relative group bg-[#f7f8f9] rounded-lg"
                     href={
                       recentCertificate?.JSON
                         ? "/credentials/create/" +
@@ -357,11 +367,16 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                       width={200}
                     />
                     {recentCertificate?.JSON && (
-                      <div className="absolute inset-0 p-2 bg-black/50 group-hover:flex hidden z-10 group-hover:gap-8 group-hover:justify-center group-hover:items-center rounded-lg">
+                      <div className="absolute inset-0 p-2 bg-zikoroBlack/80 group-hover:flex hidden z-10 group-hover:gap-8 group-hover:justify-center group-hover:items-center rounded-lg">
                         <div className="flex flex-col gap-2 items-center">
-                          <p className="text-sm text-white font-semibold capitalize text-center group-hover:underline">
-                            Continue editing {recentCertificate?.name}
-                          </p>
+                          <div className="text-white font-medium text-center flex flex-col items-center gap-2">
+                            <span className="text-sm">
+                              Continue editing
+                            </span>
+                            <span className="underline underline-offset-2 text-xl">
+                              {recentCertificate?.name}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -370,7 +385,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                   <div className="flex-[60%] space-y-4 text-sm">
                     <div>
                       <div className="flex gap-2">
-                        <div className="border-2 rounded-lg p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
+                        <div className="border rounded-lg p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
                           <Image
                             src={NibIcon}
                             alt="Nib Icon"
@@ -396,7 +411,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                               }
                               className="flex gap-2 items-center"
                             >
-                              <span className="text-basePrimary underline font-medium">
+                              <span className="text-basePrimary underline underline-offset-2 font-medium">
                                 Proceed
                               </span>
                               <motion.div
@@ -415,9 +430,9 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                           )}
                         </div>
                       </div>
-                      <div className="ml-[32px] h-10 w-[2px] bg-basePrimary" />
+                      <div className="ml-[32px] h-5 w-[1px] bg-basePrimary" />
                       <div className="flex gap-2">
-                        <div className="border-2 rounded-lg p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
+                        <div className="rounded-lg p-4 flex items-center justify-center border-basePrimary border bg-[#f7f8ff]">
                           <Image
                             src={Assign}
                             alt="Assign Icon"
@@ -444,7 +459,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                               }
                               className="flex gap-2 items-center"
                             >
-                              <span className="text-basePrimary underline font-medium">
+                              <span className="text-basePrimary underline underline-offset-2 font-medium">
                                 Proceed
                               </span>
                               <motion.div
@@ -463,9 +478,9 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                           )}
                         </div>
                       </div>
-                      <div className="ml-[32px] h-10 w-[2px] bg-basePrimary" />
+                      <div className="ml-[32px] h-5 w-[1px] bg-basePrimary" />
                       <div className="flex gap-2">
-                        <div className="border-2 rounded-lg p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
+                        <div className="border rounded-lg p-4 flex items-center justify-center border-basePrimary bg-[#f7f8ff]">
                           <Image
                             src={Analytics}
                             alt="analytics icon"
@@ -487,7 +502,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                               }
                               className="flex gap-2 items-center"
                             >
-                              <span className="text-basePrimary underline font-medium">
+                              <span className="text-basePrimary underline underline-offset-2 font-medium">
                                 Proceed
                               </span>
                               <motion.div
@@ -555,84 +570,86 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                   </div>
                 </div>
               </div>
-              <div className="border rounded-lg bg-white p-4 col-span-3 space-y-6 w-full">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold">
-                    <span className="text-[18.75px]">📊</span> Analytics
-                  </h3>
-                </div>
-                <div className="space-y-4 divide-y divide-gray-200 [&>*]:pt-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-2 items-center">
-                      <Image
-                        src={CertificateIcon2}
-                        alt={"certificate"}
-                        width={24}
-                        height={24}
-                      />
-                      <span className="text-sm">Created Credentials</span>
-                    </div>
-                    <span className="font-semibold text-xl">
-                      {certificates.length}
-                    </span>
+              <div className="border rounded-lg bg-white p-4 col-span-3 w-full flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <h3 className="font-semibold text-zikoroBlack">
+                      <span className="text-[18.75px]">📊</span> Analytics
+                    </h3>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-2 items-center">
-                      <Image
-                        src={CertificateAssignIcon}
-                        alt={"assigned"}
-                        width={24}
-                        height={24}
-                      />
-                      <span className="text-sm">Assigned Credentials</span>
+                  <div className="space-y-2 divide-y divide-gray-200 [&>*]:pt-4 text-zikoroBlack">
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-2 items-center">
+                        <Image
+                          src={CertificateIcon2}
+                          alt={"certificate"}
+                          width={24}
+                          height={24}
+                        />
+                        <span className="text-sm">Created Credentials</span>
+                      </div>
+                      <span className="font-semibold text-xl">
+                        {certificates.length}
+                      </span>
                     </div>
-                    <span className="font-bold text-xl">
-                      {assignedCertificates?.length}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-2 items-center">
-                      <Image
-                        src={EmailOpenedIcon}
-                        alt={"assigned"}
-                        width={24}
-                        height={24}
-                      />
-                      <span className="text-sm">Viewed</span>
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-2 items-center">
+                        <Image
+                          src={CertificateAssignIcon}
+                          alt={"assigned"}
+                          width={24}
+                          height={24}
+                        />
+                        <span className="text-sm">Assigned Credentials</span>
+                      </div>
+                      <span className="font-bold text-xl">
+                        {assignedCertificates?.length}
+                      </span>
                     </div>
-                    <span className="font-semibold text-xl">
-                      {
-                        recipients.filter(
-                          (recipient) =>
-                            recipient.statusDetails &&
-                            recipient.statusDetails.some(
-                              (status) => status.action === "email opened"
-                            )
-                        ).length
-                      }
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-2 items-center">
-                      <Image
-                        src={ShareIcon}
-                        alt={"assigned"}
-                        width={24}
-                        height={24}
-                      />
-                      <span className="text-sm">Shared On Socials</span>
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-2 items-center">
+                        <Image
+                          src={EmailOpenedIcon}
+                          alt={"assigned"}
+                          width={24}
+                          height={24}
+                        />
+                        <span className="text-sm">Viewed</span>
+                      </div>
+                      <span className="font-semibold text-xl">
+                        {
+                          recipients.filter(
+                            (recipient) =>
+                              recipient.statusDetails &&
+                              recipient.statusDetails.some(
+                                (status) => status.action === "email opened"
+                              )
+                          ).length
+                        }
+                      </span>
                     </div>
-                    <span className="font-semibold text-xl">
-                      {
-                        recipients.filter(
-                          (recipient) =>
-                            recipient.statusDetails &&
-                            recipient.statusDetails.some((status) =>
-                              status.action.includes("shared")
-                            )
-                        ).length
-                      }
-                    </span>
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-2 items-center">
+                        <Image
+                          src={ShareIcon}
+                          alt={"assigned"}
+                          width={24}
+                          height={24}
+                        />
+                        <span className="text-sm">Shared On Socials</span>
+                      </div>
+                      <span className="font-semibold text-xl">
+                        {
+                          recipients.filter(
+                            (recipient) =>
+                              recipient.statusDetails &&
+                              recipient.statusDetails.some((status) =>
+                                status.action.includes("shared")
+                              )
+                          ).length
+                        }
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex justify-center items-center gap-2">

@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import GradientText from "../GradientText";
+import Image from "next/image";
+import CaretDown from "@/public/icons/caret-down.svg";
 
 const SelectOrganization = () => {
   const searchParams = useSearchParams();
@@ -75,7 +77,7 @@ const SelectOrganization = () => {
 
   return (
     <div className="flex flex-col gap-1" id="step1">
-      <span className="text-xs text-gray-600">Workspace:</span>
+      <span className="text-xs text-gray-600 font-semibold">Workspace:</span>
       <div className="flex items-center gap-4" id="step2">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
@@ -83,9 +85,9 @@ const SelectOrganization = () => {
               variant="outline"
               role="combobox"
               aria-expanded={open}
-              className="w-fit rounded-lg bg-white text-xs font-medium justify-between border-basePrimary hover:bg-basePrimary/10"
+              className="w-fit rounded-lg bg-white justify-between border-basePrimary hover:bg-basePrimary/10"
             >
-              <GradientText Tag={"span"}>
+              <GradientText Tag={"span"} className="font-semibold">
                 {organization
                   ? workspaces.find(
                       (option) =>
@@ -94,7 +96,13 @@ const SelectOrganization = () => {
                     )?.organizationName
                   : `Select Workspace...`}
               </GradientText>
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 text-basePrimary" />
+              <Image
+                src={CaretDown}
+                alt="CaretDown"
+                width={16}
+                height={16}
+                className="ml-2"
+              />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[250px] p-0">

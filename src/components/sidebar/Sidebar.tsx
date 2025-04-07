@@ -107,7 +107,7 @@ const navlinks: Navlinks[] = [
     Icon: Analytics,
   },
   {
-    name: "Templates",
+    name: "Email Templates",
     href: "/email/templates",
     Icon: EmailTemplate,
     restricted: ["create"],
@@ -158,9 +158,9 @@ const Sidebar = () => {
   console.log(pathname);
 
   const sidebarVariants = {
-    initial: { width: 70 },
+    initial: { width: 76 },
     hover: {
-      width: 175,
+      width: 200,
       transition: {
         type: "spring",
         stiffness: 300,
@@ -170,8 +170,8 @@ const Sidebar = () => {
   };
 
   const navItemVariants = {
-    initial: { gap: 0 },
-    hover: { gap: "8px" },
+    initial: { gap: 0, width: 44 },
+    hover: { gap: "8px", width: 164 },
   };
 
   const childrenVariants = {
@@ -192,18 +192,18 @@ const Sidebar = () => {
       className="contents"
     >
       <motion.div
-        className="pl-2 pr-1 py-4 flex flex-col justify-between h-full"
-        variants={sidebarVariants}
+        className="py-4 px-[18px] flex flex-col h-full items-center w-fit"
+        // variants={sidebarVariants}
         id="sidebar"
       >
         <motion.div
-          className="flex items-center p-2.5"
+          className="flex items-center w-fit mb-10"
           variants={navItemVariants}
         >
           <Image
             src={logo}
-            width={30}
-            height={30}
+            width={35}
+            height={35}
             alt="logo"
             className="cursor-pointer"
           />
@@ -211,15 +211,17 @@ const Sidebar = () => {
             variants={childrenVariants}
             className="flex flex-col justify-center overflow-hidden truncate"
           >
-            <span className="text-2xl font-black leading-6 truncate">
+            <span className="text-[22px] font-bold leading-6 truncate">
               Zikoro
             </span>
-            <span className="text-sm font-semibold truncate">Credentials</span>
+            <span className="text-[10px] font-semibold truncate">
+              Credentials
+            </span>
           </motion.div>
         </motion.div>
 
         <nav className="my-4">
-          <ul className="flex flex-col gap-y-2.5">
+          <motion.ul className="flex flex-col gap-y-2.5">
             {navlinks
               .filter(
                 (navlink) =>
@@ -228,7 +230,11 @@ const Sidebar = () => {
                   )
               )
               .map(({ name, href, Icon, disabled }) => (
-                <li key={name} className="w-full">
+                <motion.li
+                  key={name}
+                  className="w-full"
+                  variants={navItemVariants}
+                >
                   <Link
                     id={name + "-link"}
                     aria-disabled={disabled}
@@ -236,36 +242,32 @@ const Sidebar = () => {
                     prefetch={false}
                     href={disabled ? {} : href}
                     target={href === "/live-events" ? "_blank" : ""}
+                    className={cn(
+                      "text-gray-800 py-2.5 px-2 flex items-center gap-2 justify-start font-medium rounded-lg w-full",
+                      pathname.includes(href)
+                        ? "bg-basePrimary/10 text-zikoroGrey"
+                        : "hover:bg-basePrimary/5 hover:text-zikoroGrey"
+                    )}
                   >
-                    <motion.div
-                      className={cn(
-                        "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg w-full",
-                        pathname.includes(href)
-                          ? "bg-basePrimary/10 text-[#1F1F1F]"
-                          : "hover:bg-basePrimary/5 hover:text-[#1F1F1F]"
-                      )}
-                      variants={navItemVariants}
+                    {Icon && (
+                      <Image
+                        src={Icon}
+                        width={24}
+                        height={24}
+                        alt={name}
+                        className={cn(disabled && "grayscale")}
+                      />
+                    )}
+                    <motion.span
+                      variants={childrenVariants}
+                      className="truncate text-sm"
                     >
-                      {Icon && (
-                        <Image
-                          src={Icon}
-                          width={20}
-                          height={20}
-                          alt={name}
-                          className={cn(disabled && "grayscale")}
-                        />
-                      )}
-                      <motion.span
-                        variants={childrenVariants}
-                        className="truncate text-sm"
-                      >
-                        {name}
-                      </motion.span>
-                    </motion.div>
+                      {name}
+                    </motion.span>
                   </Link>
-                </li>
+                </motion.li>
               ))}
-          </ul>
+          </motion.ul>
         </nav>
 
         <nav className="border-y py-4 space-y-2.5">
@@ -274,7 +276,7 @@ const Sidebar = () => {
               <motion.button
                 type="button"
                 className={cn(
-                  "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg hover:bg-basePrimary/5 hover:text-[#1F1F1F] w-full"
+                  "text-gray-800 py-2.5 px-2 flex items-center justify-start font-medium rounded-lg hover:bg-basePrimary/5 hover:text-[#1F1F1F]"
                 )}
                 variants={navItemVariants}
               >
@@ -374,7 +376,7 @@ const Sidebar = () => {
                 >
                   <motion.div
                     className={cn(
-                      "text-gray-800 p-2.5 flex items-center justify-start font-medium rounded-lg w-full",
+                      "text-gray-800 py-2.5 px-2 flex items-center justify-start font-medium rounded-lg",
                       pathname.includes(href)
                         ? "bg-basePrimary/10 text-[#1F1F1F]"
                         : "hover:bg-basePrimary/5 hover:text-[#1F1F1F]"
@@ -384,8 +386,8 @@ const Sidebar = () => {
                     {Icon && (
                       <Image
                         src={Icon}
-                        width={20}
-                        height={20}
+                        width={24}
+                        height={24}
                         alt={name}
                         className={cn(disabled && "grayscale")}
                       />
@@ -429,7 +431,7 @@ const Sidebar = () => {
 
         <motion.button
           type="button"
-          className="flex items-center p-2.5"
+          className="flex items-center py-2.5 px-2"
           variants={navItemVariants}
         >
           <svg
@@ -467,7 +469,7 @@ const Sidebar = () => {
             window.location.href = "/";
           }}
           variants={navItemVariants}
-          className="flex items-center h-fit p-2.5"
+          className="flex items-center h-fit py-2.5 px-2"
         >
           <LogOutIcon />
           <motion.span

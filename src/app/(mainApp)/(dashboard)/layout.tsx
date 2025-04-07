@@ -10,7 +10,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
         </div>
       }
     >
-      <DashboardLayout>{children}</DashboardLayout>;
+      <DashboardLayout>{children}</DashboardLayout>
     </Suspense>
   );
 };
