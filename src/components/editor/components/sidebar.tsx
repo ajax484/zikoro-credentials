@@ -6,7 +6,7 @@ import {
   Shapes,
   Type,
   Lock,
-  QrCode,
+  Barcode,
 } from "lucide-react";
 import { ActiveTool } from "@/components/editor/types";
 import { SidebarItem } from "@/components/editor/components/sidebar-item";
@@ -47,8 +47,8 @@ export const Sidebar = ({ activeTool, onChangeActiveTool }: SidebarProps) => {
           onClick={() => onChangeActiveTool("text")}
         />
         <SidebarItem
-          icon={QrCode}
-          label="QR Code"
+          icon={Barcode}
+          label="Bar Code"
           isActive={activeTool === "qrCode"}
           onClick={() => onChangeActiveTool("qrCode")}
         />

@@ -33,6 +33,8 @@ import { useWindowEvents } from "@/components/editor/hooks/use-window-events";
 import { useLoadState } from "@/components/editor/hooks/use-load-state";
 import jsPDF from "jspdf";
 import { rgbaToHex } from "@/utils/helpers";
+import { z } from "zod";
+import { barCodeTypeEnum } from "../components/qrcode-sidebar";
 
 const buildEditor = ({
   save,
@@ -339,22 +341,34 @@ const buildEditor = ({
         { crossOrigin: "anonymous" }
       );
     },
-    addQRCode: (value: string, color: string, bgcolor: string) => {
+    addQRCode: async (
+      value: string,
+      color: string,
+      bgcolor: string,
+      type: z.infer<typeof barCodeTypeEnum>
+    ) => {
       try {
+        const url = `https://barcodeapi.org/api/${type}/${encodeURIComponent(
+          value
+        )}?bg=${rgbaToHex(bgcolor || "#ffffff")}&color=${
+          rgbaToHex(color) || "#000000"
+        }`;
+        const response = await fetch(url, { cache: "no-store" });
+
+        const tokens = response.headers.get("X-RateLimit-Tokens");
+        console.log("Tokens remaining: " + tokens);
+
+        const blob = await response.blob();
+
+        const imgSrc = URL.createObjectURL(blob);
+
         fabric.Image.fromURL(
-          "https://api.qrserver.com/v1/create-qr-code/?size=150x150&format=svg" +
-            "&bgcolor=" +
-            (rgbaToHex(bgcolor) || "#ffffff") +
-            "&color=" +
-            (rgbaToHex(color) || "#000000") +
-            "&data=" +
-            encodeURIComponent(value),
-          (image: fabric.Image) => {
-            console.log(image);
+          imgSrc,
+          (image) => {
             const workspace = getWorkspace();
 
-            // image.scaleToWidth(workspace?.width || 0);
-            // image.scaleToHeight(workspace?.height || 0);
+            image.scaleToWidth(workspace?.width || 0);
+            image.scaleToHeight(workspace?.height || 0);
 
             addToCanvas(image);
           },
@@ -362,6 +376,28 @@ const buildEditor = ({
             crossOrigin: "anonymous",
           }
         );
+
+        // fabric.Image.fromURL(
+        //   "https://api.qrserver.com/v1/create-qr-code/?size=150x150&format=svg" +
+        //     "&bgcolor=" +
+        //     (rgbaToHex(bgcolor) || "#ffffff") +
+        //     "&color=" +
+        //     (rgbaToHex(color) || "#000000") +
+        //     "&data=" +
+        //     encodeURIComponent(value),
+        //   (image: fabric.Image) => {
+        //     console.log(image);
+        //     const workspace = getWorkspace();
+
+        //     // image.scaleToWidth(workspace?.width || 0);
+        //     // image.scaleToHeight(workspace?.height || 0);
+
+        //     addToCanvas(image);
+        //   },
+        //   {
+        //     crossOrigin: "anonymous",
+        //   }
+        // );
       } catch (error) {
         console.log(error);
       }

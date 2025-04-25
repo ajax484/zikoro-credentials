@@ -3,7 +3,6 @@
 import { fabric } from "fabric";
 import debounce from "lodash.debounce";
 import { useCallback, useEffect, useRef, useState } from "react";
-
 import { ActiveTool, selectionDependentTools } from "@/components/editor/types";
 import { Navbar } from "@/components/editor/components/navbar";
 import { Footer } from "@/components/editor/components/footer";

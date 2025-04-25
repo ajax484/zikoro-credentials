@@ -1,6 +1,8 @@
 import { fabric } from "fabric";
 import { ITextboxOptions } from "fabric/fabric-impl";
 import * as material from "material-colors";
+import { barCodeTypeEnum } from "./components/qrcode-sidebar";
+import { z } from "zod";
 
 export const JSON_KEYS = [
   "name",
@@ -239,7 +241,12 @@ export interface Editor {
   changeImageFilter: (value: string) => void;
   addImage: (value: string) => void;
   addBackgroundImage: (value: string) => void;
-  addQRCode: (value: string, color: string, bgcolor: string) => void;
+  addQRCode: (
+    value: string,
+    color: string,
+    bgcolor: string,
+    type: z.infer<typeof barCodeTypeEnum>
+  ) => Promise<void>;
   delete: () => void;
   changeFontSize: (value: number) => void;
   getActiveFontSize: () => number;
