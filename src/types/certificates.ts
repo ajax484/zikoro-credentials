@@ -44,6 +44,13 @@ export interface TCertificate {
   isValid: boolean;
   attributes: string[];
   hasQRCode: boolean;
+  assets: TCertificateAssets[];
+}
+
+export interface TCertificateAssets {
+  url: string;
+  type: string;
+  assetId: string;
 }
 
 export interface TCertificateSettings {

@@ -32,9 +32,20 @@ import { useCanvasEvents } from "@/components/editor/hooks/use-canvas-events";
 import { useWindowEvents } from "@/components/editor/hooks/use-window-events";
 import { useLoadState } from "@/components/editor/hooks/use-load-state";
 import jsPDF from "jspdf";
-import { rgbaToHex } from "@/utils/helpers";
+import {
+  base64ToFile,
+  generateAlphanumericHash,
+  rgbaToHex,
+  uploadFile,
+} from "@/utils/helpers";
 import { z } from "zod";
 import { barCodeTypeEnum } from "../components/qrcode-sidebar";
+import {
+  CertificateRecipient,
+  TCertificate,
+  TCertificateAssets,
+} from "@/types/certificates";
+import { TOrganization } from "@/types/organization";
 
 const buildEditor = ({
   save,
@@ -345,14 +356,17 @@ const buildEditor = ({
       value: string,
       color: string,
       bgcolor: string,
-      type: z.infer<typeof barCodeTypeEnum>
+      type: z.infer<typeof barCodeTypeEnum>,
+      barCodeFunction: string
     ) => {
       try {
         const url = `https://barcodeapi.org/api/${type}/${encodeURIComponent(
           value
-        )}?bg=${rgbaToHex(bgcolor || "#ffffff")}&color=${
-          rgbaToHex(color) || "#000000"
-        }`;
+        )}?bg=${rgbaToHex(bgcolor || "ffffff")}&fg=${rgbaToHex(
+          color || "000000"
+        )}`;
+
+        console.log(url);
         const response = await fetch(url, { cache: "no-store" });
 
         const tokens = response.headers.get("X-RateLimit-Tokens");
@@ -360,15 +374,57 @@ const buildEditor = ({
 
         const blob = await response.blob();
 
-        const imgSrc = URL.createObjectURL(blob);
+        // const imgSrc = URL.createObjectURL(blob);
+
+        // console.log(imgSrc);
+
+        // base64ToFile(
+        //   imgSrc,
+        //   type + ":" + value + new Date().getUTCMilliseconds() + ".png"
+        // );
+
+        const blobUrl = new File(
+          [blob],
+          type + ":" + value + new Date().getUTCMilliseconds() + ".png",
+          {
+            type: blob.type,
+            lastModified: Date.now(),
+          }
+        );
+
+        console.log(blobUrl);
+
+        const { url: imageUrl, error } = await uploadFile(blobUrl, "image");
+
+        console.log(imageUrl);
+
+        if (error) return;
+        if (!imageUrl) return;
 
         fabric.Image.fromURL(
-          imgSrc,
+          imageUrl,
           (image) => {
+            console.log(image);
             const workspace = getWorkspace();
 
-            image.scaleToWidth(workspace?.width || 0);
-            image.scaleToHeight(workspace?.height || 0);
+            const assetId = generateAlphanumericHash();
+
+            image.set({
+              options: {
+                bg: rgbaToHex(bgcolor || "ffffff"),
+                fg: rgbaToHex(color || "000000"),
+                barCodeType: type,
+                isBarCode: true,
+                value,
+                barCodeFunction,
+                assetId,
+              },
+            });
+
+            console.log(image.options?.isBarCode);
+
+            // image.scaleToWidth(workspace?.width || 0);
+            // image.scaleToHeight(workspace?.height || 0);
 
             addToCanvas(image);
           },
@@ -401,6 +457,113 @@ const buildEditor = ({
       } catch (error) {
         console.log(error);
       }
+    },
+    transformBarCodes: async (
+      certificate: CertificateRecipient & {
+        originalCertificate: TCertificate & {
+          workspace: TOrganization;
+        };
+      }
+    ) => {
+      canvas
+        .getObjects()
+        // .forEach((object) => console.log(object.isBarCode))
+        .filter(
+          (object) =>
+            object instanceof fabric.Image && object.options?.isBarCode
+        )
+        .forEach(async (oldImage: fabric.Image) => {
+          try {
+            console.log(oldImage.options);
+            let text = oldImage.options?.value;
+
+            if (oldImage.options?.barCodeFunction === "verify") {
+              text = `https://credentials.zikoro.com/credentials/verify/certificate/${certificate.certificateId}`;
+            }
+
+            if (oldImage.options?.barCodeFunction === "attribute") {
+              text = certificate?.metadata[oldImage.options?.value];
+            }
+
+            console.log(text);
+
+            const url = `https://barcodeapi.org/api/${
+              oldImage.options?.barCodeType
+            }/${encodeURIComponent(text)}`;
+
+            console.log(url);
+            const response = await fetch(url, { cache: "no-store" });
+
+            const tokens = response.headers.get("X-RateLimit-Tokens");
+            console.log("Tokens remaining: " + tokens);
+
+            const blob = await response.blob();
+
+            const blobUrl = new File(
+              [blob],
+              oldImage.options?.type +
+                ":" +
+                oldImage.options?.value +
+                new Date().getUTCMilliseconds() +
+                ".png",
+              {
+                type: blob.type,
+                lastModified: Date.now(),
+              }
+            );
+
+            const { url: imageUrl, error } = await uploadFile(blobUrl, "image");
+
+            console.log(imageUrl);
+
+            if (error) return;
+            if (!imageUrl) return;
+
+            oldImage.setSrc(
+              imageUrl,
+              function (img) {
+                console.log(img.src)
+                canvas.renderAll();
+              },
+              {
+                crossOrigin: "anonymous",
+              }
+            );
+
+            // oldImage.set({
+            //   src: imageUrl,
+            // })
+            
+            // canvas.renderAll();
+
+            // fabric.Image.fromURL(
+            //   imageUrl,
+            //   (newImg) => {
+            //     newImg.set({
+            //       left: oldImage.left,
+            //       top: oldImage.top,
+            //       angle: oldImage.angle,
+            //       scaleX: oldImage.scaleX,
+            //       scaleY: oldImage.scaleY,
+            //       opacity: oldImage.opacity,
+            //       flipX: oldImage.flipX,
+            //       flipY: oldImage.flipY,
+            //     });
+
+            //     console.log(newImg.left, oldImage.left);
+            //     // Replace the old image with the new one
+            //     // canvas.remove(oldImage);
+            //     addToCanvas(newImg);
+            //     canvas.renderAll();
+            //   },
+            //   {
+            //     crossOrigin: "anonymous",
+            //   }
+            // );
+          } catch (error) {
+            console.log(error);
+          }
+        });
     },
     delete: () => {
       canvas.getActiveObjects().forEach((object: fabric.Object) => {

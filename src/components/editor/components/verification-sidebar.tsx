@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import AddVariables from "@/components/modals/AddVariables.modal";
+import { X } from "lucide-react";
 
 interface VerificationSidebarProps {
   editor: Editor | undefined;
@@ -127,19 +128,36 @@ export const VerificationSidebar = ({
           </Button>
           {attributes.length > 0 &&
             attributes.map((attribute) => (
-              <Button
-                className="h-16 w-full"
-                variant="secondary"
-                size="lg"
-                onClick={() =>
-                  editor?.addText(`#{${attribute}#}`, {
-                    fontSize: 32,
-                    textAlign: "center",
-                  })
-                }
-              >
-                Add {attribute}
-              </Button>
+              <div className="relative">
+                <Button
+                  className="h-16 w-full"
+                  variant="secondary"
+                  size="lg"
+                  onClick={() =>
+                    editor?.addText(`#{${attribute}#}`, {
+                      fontSize: 32,
+                      textAlign: "center",
+                    })
+                  }
+                >
+                  Add {attribute}
+                </Button>
+                {/* remove attribute */}
+
+                <button
+                  className="absolute inset-y-0 right-2 rounded-full text-red-500"
+                  aria-label={`Remove ${attribute}`}
+                  onClick={() => {
+                    setAttributes((prevAttributes) =>
+                      prevAttributes.filter(
+                        (prevAttribute) => prevAttribute !== attribute
+                      )
+                    );
+                  }}
+                >
+                  <X className="size-6" />
+                </button>
+              </div>
             ))}
         </div>
       </ScrollArea>

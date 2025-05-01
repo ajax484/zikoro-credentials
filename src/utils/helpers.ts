@@ -8,6 +8,7 @@ import * as crypto from "crypto";
 import { v4 as uuidv4 } from "uuid";
 
 export function rgbaToHex(rgba: string): string {
+  console.log(rgba);
   const match = rgba.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)$/);
 
   if (!match) {
@@ -428,6 +429,7 @@ export function getTextColorFromBackground(backgroundColor: string): string {
   // Convert rgba color to RGB
 
   const rgbaToRgb = (rgba: string): { r: number; g: number; b: number } => {
+    console.log(rgba);
     const match = rgba.match(/^rgba?\((\d+), (\d+), (\d+), (\d?\.?\d+)\)$/);
     if (match) {
       return {

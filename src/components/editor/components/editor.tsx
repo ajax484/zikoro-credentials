@@ -240,6 +240,7 @@ export const Editor = ({
           workspaceAlias={workspaceAlias}
           toggleQRCode={toggleQRCode}
           hasQRCode={hasQRCode}
+          attributes={attributes}
         />
         <VerificationSidebar
           editor={editor}

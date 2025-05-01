@@ -227,7 +227,7 @@ Event Team.`,
   console.log(creditBalance);
 
   const onSubmit = async (data: z.infer<typeof sendEmailSchema>) => {
-    console.log(creditBalance[creditType], recipients.length);
+    console.log(creditBalance[creditType], recipients.length, creditType);
     if (!user) return toast.error("Please login to send certificate");
     if (
       creditBalance[creditType] === 0 ||

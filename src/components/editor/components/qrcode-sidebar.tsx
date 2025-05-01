@@ -65,6 +65,7 @@ interface QRCodeSidebarProps {
   workspaceAlias: string;
   toggleQRCode: (value: boolean) => void;
   hasQRCode: boolean;
+  attributes: string[];
 }
 
 export const barCodeTypeEnum = z.enum([
@@ -188,6 +189,7 @@ export const QRCodeSidebar = ({
   workspaceAlias,
   toggleQRCode,
   hasQRCode,
+  attributes,
 }: QRCodeSidebarProps) => {
   const onClose = () => {
     onChangeActiveTool("select");
@@ -198,6 +200,8 @@ export const QRCodeSidebar = ({
   const [barCodeFunction, setBarCodeFunction] = useState<
     "verify" | "attribute" | "custom"
   >("verify");
+
+  const [textType, setTextType] = useState<"text" | "number">("text");
 
   const form = useForm<z.infer<typeof QRCodeSchema>>({
     resolver: zodResolver(QRCodeSchema),
@@ -233,7 +237,13 @@ export const QRCodeSidebar = ({
       // await chargeCredits({ payload });
       // await getCredits();
       // toast.success("QR Code charged successfully.");
-      editor?.addQRCode(data.text, data.color, data.bgcolor, data.barCodeType);
+      editor?.addQRCode(
+        data.text,
+        data.color,
+        data.bgcolor,
+        data.barCodeType,
+        barCodeFunction
+      );
       toggleQRCode(true);
     } catch (error) {
       toast.error("Failed to charge QR Code.");
@@ -316,7 +326,9 @@ export const QRCodeSidebar = ({
                   </SelectTrigger>
                   <SelectContent className="z-[1001]">
                     <SelectItem value={"verify"}>Verify Credentials</SelectItem>
-                    <SelectItem value={"attribute"}>Attribute</SelectItem>
+                    {attributes.length > 0 && (
+                      <SelectItem value={"attribute"}>Attribute</SelectItem>
+                    )}
                     <SelectItem value={"custom"}>Custom</SelectItem>
                   </SelectContent>
                 </Select>
@@ -334,6 +346,36 @@ export const QRCodeSidebar = ({
                         value={field.value}
                         onChange={(e) => field.onChange(e.target.value)}
                       />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            )}
+            {barCodeFunction === "attribute" && (
+              <FormField
+                name={"text" as const}
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-gray-700">Attribute</FormLabel>
+                    <FormControl className="relative w-full">
+                      <Select
+                        onValueChange={(value) => field.onChange(value)}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="w-full rounded-lg text-sm font-medium bg-transparent">
+                          <SelectValue placeholder={"Select attribute"} />
+                        </SelectTrigger>
+                        <SelectContent className="z-[1001]">
+                          {attributes.map((attribute) => (
+                            <SelectItem
+                              value={`#{${attribute}#}`}
+                              key={attribute}
+                            >
+                              {attribute}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                   </FormItem>
                 )}
@@ -361,7 +403,7 @@ export const QRCodeSidebar = ({
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="color">
-                <AccordionTrigger>Color</AccordionTrigger>
+                <AccordionTrigger>Foreground Color</AccordionTrigger>
                 <AccordionContent>
                   <FormField
                     control={form.control}

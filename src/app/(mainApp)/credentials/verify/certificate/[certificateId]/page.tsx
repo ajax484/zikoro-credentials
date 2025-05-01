@@ -103,10 +103,11 @@ const CertificateView = ({
       preserveObjectStacking: true,
     });
 
-    init({
-      initialCanvas: canvas,
-      initialContainer: containerRef.current!,
-    });
+    (async () =>
+      await init({
+        initialCanvas: canvas,
+        initialContainer: containerRef.current!,
+      }))();
 
     return () => {
       canvas.dispose();
@@ -142,6 +143,24 @@ const CertificateView = ({
         : "pending"
       : "unverified";
 
+  const [imageSrc, setImageSrc] = useState("");
+
+  useEffect(() => {
+    const generateImage = async () => {
+      try {
+        if (editor) {
+          await editor.transformBarCodes(certificate);
+          const src = editor.generateLink(true);
+          setImageSrc(src);
+        }
+      } catch (error) {
+        console.error("Error generating certificate image:", error);
+      }
+    };
+
+    generateImage();
+  }, [certificate]); // Add dependencies as needed
+
   return (
     <section className="space-y-6">
       <div className="bg-white py-2 border rounded-lg w-full">
@@ -157,12 +176,18 @@ const CertificateView = ({
         </div>
 
         <div className="relative h-full w-full flex justify-center items-center flex-1 px-4 py-4">
-          <img
-            alt="certificate"
-            src={editor?.generateLink(true)}
-            style={{ width: "50%" }}
-            className="h-auto"
-          />{" "}
+          {imageSrc && (
+            <img
+              alt="certificate"
+              src={imageSrc}
+              style={{ width: "50%" }}
+              className="h-auto"
+              onError={(e) => {
+                console.error("Failed to load certificate image");
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          )}
         </div>
       </div>
       {certificate?.originalCertificate?.certificateSettings?.description && (

@@ -3,6 +3,8 @@ import { ITextboxOptions } from "fabric/fabric-impl";
 import * as material from "material-colors";
 import { barCodeTypeEnum } from "./components/qrcode-sidebar";
 import { z } from "zod";
+import { CertificateRecipient, TCertificate } from "@/types/certificates";
+import { TOrganization } from "@/types/organization";
 
 export const JSON_KEYS = [
   "name",
@@ -13,6 +15,8 @@ export const JSON_KEYS = [
   "editable",
   "extensionType",
   "extension",
+  "options",
+  "isBackground",
 ];
 
 export const filters = [
@@ -245,7 +249,15 @@ export interface Editor {
     value: string,
     color: string,
     bgcolor: string,
-    type: z.infer<typeof barCodeTypeEnum>
+    type: z.infer<typeof barCodeTypeEnum>,
+    barCodeFunction: string
+  ) => Promise<void>;
+  transformBarCodes: (
+    certificate: CertificateRecipient & {
+      originalCertificate: TCertificate & {
+        workspace: TOrganization;
+      };
+    }
   ) => Promise<void>;
   delete: () => void;
   changeFontSize: (value: number) => void;

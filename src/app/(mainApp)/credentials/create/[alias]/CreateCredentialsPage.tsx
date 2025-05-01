@@ -171,6 +171,8 @@ const CreateCredentialsPage = ({
 
   if (isLoading || eventLoading) return <div>Loading...</div>;
 
+  console.log(data?.JSON);
+
   return (
     <>
       <Editor
