@@ -217,7 +217,7 @@ export type BuildEditorProps = {
 };
 
 export interface Editor {
-  generateLink: (isLive?: boolean) => string;
+  generateLink: (isLive?: boolean) => Promise<string>;
   savePdf: (
     { width, height }: { width: number; height: number },
     name?: string
@@ -251,7 +251,7 @@ export interface Editor {
     bgcolor: string,
     type: z.infer<typeof barCodeTypeEnum>,
     barCodeFunction: string
-  ) => Promise<void>;
+  ) => Promise<string | undefined>;
   transformBarCodes: (
     certificate: CertificateRecipient & {
       originalCertificate: TCertificate & {

@@ -135,7 +135,112 @@ const buildEditor = ({
     autoZoom();
   };
 
-  const generateLink = (isLive = false) => {
+  const generateLink = async (isLive = false) => {
+    const objects = canvas
+      .getObjects()
+      // .forEach((object) => console.log(object.isBarCode))
+      .filter(
+        (object) => object instanceof fabric.Image && object.options?.isBarCode
+      );
+
+    for (const object of objects) {
+      try {
+        console.log(object.options);
+        let text = object.options?.value;
+
+        // if (object.options?.barCodeFunction === "verify") {
+        //   text = `https://credentials.zikoro.com/credentials/verify/certificate/${certificate.certificateId}`;
+        // }
+
+        // if (object.options?.barCodeFunction === "attribute") {
+        //   text = certificate?.metadata[object.options?.value];
+        // }
+
+        console.log(text);
+
+        const url = `https://barcodeapi.org/api/${
+          object.options?.barCodeType
+        }/${encodeURIComponent(text)}`;
+
+        console.log(url);
+        const response = await fetch(url, { cache: "no-store" });
+
+        const tokens = response.headers.get("X-RateLimit-Tokens");
+        console.log("Tokens remaining: " + tokens);
+
+        const blob = await response.blob();
+
+        const blobUrl = new File(
+          [blob],
+          object.options?.type +
+            ":" +
+            object.options?.value +
+            new Date().getUTCMilliseconds() +
+            ".png",
+          {
+            type: blob.type,
+            lastModified: Date.now(),
+          }
+        );
+
+        const { url: imageUrl, error } = await uploadFile(blobUrl, "image");
+
+        console.log(imageUrl);
+
+        if (error) return;
+        if (!imageUrl) return;
+
+        object.set({
+          src: imageUrl,
+        });
+
+        object.setSrc(
+          imageUrl,
+          function (img) {
+            console.log(img.src);
+            canvas.renderAll();
+          },
+          {
+            crossOrigin: "anonymous",
+          }
+        );
+
+        // oldImage.set({
+        //   src: imageUrl,
+        // })
+
+        // canvas.renderAll();
+
+        // fabric.Image.fromURL(
+        //   imageUrl,
+        //   (newImg) => {
+        //     newImg.set({
+        //       left: object.left,
+        //       top: object.top,
+        //       angle: object.angle,
+        //       scaleX: object.scaleX,
+        //       scaleY: object.scaleY,
+        //       opacity: object.opacity,
+        //       flipX: object.flipX,
+        //       flipY: object.flipY,
+        //     });
+
+        //     console.log(newImg.src, object.options.value);
+        //     // Replace the old image with the new one
+        //     // canvas.remove(oldImage);
+        //     canvas.remove(object);
+        //     addToCanvas(newImg);
+
+        //   },
+        //   {
+        //     crossOrigin: "anonymous",
+        //   }
+        // );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     const options = generateSaveOptions();
 
     isLive && canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
@@ -465,105 +570,111 @@ const buildEditor = ({
         };
       }
     ) => {
-      canvas
+      const objects = canvas
         .getObjects()
         // .forEach((object) => console.log(object.isBarCode))
         .filter(
           (object) =>
             object instanceof fabric.Image && object.options?.isBarCode
-        )
-        .forEach(async (oldImage: fabric.Image) => {
-          try {
-            console.log(oldImage.options);
-            let text = oldImage.options?.value;
+        );
 
-            if (oldImage.options?.barCodeFunction === "verify") {
-              text = `https://credentials.zikoro.com/credentials/verify/certificate/${certificate.certificateId}`;
+      for (const object of objects) {
+        try {
+          console.log(object.options);
+          let text = object.options?.value;
+
+          // if (object.options?.barCodeFunction === "verify") {
+          //   text = `https://credentials.zikoro.com/credentials/verify/certificate/${certificate.certificateId}`;
+          // }
+
+          // if (object.options?.barCodeFunction === "attribute") {
+          //   text = certificate?.metadata[object.options?.value];
+          // }
+
+          console.log(text);
+
+          const url = `https://barcodeapi.org/api/${
+            object.options?.barCodeType
+          }/${encodeURIComponent(text)}`;
+
+          console.log(url);
+          const response = await fetch(url, { cache: "no-store" });
+
+          const tokens = response.headers.get("X-RateLimit-Tokens");
+          console.log("Tokens remaining: " + tokens);
+
+          const blob = await response.blob();
+
+          const blobUrl = new File(
+            [blob],
+            object.options?.type +
+              ":" +
+              object.options?.value +
+              new Date().getUTCMilliseconds() +
+              ".png",
+            {
+              type: blob.type,
+              lastModified: Date.now(),
             }
+          );
 
-            if (oldImage.options?.barCodeFunction === "attribute") {
-              text = certificate?.metadata[oldImage.options?.value];
+          const { url: imageUrl, error } = await uploadFile(blobUrl, "image");
+
+          console.log(imageUrl);
+
+          if (error) return;
+          if (!imageUrl) return;
+
+          object.set({
+            src: imageUrl,
+          });
+
+          object.setSrc(
+            imageUrl,
+            function (img) {
+              console.log(img.src);
+              canvas.renderAll();
+            },
+            {
+              crossOrigin: "anonymous",
             }
+          );
 
-            console.log(text);
+          // oldImage.set({
+          //   src: imageUrl,
+          // })
 
-            const url = `https://barcodeapi.org/api/${
-              oldImage.options?.barCodeType
-            }/${encodeURIComponent(text)}`;
+          // canvas.renderAll();
 
-            console.log(url);
-            const response = await fetch(url, { cache: "no-store" });
+          // fabric.Image.fromURL(
+          //   imageUrl,
+          //   (newImg) => {
+          //     newImg.set({
+          //       left: object.left,
+          //       top: object.top,
+          //       angle: object.angle,
+          //       scaleX: object.scaleX,
+          //       scaleY: object.scaleY,
+          //       opacity: object.opacity,
+          //       flipX: object.flipX,
+          //       flipY: object.flipY,
+          //     });
 
-            const tokens = response.headers.get("X-RateLimit-Tokens");
-            console.log("Tokens remaining: " + tokens);
+          //     console.log(newImg.src, object.options.value);
+          //     // Replace the old image with the new one
+          //     // canvas.remove(oldImage);
+          //     canvas.remove(object);
+          //     addToCanvas(newImg);
 
-            const blob = await response.blob();
-
-            const blobUrl = new File(
-              [blob],
-              oldImage.options?.type +
-                ":" +
-                oldImage.options?.value +
-                new Date().getUTCMilliseconds() +
-                ".png",
-              {
-                type: blob.type,
-                lastModified: Date.now(),
-              }
-            );
-
-            const { url: imageUrl, error } = await uploadFile(blobUrl, "image");
-
-            console.log(imageUrl);
-
-            if (error) return;
-            if (!imageUrl) return;
-
-            oldImage.setSrc(
-              imageUrl,
-              function (img) {
-                console.log(img.src)
-                canvas.renderAll();
-              },
-              {
-                crossOrigin: "anonymous",
-              }
-            );
-
-            // oldImage.set({
-            //   src: imageUrl,
-            // })
-            
-            // canvas.renderAll();
-
-            // fabric.Image.fromURL(
-            //   imageUrl,
-            //   (newImg) => {
-            //     newImg.set({
-            //       left: oldImage.left,
-            //       top: oldImage.top,
-            //       angle: oldImage.angle,
-            //       scaleX: oldImage.scaleX,
-            //       scaleY: oldImage.scaleY,
-            //       opacity: oldImage.opacity,
-            //       flipX: oldImage.flipX,
-            //       flipY: oldImage.flipY,
-            //     });
-
-            //     console.log(newImg.left, oldImage.left);
-            //     // Replace the old image with the new one
-            //     // canvas.remove(oldImage);
-            //     addToCanvas(newImg);
-            //     canvas.renderAll();
-            //   },
-            //   {
-            //     crossOrigin: "anonymous",
-            //   }
-            // );
-          } catch (error) {
-            console.log(error);
-          }
-        });
+          //   },
+          //   {
+          //     crossOrigin: "anonymous",
+          //   }
+          // );
+        } catch (error) {
+          console.log(error);
+        }
+      }
     },
     delete: () => {
       canvas.getActiveObjects().forEach((object: fabric.Object) => {

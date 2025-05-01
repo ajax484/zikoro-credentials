@@ -149,8 +149,8 @@ const CertificateView = ({
     const generateImage = async () => {
       try {
         if (editor) {
-          await editor.transformBarCodes(certificate);
-          const src = editor.generateLink(true);
+          // await editor.transformBarCodes(certificate);
+          const src = await editor.generateLink(true);
           setImageSrc(src);
         }
       } catch (error) {
@@ -159,7 +159,7 @@ const CertificateView = ({
     };
 
     generateImage();
-  }, [certificate]); // Add dependencies as needed
+  }, [certificate]);
 
   return (
     <section className="space-y-6">
