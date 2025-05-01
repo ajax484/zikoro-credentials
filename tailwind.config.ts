@@ -17,26 +17,37 @@ const config: Config = {
   		}
   	},
   	extend: {
-  		gradientColorStops: '(theme) => ({\r\n        "custom-gradient-start": "#001FCC",\r\n        "custom-gradient-end": "#9D00FF",\r\n        "custom-bg-gradient-start": "#001FCC19",\r\n        "custom-bg-gradient-end": "#9D00FF19",\r\n        "concert-gradient-start": "rgba(157, 0, 255, 0.14)", // 10% opacity\r\n        "concert-gradient-end": " rgba(255, 255, 255, 0.14)", // 10% opacity\r\n      })',
-  		linearGradientDirections: {
-  			'top-right': 'to top right'
-  		},
-  		linearGradientColors: '(theme: (arg0: string) => any) => ({\r\n        "custom-gradient": [\r\n          theme("colors.custom-gradient-start"),\r\n          theme("colors.custom-gradient-end"),\r\n        ],\r\n      })',
+		fontFamily: {
+			'montserrat': ["var(--font-montserrat)"]
+		  },
+		gradientColorStops: (theme) => ({
+			"custom-gradient-start": "#001FCC",
+			"custom-gradient-end": "#9D00FF",
+			"custom-bg-gradient-start": "#001FCC19",
+			"custom-bg-gradient-end": "#9D00FF19",
+		  }),
+		  linearGradientDirections: {
+			// Define your custom gradient direction
+			"top-right": "to top right",
+		  },
+		  linearGradientColors: (theme: (arg0: string) => any) => ({
+			"custom-gradient": [
+			  theme("colors.custom-gradient-start"),
+			  theme("colors.custom-gradient-end"),
+			],
+		  }),
   		colors: {
-  			zikoroBlue: 'hsl(var(--zblue))',
-  			zikoroBlack: 'hsl(var(--zikoro-black))',
-  			zikoroGrey: 'hsla(var(--zikoro-grey))',
-  			zikoroRed: 'hsl(var(--zikoro-red))',
-  			zikoroGreen: 'hsl(var(--zikoro-green))',
-  			zikoroWhite: 'hsl(var(--zikoro-white))',
-  			zikoroGradient: 'hsl(var(--zikoro-gradient))',
-  			basePrimary: '#001FCC',
-  			ticketColor: '#CFCFCF',
-  			greyBlack: '#0A0E2E',
-  			earlyBirdColor: '#001FCC',
-  			ash: '#717171',
-  			background: 'hsl(var(--zikoro-background))',
-  			foreground: 'hsl(var(--zikoro-foreground))',
+			zikoroBlue: "hsl(var(--zblue))",
+			basePrimary: "#001FCC",
+			basebody: "#f3f3f3",
+			baseBg: "#F9FAFF",
+			ticketColor: "#CFCFCF",
+			greyBlack: "#0A0E2E",
+			earlyBirdColor: "#001FCC",
+			ash: "#717171",
+
+  			background: 'hsl(var(--background))',
+  			foreground: 'hsl(var(--foreground))',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
@@ -76,45 +87,37 @@ const config: Config = {
   				'5': 'hsl(var(--chart-5))'
   			}
   		},
-  		screens: {
-  			xs: '380px'
-  		},
-  		backgroundImage: {
-  			basePrimary: 'linear-gradient(to right, #001FCC 0%, #9D00FF 100%)',
-  			baseLight: 'linear-gradient(to right, #E2E8F0 0%, #D8B4FE 100%)'
-  		},
+		screens:{
+		'xs': '380px'
+		},
+		backgroundImage: {
+			basePrimary: 'linear-gradient(to right, #001FCC 0%, #9D00FF 100%)',
+			baseLight: 'linear-gradient(to right, #E2E8F0 0%, #D8B4FE 100%)'
+		  },
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
-  		fontSize: {
-  			tiny: '10px',
-  			mobile: '13px',
-  			desktop: '15px'
-  		},
-  		keyframes: {
-  			'accordion-down': {
-  				from: {
-  					height: '0'
-  				},
-  				to: {
-  					height: 'var(--radix-accordion-content-height)'
-  				}
-  			},
-  			'accordion-up': {
-  				from: {
-  					height: 'var(--radix-accordion-content-height)'
-  				},
-  				to: {
-  					height: '0'
-  				}
-  			}
-  		},
-  		animation: {
-  			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
-  		}
+		fontSize: {
+		tiny: "10px",
+		mobile: "13px",
+		desktop: "15px",
+		},
+		keyframes: {
+			'slide-in-right': {
+				'0%': { transform: 'translateX(-100%)', opacity: '0', },
+				'100%': { transform: 'translateX(0)', opacity: '1' },
+			},
+			'slide-out-left': {
+				'0%': { transform: 'translateX(0)', opacity: '1' },
+				'100%': { transform: 'translateX(-100%)', opacity: '0', visibility: 'hidden' },
+			},
+			},
+		animation: {
+			'slide-in-right': 'slide-in-right 0.5s ease-in-out forwards',
+			'slide-out-left': 'slide-out-left 0.5s ease-in-out forwards',
+			},
   	}
   },
   plugins: [require("tailwindcss-animate")],
