@@ -471,6 +471,7 @@ const CertificateView = ({
 
   const [imageSrc, setImageSrc] = useState("");
   const [imageIsLoading, setImageIsLoading] = useState(false);
+
   useEffect(() => {
     const generateImage = async () => {
       setImageIsLoading(true);
@@ -569,7 +570,7 @@ const CertificateView = ({
             <span>User View</span>
           </Link>
           <div className="relative h-full w-full flex justify-center items-center flex-1 px-4 py-4">
-          {imageSrc && !imageIsLoading ? (
+          {!imageIsLoading ? (
             <img
               alt="certificate"
               src={imageSrc}
@@ -585,7 +586,7 @@ const CertificateView = ({
               <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid" />
             </div>
           )}
-        </div>F
+        </div>
         </div>
       </section>
       <div className="relative flex gap-4 items-center opacity-0">

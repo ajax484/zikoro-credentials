@@ -180,7 +180,7 @@ const CertificateView = ({
         </div>
 
         <div className="relative h-full w-full flex justify-center items-center flex-1 px-4 py-4">
-          {imageSrc && !imageIsLoading ? (
+          {!imageIsLoading ? (
             <img
               alt="certificate"
               src={imageSrc}
