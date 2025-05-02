@@ -151,8 +151,8 @@ const CertificateView = ({
       setImageIsLoading(true);
       try {
         if (editor) {
-          // await editor.transformBarCodes(certificate);
-          const src = await editor.generateLink(true);
+          await editor.transformBarCodes(certificate);
+          const src = editor.generateLink(true);
           setImageSrc(src);
         }
         setImageIsLoading(false);
@@ -180,7 +180,7 @@ const CertificateView = ({
         </div>
 
         <div className="relative h-full w-full flex justify-center items-center flex-1 px-4 py-4">
-          {imageSrc && !imageIsLoading ? (
+          {imageSrc && (
             <img
               alt="certificate"
               src={imageSrc}
@@ -191,10 +191,6 @@ const CertificateView = ({
                 e.currentTarget.style.display = "none";
               }}
             />
-          ) : (
-            <div className="flex items-center justify-center h-[500px]">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid" />
-            </div>
           )}
         </div>
       </div>

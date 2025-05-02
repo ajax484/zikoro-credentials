@@ -217,7 +217,7 @@ export type BuildEditorProps = {
 };
 
 export interface Editor {
-  generateLink: (isLive?: boolean) => Promise<string>;
+  generateLink: (isLive?: boolean) => string;
   savePdf: (
     { width, height }: { width: number; height: number },
     name?: string
