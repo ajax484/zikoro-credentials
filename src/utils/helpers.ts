@@ -485,3 +485,26 @@ export function openWhatsApp(phoneNumber: string, message: string): void {
   // Open the URL in a new tab or window
   window.open(url, "_blank");
 }
+
+const dpi = 96;
+export const convertToPixels = (value: number, unit: string) => {
+  switch (unit) {
+    case "in":
+      return value * dpi;
+    case "cm":
+      return (value * dpi) / 2.54;
+    default:
+      return value;
+  }
+};
+
+export const convertFromPixels = (pixels: number, unit: string) => {
+  switch (unit) {
+    case "in":
+      return pixels / dpi;
+    case "cm":
+      return (pixels * 2.54) / dpi;
+    default:
+      return pixels;
+  }
+};

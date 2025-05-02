@@ -16,6 +16,8 @@ import {
   SelectContent,
   SelectItem,
   SelectValue,
+  SelectGroup,
+  SelectLabel,
 } from "@/components/ui/select";
 import { Button } from "../ui/button";
 import { PlusCircle } from "lucide-react";
@@ -33,6 +35,9 @@ import {
 import { CertificateTemplate } from "@/types/certificates";
 import { cn } from "@/lib/utils";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { convertToPixels } from "@/utils/helpers";
+import { paperSizes } from "../editor/components/settings-sidebar";
+import { ScrollArea } from "../ui/scroll-area";
 
 export interface CreateCertificateDialogProps {
   open: boolean;
@@ -105,226 +110,230 @@ const CreateCertificateDialog = ({
 
   console.log(templates);
 
+  const [sizing, setSizing] = useState("custom");
+  const [width, setWidth] = useState(900);
+  const [height, setHeight] = useState(1200);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{triggerButton}</DialogTrigger>
       <DialogContent className="max-w-[50%]">
         <DialogHeader>
-          <DialogTitle>Create Certificate</DialogTitle>
+          <DialogTitle>Create Credential</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col gap-2 w-full">
-          <label className="font-medium text-gray-700">Workspace</label>
-          <Select
-            value={credentialType}
-            onValueChange={(value) =>
-              setCredentialType(value as "label" | "certificate" | "badge")
-            }
-          >
-            <SelectTrigger className="w-full rounded-lg bg-white font-medium">
-              <SelectValue placeholder={"Select type"} />
-            </SelectTrigger>
-            <SelectContent>
-              {["label", "certificate", "badge"].map((type, index) => (
-                <SelectItem value={type} key={index}>
-                  {type}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex flex-col gap-2 w-full">
-          <label className="font-medium text-gray-700">Workspace</label>
-          <Select
-            value={`${height},${width},${sizing}`}
-            onValueChange={(value) => {
-              const [height, width, sizing] = value.split(",");
-              const heightInPixels = convertToPixels(Number(height), "cm");
-              const widthInPixels = convertToPixels(Number(width), "cm");
-              setHeight(heightInPixels);
-              setWidth(widthInPixels);
-              editor?.changeSize({
-                width: widthInPixels,
-                height: heightInPixels,
-              });
-              setSizing(sizing);
-            }}
-          >
-            <SelectTrigger className="w-full rounded-lg text-sm font-medium bg-transparent">
-              <SelectValue placeholder="Select paper size" />
-            </SelectTrigger>
-            <SelectContent className="z-[1001]">
-              {/* Grouped Paper Sizes */}
-              {paperSizes.map((seriesGroup) => (
-                <SelectGroup key={seriesGroup.series}>
-                  <SelectLabel>{seriesGroup.series}</SelectLabel>
-                  {seriesGroup.sizes.map(({ height, width, label, value }) => (
-                    <SelectItem
-                      key={value}
-                      value={`${height},${width},${value}`}
-                    >
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <RadioGroup
-          onValueChange={(value) => {
-            setSelectedTemplate(null);
-            setType(value);
-          }}
-          defaultValue={type}
-          className="flex items-center gap-6 font-semibold"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem
-              className="data-[state=checked]:!fill-basePrimary"
-              value={"template"}
-              id={"template"}
-            />
-            <Label htmlFor={"template"}>Start with a Template</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem
-              className="data-[state=checked]:!fill-basePrimary"
-              value={"scratch"}
-              id={"scratch"}
-            />
-            <Label htmlFor={"scratch"}>Create from Scratch</Label>
-          </div>
-        </RadioGroup>
-        <div>
-          <AnimatePresence>
-            {type === "template" ? (
-              <motion.div
-                key="templates"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "300px", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="w-full bg-[#f7f8f9] rounded-lg flex items-center justify-center"
-              >
-                <Carousel className="w-full" setApi={setApi}>
-                  <CarouselContent className="-ml-1 relative px-4">
-                    {templates?.map((template, index) => (
-                      <CarouselItem
-                        key={index}
-                        className="pl-1 md:basis-1/2 lg:basis-1/3"
-                      >
-                        <button
-                          onClick={() => setSelectedTemplate(template)}
-                          aria-label={template.name}
-                          key={template.id}
-                          className={cn(
-                            "group relative h-[250px] w-full overflow-hidden border bg-muted transition rounded-lg",
-                            selectedTemplate?.id === template.id &&
-                              "border-basePrimary"
-                          )}
-                        >
-                          <img
-                            src={template.previewUrl}
-                            alt={"Image " + index}
-                            className="object-fill"
-                          />
-                        </button>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <button
-                    aria-label="Previous"
-                    className="bg-white border p-4 rounded-full z-[999] absolute -translate-y-1/2 top-1/2 -left-2"
-                    onClick={() => api?.scrollPrev()}
-                  >
-                    <CaretLeft className="size-4" />
-                  </button>
-                  <button
-                    aria-label="Next"
-                    className="bg-white border p-4 rounded-full z-[999] absolute -translate-y-1/2 top-1/2 -right-2"
-                    onClick={() => api?.scrollNext()}
-                  >
-                    <CaretRight className="size-4" />
-                  </button>
-                </Carousel>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
-        </div>
-        <div className="space-y-6">
-          <div className="flex flex-col gap-2 w-full">
-            <label className="font-medium text-gray-700">
-              Certificate Name
-            </label>
-            <Input
-              type="text"
-              placeholder="Enter certificate name"
-              className=" placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-              onInput={(e) => setName(e.currentTarget.value)}
-              value={name}
-            />
-          </div>
+        <ScrollArea className="max-h-[90vh] space-y-2 no-scrollbar">
           <div className="flex flex-col gap-2 w-full">
             <label className="font-medium text-gray-700">Workspace</label>
-            <div className="flex items-center gap-4">
-              <Select
-                disabled={workspacesIsLoading}
-                value={String(workspace?.id)}
-                onValueChange={(value) =>
-                  updateWorkspace(
-                    workspaces?.find(({ id }) => id === parseInt(value))!
-                  )
-                }
-              >
-                <SelectTrigger className="w-full rounded-lg bg-white font-medium">
-                  <SelectValue placeholder={"Select workspace"} />
-                </SelectTrigger>
-                <SelectContent>
-                  {workspaces?.map(({ id, organizationName }) => (
-                    <SelectItem value={String(id)} key={id}>
-                      {organizationName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button
-                onClick={() => setDialogIsOpen(true)}
-                className="bg-basePrimary gap-x-2 py-1 text-gray-50 font-medium flex items-center justify-center rounded-lg w-fit text-xs"
-              >
-                <span>New Workspace</span>
-                <PlusCircle className="w-4 h-4" />
-              </Button>
+            <Select
+              value={credentialType}
+              onValueChange={(value) =>
+                setCredentialType(value as "label" | "certificate" | "badge")
+              }
+            >
+              <SelectTrigger className="w-full rounded-lg bg-white font-medium">
+                <SelectValue placeholder={"Select type"} />
+              </SelectTrigger>
+              <SelectContent>
+                {["label", "certificate", "badge"].map((type, index) => (
+                  <SelectItem value={type} key={index}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-2 w-full">
+            <label className="font-medium text-gray-700">Sizing</label>
+            <Select
+              value={`${height},${width},${sizing}`}
+              onValueChange={(value) => {
+                const [height, width, sizing] = value.split(",");
+                const heightInPixels = convertToPixels(Number(height), "cm");
+                const widthInPixels = convertToPixels(Number(width), "cm");
+                setHeight(heightInPixels);
+                setWidth(widthInPixels);
+                setSizing(sizing);
+              }}
+            >
+              <SelectTrigger className="w-full rounded-lg text-sm font-medium bg-transparent">
+                <SelectValue placeholder="Select paper size" />
+              </SelectTrigger>
+              <SelectContent className="z-[1001]">
+                {/* Grouped Paper Sizes */}
+                {paperSizes.map((seriesGroup) => (
+                  <SelectGroup key={seriesGroup.series}>
+                    <SelectLabel>{seriesGroup.series}</SelectLabel>
+                    {seriesGroup.sizes.map(
+                      ({ height, width, label, value }) => (
+                        <SelectItem
+                          key={value}
+                          value={`${height},${width},${value}`}
+                        >
+                          {label}
+                        </SelectItem>
+                      )
+                    )}
+                  </SelectGroup>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <RadioGroup
+            onValueChange={(value) => {
+              setSelectedTemplate(null);
+              setType(value);
+            }}
+            defaultValue={type}
+            className="flex items-center gap-6 font-semibold"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem
+                className="data-[state=checked]:!fill-basePrimary"
+                value={"template"}
+                id={"template"}
+              />
+              <Label htmlFor={"template"}>Start with a Template</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem
+                className="data-[state=checked]:!fill-basePrimary"
+                value={"scratch"}
+                id={"scratch"}
+              />
+              <Label htmlFor={"scratch"}>Create from Scratch</Label>
+            </div>
+          </RadioGroup>
+          <div>
+            <AnimatePresence>
+              {type === "template" ? (
+                <motion.div
+                  key="templates"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "300px", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="w-full bg-[#f7f8f9] rounded-lg flex items-center justify-center"
+                >
+                  <Carousel className="w-full" setApi={setApi}>
+                    <CarouselContent className="-ml-1 relative px-4">
+                      {templates?.map((template, index) => (
+                        <CarouselItem
+                          key={index}
+                          className="pl-1 md:basis-1/2 lg:basis-1/3"
+                        >
+                          <button
+                            onClick={() => setSelectedTemplate(template)}
+                            aria-label={template.name}
+                            key={template.id}
+                            className={cn(
+                              "group relative h-[250px] w-full overflow-hidden border bg-muted transition rounded-lg",
+                              selectedTemplate?.id === template.id &&
+                                "border-basePrimary"
+                            )}
+                          >
+                            <img
+                              src={template.previewUrl}
+                              alt={"Image " + index}
+                              className="object-fill"
+                            />
+                          </button>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <button
+                      aria-label="Previous"
+                      className="bg-white border p-4 rounded-full z-[999] absolute -translate-y-1/2 top-1/2 -left-2"
+                      onClick={() => api?.scrollPrev()}
+                    >
+                      <CaretLeft className="size-4" />
+                    </button>
+                    <button
+                      aria-label="Next"
+                      className="bg-white border p-4 rounded-full z-[999] absolute -translate-y-1/2 top-1/2 -right-2"
+                      onClick={() => api?.scrollNext()}
+                    >
+                      <CaretRight className="size-4" />
+                    </button>
+                  </Carousel>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          </div>
+          <div className="space-y-6">
+            <div className="flex flex-col gap-2 w-full">
+              <label className="font-medium text-gray-700">
+                Certificate Name
+              </label>
+              <Input
+                type="text"
+                placeholder="Enter certificate name"
+                className=" placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+                onInput={(e) => setName(e.currentTarget.value)}
+                value={name}
+              />
+            </div>
+            <div className="flex flex-col gap-2 w-full">
+              <label className="font-medium text-gray-700">Workspace</label>
+              <div className="flex items-center gap-4">
+                <Select
+                  disabled={workspacesIsLoading}
+                  value={String(workspace?.id)}
+                  onValueChange={(value) =>
+                    updateWorkspace(
+                      workspaces?.find(({ id }) => id === parseInt(value))!
+                    )
+                  }
+                >
+                  <SelectTrigger className="w-full rounded-lg bg-white font-medium">
+                    <SelectValue placeholder={"Select workspace"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {workspaces?.map(({ id, organizationName }) => (
+                      <SelectItem value={String(id)} key={id}>
+                        {organizationName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  onClick={() => setDialogIsOpen(true)}
+                  className="bg-basePrimary gap-x-2 py-1 text-gray-50 font-medium flex items-center justify-center rounded-lg w-fit text-xs"
+                >
+                  <span>New Workspace</span>
+                  <PlusCircle className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-        <DialogFooter>
-          <Button
-            onClick={() => {
-              workspace &&
-                createCertificateFn({
-                  name,
-                  workspace,
-                  JSON: selectedTemplate?.JSON || null,
-                  type: credentialType,
-                });
-              setOpen(false);
-            }}
-            disabled={
-              certificateIsCreating ||
-              name === "" ||
-              !workspace ||
-              (selectedTemplate === null && type === "template")
-            }
-            className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-lg text-gray-50 font-medium"
-          >
-            {certificateIsCreating && (
-              <LoaderAlt size={22} className="animate-spin" />
-            )}
-            <span>Create Certificate</span>
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                workspace &&
+                  createCertificateFn({
+                    name,
+                    workspace,
+                    JSON: selectedTemplate?.JSON || null,
+                    type: credentialType,
+                  });
+                setOpen(false);
+              }}
+              disabled={
+                certificateIsCreating ||
+                name === "" ||
+                !workspace ||
+                (selectedTemplate === null && type === "template")
+              }
+              className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-lg text-gray-50 font-medium"
+            >
+              {certificateIsCreating && (
+                <LoaderAlt size={22} className="animate-spin" />
+              )}
+              <span>Create Certificate</span>
+            </Button>
+          </DialogFooter>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

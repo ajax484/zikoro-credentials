@@ -20,8 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { convertFromPixels, convertToPixels } from "@/utils/helpers";
 
-const paperSizes = [
+export const paperSizes = [
   {
     series: "ISO B Series",
     sizes: [
@@ -73,6 +74,10 @@ const paperSizes = [
     ],
   },
   {
+    series: "Label",
+    sizes: [],
+  },
+  {
     series: "custom",
     sizes: [{ height: 100, width: 100, label: "Custom", value: "custom" }],
   },
@@ -99,30 +104,6 @@ export const SettingsSidebar = ({
 }: SettingsSidebarProps) => {
   const workspace = editor?.getWorkspace();
   const [unit, setUnit] = useState<"px" | "in" | "cm">("px");
-  const dpi = 96; // Default screen DPI
-
-  // Conversion functions
-  const convertToPixels = (value: number, unit: string) => {
-    switch (unit) {
-      case "in":
-        return value * dpi;
-      case "cm":
-        return (value * dpi) / 2.54;
-      default:
-        return value;
-    }
-  };
-
-  const convertFromPixels = (pixels: number, unit: string) => {
-    switch (unit) {
-      case "in":
-        return pixels / dpi;
-      case "cm":
-        return (pixels * 2.54) / dpi;
-      default:
-        return pixels;
-    }
-  };
 
   // Initialize with pixel values from workspace
   const initialWidth = useMemo(() => workspace?.width ?? 0, [workspace]);
