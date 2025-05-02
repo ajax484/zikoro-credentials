@@ -136,112 +136,112 @@ const buildEditor = ({
   };
 
   const generateLink = async (isLive = false) => {
-    const objects = canvas
-      .getObjects()
-      // .forEach((object) => console.log(object.isBarCode))
-      .filter(
-        (object) => object instanceof fabric.Image && object.options?.isBarCode
-      );
+    // const objects = canvas
+    //   .getObjects()
+    //   // .forEach((object) => console.log(object.isBarCode))
+    //   .filter(
+    //     (object) => object instanceof fabric.Image && object.options?.isBarCode
+    //   );
 
-    for (const object of objects) {
-      try {
-        console.log(object.options);
-        let text = object.options?.value;
+    // for (const object of objects) {
+    //   try {
+    //     console.log(object.options);
+    //     let text = object.options?.value;
 
-        // if (object.options?.barCodeFunction === "verify") {
-        //   text = `https://credentials.zikoro.com/credentials/verify/certificate/${certificate.certificateId}`;
-        // }
+    //     // if (object.options?.barCodeFunction === "verify") {
+    //     //   text = `https://credentials.zikoro.com/credentials/verify/certificate/${certificate.certificateId}`;
+    //     // }
 
-        // if (object.options?.barCodeFunction === "attribute") {
-        //   text = certificate?.metadata[object.options?.value];
-        // }
+    //     // if (object.options?.barCodeFunction === "attribute") {
+    //     //   text = certificate?.metadata[object.options?.value];
+    //     // }
 
-        console.log(text);
+    //     console.log(text);
 
-        const url = `https://barcodeapi.org/api/${
-          object.options?.barCodeType
-        }/${encodeURIComponent(text)}`;
+    //     const url = `https://barcodeapi.org/api/${
+    //       object.options?.barCodeType
+    //     }/${encodeURIComponent(text)}`;
 
-        console.log(url);
-        const response = await fetch(url, { cache: "no-store" });
+    //     console.log(url);
+    //     const response = await fetch(url, { cache: "no-store" });
 
-        const tokens = response.headers.get("X-RateLimit-Tokens");
-        console.log("Tokens remaining: " + tokens);
+    //     const tokens = response.headers.get("X-RateLimit-Tokens");
+    //     console.log("Tokens remaining: " + tokens);
 
-        const blob = await response.blob();
+    //     const blob = await response.blob();
 
-        const blobUrl = new File(
-          [blob],
-          object.options?.type +
-            ":" +
-            object.options?.value +
-            new Date().getUTCMilliseconds() +
-            ".png",
-          {
-            type: blob.type,
-            lastModified: Date.now(),
-          }
-        );
+    //     const blobUrl = new File(
+    //       [blob],
+    //       object.options?.type +
+    //         ":" +
+    //         object.options?.value +
+    //         new Date().getUTCMilliseconds() +
+    //         ".png",
+    //       {
+    //         type: blob.type,
+    //         lastModified: Date.now(),
+    //       }
+    //     );
 
-        const { url: imageUrl, error } = await uploadFile(blobUrl, "image");
+    //     const { url: imageUrl, error } = await uploadFile(blobUrl, "image");
 
-        console.log(imageUrl);
+    //     console.log(imageUrl);
 
-        if (error) return;
-        if (!imageUrl) return;
+    //     if (error) return;
+    //     if (!imageUrl) return;
 
-        object.set({
-          src: imageUrl,
-        });
+    //     object.set({
+    //       src: imageUrl,
+    //     });
 
-        object.setSrc(
-          imageUrl,
-          function (img) {
-            console.log(img.src);
-            canvas.renderAll();
-          },
-          {
-            crossOrigin: "anonymous",
-          }
-        );
+    //     object.setSrc(
+    //       imageUrl,
+    //       function (img) {
+    //         console.log(img.src);
+    //         canvas.renderAll();
+    //       },
+    //       {
+    //         crossOrigin: "anonymous",
+    //       }
+    //     );
 
-        // oldImage.set({
-        //   src: imageUrl,
-        // })
+    //     // oldImage.set({
+    //     //   src: imageUrl,
+    //     // })
 
-        // canvas.renderAll();
+    //     // canvas.renderAll();
 
-        // fabric.Image.fromURL(
-        //   imageUrl,
-        //   (newImg) => {
-        //     newImg.set({
-        //       left: object.left,
-        //       top: object.top,
-        //       angle: object.angle,
-        //       scaleX: object.scaleX,
-        //       scaleY: object.scaleY,
-        //       opacity: object.opacity,
-        //       flipX: object.flipX,
-        //       flipY: object.flipY,
-        //     });
+    //     // fabric.Image.fromURL(
+    //     //   imageUrl,
+    //     //   (newImg) => {
+    //     //     newImg.set({
+    //     //       left: object.left,
+    //     //       top: object.top,
+    //     //       angle: object.angle,
+    //     //       scaleX: object.scaleX,
+    //     //       scaleY: object.scaleY,
+    //     //       opacity: object.opacity,
+    //     //       flipX: object.flipX,
+    //     //       flipY: object.flipY,
+    //     //     });
 
-        //     console.log(newImg.src, object.options.value);
-        //     // Replace the old image with the new one
-        //     // canvas.remove(oldImage);
-        //     canvas.remove(object);
-        //     addToCanvas(newImg);
+    //     //     console.log(newImg.src, object.options.value);
+    //     //     // Replace the old image with the new one
+    //     //     // canvas.remove(oldImage);
+    //     //     canvas.remove(object);
+    //     //     addToCanvas(newImg);
 
-        //   },
-        //   {
-        //     crossOrigin: "anonymous",
-        //   }
-        // );
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    //     //   },
+    //     //   {
+    //     //     crossOrigin: "anonymous",
+    //     //   }
+    //     // );
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }
 
-    const options = generateSaveOptions();
+    // const options = generateSaveOptions();
 
     isLive && canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
     const dataUrl = canvas.toDataURL(options);
