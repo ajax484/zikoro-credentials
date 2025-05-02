@@ -548,7 +548,7 @@ const Issue = ({
     );
     if (!certificate) return "bronze";
 
-    return certificate?.attributes.length > 0
+    return certificate?.attributes?.length > 0
       ? "gold"
       : certificate?.hasQRCode
       ? "silver"

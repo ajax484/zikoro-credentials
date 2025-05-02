@@ -132,6 +132,46 @@ const CreateCertificateDialog = ({
             </SelectContent>
           </Select>
         </div>
+
+        <div className="flex flex-col gap-2 w-full">
+          <label className="font-medium text-gray-700">Workspace</label>
+          <Select
+            value={`${height},${width},${sizing}`}
+            onValueChange={(value) => {
+              const [height, width, sizing] = value.split(",");
+              const heightInPixels = convertToPixels(Number(height), "cm");
+              const widthInPixels = convertToPixels(Number(width), "cm");
+              setHeight(heightInPixels);
+              setWidth(widthInPixels);
+              editor?.changeSize({
+                width: widthInPixels,
+                height: heightInPixels,
+              });
+              setSizing(sizing);
+            }}
+          >
+            <SelectTrigger className="w-full rounded-lg text-sm font-medium bg-transparent">
+              <SelectValue placeholder="Select paper size" />
+            </SelectTrigger>
+            <SelectContent className="z-[1001]">
+              {/* Grouped Paper Sizes */}
+              {paperSizes.map((seriesGroup) => (
+                <SelectGroup key={seriesGroup.series}>
+                  <SelectLabel>{seriesGroup.series}</SelectLabel>
+                  {seriesGroup.sizes.map(({ height, width, label, value }) => (
+                    <SelectItem
+                      key={value}
+                      value={`${height},${width},${value}`}
+                    >
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <RadioGroup
           onValueChange={(value) => {
             setSelectedTemplate(null);
