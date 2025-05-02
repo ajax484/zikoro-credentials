@@ -79,10 +79,12 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
     name,
     workspace,
     JSON,
+    credentialType,
   }: {
     name: string;
     workspace: TOrganization;
     JSON: Record<string, any> | null;
+    credentialType: "label" | "certificate" | "badge";
   }) => {
     if (!organization) return toast.error("Please select an organization");
     const data = await createCertificate({
@@ -91,6 +93,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
       createdBy: user?.id!,
       JSON,
       hasQRCode: !!JSON,
+      credentialType,
     });
 
     console.log(data);
@@ -370,9 +373,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                       <div className="absolute inset-0 p-2 bg-zikoroBlack/80 group-hover:flex hidden z-10 group-hover:gap-8 group-hover:justify-center group-hover:items-center rounded-lg">
                         <div className="flex flex-col gap-2 items-center">
                           <div className="text-white font-medium text-center flex flex-col items-center gap-2">
-                            <span className="text-sm">
-                              Continue editing
-                            </span>
+                            <span className="text-sm">Continue editing</span>
                             <span className="underline underline-offset-2 text-xl">
                               {recentCertificate?.name}
                             </span>

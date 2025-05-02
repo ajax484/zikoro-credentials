@@ -392,15 +392,15 @@ const CertificateView = ({
     showShareDropDown((prev) => !prev);
   }
 
-  // useEffect(() => {
-  //   const timeout = setTimeout(() => {
-  //     toggleShareDropDown();
-  //   }, 1500);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      toggleShareDropDown();
+    }, 1500);
 
-  //   return () => {
-  //     clearTimeout(timeout);
-  //   };
-  // }, []);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
 
   const [isLoading, setIsLoading] = useState(false);
 

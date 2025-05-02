@@ -45,7 +45,7 @@ export interface TCertificate {
   attributes: string[];
   hasQRCode: boolean;
   assets: TCertificateAssets[];
-  type: "badge" | "certificate" | "label";
+  credentialType: "badge" | "certificate" | "label";
 }
 
 export interface TCertificateAssets {
