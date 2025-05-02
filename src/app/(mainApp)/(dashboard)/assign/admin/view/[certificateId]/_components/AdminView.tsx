@@ -469,18 +469,21 @@ const CertificateView = ({
     }
   };
 
-  const [imageSrc, setImageSrc] = useState<string>("");
-
+  const [imageSrc, setImageSrc] = useState("");
+  const [imageIsLoading, setImageIsLoading] = useState(false);
   useEffect(() => {
     const generateImage = async () => {
+      setImageIsLoading(true);
       try {
         if (editor) {
           // await editor.transformBarCodes(certificate);
           const src = await editor.generateLink(true);
           setImageSrc(src);
         }
+        setImageIsLoading(false);
       } catch (error) {
         console.error("Error generating certificate image:", error);
+        setImageIsLoading(false);
       }
     };
 
@@ -565,14 +568,24 @@ const CertificateView = ({
             <Eye className="size-4" />
             <span>User View</span>
           </Link>
-          <div className="relative h-full w-full flex justify-center items-center flex-1">
+          <div className="relative h-full w-full flex justify-center items-center flex-1 px-4 py-4">
+          {imageSrc && !imageIsLoading ? (
             <img
               alt="certificate"
               src={imageSrc}
               style={{ width: "50%" }}
               className="h-auto"
-            />{" "}
-          </div>
+              onError={(e) => {
+                console.error("Failed to load certificate image");
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-[500px]">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid" />
+            </div>
+          )}
+        </div>F
         </div>
       </section>
       <div className="relative flex gap-4 items-center opacity-0">
