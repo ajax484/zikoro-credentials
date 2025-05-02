@@ -469,6 +469,24 @@ const CertificateView = ({
     }
   };
 
+  const [imageSrc, setImageSrc] = useState<string>("");
+
+  useEffect(() => {
+    const generateImage = async () => {
+      try {
+        if (editor) {
+          // await editor.transformBarCodes(certificate);
+          const src = await editor.generateLink(true);
+          setImageSrc(src);
+        }
+      } catch (error) {
+        console.error("Error generating certificate image:", error);
+      }
+    };
+
+    generateImage();
+  }, [certificate]);
+
   return (
     <section className="space-y-4">
       <section className="flex items-center justify-between">
@@ -550,7 +568,7 @@ const CertificateView = ({
           <div className="relative h-full w-full flex justify-center items-center flex-1">
             <img
               alt="certificate"
-              src={editor?.generateLink(true)}
+              src={imageSrc}
               style={{ width: "50%" }}
               className="h-auto"
             />{" "}

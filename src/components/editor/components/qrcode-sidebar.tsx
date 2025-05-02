@@ -261,6 +261,8 @@ export const QRCodeSidebar = ({
     }
   }, [barCodeFunction]);
 
+  const [inputType, setInputType] = useState<"text" | "number">("text");
+
   return (
     <aside
       className={cn(
@@ -335,21 +337,40 @@ export const QRCodeSidebar = ({
               </div>
             </div>
             {barCodeFunction === "custom" && (
-              <FormField
-                name={"text" as const}
-                render={({ field }) => (
-                  <FormItem className="space-y-1">
-                    <FormLabel className="text-gray-700">Text</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="enter text"
-                        value={field.value}
-                        onChange={(e) => field.onChange(e.target.value)}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+              <>
+                <div className="flex justify-center items-center">
+                  {["text", "number"].map((type, index) => (
+                    <button
+                      key={index}
+                      className={cn(
+                        `w-fit py-2 px-6 text-center border border-basePrimary text-sm`,
+                        inputType === type
+                          ? "text-white bg-basePrimary"
+                          : "text-basePrimary bg-transparent"
+                      )}
+                      onClick={() => setInputType(type as "text" | "number")}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
+                <FormField
+                  name={"text" as const}
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-gray-700">Text</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder={inputType === "text" ? "enter text" : ""}
+                          value={field.value}
+                          onChange={(e) => field.onChange(e.target.value)}
+                          type={inputType}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </>
             )}
             {barCodeFunction === "attribute" && (
               <FormField

@@ -45,6 +45,7 @@ export interface CreateCertificateDialogProps {
     name: string;
     workspace: TOrganization;
     JSON: Record<string, any> | null;
+    type: "label" | "certificate" | "badge";
   }) => void;
   certificateIsCreating: boolean;
   setDialogIsOpen: (open: boolean) => void;
@@ -98,6 +99,9 @@ const CreateCertificateDialog = ({
   const [selectedTemplate, setSelectedTemplate] =
     useState<CertificateTemplate | null>(null);
   const [type, setType] = useState<string>("template");
+  const [credentialType, setCredentialType] = useState<
+    "label" | "certificate" | "badge"
+  >("certificate");
 
   console.log(templates);
 
@@ -108,6 +112,26 @@ const CreateCertificateDialog = ({
         <DialogHeader>
           <DialogTitle>Create Certificate</DialogTitle>
         </DialogHeader>
+        <div className="flex flex-col gap-2 w-full">
+          <label className="font-medium text-gray-700">Workspace</label>
+          <Select
+            value={credentialType}
+            onValueChange={(value) =>
+              setCredentialType(value as "label" | "certificate" | "badge")
+            }
+          >
+            <SelectTrigger className="w-full rounded-lg bg-white font-medium">
+              <SelectValue placeholder={"Select type"} />
+            </SelectTrigger>
+            <SelectContent>
+              {["label", "certificate", "badge"].map((type, index) => (
+                <SelectItem value={type} key={index}>
+                  {type}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <RadioGroup
           onValueChange={(value) => {
             setSelectedTemplate(null);
@@ -243,6 +267,7 @@ const CreateCertificateDialog = ({
                   name,
                   workspace,
                   JSON: selectedTemplate?.JSON || null,
+                  type: credentialType,
                 });
               setOpen(false);
             }}

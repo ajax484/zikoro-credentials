@@ -63,6 +63,7 @@ const CreateCredentialsPage = ({
       await deletePreviousUrl({
         payload: {},
       });
+    console.log(url);
     base64ToFile(url, name + ".png");
     const { url: imageUrl, error } = await uploadFile(url, "image");
     if (error) return;

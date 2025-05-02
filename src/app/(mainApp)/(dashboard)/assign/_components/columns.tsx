@@ -315,7 +315,7 @@ export const issueesColumns: ColumnDef<
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <span>Download as PDF</span>
+                <span>Print</span>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
