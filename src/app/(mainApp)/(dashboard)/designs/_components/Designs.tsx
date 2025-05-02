@@ -62,12 +62,12 @@ const Designs = () => {
     name,
     workspace,
     JSON,
-    type
+    credentialType,
   }: {
     name: string;
     workspace: TOrganization;
     JSON: Record<string, any> | null;
-    type: "label" | "certificate" | "badge";
+    credentialType: "label" | "certificate" | "badge";
   }) => {
     if (!organization) return toast.error("Please select an organization");
     console.log(JSON);
@@ -77,7 +77,7 @@ const Designs = () => {
       createdBy: user?.id!,
       JSON,
       hasQRCode: !!JSON,
-      type,
+      credentialType,
     });
 
     console.log(data);
