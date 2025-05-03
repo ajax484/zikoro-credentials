@@ -3,7 +3,12 @@ import { formatDateToHumanReadable } from "@/utils/date";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 // import { exportComponentAsPNG } from "react-component-export-image";
-import { replaceSpecialText, replaceURIVariable } from "@/utils/helpers";
+import {
+  base64ToFile,
+  replaceSpecialText,
+  replaceURIVariable,
+  uploadFile,
+} from "@/utils/helpers";
 import { toast } from "@/hooks/use-toast";
 import { fabric } from "fabric";
 import {
@@ -153,7 +158,15 @@ const CertificateView = ({
         if (editor) {
           await editor.transformBarCodes();
           const src = editor.generateLink(true);
-          setImageSrc(src);
+
+          base64ToFile(
+            src,
+            certificate.recipientEmail + "-" + new Date().getTime() + ".png"
+          );
+          const { url: imageUrl, error } = await uploadFile(src, "image");
+          if (error) return;
+          if (!imageUrl) return;
+          setImageSrc(imageUrl);
         }
         setImageIsLoading(false);
       } catch (error) {
