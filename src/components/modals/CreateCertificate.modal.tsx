@@ -94,7 +94,7 @@ const CreateCertificateDialog = ({
     organization
   );
 
-  const [name, setName] = useState<string>("Untitled Certificate");
+  const [name, setName] = useState<string>("Untitled credential");
 
   const updateWorkspace = (workspace: TOrganization | null) => {
     setWorkspace(workspace);
@@ -105,10 +105,10 @@ const CreateCertificateDialog = ({
     useState<CertificateTemplate | null>(null);
   const [type, setType] = useState<string>("template");
   const [credentialType, setCredentialType] = useState<
-    "label" | "certificate" | "badge"
+    "product label" | "certificate" | "badge" | "shipping label"
   >("certificate");
 
-  console.log(templates);
+  console.log(templates[0]?.JSON);
 
   const [sizing, setSizing] = useState("custom");
   const [width, setWidth] = useState(900);
@@ -130,7 +130,13 @@ const CreateCertificateDialog = ({
               <Select
                 value={credentialType}
                 onValueChange={(value) =>
-                  setCredentialType(value as "label" | "certificate" | "badge")
+                  setCredentialType(
+                    value as
+                      | "product label"
+                      | "certificate"
+                      | "badge"
+                      | "shipping label"
+                  )
                 }
               >
                 <SelectTrigger className="w-full rounded-lg bg-white font-medium">
@@ -140,7 +146,8 @@ const CreateCertificateDialog = ({
                   {[
                     { label: "Certificate", value: "certificate" },
                     { label: "Event Badge", value: "badge" },
-                    { label: "Product Label", value: "label" },
+                    { label: "Product Label", value: "product label" },
+                    { label: "Shipping Label", value: "shipping label" },
                   ].map((type, index) => (
                     <SelectItem value={type.value} key={index}>
                       {type.label}
@@ -320,7 +327,11 @@ const CreateCertificateDialog = ({
                     createCertificateFn({
                       name,
                       workspace,
-                      JSON: selectedTemplate?.JSON || null,
+                      JSON: {
+                        json: JSON.stringify(selectedTemplate?.JSON) || null,
+                        width: 900,
+                        height: 1200,
+                      },
                       credentialType,
                     });
                   setOpen(false);

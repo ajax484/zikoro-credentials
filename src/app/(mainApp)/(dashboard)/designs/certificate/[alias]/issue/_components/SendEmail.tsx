@@ -100,7 +100,7 @@ const CreateTemplateDialog = ({
     organization
   );
 
-  const [name, setName] = useState<string>("Untitled Certificate");
+  const [name, setName] = useState<string>("Untitled credential");
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

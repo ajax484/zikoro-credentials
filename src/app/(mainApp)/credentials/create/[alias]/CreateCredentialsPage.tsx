@@ -99,7 +99,7 @@ const CreateCredentialsPage = ({
     isAlias: true,
   });
 
-  const [name, setName] = useState<string>("Untitled Certificate");
+  const [name, setName] = useState<string>("Untitled credential");
 
   const [attributes, setAttributes] = useState<string[]>([]);
 

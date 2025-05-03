@@ -258,7 +258,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                       className="rounded-full"
                     />
                     <p className="font-semibold text-zikoroBlack">
-                      Create new certificate
+                      Create new credential
                     </p>
                   </button>
                 }
