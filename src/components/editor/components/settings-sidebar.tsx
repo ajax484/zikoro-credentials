@@ -21,65 +21,266 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { convertFromPixels, convertToPixels } from "@/utils/helpers";
+import { se } from "date-fns/locale";
+
+export const paperSeries: string[] = [
+  "iso b series",
+  "iso a series",
+  "north american",
+  "large format",
+  "label",
+  "custom",
+];
 
 export const paperSizes = [
   {
-    series: "ISO B Series",
-    sizes: [
-      { height: 141.4, width: 100.0, label: "B0", value: "b0" },
-      { height: 100.0, width: 70.7, label: "B1", value: "b1" },
-      { height: 70.7, width: 50.0, label: "B2", value: "b2" },
-      { height: 50.0, width: 35.3, label: "B3", value: "b3" },
-      { height: 35.3, width: 25.0, label: "B4", value: "b4" },
-      { height: 25.0, width: 17.6, label: "B5", value: "b5" },
-      { height: 17.6, width: 12.5, label: "B6", value: "b6" },
-      { height: 12.5, width: 8.8, label: "B7", value: "b7" },
-      { height: 8.8, width: 6.2, label: "B8", value: "b8" },
-      { height: 6.2, width: 4.4, label: "B9", value: "b9" },
-      { height: 4.4, width: 3.1, label: "B10", value: "b10" },
-    ],
+    height: 141.4,
+    width: 100.0,
+    label: "B0",
+    sizing: "b0",
+    series: "iso b series",
   },
   {
-    series: "ISO A Series",
-    sizes: [
-      { height: 118.9, width: 84.1, label: "A0", value: "a0" },
-      { height: 84.1, width: 59.4, label: "A1", value: "a1" },
-      { height: 59.4, width: 42.0, label: "A2", value: "a2" },
-      { height: 42.0, width: 29.7, label: "A3", value: "a3" },
-      { height: 29.7, width: 21.0, label: "A4", value: "a4" },
-      { height: 21.0, width: 14.8, label: "A5", value: "a5" },
-      { height: 14.8, width: 10.5, label: "A6", value: "a6" },
-      { height: 10.5, width: 7.4, label: "A7", value: "a7" },
-      { height: 7.4, width: 5.2, label: "A8", value: "a8" },
-      { height: 5.2, width: 3.7, label: "A9", value: "a9" },
-      { height: 3.7, width: 2.6, label: "A10", value: "a10" },
-    ],
+    height: 100.0,
+    width: 70.7,
+    label: "B1",
+    sizing: "b1",
+    series: "iso b series",
   },
   {
-    series: "North American",
-    sizes: [
-      { height: 43.2, width: 27.9, label: "Ledger", value: "ledger" },
-      { height: 43.2, width: 27.9, label: "Tabloid", value: "tabloid" },
-      { height: 35.6, width: 21.6, label: "Legal", value: "legal" },
-      { height: 27.9, width: 21.6, label: "Letter", value: "letter" },
-      { height: 26.7, width: 18.4, label: "Executive", value: "executive" },
-    ],
+    height: 70.7,
+    width: 50.0,
+    label: "B2",
+    sizing: "b2",
+    series: "iso b series",
   },
   {
-    series: "Large Format",
-    sizes: [
-      { height: 91.4, width: 66.0, label: "A1+", value: "a1_plus" },
-      { height: 60.9, width: 45.7, label: "A2+", value: "a2_plus" },
-      { height: 48.3, width: 32.9, label: "A3+", value: "a3_plus" },
-    ],
+    height: 50.0,
+    width: 35.3,
+    label: "B3",
+    sizing: "b3",
+    series: "iso b series",
   },
   {
-    series: "Label",
-    sizes: [],
+    height: 35.3,
+    width: 25.0,
+    label: "B4",
+    sizing: "b4",
+    series: "iso b series",
   },
   {
+    height: 25.0,
+    width: 17.6,
+    label: "B5",
+    sizing: "b5",
+    series: "iso b series",
+  },
+  {
+    height: 17.6,
+    width: 12.5,
+    label: "B6",
+    sizing: "b6",
+    series: "iso b series",
+  },
+  {
+    height: 12.5,
+    width: 8.8,
+    label: "B7",
+    sizing: "b7",
+    series: "iso b series",
+  },
+  {
+    height: 8.8,
+    width: 6.2,
+    label: "B8",
+    sizing: "b8",
+    series: "iso b series",
+  },
+  {
+    height: 6.2,
+    width: 4.4,
+    label: "B9",
+    sizing: "b9",
+    series: "iso b series",
+  },
+  {
+    height: 4.4,
+    width: 3.1,
+    label: "B10",
+    sizing: "b10",
+    series: "iso b series",
+  },
+
+  {
+    height: 118.9,
+    width: 84.1,
+    label: "A0",
+    sizing: "a0",
+    series: "iso a series",
+  },
+  {
+    height: 84.1,
+    width: 59.4,
+    label: "A1",
+    sizing: "a1",
+    series: "iso a series",
+  },
+  {
+    height: 59.4,
+    width: 42.0,
+    label: "A2",
+    sizing: "a2",
+    series: "iso a series",
+  },
+  {
+    height: 42.0,
+    width: 29.7,
+    label: "A3",
+    sizing: "a3",
+    series: "iso a series",
+  },
+  {
+    height: 29.7,
+    width: 21.0,
+    label: "A4",
+    sizing: "a4",
+    series: "iso a series",
+  },
+  {
+    height: 21.0,
+    width: 14.8,
+    label: "A5",
+    sizing: "a5",
+    series: "iso a series",
+  },
+  {
+    height: 14.8,
+    width: 10.5,
+    label: "A6",
+    sizing: "a6",
+    series: "iso a series",
+  },
+  {
+    height: 10.5,
+    width: 7.4,
+    label: "A7",
+    sizing: "a7",
+    series: "iso a series",
+  },
+  {
+    height: 7.4,
+    width: 5.2,
+    label: "A8",
+    sizing: "a8",
+    series: "iso a series",
+  },
+  {
+    height: 5.2,
+    width: 3.7,
+    label: "A9",
+    sizing: "a9",
+    series: "iso a series",
+  },
+  {
+    height: 3.7,
+    width: 2.6,
+    label: "A10",
+    sizing: "a10",
+    series: "iso a series",
+  },
+
+  {
+    height: 43.2,
+    width: 27.9,
+    label: "Ledger",
+    sizing: "ledger",
+    series: "north american",
+  },
+  {
+    height: 43.2,
+    width: 27.9,
+    label: "Tabloid",
+    sizing: "tabloid",
+    series: "north american",
+  },
+  {
+    height: 35.6,
+    width: 21.6,
+    label: "Legal",
+    sizing: "legal",
+    series: "north american",
+  },
+  {
+    height: 27.9,
+    width: 21.6,
+    label: "Letter",
+    sizing: "letter",
+    series: "north american",
+  },
+  {
+    height: 26.7,
+    width: 18.4,
+    label: "Executive",
+    sizing: "executive",
+    series: "north american",
+  },
+
+  {
+    height: 91.4,
+    width: 66.0,
+    label: "A1+",
+    sizing: "a1_plus",
+    series: "large format",
+  },
+  {
+    height: 60.9,
+    width: 45.7,
+    label: "A2+",
+    sizing: "a2_plus",
+    series: "large format",
+  },
+  {
+    height: 48.3,
+    width: 32.9,
+    label: "A3+",
+    sizing: "a3_plus",
+    series: "large format",
+  },
+  {
+    height: 4.5,
+    width: 2.5,
+    label: "4.5 x 2.5 cm",
+    sizing: "4_5_x_2_5_cm",
+    series: "label",
+  },
+  {
+    height: 5,
+    width: 4,
+    label: "5cm x 4 cm",
+    sizing: "5_cm_x_4_cm",
+    series: "label",
+  },
+  {
+    height: 5,
+    width: 10,
+    label: "5cm x 10cm",
+    sizing: "5_cm_x_10_cm",
+    series: "label",
+  },
+  {
+    height: 10,
+    width: 10,
+    label: "Label",
+    sizing: "10_cm_x_10_cm",
+    series: "label",
+  },
+
+  {
+    height: 100,
+    width: 100,
+    label: "Custom",
+    sizing: "custom",
     series: "custom",
-    sizes: [{ height: 100, width: 100, label: "Custom", value: "custom" }],
   },
 ];
 
@@ -103,13 +304,13 @@ export const SettingsSidebar = ({
   isSaving,
 }: SettingsSidebarProps) => {
   const workspace = editor?.getWorkspace();
-  const [unit, setUnit] = useState<"px" | "in" | "cm">("px");
+  const [unit, setUnit] = useState<"px" | "in" | "cm">(settings?.unit ?? "px");
 
   // Initialize with pixel values from workspace
   const initialWidth = useMemo(() => workspace?.width ?? 0, [workspace]);
   const initialHeight = useMemo(() => workspace?.height ?? 0, [workspace]);
 
-  const [sizing, setSizing] = useState("custom");
+  const [sizing, setSizing] = useState(settings?.sizing ?? "custom");
   const [width, setWidth] = useState(initialWidth);
   const [height, setHeight] = useState(initialHeight);
   const [background, setBackground] = useState(workspace?.fill ?? "#ffffff");
@@ -123,7 +324,12 @@ export const SettingsSidebar = ({
       <select
         aria-label="Unit"
         value={unit}
-        onChange={(e) => setUnit(e.target.value as "px" | "in" | "cm")}
+        onChange={(e) => {
+          setUnit(e.currentTarget.value as "px" | "in" | "cm");
+          onChangeSettings({
+            unit: e.currentTarget.value as "px" | "in" | "cm",
+          });
+        }}
         className="w-full p-2 border rounded bg-transparent"
       >
         <option value="px">Pixels (px)</option>
@@ -180,7 +386,10 @@ export const SettingsSidebar = ({
               Paper Sizes
             </Label>
             <Select
-              value={`${height},${width},${sizing}`}
+              value={`${convertFromPixels(height, "cm")},${convertFromPixels(
+                width,
+                "cm"
+              )},${sizing}`}
               onValueChange={(value) => {
                 const [height, width, sizing] = value.split(",");
                 const heightInPixels = convertToPixels(Number(height), "cm");
@@ -192,28 +401,42 @@ export const SettingsSidebar = ({
                   height: heightInPixels,
                 });
                 setSizing(sizing);
+                onChangeSettings({ sizing });
               }}
             >
               <SelectTrigger className="w-full rounded-lg text-sm font-medium bg-transparent">
                 <SelectValue placeholder="Select paper size" />
               </SelectTrigger>
               <SelectContent className="z-[1001]">
-                {/* Grouped Paper Sizes */}
-                {paperSizes.map((seriesGroup) => (
-                  <SelectGroup key={seriesGroup.series}>
-                    <SelectLabel>{seriesGroup.series}</SelectLabel>
-                    {seriesGroup.sizes.map(
-                      ({ height, width, label, value }) => (
-                        <SelectItem
-                          key={value}
-                          value={`${height},${width},${value}`}
-                        >
-                          {label}
-                        </SelectItem>
-                      )
-                    )}
-                  </SelectGroup>
-                ))}
+                {paperSeries.map((seriesGroup) => {
+                  const sizesInSeries = paperSizes.filter(
+                    (size) => size.series === seriesGroup
+                  );
+
+                  if (sizesInSeries.length === 0) return null;
+
+                  return (
+                    <SelectGroup key={seriesGroup}>
+                      <SelectLabel className="capitalize">
+                        {seriesGroup}
+                      </SelectLabel>
+                      {sizesInSeries.map((size) => {
+                        const { height, width, label, sizing } = size;
+
+                        return (
+                          <SelectItem
+                            key={sizing}
+                            value={`${height},${width},${sizing}`}
+                            data-height={height}
+                            data-width={width}
+                          >
+                            {label}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectGroup>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>

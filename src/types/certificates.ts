@@ -58,6 +58,8 @@ export interface TCertificateSettings {
   expiryDate: Date;
   skills: { color: string; value: string }[];
   description: string;
+  sizing: string;
+  unit: string;
 }
 
 export type TFullCertificate = TAttendeeCertificate & {

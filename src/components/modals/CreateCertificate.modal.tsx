@@ -35,8 +35,8 @@ import {
 import { CertificateTemplate } from "@/types/certificates";
 import { cn } from "@/lib/utils";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
-import { convertToPixels } from "@/utils/helpers";
-import { paperSizes } from "../editor/components/settings-sidebar";
+import { convertFromPixels, convertToPixels } from "@/utils/helpers";
+import { paperSeries, paperSizes } from "../editor/components/settings-sidebar";
 import { ScrollArea } from "../ui/scroll-area";
 
 export interface CreateCertificateDialogProps {
@@ -157,10 +157,13 @@ const CreateCertificateDialog = ({
               </Select>
             </div>
 
-            {/* <div className="flex flex-col gap-2 w-full">
+            <div className="flex flex-col gap-2 w-full">
               <label className="font-medium text-gray-700">Sizing</label>
               <Select
-                value={`${height},${width},${sizing}`}
+                value={`${convertFromPixels(height, "cm")},${convertFromPixels(
+                  width,
+                  "cm"
+                )},${sizing}`}
                 onValueChange={(value) => {
                   const [height, width, sizing] = value.split(",");
                   const heightInPixels = convertToPixels(Number(height), "cm");
@@ -174,24 +177,38 @@ const CreateCertificateDialog = ({
                   <SelectValue placeholder="Select paper size" />
                 </SelectTrigger>
                 <SelectContent className="z-[1001]">
-                  {paperSizes.map((seriesGroup) => (
-                    <SelectGroup key={seriesGroup.series}>
-                      <SelectLabel>{seriesGroup.series}</SelectLabel>
-                      {seriesGroup.sizes.map(
-                        ({ height, width, label, value }) => (
-                          <SelectItem
-                            key={value}
-                            value={`${height},${width},${value}`}
-                          >
-                            {label}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectGroup>
-                  ))}
+                  {paperSeries.map((seriesGroup) => {
+                    const sizesInSeries = paperSizes.filter(
+                      (size) => size.series === seriesGroup
+                    );
+
+                    if (sizesInSeries.length === 0) return null;
+
+                    return (
+                      <SelectGroup key={seriesGroup}>
+                        <SelectLabel className="capitalize">
+                          {seriesGroup}
+                        </SelectLabel>
+                        {sizesInSeries.map((size) => {
+                          const { height, width, label, sizing } = size;
+
+                          return (
+                            <SelectItem
+                              key={sizing}
+                              value={`${height},${width},${sizing}`}
+                              data-height={height}
+                              data-width={width}
+                            >
+                              {label}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectGroup>
+                    );
+                  })}
                 </SelectContent>
               </Select>
-            </div> */}
+            </div>
 
             <RadioGroup
               onValueChange={(value) => {
