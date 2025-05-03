@@ -570,7 +570,20 @@ const CertificateView = ({
             <span>User View</span>
           </Link>
           <div className="relative h-full w-full flex justify-center items-center flex-1">
-            {imageSrc && !imageIsLoading ? (
+            {imageSrc && (
+              <img
+                alt="certificate"
+                // src={imageSrc}
+                src={editor && editor.generateLink(true)}
+                style={{ width: "50%" }}
+                className="h-auto"
+                onError={(e) => {
+                  console.error("Failed to load certificate image", e);
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            )}
+            {/* {imageSrc && !imageIsLoading ? (
               <img
                 alt="certificate"
                 // src={imageSrc}
@@ -586,7 +599,7 @@ const CertificateView = ({
               <div className="flex items-center justify-center h-[500px] w-full">
                 <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid" />
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </section>
