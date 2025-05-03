@@ -481,9 +481,9 @@ const CertificateView = ({
           const src = editor.generateLink(true);
           setImageSrc(src);
         }
-        setImageIsLoading(false);
       } catch (error) {
         console.error("Error generating certificate image:", error);
+      } finally {
         setImageIsLoading(false);
       }
     };
@@ -573,7 +573,8 @@ const CertificateView = ({
             {imageSrc && !imageIsLoading ? (
               <img
                 alt="certificate"
-                src={imageSrc}
+                // src={imageSrc}
+                src={editor && editor.generateLink(true)}
                 style={{ width: "50%" }}
                 className="h-auto"
                 onError={(e) => {
