@@ -570,7 +570,7 @@ const CertificateView = ({
             <span>User View</span>
           </Link>
           <div className="relative h-full w-full flex justify-center items-center flex-1">
-            {imageSrc && (
+            {
               <img
                 alt="certificate"
                 // src={imageSrc}
@@ -582,7 +582,7 @@ const CertificateView = ({
                   e.currentTarget.style.display = "none";
                 }}
               />
-            )}
+            }
             {/* {imageSrc && !imageIsLoading ? (
               <img
                 alt="certificate"
