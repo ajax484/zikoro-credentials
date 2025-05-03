@@ -135,7 +135,7 @@ const buildEditor = ({
     autoZoom();
   };
 
-  const generateLink = async (isLive = false) => {
+  const generateLink = (isLive = false) => {
     const options = generateSaveOptions();
 
     isLive && canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
@@ -458,13 +458,7 @@ const buildEditor = ({
         console.log(error);
       }
     },
-    transformBarCodes: async (
-      certificate: CertificateRecipient & {
-        originalCertificate: TCertificate & {
-          workspace: TOrganization;
-        };
-      }
-    ) => {
+    transformBarCodes: async () => {
       const objects = canvas
         .getObjects()
         // .forEach((object) => console.log(object.isBarCode))

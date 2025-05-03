@@ -151,7 +151,7 @@ const CertificateView = ({
       setImageIsLoading(true);
       try {
         if (editor) {
-          await editor.transformBarCodes(certificate);
+          await editor.transformBarCodes();
           const src = editor.generateLink(true);
           setImageSrc(src);
         }
@@ -180,17 +180,21 @@ const CertificateView = ({
         </div>
 
         <div className="relative h-full w-full flex justify-center items-center flex-1 px-4 py-4">
-          {imageSrc && (
+          {imageSrc && !imageIsLoading ? (
             <img
               alt="certificate"
               src={imageSrc}
               style={{ width: "50%" }}
               className="h-auto"
               onError={(e) => {
-                console.error("Failed to load certificate image");
+                console.error("Failed to load certificate image", e);
                 e.currentTarget.style.display = "none";
               }}
             />
+          ) : (
+            <div className="flex items-center justify-center h-[500px] w-full">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid" />
+            </div>
           )}
         </div>
       </div>

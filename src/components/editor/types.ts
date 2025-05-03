@@ -252,13 +252,7 @@ export interface Editor {
     type: z.infer<typeof barCodeTypeEnum>,
     barCodeFunction: string
   ) => Promise<string | undefined>;
-  transformBarCodes: (
-    certificate: CertificateRecipient & {
-      originalCertificate: TCertificate & {
-        workspace: TOrganization;
-      };
-    }
-  ) => Promise<void>;
+  transformBarCodes: () => Promise<void>;
   delete: () => void;
   changeFontSize: (value: number) => void;
   getActiveFontSize: () => number;
