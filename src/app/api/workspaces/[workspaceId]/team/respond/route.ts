@@ -73,18 +73,18 @@ export async function GET(req: NextRequest) {
     }
 
     // Insert user into organization team
-    const { error: insertError } = await supabase
-      .from("organizationTeamMembers")
-      .insert({
-        userEmail,
-        userRole: inviteData.role,
-        workspaceAlias,
-        userId: user.id,
-      });
+    // const { error: insertError } = await supabase
+    //   .from("organizationTeamMembers")
+    //   .insert({
+    //     userEmail,
+    //     userRole: inviteData.role,
+    //     workspaceAlias,
+    //     userId: user.id,
+    //   });
 
-    if (insertError) {
-      throw new Error(`Failed to add user to team: ${insertError.message}`);
-    }
+    // if (insertError) {
+    //   throw new Error(`Failed to add user to team: ${insertError.message}`);
+    // }
 
     const { error: insertCredentialsError } = await supabase
       .from("organizationTeamMembers_Credentials")
@@ -100,20 +100,21 @@ export async function GET(req: NextRequest) {
         `Failed to add user to team: ${insertCredentialsError.message}`
       );
     }
-    const { error: insertEngagementsError } = await supabase
-      .from("organizationTeamMembers_Engagement")
-      .insert({
-        userEmail,
-        userRole: inviteData.role,
-        workspaceAlias,
-        userId: user.id,
-      });
 
-    if (insertEngagementsError) {
-      throw new Error(
-        `Failed to add user to team: ${insertEngagementsError.message}`
-      );
-    }
+    // const { error: insertEngagementsError } = await supabase
+    //   .from("organizationTeamMembers_Engagement")
+    //   .insert({
+    //     userEmail,
+    //     userRole: inviteData.role,
+    //     workspaceAlias,
+    //     userId: user.id,
+    //   });
+
+    // if (insertEngagementsError) {
+    //   throw new Error(
+    //     `Failed to add user to team: ${insertEngagementsError.message}`
+    //   );
+    // }
 
     //delete invite
     const { error: deleteInviteError } = await supabase

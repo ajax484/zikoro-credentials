@@ -82,8 +82,6 @@ const CertificateView = ({
     )
   );
 
-  console.log(newState);
-
   // console.log(certificate.originalCertificate.certificateSettings.skills);
 
   // Find placeholder in newState and replace with profile picture in the string
@@ -108,11 +106,10 @@ const CertificateView = ({
       preserveObjectStacking: true,
     });
 
-    (async () =>
-      await init({
-        initialCanvas: canvas,
-        initialContainer: containerRef.current!,
-      }))();
+    init({
+      initialCanvas: canvas,
+      initialContainer: containerRef.current!,
+    });
 
     return () => {
       canvas.dispose();
@@ -553,7 +550,9 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
           />
         </div>
       ) : !isLoading && !certificate ? (
-        <div>this certificate does not exist</div>
+        <div className="flex items-center justify-center h-[250px] text-xl">
+          this certificate does not exist
+        </div>
       ) : (
         <div className="flex items-center justify-center h-screen">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid" />

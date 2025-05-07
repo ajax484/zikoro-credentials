@@ -105,7 +105,7 @@ export const Editor = ({
     width: number;
   }) => {
     console.log("here");
-    const imageURL = await editor?.generateLink();
+    const imageURL = editor?.generateLink();
     if (!imageURL) return;
     save(values, imageURL);
   };

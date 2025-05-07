@@ -603,8 +603,11 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                         />
                         <span className="text-sm">Assigned Credentials</span>
                       </div>
-                      <span className="font-bold text-xl">
-                        {assignedCertificates?.length}
+                      <span className="font-semibold text-xl">
+                        {assignedCertificates?.reduce(
+                          (acc, { recipientCount }) => acc + recipientCount,
+                          0
+                        )}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">

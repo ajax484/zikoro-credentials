@@ -4,8 +4,14 @@ import { Button } from "@/components/ui/button";
 import { useFilter } from "@/hooks";
 import useSearch from "@/hooks/common/useSearch";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
+import { fabric } from "fabric";
 import { TFilter } from "@/types/filter";
-import { convertCamelToNormal, extractUniqueTypes } from "@/utils/helpers";
+import {
+  convertCamelToNormal,
+  extractUniqueTypes,
+  replaceSpecialText,
+  replaceURIVariable,
+} from "@/utils/helpers";
 import { Send, Trash } from "lucide-react";
 import React, {
   useEffect,
@@ -55,6 +61,7 @@ import {
 } from "@/mutations/certificates.mutations";
 import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
 import debounce from "lodash.debounce";
+import { useEditor } from "@/components/editor/hooks/use-editor";
 
 const issueesFilter: TFilter<
   CertificateRecipient & { certificate: TCertificate }
@@ -472,58 +479,171 @@ const Issue = ({
     updatePage(1);
   };
 
-  const exportRecipientsFn = (
-    name = `credentials_recipients_${
-      organization?.organizationName
-    }_${new Date().toISOString()}`
-  ) => {
-    const omittedFields: (keyof (CertificateRecipient & {
-      certificate: TCertificate;
-    }))[] = ["certificateId", "certificateGroupId", "id", "statusDetails"];
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-    const normalizedData = convertCamelToNormal<
-      CertificateRecipient & {
-        certificate: TCertificate;
-      }
-    >(
-      filteredIssuees.map((obj) =>
-        Object.keys(obj).reduce(
-          (newObj, key) => {
-            if (
-              !omittedFields.includes(
-                key as keyof (CertificateRecipient & {
-                  certificate: TCertificate;
-                })
-              )
-            ) {
-              (newObj as any)[key] =
-                key === "created_at"
-                  ? obj[key]
-                    ? format(new Date(obj[key]), "MM/dd/yyyy")
-                    : "N/A"
-                  : key === "certificate"
-                  ? obj[key].name
-                  : (obj as any)[key];
-            }
-            return newObj;
-          },
-          {} as Partial<
-            CertificateRecipient & {
-              certificate: TCertificate;
-            }
-          >
-        )
-      ) as (CertificateRecipient & {
-        certificate: TCertificate;
-      })[],
-      " "
-    );
+  const { init, editor } = useEditor({
+    defaultState: "",
+    defaultWidth: 900,
+    defaultHeight: 1200,
+    toggleQRCode: () => {},
+  });
 
-    const worksheet = XLSX.utils.json_to_sheet(normalizedData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, `${name}.xlsx`);
-  };
+  useEffect(() => {
+    const canvas = new fabric.Canvas(canvasRef.current, {
+      controlsAboveOverlay: true,
+      preserveObjectStacking: true,
+    });
+
+    init({
+      initialCanvas: canvas,
+      initialContainer: containerRef.current!,
+    });
+
+    return () => {
+      canvas.dispose();
+    };
+  }, [init]);
+
+  async function exportRecipientsFn(options?: { imagesPerRow?: number }) {
+    try {
+      const exportedCertificates = filteredIssuees.filter(
+        ({ id }) => rowSelection[id]
+      );
+
+      // Generate data URLs with proper async handling
+      const dataUrls = await Promise.all(
+        exportedCertificates.map(async (recipient) => {
+          let newState = JSON.parse(
+            replaceURIVariable(
+              replaceSpecialText(
+                JSON.stringify(recipient?.certificate?.JSON?.json || {}),
+                {
+                  asset: recipient.certificate,
+                  recipient: recipient,
+                  organization: organization!,
+                }
+              ),
+              recipient.certificateId || ""
+            )
+          );
+
+          // Handle image replacement
+          newState = String(newState).replaceAll(
+            "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
+            recipient?.profilePicture?.trim()!
+          );
+
+          // editor?.clear();
+          editor?.changeSize({
+            width: recipient.certificate.JSON.width || 1200,
+            height: recipient.certificate.JSON?.height || 900,
+          });
+          const url = await editor?.loadJson(newState);
+
+          console.log(url);
+          return url || "";
+          // return "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg";
+        })
+      );
+
+      console.log(dataUrls);
+
+      // Prepare print window
+      const printWindow = window.open("", "_blank");
+      if (!printWindow) throw new Error("Popup blocked");
+
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Certificates</title>
+            <style>
+              body { 
+                margin: 0;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 10px;
+              }
+              img {
+                max-width: calc(${100 / (options?.imagesPerRow || 4)}% - 10px);
+                height: auto;
+                flex-grow: 1;
+                page-break-inside: avoid;
+              }
+            </style>
+          </head>
+          <body>
+            ${dataUrls.map((url) => `<img src="${url}">`).join("")}
+          </body>
+        </html>
+      `);
+
+      // Print handling
+      printWindow.document.close();
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Ensure DOM ready
+
+      printWindow.focus();
+      printWindow.print();
+      // setTimeout(() => printWindow.close(), 3000);
+    } catch (error) {
+      console.error("Export failed:", error);
+      alert("Error generating certificates. Check console for details.");
+    }
+  }
+
+  // const exportRecipientsFn = (
+  //   name = `credentials_recipients_${
+  //     organization?.organizationName
+  //   }_${new Date().toISOString()}`
+  // ) => {
+  //   const omittedFields: (keyof (CertificateRecipient & {
+  //     certificate: TCertificate;
+  //   }))[] = ["certificateId", "certificateGroupId", "id", "statusDetails"];
+
+//   const normalizedData = convertCamelToNormal<
+  //     CertificateRecipient & {
+  //       certificate: TCertificate;
+  //     }
+  //   >(
+  //     filteredIssuees.map((obj) =>
+  //       Object.keys(obj).reduce(
+  //         (newObj, key) => {
+  //           if (
+  //             !omittedFields.includes(
+  //               key as keyof (CertificateRecipient & {
+  //                 certificate: TCertificate;
+  //               })
+  //             )
+  //           ) {
+  //             (newObj as any)[key] =
+  //               key === "created_at"
+  //                 ? obj[key]
+  //                   ? format(new Date(obj[key]), "MM/dd/yyyy")
+  //                   : "N/A"
+  //                 : key === "certificate"
+  //                 ? obj[key].name
+  //                 : (obj as any)[key];
+  //           }
+  //           return newObj;
+  //         },
+  //         {} as Partial<
+  //           CertificateRecipient & {
+  //             certificate: TCertificate;
+  //           }
+  //         >
+  //       )
+  //     ) as (CertificateRecipient & {
+  //       certificate: TCertificate;
+  //     })[],
+  //     " "
+  //   );
+
+  //   const worksheet = XLSX.utils.json_to_sheet(normalizedData);
+  //   const workbook = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  //   XLSX.writeFile(workbook, `${name}.xlsx`);
+  // };
 
   const { data: credits, isFetching: creditsIsLoading } =
     useFetchWorkspaceCredits(organization?.id!);
@@ -779,6 +899,13 @@ const Issue = ({
           />
         </>
       )}
+      <div
+        className="relative h-[500px] md:h-[calc(100%-124px)] w-full hidden"
+        ref={containerRef}
+      >
+        <div className="absolute inset-0 bg-transparent z-50" />
+        <canvas id="canvas" ref={canvasRef} />
+      </div>
     </section>
   );
 };

@@ -62,9 +62,23 @@ const Information = ({
   );
 
   const onSubmit = async (data: z.infer<typeof recipientSchema>) => {
+    const {
+      recipientFirstName,
+      recipientLastName,
+      recipientEmail,
+      profilePicture,
+      ...rest
+    } = data;
+
     await updateRecipient({
       payload: {
-        ...data,
+        metadata: {
+          ...rest,
+        },
+        recipientFirstName,
+        recipientLastName,
+        recipientEmail,
+        profilePicture,
         id,
         statusDetails: statusDetails
           ? [

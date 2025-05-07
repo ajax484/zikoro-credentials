@@ -217,6 +217,10 @@ export type BuildEditorProps = {
 };
 
 export interface Editor {
+  generateLinkAsync: (
+    next?: (url: string) => void,
+    isLive?: boolean
+  ) => Promise<string>;
   generateLink: (isLive?: boolean) => string;
   savePdf: (
     { width, height }: { width: number; height: number },
@@ -226,7 +230,7 @@ export interface Editor {
   saveJpg: () => void;
   saveSvg: () => void;
   saveJson: () => void;
-  loadJson: (json: string) => void;
+  loadJson: (json: string) => Promise<string>;
   onUndo: () => void;
   onRedo: () => void;
   canUndo: () => boolean;
@@ -273,6 +277,7 @@ export interface Editor {
   changeOpacity: (value: number) => void;
   bringForward: () => void;
   sendBackwards: () => void;
+  clear: () => void;
   changeStrokeWidth: (value: number) => void;
   changeFillColor: (value: string) => void;
   changeStrokeColor: (value: string) => void;

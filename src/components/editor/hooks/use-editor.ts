@@ -135,6 +135,24 @@ const buildEditor = ({
     autoZoom();
   };
 
+  const generateLinkAsync = async (
+    next: (url: string) => void,
+    isLive = false
+  ) => {
+    const options = generateSaveOptions();
+
+    isLive && canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+    const dataUrl = await canvas.toDataURL((err, url) => {
+      if (err) throw err;
+      console.log(url);
+      next(url);
+    });
+
+    // console.log(dataUrl);
+
+    return dataUrl;
+  };
+
   const generateLink = (isLive = false) => {
     const options = generateSaveOptions();
 
@@ -166,12 +184,40 @@ const buildEditor = ({
     downloadFile(fileString, "json");
   };
 
-  const loadJson = (json: string) => {
-    const data = JSON.parse(json);
+  const loadJson = async (json: string): Promise<string> => {
+    try {
+      const options = generateSaveOptions();
+      const data = JSON.parse(json);
 
-    canvas.loadFromJSON(data, () => {
-      autoZoom();
-    });
+      // canvas.loadFromJSON(data, () => {
+      //   console.log(data);
+      //   autoZoom();
+      //   canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+      //   dataUrl = canvas.toDataURL(options);
+      //   console.log(dataUrl);
+      // });
+
+      // Wrap canvas loading in a Promise
+      return await new Promise<string>((resolve, reject) => {
+        canvas.loadFromJSON(data, () => {
+          try {
+            autoZoom();
+            canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+            // canvas.renderAll(); // Ensure all objects are rendered
+
+            // Generate data URL after rendering
+            const dataUrl = canvas.toDataURL(options);
+            console.log(dataUrl);
+            resolve(dataUrl);
+          } catch (error) {
+            reject(error);
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Error loading JSON:", error);
+      throw error; // Propagate the error
+    }
   };
 
   const getWorkspace = () => {
@@ -197,6 +243,7 @@ const buildEditor = ({
   };
 
   return {
+    generateLinkAsync,
     generateLink,
     savePdf,
     savePng,
@@ -564,6 +611,10 @@ const buildEditor = ({
           console.log(error);
         }
       }
+    },
+    clear: () => {
+      canvas.clear();
+      canvas.renderAll();
     },
     delete: () => {
       canvas.getActiveObjects().forEach((object: fabric.Object) => {

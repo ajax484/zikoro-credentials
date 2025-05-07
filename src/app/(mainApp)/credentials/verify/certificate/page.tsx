@@ -12,12 +12,6 @@ const Page = () => {
   const { getAttendeeCertificate, isLoading, error } =
     useGetAttendeeCertificate();
 
-  const onSubmit = async () => {
-    const certificate = await getAttendeeCertificate({ certificateId });
-
-    if (!!certificate) router.push(`/verify/cerificate/${certificateId}`);
-  };
-
   return (
     <section className="h-fit md:h-screen w-screen flex flex-col md:flex-row items-center justify-center gap-6 pt-8">
       <div className="flex-1 flex justify-center">
@@ -289,7 +283,9 @@ const Page = () => {
         <Button
           className="bg-basePrimary w-full md:w-3/4 rounded-none py-4"
           disabled={certificateId.length < 8}
-          onClick={onSubmit}
+          onClick={() =>
+            router.push(`/credentials/verify/certificate/${certificateId}`)
+          }
         >
           Verify
         </Button>

@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Failed from "./Failed";
 
 const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
-  const { organization, setOrganization } = useOrganizationStore();
+  const { organization } = useOrganizationStore();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [pagination, setPagination] = useState<{ page: number; limit: number }>(
     { page: 1, limit: 10 }
