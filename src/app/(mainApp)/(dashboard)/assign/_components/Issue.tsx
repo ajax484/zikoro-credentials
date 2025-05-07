@@ -62,6 +62,7 @@ import {
 import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
 import debounce from "lodash.debounce";
 import { useEditor } from "@/components/editor/hooks/use-editor";
+import { Label } from "@/components/ui/label";
 
 const issueesFilter: TFilter<
   CertificateRecipient & { certificate: TCertificate }
@@ -383,29 +384,27 @@ const Issue = ({
   };
 
   const ExportRecipients = () => {
-    const [name, setName] = useState<string>(
-      `credentials_recipients_${
-        organization?.organizationName
-      }_${new Date().toISOString()}`
-    );
+    const [itemsPerRow, setItemsPerRow] = useState<number>(1);
     const clsBtnRef = useRef<HTMLButtonElement>(null);
-
     return (
       <Dialog>
         <DialogTrigger asChild>
           <button
             className={cn(
-              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
-                ? "border-gray-600 text-gray-600"
-                : "border-basePrimary text-basePrimary"
+              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm disabled:border-gray-600 disabled:text-gray-600 border-basePrimary text-basePrimary"
             )}
             disabled={
               filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
                 0 ||
               isLoadingRecall ||
               isLoadingReissue ||
-              isLoadingResend
+              isLoadingResend ||
+              !filteredIssuees
+                .filter(({ id }) => rowSelection[id])
+                .every(
+                  (item, _, arr) =>
+                    item.certificateGroupId === arr[0]?.certificateGroupId
+                )
             }
             // onClick={exportRecipients}
           >
@@ -420,20 +419,25 @@ const Issue = ({
               <h2 className="font-semibold text-center">Export Credentials</h2>
             </div>
             <div className="relative w-full">
-              <Input
-                placeholder="file name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-              />
+              <div className="relative border mb-4">
+                <Label className="absolute top-0 -translate-y-1/2 right-4 bg-white text-gray-600 text-tiny px-1">
+                  Items per row
+                </Label>
+                <Input
+                  value={itemsPerRow}
+                  onInput={(e) => setItemsPerRow(Number(e.currentTarget.value))}
+                  max={5}
+                  min={1}
+                  type="number"
+                />
+              </div>
             </div>
             <div className="flex w-full">
               <Button
                 disabled={isLoadingRecall || isLoadingReissue}
                 onClick={async (e) => {
                   e.stopPropagation();
-                  await exportRecipientsFn(name);
+                  await exportRecipientsFn({ imagesPerRow: itemsPerRow });
                   clsBtnRef.current?.click();
                 }}
                 className={cn("px-4 mx-auto", "bg-basePrimary")}
@@ -601,7 +605,7 @@ const Issue = ({
   //     certificate: TCertificate;
   //   }))[] = ["certificateId", "certificateGroupId", "id", "statusDetails"];
 
-//   const normalizedData = convertCamelToNormal<
+  //   const normalizedData = convertCamelToNormal<
   //     CertificateRecipient & {
   //       certificate: TCertificate;
   //     }
