@@ -543,7 +543,7 @@ const Issue = ({
             width: recipient.certificate.JSON.width || 1200,
             height: recipient.certificate.JSON?.height || 900,
           });
-          const url = await editor?.loadJson(newState);
+          const url = await editor?.loadJsonAsync(newState);
 
           console.log(url);
           return url || "";

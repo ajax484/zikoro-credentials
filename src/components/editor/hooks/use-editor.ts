@@ -184,7 +184,17 @@ const buildEditor = ({
     downloadFile(fileString, "json");
   };
 
-  const loadJson = async (json: string): Promise<string> => {
+  const loadJson = async (json: string) => {
+    const data = JSON.parse(json);
+
+    canvas.loadFromJSON(data, () => {
+      console.log(data);
+      autoZoom();
+      canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+    });
+  };
+
+  const loadJsonAsync = async (json: string): Promise<string> => {
     try {
       const options = generateSaveOptions();
       const data = JSON.parse(json);
@@ -251,6 +261,7 @@ const buildEditor = ({
     saveSvg,
     saveJson,
     loadJson,
+    loadJsonAsync,
     canUndo,
     canRedo,
     autoZoom,
@@ -1180,18 +1191,18 @@ export const useEditor = ({
       setCanvas(initialCanvas);
       setContainer(initialContainer);
 
-      initialCanvas
-        .getObjects()
-        .filter(
-          (object) =>
-            object instanceof fabric.Image &&
-            (object.isBackground || !object.selectable)
-        )
-        .forEach((bgImage) => {
-          initialCanvas.sendToBack(bgImage);
-          bgImage.scaleToWidth(initialWorkspace.width || 1200);
-          bgImage.scaleToHeight(initialWorkspace.height || 900);
-        });
+      // initialCanvas
+      //   .getObjects()
+      //   .filter(
+      //     (object) => object instanceof fabric.Image && object.isBackground
+      //   )
+      //   .forEach((bgImage) => {
+      //     console.log("here");
+      //     initialCanvas.sendToBack(bgImage);
+      //     bgImage.scaleToWidth(initialWorkspace.width || 1200);
+      //     bgImage.scaleToHeight(initialWorkspace.height || 900);
+      //     initialCanvas.renderAll();
+      //   });
 
       const currentState = JSON.stringify(initialCanvas.toJSON(JSON_KEYS));
       canvasHistory.current = [currentState];
