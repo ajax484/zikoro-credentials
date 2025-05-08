@@ -42,9 +42,7 @@ const recipientSchema = z.object({
           .optional(),
         profilePicture: z.string().url("Enter a valid URL"),
       })
-      .catchall(
-        z.string().nonempty("Additional fields must be non-empty strings")
-      )
+      .catchall(z.string().optional())
   ),
 });
 
