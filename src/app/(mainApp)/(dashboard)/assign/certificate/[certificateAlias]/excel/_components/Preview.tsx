@@ -30,7 +30,7 @@ const Preview = ({
 
       Array.from(headers).forEach(([key, value]) => {
         const rowValue = headerMap.get(value) ?? "";
-        recipient[key.value] = row[rowValue].trim() || "";
+        recipient[key.value] = row[rowValue]?.trim() || "";
 
         console.log(key.value, row[rowValue]);
       });

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useGetData } from "@/hooks/services/request";
+import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { TCertificate } from "@/types/certificates";
 import { CredentialsWorkspaceToken } from "@/types/token";
@@ -80,9 +81,8 @@ const RecipientsPage = ({
 
   const { organization } = useOrganizationStore();
 
-  const { data: credits, isLoading: creditsIsLoading } = useGetData<
-    CredentialsWorkspaceToken[]
-  >(`/workspaces/${organization?.id}/credits`, []);
+  const { data: credits, isFetching: creditsIsLoading } =
+    useFetchWorkspaceCredits(organization?.id!);
 
   const creditBalance = {
     bronze: credits
@@ -157,6 +157,8 @@ const RecipientsPage = ({
       : "bronze";
 
   console.log(form.formState.errors);
+
+  if (creditsIsLoading) return <div>Loading...</div>;
 
   return (
     <Form {...form}>
@@ -313,6 +315,7 @@ const RecipientsPage = ({
                     className="text-red-600"
                     disabled={index === 0}
                     onClick={() => deleteRecipient(index)}
+                    type="button"
                   >
                     <Trash className="w-4 h-4" />
                   </button>

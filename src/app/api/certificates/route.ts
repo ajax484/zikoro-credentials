@@ -64,6 +64,7 @@ export async function POST(req: NextRequest) {
         .insert({
           certificateAlias,
           name: "untitled credential",
+          attributes: [],
           ...params,
         })
         .select("*")

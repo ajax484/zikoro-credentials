@@ -46,7 +46,7 @@ const MapRecipients = ({
     { label: "First name", value: "recipientFirstName" },
     { label: "Last name", value: "recipientLastName" },
     { label: "Email", value: "recipientEmail" },
-    ...attributes.map((attribute) => ({
+    ...(attributes ?? []).map((attribute) => ({
       label: attribute,
       value: attribute,
     })),
@@ -76,7 +76,7 @@ const MapRecipients = ({
 
     setStep(3);
   };
-  
+
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-4">

@@ -320,6 +320,8 @@ Event Team.`,
   console.log(certificate);
   console.log(form.formState.errors);
 
+  if (creditsIsLoading) return <div>Loading...</div>;
+
   return (
     <Form {...form}>
       <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
