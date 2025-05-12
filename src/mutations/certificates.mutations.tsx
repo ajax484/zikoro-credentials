@@ -121,8 +121,6 @@ export function useDeleteCertificate(certificateAlias: string) {
                 (item) => item.certificateAlias !== certificateAlias
               ),
             };
-          } else {
-            return undefined;
           }
         }
       );

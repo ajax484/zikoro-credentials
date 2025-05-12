@@ -250,46 +250,54 @@ export function useCreateOrganisation() {
 
       console.log(data);
 
-      const { error: insertError } = await supabase
-        .from("organizationTeamMembers")
-        .insert({
-          userEmail: userEmail,
-          userRole: "owner",
-          workspaceAlias: data?.organizationAlias,
-          userId,
-        });
+      const teamMember = {
+        userId: userData?.id,
+        userEmail: userData?.userEmail,
+        userRole: "owner",
+        workspaceAlias: values?.organizationAlias,
+      };
 
-      if (insertError) {
-        throw new Error(`Failed to add user to team: ${insertError.message}`);
-      }
-
-      const { error: insertCredentialsError } = await supabase
-        .from("organizationTeamMembers_Credentials")
-        .insert({
-          userEmail: userEmail,
-          userRole: "owner",
-          workspaceAlias: data?.organizationAlias,
-          userId,
-        });
-
-      if (insertCredentialsError) {
-        throw new Error(
-          `Failed to add user to team: ${insertCredentialsError.message}`
-        );
-      }
-      const { error: insertEngagementsError } = await supabase
+      const { data: eData, error: eError } = await supabase
         .from("organizationTeamMembers_Engagement")
-        .insert({
-          userEmail: userEmail,
-          userRole: "owner",
-          workspaceAlias: data?.organizationAlias,
-          userId,
-        });
+        .insert([teamMember])
+        .select("*");
 
-      if (insertEngagementsError) {
-        throw new Error(
-          `Failed to add user to team: ${insertEngagementsError.message}`
-        );
+      console.log(eData);
+      if (eError) {
+        throw new Error("Engagement team member creation failed");
+      }
+
+      const { error: bError, data: bData } = await supabase
+        .from("organizationTeamMembers_Credentials")
+        .insert([teamMember])
+        .select("*");
+
+      console.log(bData);
+
+      if (bError) {
+        throw new Error("Credentials team member creation failed");
+      }
+
+      const { error: cError, data: cData } = await supabase
+        .from("organizationTeamMembers")
+        .insert([teamMember])
+        .select("*");
+
+      console.log(cData);
+
+      if (cError) {
+        throw new Error("General team member creation failed:" + cError);
+      }
+
+      const { error: fError, data: fData } = await supabase
+        .from("organizationTeamMembers_Bookings")
+        .insert([teamMember])
+        .select("*");
+
+      console.log(fData);
+
+      if (fError) {
+        throw new Error("Bookings team member creation failed");
       }
 
       setLoading(false);

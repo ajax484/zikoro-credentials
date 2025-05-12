@@ -423,9 +423,13 @@ const Issue = ({
                 <Label className="absolute top-0 -translate-y-1/2 right-4 bg-white text-gray-600 text-tiny px-1">
                   Items per row
                 </Label>
-                <Input
+                <input
+                  title="Items per row"
                   value={itemsPerRow}
-                  onInput={(e) => setItemsPerRow(Number(e.currentTarget.value))}
+                  onInput={(e) => {
+                    e.stopPropagation();
+                    setItemsPerRow(e.currentTarget.value);
+                  }}
                   max={5}
                   min={1}
                   type="number"

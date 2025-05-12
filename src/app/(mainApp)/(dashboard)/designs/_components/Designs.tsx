@@ -174,7 +174,6 @@ const Designs = () => {
               <Button
                 disabled={isDeleting}
                 onClick={(e) => {
-                  e.stopPropagation();
                   clsBtnRef.current?.click();
                 }}
                 className="border-2 bg-white border-basePrimary text-basePrimary w-full"
@@ -184,9 +183,8 @@ const Designs = () => {
               <Button
                 disabled={isDeleting}
                 onClick={async (e) => {
-                  e.stopPropagation();
-                  await deleteCertificate();
                   clsBtnRef.current?.click();
+                  await deleteCertificate();
                 }}
                 className="bg-basePrimary w-full"
               >
@@ -486,6 +484,8 @@ const Designs = () => {
                                           name: certificate.name + " (copy)",
                                           workspace: organization,
                                           JSON: certificate.JSON,
+                                          credentialType:
+                                            certificate.credentialType,
                                         });
                                     }}
                                   >
