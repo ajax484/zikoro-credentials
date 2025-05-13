@@ -23,6 +23,8 @@ export async function GET(req: NextRequest) {
         ({ workspaceAlias }) => workspaceAlias
       );
 
+      console.log(workspaceAliases);
+
       // Fetch organizations with only the current user's role
       const { data: organizations, error: organizationsError } = await supabase
         .from("organization")

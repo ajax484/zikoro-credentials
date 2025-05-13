@@ -43,6 +43,8 @@ const SelectOrganization = () => {
 
   console.log(workspaces);
 
+  console.log(workspaces);
+
   useEffect(() => {
     if (workspaceAlias) {
       const workspace = workspaces?.find(

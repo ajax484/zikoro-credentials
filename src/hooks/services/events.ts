@@ -218,6 +218,7 @@ export function useCreateOrganisation() {
   ) {
     setLoading(true);
     const { firstName, lastName, userEmail, userId, ...restData } = values;
+    console.log(userEmail);
     try {
       const { data, error, status } = await supabase
         .from("organization")
@@ -252,7 +253,7 @@ export function useCreateOrganisation() {
 
       const teamMember = {
         userId: userData?.id,
-        userEmail: userData?.userEmail,
+        userEmail,
         userRole: "owner",
         workspaceAlias: values?.organizationAlias,
       };
@@ -263,6 +264,7 @@ export function useCreateOrganisation() {
         .select("*");
 
       console.log(eData);
+
       if (eError) {
         throw new Error("Engagement team member creation failed");
       }
@@ -278,17 +280,6 @@ export function useCreateOrganisation() {
         throw new Error("Credentials team member creation failed");
       }
 
-      const { error: cError, data: cData } = await supabase
-        .from("organizationTeamMembers")
-        .insert([teamMember])
-        .select("*");
-
-      console.log(cData);
-
-      if (cError) {
-        throw new Error("General team member creation failed:" + cError);
-      }
-
       const { error: fError, data: fData } = await supabase
         .from("organizationTeamMembers_Bookings")
         .insert([teamMember])
@@ -298,6 +289,17 @@ export function useCreateOrganisation() {
 
       if (fError) {
         throw new Error("Bookings team member creation failed");
+      }
+
+      const { error: cError, data: cData } = await supabase
+        .from("organizationTeamMembers")
+        .insert([teamMember])
+        .select("*");
+
+      console.log(cData);
+
+      if (cError) {
+        throw new Error("General team member creation failed:" + cError);
       }
 
       setLoading(false);

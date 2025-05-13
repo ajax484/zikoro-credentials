@@ -462,24 +462,21 @@ export default function OnboardingForm({
             {/* buttons */}
             <div className="w-full flex">
               <div className="flex gap-x-[8px] mt-8 mx-auto ">
-                <div
-                  className="flex flex-col cursor-pointer rounded-[8px] gap-y-[18px] pt-[11px] bg-white border-[1px] border-gray-200 hover:border-indigo-800 w-[100px] h-[100px]"
-                  onClick={() => setIsReferralCode(false)}
-                >
+                <label className="flex flex-col cursor-pointer rounded-[8px] gap-y-[18px] pt-[11px] bg-white border-[1px] border-gray-200 hover:border-indigo-800 w-[100px] h-[100px]">
                   <div className="flex mx-auto">
                     <input
                       type="radio"
                       name="referral"
                       id="referral-no"
                       className="radio-input"
-                      checked={!isReferralCode} // Sync with state
-                      readOnly // Prevent direct manipulation
+                      onChange={() => setIsReferralCode(false)}
+                      defaultChecked={!isReferralCode}
                     />
                   </div>
                   <p className="text-[14px] font-normal text-center">No</p>
-                </div>
+                </label>
 
-                <div
+                <label
                   className="flex flex-col cursor-pointer rounded-[8px] gap-y-[18px] pt-[11px] bg-white border-[1px] border-gray-200 hover:border-indigo-800 w-[100px] h-[100px]"
                   onClick={() => setIsReferralCode(true)}
                 >
@@ -489,12 +486,12 @@ export default function OnboardingForm({
                       name="referral"
                       id="referral-yes"
                       className="radio-input"
-                      checked={isReferralCode} // Sync with state
-                      readOnly // Prevent direct manipulation
+                      onChange={() => setIsReferralCode(true)}
+                      defaultChecked={isReferralCode} // Sync with state
                     />
                   </div>
                   <p className="text-[14px] font-normal text-center">Yes</p>
-                </div>
+                </label>
               </div>
             </div>
 

@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { useRegistration } from "@/hooks/services/auth";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import logoFooter from "@/public/appointments/logoFooter.png";
+import { useRegister } from "@/mutations/auth.mutations";
 
 const AppointmentSignupForm = ({
   workspaceAlias,
@@ -14,7 +15,9 @@ const AppointmentSignupForm = ({
 }) => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const { loading, register } = useRegistration();
+  const { mutateAsync: register, isPending: isLoading } = useRegister(
+    workspaceAlias || ""
+  );
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -27,7 +30,7 @@ const AppointmentSignupForm = ({
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    await register(formData, workspaceAlias);
+    await register(formData);
   }
 
   return (
@@ -89,7 +92,7 @@ const AppointmentSignupForm = ({
           type="submit"
           className="py-4 px-3 text-base w-full rounded-[8px] font-semibold mt-10 mb-6 text-white bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end"
         >
-          {loading && <LoaderAlt size={22} className="animate-spin" />}
+          {isLoading && <LoaderAlt size={22} className="animate-spin" />}
           Get Started
         </button>
       </form>

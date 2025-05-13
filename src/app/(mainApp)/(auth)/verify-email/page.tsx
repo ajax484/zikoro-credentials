@@ -11,14 +11,12 @@ import mailImage from "@/public/mail64.png";
 
 type SearchParams = {
   email: string;
-  message: string;
-  content: any;
   type: any;
   workspaceAlias: string;
 };
 
 export default function Page({ searchParams }: { searchParams: SearchParams }) {
-  const { message, content, email, type } = searchParams;
+  const { email, type } = searchParams;
   const [secondsLeft, setSecondsLeft] = useState(60);
   const { loading, resendLink } = useResendLink();
   const { loading: isVerifying, verifyCode } = useVerifyCode();
@@ -42,6 +40,15 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     await verifyCode(email!, code, type, searchParams?.workspaceAlias);
   }
 
+  const message =
+    type === "reset-password" ? "Reset Password" : "Verify Your Account";
+  const content =
+    type === "reset-password"
+      ? "If the email you entered is registered, we've sent an OTP code to your inbox. Please check your email and follow the instructions to reset your password."
+      : `Thank you for signing up! A verification code has been sent to your
+          registered email address. Please check your inbox and enter the code
+          to verify your account.`;
+
   return (
     <div className="w-full h-full inset-0 fixed">
       <div className="w-fit h-fit m-auto inset-0 absolute flex flex-col gap-y-2 items-center justify-center px-4">
@@ -53,9 +60,9 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
           height={100}
         />
         <h1 className="font-semibold text-base w-full text-center sm:text-xl">
-          {message ?? ""}
+          {message}
         </h1>
-        <p className="text-center w-full max-w-xl">{content ?? ""}</p>
+        <p className="text-center w-full max-w-xl">{content}</p>
         <div className="w-full max-w-xl flex flex-col items-center justify-center gap-y-3">
           <div className="w-full flex items-center h-24 justify-center">
             <VerificationInput
