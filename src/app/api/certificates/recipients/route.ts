@@ -13,10 +13,11 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     const { searchParams } = new URL(req.url || "");
     const searchTerm = searchParams.get("searchTerm");
     const workspaceAlias = searchParams.get("workspaceAlias");
+    const certificateAlias = searchParams.get("certificateAlias");
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
 
-    if (!workspaceAlias || isNaN(page) || isNaN(limit)) {
+    if ((!workspaceAlias && !certificateAlias) || isNaN(page) || isNaN(limit)) {
       return NextResponse.json(
         { error: "Invalid query parameters" },
         { status: 400 }
@@ -29,8 +30,12 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     // Fetch certificate recipients with the workspace alias filter
     let query = supabase
       .from("certificateRecipients")
-      .select("*, certificate!inner(*)", { count: "exact" })
-      .eq("certificate.workspaceAlias", workspaceAlias);
+      .select("*, certificate!inner(*)", { count: "exact" });
+
+    if (workspaceAlias) query.eq("certificate.workspaceAlias", workspaceAlias);
+
+    if (certificateAlias)
+      query.eq("certificate.certificateAlias", certificateAlias);
 
     if (searchTerm) {
       query = query.or(

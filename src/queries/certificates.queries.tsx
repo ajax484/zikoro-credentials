@@ -1,5 +1,10 @@
 "use client";
-import { CertificateRecipient, CertificateTemplate, FailedCertificateRecipient, TCertificate } from "@/types/certificates";
+import {
+  CertificateRecipient,
+  CertificateTemplate,
+  FailedCertificateRecipient,
+  TCertificate,
+} from "@/types/certificates";
 import { PaginatedData } from "@/types/request";
 import { getRequest } from "@/utils/api";
 import {
@@ -71,14 +76,14 @@ export function useFetchRecentCertificate(workspaceAlias: string) {
   };
 }
 
-export function useFetchCertificateRecipients(
+export function useFetchWorkspaceCertificatesRecipients(
   workspaceAlias: string,
   pagination: { page: number; limit: number },
   searchTerm: string
 ) {
   const { data, isFetching, status, error, refetch } = useQuery({
     queryKey: [
-      "certificates recipients",
+      "workspace recipients",
       workspaceAlias,
       pagination,
       searchTerm,
@@ -117,7 +122,53 @@ export function useFetchCertificateRecipients(
   };
 }
 
-export function useFetchFailedCertificateRecipients(
+export function useFetchCertificateRecipients(
+  certificateAlias: string,
+  pagination: { page: number; limit: number },
+  searchTerm: string
+) {
+  const { data, isFetching, status, error, refetch } = useQuery({
+    queryKey: [
+      "certificates recipients",
+      certificateAlias,
+      pagination,
+      searchTerm,
+    ],
+    queryFn: async () => {
+      const { data, status } = await getRequest<
+        PaginatedData<CertificateRecipient>
+      >({
+        endpoint: `/certificates/recipients?certificateAlias=${certificateAlias}&limit=${pagination.limit}&page=${pagination.page}&searchTerm=${searchTerm}`,
+      });
+
+      if (status !== 200) {
+        toast.error(data.error);
+        throw new Error(data.error);
+      }
+
+      console.log(data.data);
+
+      return data.data;
+    },
+    placeholderData: keepPreviousData,
+  });
+
+  return {
+    data: data || {
+      data: [],
+      limit: pagination.limit,
+      total: 0,
+      totalPages: 0,
+      page: pagination.page,
+    },
+    isFetching,
+    status,
+    error,
+    refetch,
+  };
+}
+
+export function useFetchFailedWorkspaceCertificatesRecipients(
   workspaceAlias: string,
   pagination: { page: number; limit: number },
   searchTerm: string
@@ -134,6 +185,52 @@ export function useFetchFailedCertificateRecipients(
         PaginatedData<FailedCertificateRecipient>
       >({
         endpoint: `/certificates/recipients/failed?workspaceAlias=${workspaceAlias}&limit=${pagination.limit}&page=${pagination.page}&searchTerm=${searchTerm}`,
+      });
+
+      if (status !== 200) {
+        toast.error(data.error);
+        throw new Error(data.error);
+      }
+
+      console.log(data.data);
+
+      return data.data;
+    },
+    placeholderData: keepPreviousData,
+  });
+
+  return {
+    data: data || {
+      data: [],
+      limit: pagination.limit,
+      total: 0,
+      totalPages: 0,
+      page: pagination.page,
+    },
+    isFetching,
+    status,
+    error,
+    refetch,
+  };
+}
+
+export function useFetchFailedCertificateRecipients(
+  certificateAlias: string,
+  pagination: { page: number; limit: number },
+  searchTerm: string
+) {
+  const { data, isFetching, status, error, refetch } = useQuery({
+    queryKey: [
+      "failed certificates recipients",
+      certificateAlias,
+      pagination,
+      searchTerm,
+    ],
+    queryFn: async () => {
+      const { data, status } = await getRequest<
+        PaginatedData<FailedCertificateRecipient>
+      >({
+        endpoint: `/certificates/recipients/failed?certificateAlias=${certificateAlias}&limit=${pagination.limit}&page=${pagination.page}&searchTerm=${searchTerm}`,
       });
 
       if (status !== 200) {

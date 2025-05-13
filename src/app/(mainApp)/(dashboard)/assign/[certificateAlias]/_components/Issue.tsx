@@ -63,6 +63,7 @@ import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
 import debounce from "lodash.debounce";
 import { useEditor } from "@/components/editor/hooks/use-editor";
 import { Label } from "@/components/ui/label";
+import { DEFAULT_JSON } from "@/app/constants/DEFAULT_JSON";
 
 const issueesFilter: TFilter<
   CertificateRecipient & { certificate: TCertificate }
@@ -386,6 +387,7 @@ const Issue = ({
   const ExportRecipients = () => {
     const [itemsPerRow, setItemsPerRow] = useState<number>(1);
     const clsBtnRef = useRef<HTMLButtonElement>(null);
+
     return (
       <Dialog>
         <DialogTrigger asChild>
@@ -412,7 +414,7 @@ const Issue = ({
             <span>Export</span>
           </button>
         </DialogTrigger>
-        <DialogContent className="px-4 py-6 z-[1000]">
+        <DialogContent className="px-4 py-6">
           <div className="space-y-4">
             <div className="flex flex-col gap-4 items-center py-4">
               <Image src={ExportFill} alt="export" width={40} height={40} />
@@ -423,16 +425,14 @@ const Issue = ({
                 <Label className="absolute top-0 -translate-y-1/2 right-4 bg-white text-gray-600 text-tiny px-1">
                   Items per row
                 </Label>
-                <input
-                  title="Items per row"
-                  value={itemsPerRow}
-                  onInput={(e) => {
-                    e.stopPropagation();
-                    setItemsPerRow(e.currentTarget.value);
-                  }}
-                  max={5}
-                  min={1}
-                  type="number"
+                <GradientBorderSelect
+                  placeholder="Select limit"
+                  value={itemsPerRow.toString()}
+                  onChange={(value: string) => setItemsPerRow(parseInt(value))}
+                  options={[1, 2, 3, 4, 5].map((number) => ({
+                    label: number.toString(),
+                    value: number.toString(),
+                  }))}
                 />
               </div>
             </div>
@@ -512,6 +512,18 @@ const Issue = ({
       canvas.dispose();
     };
   }, [init]);
+
+  const [defaultUrl, setDefaultUrl] = useState<string>("");
+
+  // useEffect(() => {
+  //   if (defaultUrl) return;
+  //   (async () => {
+  //     const url1 = await editor?.loadJsonAsync(JSON.stringify(DEFAULT_JSON));
+  //     const url2 = await editor?.loadJsonAsync(JSON.stringify(DEFAULT_JSON));
+  //     console.log(url1);
+  //     if (url2) setDefaultUrl(url2);
+  //   })();
+  // }, [editor]);
 
   async function exportRecipientsFn(options?: { imagesPerRow?: number }) {
     try {

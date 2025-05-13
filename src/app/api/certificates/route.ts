@@ -14,7 +14,9 @@ export async function GET(req: NextRequest) {
 
       const query = supabase
         .from("certificate")
-        .select("*, recipientCount:certificateRecipients!inner(count)")
+        .select(
+          "*, recipientCount:certificateRecipients!inner(count), failedRecipientCount:certificateRecipientsFailed!inner(count)"
+        )
         .order("lastEdited", { ascending: false, nullsFirst: true });
 
       if (workspaceAlias) query.eq("workspaceAlias", workspaceAlias);
@@ -30,6 +32,7 @@ export async function GET(req: NextRequest) {
           data: data.map((certificate) => ({
             ...certificate,
             recipientCount: certificate.recipientCount[0].count,
+            failedRecipientCount: certificate.failedRecipientCount[0].count,
           })),
         },
         {

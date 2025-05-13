@@ -3,8 +3,10 @@ import React, { useState } from "react";
 import Issue from "./Issue";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import {
-  useFetchCertificateRecipients,
+  useFetchWorkspaceCertificatesRecipients,
   useFetchCertificates,
+  useFetchFailedWorkspaceCertificatesRecipients,
+  useFetchCertificateRecipients,
   useFetchFailedCertificateRecipients,
 } from "@/queries/certificates.queries";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,20 +22,12 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
   const { data: certificates, isFetching: certificatesIsLoading } =
     useFetchCertificates(organization?.organizationAlias!);
 
-  const searchParams = new URLSearchParams({
-    workspaceAlias: organization?.organizationAlias || "",
-  });
-
   const { data, isFetching: certificateIssueesIsLoading } =
-    useFetchCertificateRecipients(
-      organization?.organizationAlias!,
-      pagination,
-      searchTerm
-    );
+    useFetchCertificateRecipients(certificateAlias, pagination, searchTerm);
 
   const { data: failedData, isFetching: failedCertificateIssueesIsLoading } =
     useFetchFailedCertificateRecipients(
-      organization?.organizationAlias!,
+      certificateAlias,
       pagination,
       searchTerm
     );

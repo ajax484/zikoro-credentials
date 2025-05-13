@@ -40,6 +40,7 @@ export interface TCertificate {
   JSON: Record<string, any> | null;
   workspaceAlias: string;
   recipientCount: number;
+  failedRecipientCount: number;
   createdBy: number;
   isValid: boolean;
   attributes: string[];

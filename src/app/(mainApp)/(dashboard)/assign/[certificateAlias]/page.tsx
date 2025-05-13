@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import React from "react";
-import AssignPage from "./_components/AssignPage";
+import RecipientsPage from "./_components/CertificateInfoPage";
 
 export const generateMetadata = async (): Promise<Metadata> => {
   return {
@@ -9,12 +9,8 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const page = ({
-  searchParams,
-}: {
-  searchParams: { certificateAlias: string };
-}) => {
-  return <AssignPage certificateAlias={searchParams.certificateAlias} />;
+const page = ({ params }: { params: { certificateAlias: string } }) => {
+  return <RecipientsPage certificateAlias={params.certificateAlias} />;
 };
 
 export default page;

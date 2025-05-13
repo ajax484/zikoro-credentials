@@ -89,11 +89,11 @@ export const issueesColumns: ColumnDef<
     accessorKey: "recipientEmail",
     header: "Email",
   },
-  {
-    accessorKey: "certificate.name",
-    header: "Credential",
-    sortingFn: "alphanumeric",
-  },
+  // {
+  //   accessorKey: "certificate.name",
+  //   header: "Credential",
+  //   sortingFn: "alphanumeric",
+  // },
   {
     accessorKey: "created_at",
     header: "Date Issued",
@@ -370,11 +370,11 @@ export const failedColumns: ColumnDef<FailedCertificateRecipient>[] = [
     accessorKey: "recipientEmail",
     header: "Email",
   },
-  {
-    accessorKey: "certificate.name",
-    header: "Credential",
-    sortingFn: "alphanumeric",
-  },
+  // {
+  //   accessorKey: "certificate.name",
+  //   header: "Credential",
+  //   sortingFn: "alphanumeric",
+  // },
   {
     accessorKey: "created_at",
     header: "Date Issued",
