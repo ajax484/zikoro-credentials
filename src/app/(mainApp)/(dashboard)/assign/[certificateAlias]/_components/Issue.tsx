@@ -121,7 +121,7 @@ const Issue = ({
   certificateAlias,
   updateLimit,
   searchTerm,
-  setSearchTerm,
+  updateSearchTerm,
 }: {
   certificates: TCertificate[];
   certificateIssuees: (CertificateRecipient & { certificate: TCertificate })[];
@@ -133,7 +133,7 @@ const Issue = ({
   certificateAlias: string;
   updateLimit: (limit: number) => void;
   searchTerm: string;
-  setSearchTerm: (searchTerm: string) => void;
+  updateSearchTerm: (searchTerm: string) => void;
 }) => {
   const router = useRouter();
 
@@ -697,13 +697,6 @@ const Issue = ({
 
   const [open, setOpen] = useState(false);
 
-  const debouncedSearch = useCallback(
-    (searchTerm: string) => {
-      setSearchTerm(searchTerm);
-    },
-    [searchTerm]
-  );
-
   return (
     <section className="space-y-4">
       <div className="flex items-end justify-between">
@@ -880,9 +873,10 @@ const Issue = ({
             <input
               type="text"
               placeholder="Search"
-              value={searchTerm}
+              // value={searchTerm}
               onInput={(event) => {
-                debouncedSearch(event.currentTarget.value);
+                updateSearchTerm(event.currentTarget.value);
+                // updateSearchTerm(event.currentTarget.value);
               }}
               className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 w-1/3 border-b focus-visible:outline-none"
             />

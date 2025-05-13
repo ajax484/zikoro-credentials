@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import Issue from "./Issue";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import {
@@ -11,10 +11,12 @@ import {
 } from "@/queries/certificates.queries";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Failed from "./Failed";
+import debounce from "lodash.debounce";
 
 const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
   const { organization } = useOrganizationStore();
   const [searchTerm, setSearchTerm] = useState<string>("");
+  // const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
   const [pagination, setPagination] = useState<{ page: number; limit: number }>(
     { page: 1, limit: 10 }
   );
@@ -42,12 +44,21 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
 
   console.log(data);
 
+  // const updateSearchTermFn = (searchTerm: string) => {
+  //   console.log(searchTerm);
+  //   setDebouncedSearchTerm(searchTerm);
+  // };
+
+  // const debouncedSearch = useCallback(debounce(updateSearchTermFn, 500), [
+  //   updateSearchTermFn,
+  // ]);
+
   return (
     <section>
       <Tabs
         onChange={() => {
           setPagination({ page: 1, limit: 10 });
-          setSearchTerm("");
+          // setSearchTerm("");
         }}
         defaultValue="issued"
         className="w-full !p-0"
@@ -87,7 +98,11 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
             pagination={pagination}
             isLoading={certificateIssueesIsLoading}
             searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
+            updateSearchTerm={(searchTerm: string) => {
+              console.log(searchTerm);
+              setSearchTerm(searchTerm);
+              // debouncedSearch(searchTerm);
+            }}
           />
         </TabsContent>
         <TabsContent key={"failed"} value={"failed"} className="p-4">
