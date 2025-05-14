@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
       const { data, error } = await supabase.auth.signUp({
         email: payload.email,
         password: payload.password,
+        phone: payload.phone,
         options: {
           emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback/${
             payload?.email

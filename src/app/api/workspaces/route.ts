@@ -7,6 +7,17 @@ export async function GET(req: NextRequest) {
 
   if (req.method === "GET") {
     try {
+
+
+
+
+
+
+
+
+
+
+      
       const { searchParams } = new URL(req.url);
       const userEmail = searchParams.get("userEmail");
 

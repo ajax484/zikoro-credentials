@@ -21,6 +21,7 @@ const AppointmentSignupForm = ({
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    phone: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +58,7 @@ const AppointmentSignupForm = ({
 
       <form action="" className="mt-10" onSubmit={onSubmit}>
         <div className="flex flex-col gap-y-3 mt-6">
-          <label htmlFor="">Email Address</label>
+          <label htmlFor="email">Email Address</label>
           <input
             type="email"
             name="email"
@@ -68,9 +69,21 @@ const AppointmentSignupForm = ({
             className="border-[1px] border-gray-200 px-[10px] py-4 w-full text-base rounded-[6px] outline-none"
           />
         </div>
+        <div className="flex flex-col gap-y-3 mt-6">
+          <label htmlFor="phone">Phone</label>
+          <input
+            type="tel"
+            name="phone"
+            required
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="Enter Phone Number"
+            className="border-[1px] border-gray-200 px-[10px] py-4 w-full text-base rounded-[6px] outline-none"
+          />
+        </div>
 
         <div className="flex flex-col gap-y-3 mt-6">
-          <label htmlFor="">Password</label>
+          <label htmlFor="password">Password</label>
           <div className="flex items-center justify-around border-[1px] border-gray-200 rounded-[6px] ">
             <input
               type={showPassword ? "text" : "password"}

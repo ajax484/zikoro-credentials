@@ -424,7 +424,6 @@ export default function OnboardingForm({
         userEmail: user.userEmail,
         subscriptionPlan: "free",
         organizationType: "Private",
-        organizationAlias: generateAlias(),
         firstName: user.firstName,
         lastName: user.lastName,
         userId: user.id,

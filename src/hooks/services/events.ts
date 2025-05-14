@@ -219,6 +219,8 @@ export function useCreateOrganisation() {
     setLoading(true);
     const { firstName, lastName, userEmail, userId, ...restData } = values;
     console.log(userEmail);
+
+    const organizationAlias = generateAlias();
     try {
       const { data, error, status } = await supabase
         .from("organization")
@@ -229,6 +231,7 @@ export function useCreateOrganisation() {
             organizationOwnerId: userId,
             eventContactEmail: userEmail,
             subscriptionExpiryDate: exp || null,
+            organizationAlias,
             teamMembers: [
               {
                 userId,
@@ -255,7 +258,7 @@ export function useCreateOrganisation() {
         userId: userData?.id,
         userEmail,
         userRole: "owner",
-        workspaceAlias: values?.organizationAlias,
+        workspaceAlias: organizationAlias,
       };
 
       const { data: eData, error: eError } = await supabase
