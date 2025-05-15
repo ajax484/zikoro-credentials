@@ -135,13 +135,10 @@ const buildEditor = ({
     autoZoom();
   };
 
-  const generateLinkAsync = async (
-    next: (url: string) => void,
-    isLive = false
-  ) => {
+  const generateLinkAsync = async (next: (url: string) => void) => {
     const options = generateSaveOptions();
 
-    isLive && canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+    canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
     const dataUrl = await canvas.toDataURL((err, url) => {
       if (err) throw err;
       console.log(url);

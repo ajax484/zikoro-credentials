@@ -45,7 +45,6 @@ import {
   useGetData,
   useMutateData,
 } from "@/hooks/services/request";
-import * as XLSX from "xlsx";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { format } from "date-fns";
 import { CredentialsWorkspaceToken } from "@/types/token";
@@ -60,10 +59,14 @@ import {
   useResendCertificates,
 } from "@/mutations/certificates.mutations";
 import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
-import debounce from "lodash.debounce";
 import { useEditor } from "@/components/editor/hooks/use-editor";
 import { Label } from "@/components/ui/label";
-import { DEFAULT_JSON } from "@/app/constants/DEFAULT_JSON";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const issueesFilter: TFilter<
   CertificateRecipient & { certificate: TCertificate }
@@ -525,14 +528,18 @@ const Issue = ({
   //   })();
   // }, [editor]);
 
+  const [firstGenerate, setFirstGenerate] = useState(true);
+
   async function exportRecipientsFn(options?: { imagesPerRow?: number }) {
     try {
       const exportedCertificates = filteredIssuees.filter(
         ({ id }) => rowSelection[id]
       );
 
+      let dataUrls: string[] = [];
+
       // Generate data URLs with proper async handling
-      const dataUrls = await Promise.all(
+      dataUrls = await Promise.all(
         exportedCertificates.map(async (recipient) => {
           let newState = JSON.parse(
             replaceURIVariable(
@@ -566,6 +573,44 @@ const Issue = ({
           // return "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg";
         })
       );
+
+      if (firstGenerate) {
+        setFirstGenerate(false);
+        dataUrls = await Promise.all(
+          exportedCertificates.map(async (recipient) => {
+            let newState = JSON.parse(
+              replaceURIVariable(
+                replaceSpecialText(
+                  JSON.stringify(recipient?.certificate?.JSON?.json || {}),
+                  {
+                    asset: recipient.certificate,
+                    recipient: recipient,
+                    organization: organization!,
+                  }
+                ),
+                recipient.certificateId || ""
+              )
+            );
+
+            // Handle image replacement
+            newState = String(newState).replaceAll(
+              "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
+              recipient?.profilePicture?.trim()!
+            );
+
+            // editor?.clear();
+            editor?.changeSize({
+              width: recipient.certificate.JSON.width || 1200,
+              height: recipient.certificate.JSON?.height || 900,
+            });
+            const url = await editor?.loadJsonAsync(newState);
+
+            console.log(url);
+            return url || "";
+            // return "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg";
+          })
+        );
+      }
 
       console.log(dataUrls);
 
