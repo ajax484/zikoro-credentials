@@ -538,7 +538,6 @@ const Issue = ({
 
       let dataUrls: string[] = [];
 
-      // Generate data URLs with proper async handling
       dataUrls = await Promise.all(
         exportedCertificates.map(async (recipient) => {
           let newState = JSON.parse(
