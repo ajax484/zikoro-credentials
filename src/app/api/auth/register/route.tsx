@@ -13,17 +13,19 @@ export async function POST(req: NextRequest) {
       const { data, error } = await supabase.auth.signUp({
         email: payload.email,
         password: payload.password,
-        phone: payload.phone,
         options: {
           emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback/${
             payload?.email
           }/${new Date().toISOString()}`,
           data: {
+            phone: payload.phone,
             platform: "credentials",
             verification_token: nanoid(),
           },
         },
       });
+
+      console.log(data);
 
       if (error) {
         throw error;
