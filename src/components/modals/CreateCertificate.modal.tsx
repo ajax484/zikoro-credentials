@@ -90,6 +90,8 @@ const CreateCertificateDialog = ({
   const { data: templates, isFetching: templatesIsLoading } =
     useFetchCertificateTemplates();
 
+  console.log(templates);
+
   const [workspace, setWorkspace] = useState<TOrganization | null>(
     organization
   );
@@ -105,7 +107,7 @@ const CreateCertificateDialog = ({
     useState<CertificateTemplate | null>(null);
   const [type, setType] = useState<string>("template");
   const [credentialType, setCredentialType] = useState<
-    "product label" | "certificate" | "badge" | "shipping label"
+    "product label" | "certificate" | "event badge" | "shipping label"
   >("certificate");
 
   console.log(templates[0]?.JSON);
@@ -248,29 +250,34 @@ const CreateCertificateDialog = ({
                   >
                     <Carousel className="w-full" setApi={setApi}>
                       <CarouselContent className="-ml-1 relative px-4">
-                        {templates?.map((template, index) => (
-                          <CarouselItem
-                            key={index}
-                            className="pl-1 md:basis-1/2 lg:basis-1/3"
-                          >
-                            <button
-                              onClick={() => setSelectedTemplate(template)}
-                              aria-label={template.name}
-                              key={template.id}
-                              className={cn(
-                                "group relative h-[250px] w-full overflow-hidden border bg-muted transition rounded-lg",
-                                selectedTemplate?.id === template.id &&
-                                  "border-basePrimary"
-                              )}
+                        {templates
+                          ?.filter(
+                            (template) =>
+                              template.credentialType === credentialType
+                          )
+                          .map((template, index) => (
+                            <CarouselItem
+                              key={index}
+                              className="pl-1 md:basis-1/2 lg:basis-1/3"
                             >
-                              <img
-                                src={template.previewUrl}
-                                alt={"Image " + index}
-                                className="object-fill"
-                              />
-                            </button>
-                          </CarouselItem>
-                        ))}
+                              <button
+                                onClick={() => setSelectedTemplate(template)}
+                                aria-label={template.name}
+                                key={template.id}
+                                className={cn(
+                                  "group relative h-[250px] w-full overflow-hidden border bg-muted transition rounded-lg",
+                                  selectedTemplate?.id === template.id &&
+                                    "border-basePrimary"
+                                )}
+                              >
+                                <img
+                                  src={template.previewUrl}
+                                  alt={"Image " + index}
+                                  className="object-fill"
+                                />
+                              </button>
+                            </CarouselItem>
+                          ))}
                       </CarouselContent>
                       <button
                         aria-label="Previous"

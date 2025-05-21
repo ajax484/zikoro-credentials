@@ -13,6 +13,17 @@
   color: var(--zikoro-grey);
 }
 
+@media print {
+  @page {
+    margin: 0;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+}
+
 @layer base {
   :root {
     --zikoro-primary: 277 100% 50% 1;

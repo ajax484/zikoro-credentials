@@ -128,7 +128,7 @@ export const VerificationSidebar = ({
           </Button>
           {attributes.length > 0 &&
             attributes.map((attribute) => (
-              <div className="relative">
+              <div key={attribute} className="relative">
                 <Button
                   className="h-16 w-full"
                   variant="secondary"

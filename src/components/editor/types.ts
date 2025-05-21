@@ -226,6 +226,10 @@ export interface Editor {
     { width, height }: { width: number; height: number },
     name?: string
   ) => void;
+  printPdf: (
+    { width, height }: { width: number; height: number },
+    name?: string
+  ) => void;
   savePng: () => void;
   saveJpg: () => void;
   saveSvg: () => void;
@@ -249,6 +253,7 @@ export interface Editor {
   onPaste: () => void;
   changeImageFilter: (value: string) => void;
   addImage: (value: string) => void;
+  changeImage: (value: string) => void;
   addBackgroundImage: (value: string) => void;
   addQRCode: (
     value: string,

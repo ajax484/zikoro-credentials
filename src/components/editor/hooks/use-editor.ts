@@ -115,6 +115,38 @@ const buildEditor = ({
     autoZoom();
   };
 
+  const printPdf = (
+    {
+      width,
+      height,
+    }: {
+      width: number;
+      height: number;
+    },
+    name?: string
+  ) => {
+    console.log(width, height);
+    const options = generateSaveOptions();
+
+    canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+    const dataUrl = canvas.toDataURL(options);
+
+    const pdf = new jsPDF({
+      orientation: width > height ? "l" : "p",
+      unit: "pt",
+      format: [options.width, options.height],
+    });
+    // const imgProperties = pdf.getImageProperties(dataUrl);
+    // const pdfWidth = pdf.internal.pageSize.getWidth();
+    // const pdfHeight = pdf.internal.pageSize.getHeight();
+
+    pdf.addImage(dataUrl, "png", 0, 0, width, height);
+    pdf.autoPrint({ variant: "non-conform" });
+    pdf.save(name || "untitled.pdf");
+
+    autoZoom();
+  };
+
   const savePng = () => {
     const options = generateSaveOptions();
 
@@ -171,12 +203,19 @@ const buildEditor = ({
     autoZoom();
   };
 
-  const saveJson = async () => {
+  const saveJson = async (attributes: string[]) => {
     const dataUrl = canvas.toJSON(JSON_KEYS);
 
     await transformText(dataUrl.objects);
     const fileString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(dataUrl, null, "\t")
+      JSON.stringify(
+        {
+          attributes,
+          JSON: dataUrl,
+        },
+        null,
+        "\t"
+      )
     )}`;
     downloadFile(fileString, "json");
   };
@@ -253,6 +292,7 @@ const buildEditor = ({
     generateLinkAsync,
     generateLink,
     savePdf,
+    printPdf,
     savePng,
     saveJpg,
     saveSvg,
@@ -362,6 +402,30 @@ const buildEditor = ({
           crossOrigin: "anonymous",
         }
       );
+    },
+    changeImage: (value: string) => {
+      canvas.getActiveObjects().forEach((object: fabric.Object) => {
+        if (object.type === "image") {
+          object.setSrc(
+            value,
+            function (img) {
+              img.set({
+                left: object.left,
+                top: object.top,
+                height: object.height,
+                width: object.width,
+              });
+              console.log(img.src);
+              canvas.renderAll();
+            },
+            {
+              crossOrigin: "anonymous",
+            }
+          );
+        }
+      });
+
+      canvas.renderAll();
     },
     addBackgroundImage: (value: string) => {
       console.log("Adding background image:", value);

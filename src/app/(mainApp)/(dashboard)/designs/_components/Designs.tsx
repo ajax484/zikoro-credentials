@@ -84,7 +84,7 @@ const Designs = () => {
     if (!data) return;
 
     router.push(
-      `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${workspace.id}`
+      `/credentials/create/${data.certificateAlias}?type=${data.credentialType}&workspaceId=${workspace.id}`
     );
   };
 

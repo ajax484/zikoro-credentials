@@ -42,6 +42,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import printJS from "print-js";
 
 export const issueesColumns: ColumnDef<
   CertificateRecipient & { certificate: TCertificate }
@@ -220,49 +221,53 @@ export const issueesColumns: ColumnDef<
             throw new Error("Failed to fetch image.");
           }
 
-          // Open a new window with the image
-          const printWindow = window.open("", "_blank");
-          if (!printWindow) {
-            throw new Error("Failed to open print window.");
-          }
+          console.log(imageUrl, "image");
 
-          // Write the image to the new window
-          printWindow.document.write(`
-            <html>
-              <head>
-                <title>Print Image</title>
-                <style>
-                  /* Remove default margins and padding */
-                  body, html { 
-                    margin: 0 !important; 
-                    padding: 0 !important; 
-                    height: 100% !important; 
-                    width: 100% !important; 
-                  }
-                  /* Ensure the image takes up the full page */
-                  img { 
-                    width: 100% !important; 
-                    height: 100% !important; 
-                    object-fit: contain; /* Ensures the image fits within the page */
-                  }
-                  /* Hide print metadata (headers and footers) */
-                  @page { 
-                    size: auto; /* Use the size of the image */
-                    margin: 0 !important; /* Remove default margins */
-                  }
-                </style>
-              </head>
-              <body>
-                <img src="${imageUrl}" alt="Printable Image" onload="window.print()" />
-              </body>
-            </html>
-          `);
+          printJS(imageUrl, "image");
 
-          // Close the window after printing
-          printWindow.document.close();
-          printWindow.onbeforeunload = () => {
-            printWindow.close();
-          };
+          // // Open a new window with the image
+          // const printWindow = window.open("", "_blank");
+          // if (!printWindow) {
+          //   throw new Error("Failed to open print window.");
+          // }
+
+          // // Write the image to the new window
+          // printWindow.document.write(`
+          //   <html>
+          //     <head>
+          //       <title>Print Image</title>
+          //       <style>
+          //         /* Remove default margins and padding */
+          //         body, html {
+          //           margin: 0 !important;
+          //           padding: 0 !important;
+          //           height: ${certificate?.JSON?.height} !important;
+          //           width: ${certificate?.JSON?.width} !important;
+          //         }
+          //         /* Ensure the image takes up the full page */
+          //         img {
+          //           width: 100% !important;
+          //           height: 100% !important;
+          //           object-fit: contain; /* Ensures the image fits within the page */
+          //         }
+          //         /* Hide print metadata (headers and footers) */
+          //         @page {
+          //           size: auto; /* Use the size of the image */
+          //           margin: 25mm 25mm 25mm 25mm !important;
+          //         }
+          //       </style>
+          //     </head>
+          //     <body>
+          //       <img src="${imageUrl}" alt="Printable Image" onload="window.print()" />
+          //     </body>
+          //   </html>
+          // `);
+
+          // // Close the window after printing
+          // printWindow.document.close();
+          // printWindow.onbeforeunload = () => {
+          //   printWindow.close();
+          // };
         } catch (err) {
           console.error(err);
         } finally {
@@ -309,6 +314,12 @@ export const issueesColumns: ColumnDef<
                 <button
                   aria-label="Print"
                   onClick={handlePrint}
+                  // onClick={() =>
+                  //   editor?.printPdf({
+                  //     width: certificate?.JSON?.width,
+                  //     height: certificate?.JSON?.height,
+                  //   })
+                  // }
                   className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center hover:bg-basePrimary/20 hover:text-basePrimary"
                 >
                   <PrinterIcon className="size-5" />

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { FaBold, FaItalic, FaStrikethrough, FaUnderline } from "react-icons/fa";
 import { TbColorFilter } from "react-icons/tb";
@@ -13,6 +13,7 @@ import {
   AlignRight,
   Trash,
   Copy,
+  Replace,
 } from "lucide-react";
 
 import { isTextType } from "@/components/editor/utils";
@@ -28,17 +29,23 @@ import { cn } from "@/lib/utils";
 import { Hint } from "@/components/hint";
 import { Button } from "@/components/ui/button";
 import { PiSquareSplitHorizontal } from "react-icons/pi";
+import toast from "react-hot-toast";
+import { uploadFile } from "@/utils/helpers";
+import { useGetData, useMutateData } from "@/hooks/services/request";
+import { TOrganization } from "@/types/organization";
 
 interface ToolbarProps {
   editor: Editor | undefined;
   activeTool: ActiveTool;
   onChangeActiveTool: (tool: ActiveTool) => void;
+  organizationId: string;
 }
 
 export const Toolbar = ({
   editor,
   activeTool,
   onChangeActiveTool,
+  organizationId,
 }: ToolbarProps) => {
   const initialFillColor = editor?.getActiveFillColor();
   const initialStrokeColor = editor?.getActiveStrokeColor();
@@ -148,6 +155,72 @@ export const Toolbar = ({
       fontUnderline: newValue,
     }));
   };
+
+  const {
+    data: organization,
+    isLoading: workspaceIsLoading,
+    getData: getOrganization,
+  } = useGetData<TOrganization>(`workspaces/${organizationId}`);
+
+  const { mutateData: updateOrganization, isLoading: updating } =
+    useMutateData<TOrganization>(`workspaces/${organizationId}`, true);
+
+  const [elementUploading, setElementUploading] = useState<boolean>(false);
+
+  const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 5MB");
+      return;
+    }
+
+    try {
+      if (!file) return;
+      setElementUploading(true);
+      const { url, error } = await uploadFile(file, "image");
+
+      if (error || !url) throw error;
+      alert("File uploaded successfully");
+
+      editor?.changeImage(url);
+
+      const payload = organization?.certificateAsset
+        ? {
+            certificateAsset: {
+              ...organization?.certificateAsset,
+              elements: organization?.certificateAsset?.elements
+                ? [...organization?.certificateAsset?.elements, url]
+                : [url],
+            },
+          }
+        : {
+            certificateAsset: {
+              elements: [url],
+              backgrounds: [],
+            },
+          };
+
+      console.log(payload.certificateAsset.elements);
+
+      await updateOrganization({
+        payload,
+      });
+
+      await getOrganization();
+    } catch (error) {
+      alert("error uploading profile picture");
+      console.error("Error uploading file:", error);
+    } finally {
+      setElementUploading(false);
+    }
+  };
+
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   if (editor?.selectedObjects.length === 0) {
     return (
@@ -357,6 +430,27 @@ export const Toolbar = ({
               <PiSquareSplitHorizontal className="size-4" />
             </Button>
           </Hint>
+        </div>
+      )}
+      {isImage && (
+        <div className="flex h-full items-center justify-center">
+          <Hint label="Replace" side="bottom" sideOffset={5}>
+            <Button
+              disabled={elementUploading}
+              onClick={() => imageInputRef.current?.click()}
+              size="icon"
+              variant="ghost"
+            >
+              <Replace className="size-4" />
+            </Button>
+          </Hint>
+          <input
+            accept="image/*"
+            className="hidden"
+            type="file"
+            onChange={onChangeImage}
+            ref={imageInputRef}
+          />
         </div>
       )}
       <div className="flex h-full items-center justify-center">

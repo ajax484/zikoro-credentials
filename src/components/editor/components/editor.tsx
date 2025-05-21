@@ -189,6 +189,8 @@ export const Editor = ({
         }}
         saveSettings={saveSettings}
         settings={settings}
+        attributes={attributes}
+        setAttributes={setAttributes}
       />
       <div className="absolute top-[68px] flex h-[calc(100%-68px)] w-full">
         <Sidebar
@@ -272,6 +274,7 @@ export const Editor = ({
           editor={editor}
           activeTool={activeTool}
           onChangeActiveTool={onChangeActiveTool}
+          type={type}
         />
         <FilterSidebar
           editor={editor}
@@ -310,6 +313,7 @@ export const Editor = ({
             activeTool={activeTool}
             onChangeActiveTool={onChangeActiveTool}
             key={JSON.stringify(editor?.canvas.getActiveObject())}
+            organizationId={workspaceId}
           />
           <div
             className="h-[calc(100%-124px)] flex-1 bg-muted"

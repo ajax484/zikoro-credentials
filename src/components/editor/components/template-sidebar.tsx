@@ -22,12 +22,14 @@ interface TemplateSidebarProps {
   editor: Editor | undefined;
   activeTool: ActiveTool;
   onChangeActiveTool: (tool: ActiveTool) => void;
+  type: string;
 }
 
 export const TemplateSidebar = ({
   editor,
   activeTool,
   onChangeActiveTool,
+  type,
 }: TemplateSidebarProps) => {
   const {
     data: templates,
@@ -71,25 +73,27 @@ export const TemplateSidebar = ({
         <div className="p-4">
           <div className="grid grid-cols-2 gap-4">
             {templates &&
-              templates.map((template) => {
-                return (
-                  <button
-                    onClick={() => onClick(template)}
-                    key={template.id}
-                    className="group relative rounded-sm border bg-muted transition hover:opacity-75 h-[200px] w-full overflow-hidden"
-                  >
-                    <Image
-                      fill
-                      src={template.previewUrl || ""}
-                      alt={template.name || "Template"}
-                      className="object-cover"
-                    />
-                    <div className="absolute bottom-0 left-0 w-full truncate bg-black/50 p-1 text-left text-[10px] text-white opacity-0 group-hover:opacity-100">
-                      {template.name}
-                    </div>
-                  </button>
-                );
-              })}
+              templates
+                .filter((template) => template.credentialType === type)
+                .map((template) => {
+                  return (
+                    <button
+                      onClick={() => onClick(template)}
+                      key={template.id}
+                      className="group relative rounded-sm border bg-muted transition hover:opacity-75 h-[200px] w-full overflow-hidden"
+                    >
+                      <Image
+                        fill
+                        src={template.previewUrl || ""}
+                        alt={template.name || "Template"}
+                        className="object-cover"
+                      />
+                      <div className="absolute bottom-0 left-0 w-full truncate bg-black/50 p-1 text-left text-[10px] text-white opacity-0 group-hover:opacity-100">
+                        {template.name}
+                      </div>
+                    </button>
+                  );
+                })}
           </div>
         </div>
       </ScrollArea>

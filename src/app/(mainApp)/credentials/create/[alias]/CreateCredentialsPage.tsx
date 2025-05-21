@@ -29,9 +29,7 @@ const CreateCredentialsPage = ({
   type: "badge" | "certificate";
   workspaceAlias: string;
 }) => {
-  const credentialFetchFn =
-    type === "certificate" ? useGetCertificate : useGetBadge;
-  const { data, isLoading } = credentialFetchFn({
+  const { data, isLoading } = useGetCertificate({
     alias,
   });
 

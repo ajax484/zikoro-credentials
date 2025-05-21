@@ -41,6 +41,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import DetailsForm from "./detailsForm";
+import React from "react";
 
 interface NavbarProps {
   id: string;
@@ -59,6 +60,8 @@ interface NavbarProps {
   type: "certificate" | "badge";
   alias: string;
   manualSave: (values: { json: string; height: number; width: number }) => void;
+  attributes: string[];
+  setAttributes: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export const Navbar = ({
@@ -77,6 +80,8 @@ export const Navbar = ({
   settings,
   saveSettings,
   isSaving,
+  attributes,
+  setAttributes,
 }: NavbarProps) => {
   const router = useRouter();
   const { openFilePicker } = useFilePicker({
@@ -87,7 +92,14 @@ export const Navbar = ({
         const reader = new FileReader();
         reader.readAsText(file, "UTF-8");
         reader.onload = () => {
-          editor?.loadJson(reader.result as string);
+          const data = JSON.parse(reader.result as string);
+
+          if (data.attributes) {
+            setAttributes(data.attributes);
+            editor?.loadJson(JSON.stringify(data.JSON));
+          } else {
+            editor?.loadJson(reader.result as string);
+          }
         };
       }
     },
@@ -281,7 +293,7 @@ export const Navbar = ({
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="flex items-center gap-x-2"
-                onClick={() => editor?.saveJson()}
+                onClick={() => editor?.saveJson(attributes)}
               >
                 <Download className="size-8" />
 
