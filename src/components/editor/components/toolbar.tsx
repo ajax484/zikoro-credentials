@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { FaBold, FaItalic, FaStrikethrough, FaUnderline } from "react-icons/fa";
 import { TbColorFilter } from "react-icons/tb";
@@ -219,6 +219,26 @@ export const Toolbar = ({
       setElementUploading(false);
     }
   };
+
+  useEffect(() => {
+    interface KeyboardEventWithKey extends KeyboardEvent {
+      key: string;
+    }
+
+    const handleKeyDown = (e: KeyboardEventWithKey) => {
+      if (e.key === "Delete" || e.key === "Backspace") {
+        console.log("Delete/Backspace key pressed");
+        // Your delete logic here
+        editor?.delete();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const imageInputRef = useRef<HTMLInputElement>(null);
 

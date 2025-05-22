@@ -27,48 +27,56 @@ export const Sidebar = ({ activeTool, onChangeActiveTool }: SidebarProps) => {
           label="Templates"
           isActive={activeTool === "templates"}
           onClick={() => onChangeActiveTool("templates")}
+          numKey={"1"}
         />
         <SidebarItem
           icon={PiSelectionBackground}
           label="Background"
           isActive={activeTool === "background"}
           onClick={() => onChangeActiveTool("background")}
+          numKey={"2"}
         />
         <SidebarItem
           icon={ImageIcon}
           label="Image"
           isActive={activeTool === "images"}
           onClick={() => onChangeActiveTool("images")}
+          numKey={"3"}
         />
         <SidebarItem
           icon={Type}
           label="Text"
           isActive={activeTool === "text"}
           onClick={() => onChangeActiveTool("text")}
+          numKey={"4"}
         />
         <SidebarItem
           icon={Barcode}
           label="Bar Code"
           isActive={activeTool === "qrCode"}
           onClick={() => onChangeActiveTool("qrCode")}
+          numKey={"5"}
         />
         <SidebarItem
           icon={Lock}
           label="Attributes"
           isActive={activeTool === "verification"}
           onClick={() => onChangeActiveTool("verification")}
+          numKey={"6"}
         />
         <SidebarItem
           icon={Shapes}
           label="Shapes"
           isActive={activeTool === "shapes"}
           onClick={() => onChangeActiveTool("shapes")}
+          numKey={"7"}
         />
         <SidebarItem
           icon={Signature}
           label="Signature"
           isActive={activeTool === "draw"}
           onClick={() => onChangeActiveTool("draw")}
+          numKey={"8"}
         />
         {/* <SidebarItem
           icon={Sparkles}
@@ -81,6 +89,7 @@ export const Sidebar = ({ activeTool, onChangeActiveTool }: SidebarProps) => {
           label="Settings"
           isActive={activeTool === "settings"}
           onClick={() => onChangeActiveTool("settings")}
+          numKey={"9"}
         />
       </ul>
     </aside>

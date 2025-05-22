@@ -24,12 +24,11 @@ import {
   formatTime,
   COUNTRIES_CURRENCY,
   dateFormatting,
-  generateAlias,
 } from "@/utils";
 import { useGetOrganizations } from "./organization";
 import useUserStore from "@/store/globalUserStore";
 import useAccessStore from "@/store/globalAcessStore";
-import { generateAlphanumericHash } from "@/utils/helpers";
+import { generateAlias, generateAlphanumericHash } from "@/utils/helpers";
 import { Reward } from "@/types";
 import { useGetData } from "@/hooks/services/request";
 import useOrganizationStore from "@/store/globalOrganizationStore";

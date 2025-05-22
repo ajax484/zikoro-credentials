@@ -700,6 +700,8 @@ const buildEditor = ({
             toggleQRCode(false);
           }
         }
+
+        console.log("object", object);
         canvas.remove(object);
       });
       canvas.discardActiveObject();
