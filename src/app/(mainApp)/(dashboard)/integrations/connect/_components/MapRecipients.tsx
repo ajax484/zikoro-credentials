@@ -42,14 +42,14 @@ const MapRecipients: React.FC<IntegrationComponentProps> = ({
       }
     }
 
-    const duplicates = findKeysWithSharedValue(headers);
+    // const duplicates = findKeysWithSharedValue(headers);
 
-    if (duplicates.size > 0)
-      return toast.error(
-        `duplicates found: ${Array.from(duplicates).map(
-          ([key, value], index) => key + (index < duplicates.size ? ", " : "")
-        )}`
-      );
+    // if (duplicates.size > 0)
+    //   return toast.error(
+    //     `duplicates found: ${Array.from(duplicates).map(
+    //       ([key, value], index) => key + (index < duplicates.size ? ", " : "")
+    //     )}`
+    //   );
 
     setStep(3);
   };

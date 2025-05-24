@@ -190,6 +190,7 @@ export interface EditorHookProps {
     width: number;
   }) => void;
   toggleQRCode: (value: boolean) => void;
+  smartGuides?: boolean;
 }
 
 export type BuildEditorProps = {
@@ -303,3 +304,30 @@ export interface Editor {
   getActiveStrokeDashArray: () => number[];
   selectedObjects: fabric.Object[];
 }
+
+export type SmartGuideOptions = {
+  snapThreshold?: number;
+  guideColor?: string;
+  guideWidth?: number;
+};
+
+export type Rect = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+};
+
+export type SnappingLines = {
+  vertical: fabric.Line[];
+  horizontal: fabric.Line[];
+};
+
+export type OrientationType = "vertical" | "horizontal";
+export type AlignmentType =
+  | "left"
+  | "right"
+  | "centerX"
+  | "top"
+  | "bottom"
+  | "centerY";

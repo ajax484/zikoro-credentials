@@ -46,6 +46,7 @@ import {
   TCertificateAssets,
 } from "@/types/certificates";
 import { TOrganization } from "@/types/organization";
+import { useSmartGuides } from "./use-smart-guides";
 
 const buildEditor = ({
   save,
@@ -1164,6 +1165,8 @@ export const useEditor = ({
     canvasHistory,
     setHistoryIndex,
   });
+
+  useSmartGuides(canvas, {});
 
   const editor = useMemo(() => {
     if (canvas) {
