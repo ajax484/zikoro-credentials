@@ -41,8 +41,8 @@ export default function Section2() {
         >
           <SwiperSlide>
             {" "}
-            <div className="flex flex-col lg:flex-row gap-y-6 bg-white p-3 mb-8">
-              <div className="flex justify-center items-center w-full lg:w-[50%]">
+            <div className="flex flex-col md:flex-row gap-y-6 bg-white p-3 mb-8">
+              <div className="flex justify-center items-center w-full md:w-[50%]">
                 <div>
                   <p className="font-semibold text-2xl">
                     Educational Institutions
@@ -67,8 +67,8 @@ export default function Section2() {
           </SwiperSlide>
           <SwiperSlide>
             {" "}
-            <div className="flex flex-col lg:flex-row gap-y-6 bg-white p-3  mb-8">
-              <div className="flex justify-center items-center w-full lg:w-[50%]">
+            <div className="flex flex-col md:flex-row gap-y-6 bg-white p-3  mb-8">
+              <div className="flex justify-center items-center w-full md:w-[50%]">
                 <div>
                   <p className="font-semibold text-2xl">Corporate Training</p>
                   <p className="font-medium text-[#555555] mt-3 ">
@@ -90,8 +90,8 @@ export default function Section2() {
           </SwiperSlide>
           <SwiperSlide>
             {" "}
-            <div className="flex flex-col lg:flex-row gap-y-6 bg-white p-3  mb-8">
-              <div className="flex justify-center items-center w-full lg:w-[50%]">
+            <div className="flex flex-col md:flex-row gap-y-6 bg-white p-3  mb-8">
+              <div className="flex justify-center items-center w-full md:w-[50%]">
                 <div>
                   <p className="font-semibold text-2xl">
                     Events and Conferences
@@ -116,8 +116,8 @@ export default function Section2() {
           </SwiperSlide>
           <SwiperSlide>
             {" "}
-            <div className="flex flex-col lg:flex-row gap-y-6 bg-white p-3  mb-8">
-              <div className="flex justify-center items-center w-full lg:w-[50%]">
+            <div className="flex flex-col md:flex-row gap-y-6 bg-white p-3  mb-8">
+              <div className="flex justify-center items-center w-full md:w-[50%]">
                 <div>
                   <p className="font-semibold text-2xl">Online Courses</p>
                   <p className="font-medium text-[#555555] mt-3 ">
@@ -139,8 +139,8 @@ export default function Section2() {
           </SwiperSlide>
           <SwiperSlide>
             {" "}
-            <div className="flex flex-col lg:flex-row gap-y-6 bg-white p-3  mb-8">
-              <div className="flex justify-center items-center w-full lg:w-[50%]">
+            <div className="flex flex-col md:flex-row gap-y-6 bg-white p-3  mb-8">
+              <div className="flex justify-center items-center w-full md:w-[50%]">
                 <div>
                   <p className="font-semibold text-2xl">Religious Bodies</p>
                   <p className="font-medium text-[#555555] mt-3 ">
@@ -165,8 +165,8 @@ export default function Section2() {
 
           <SwiperSlide>
             {" "}
-            <div className="flex flex-col lg:flex-row gap-y-6 bg-white p-3  mb-8">
-              <div className="flex justify-center items-center w-full lg:w-[50%]">
+            <div className="flex flex-col md:flex-row gap-y-6 bg-white p-3  mb-8">
+              <div className="flex justify-center items-center w-full md:w-[50%]">
                 <div>
                   <p className="font-semibold text-2xl">NGOs</p>
                   <p className="font-medium text-[#555555] mt-3 ">

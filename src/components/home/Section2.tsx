@@ -13,7 +13,7 @@ export default function Section2() {
       </p>
 
       {/* section 2 */}
-      <div className=" flex flex-col lg:flex-row gap-4 mt-[90px] min-w-[269px]">
+      <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-[90px] min-w-[269px]">
         {/* 1st div */}
         <div className="bg-white rounded-lg p-[10px] min-w-[269px] lg:min-w-[23%] xl:min-w-[269px]">
           <Image

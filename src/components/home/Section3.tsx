@@ -17,7 +17,7 @@ export default function Section3() {
         <p className="text-[32px] font-semibold text-center">How it works</p>
 
         {/* mid section */}
-        <div className="flex flex-col lg:flex-row mt-[34px] gap-10 relative">
+        <div className="flex flex-col md:flex-row mt-[34px] gap-10 relative">
           {/* lg screens */}
           <div className="hidden lg:inline xl:hidden 2xl:inline absolute top-[15%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 -z-5 ">
             <StraightLineIcon2 />
