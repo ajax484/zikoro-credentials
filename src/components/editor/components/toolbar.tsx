@@ -226,10 +226,19 @@ export const Toolbar = ({
     }
 
     const handleKeyDown = (e: KeyboardEventWithKey) => {
+      // Delete/Backspace handling
       if (e.key === "Delete" || e.key === "Backspace") {
-        console.log("Delete/Backspace key pressed");
-        // Your delete logic here
         editor?.delete();
+      }
+      // Copy handling (Ctrl+C/Cmd+C)
+      else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c") {
+        e.preventDefault();
+        editor?.onCopy();
+      }
+      // Paste handling (Ctrl+V/Cmd+V)
+      else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "v") {
+        e.preventDefault();
+        editor?.onPaste();
       }
     };
 
@@ -238,7 +247,7 @@ export const Toolbar = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [editor]); // Added editor to dependency array for safety
 
   const imageInputRef = useRef<HTMLInputElement>(null);
 

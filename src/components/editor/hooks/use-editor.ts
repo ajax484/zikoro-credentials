@@ -40,13 +40,7 @@ import {
 } from "@/utils/helpers";
 import { z } from "zod";
 import { barCodeTypeEnum } from "../components/qrcode-sidebar";
-import {
-  CertificateRecipient,
-  TCertificate,
-  TCertificateAssets,
-} from "@/types/certificates";
-import { TOrganization } from "@/types/organization";
-import { useSmartGuides } from "./use-smart-guides";
+import { AlignGuidelines } from "fabric-guideline-plugin";
 
 const buildEditor = ({
   save,
@@ -1256,6 +1250,7 @@ export const useEditor = ({
 
       // initCenteringGuidelines(initialCanvas);
       // initAligningGuidelines(initialCanvas);
+
 
       setCanvas(initialCanvas);
       setContainer(initialContainer);

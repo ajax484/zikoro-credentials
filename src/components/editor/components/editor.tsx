@@ -27,6 +27,7 @@ import { QRCodeSidebar } from "./qrcode-sidebar";
 import { base64ToFile, uploadFile } from "@/utils/helpers";
 import { CredentialsWorkspaceToken } from "@/types/token";
 import { TemplateSidebar } from "./template-sidebar";
+import { AlignGuidelines } from "fabric-guideline-plugin";
 
 interface EditorProps {
   initialData: ResponseType["data"];
@@ -150,11 +151,24 @@ export const Editor = ({
   const canvasRef = useRef(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const firstRenderRef = useRef(true);
+
   useEffect(() => {
     const canvas = new fabric.Canvas(canvasRef.current, {
       controlsAboveOverlay: true,
       preserveObjectStacking: true,
     });
+
+    const guideline = new AlignGuidelines({
+      canvas: canvas,
+      // pickObjTypes: [{ key: "myType", value: "box" }],
+      // aligningOptions: {
+      //   lineColor: "#32D10A",
+      //   lineMargin: 8,
+      // },
+    });
+
+    guideline.init();
 
     init({
       initialCanvas: canvas,
