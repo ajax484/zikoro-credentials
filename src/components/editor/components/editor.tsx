@@ -28,6 +28,7 @@ import { base64ToFile, uploadFile } from "@/utils/helpers";
 import { CredentialsWorkspaceToken } from "@/types/token";
 import { TemplateSidebar } from "./template-sidebar";
 import { AlignGuidelines } from "fabric-guideline-plugin";
+import { RemoveBgSidebar } from "./remove-bg-sidebar";
 
 interface EditorProps {
   initialData: ResponseType["data"];

@@ -254,7 +254,7 @@ export function useCreateOrganisation() {
       console.log(data);
 
       const teamMember = {
-        userId: userData?.id,
+        userId,
         userEmail,
         userRole: "owner",
         workspaceAlias: organizationAlias,
