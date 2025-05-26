@@ -1254,8 +1254,8 @@ export const useEditor = ({
       initialCanvas.centerObject(initialWorkspace);
       initialCanvas.clipPath = initialWorkspace;
 
-      initCenteringGuidelines(initialCanvas);
-      initAligningGuidelines(initialCanvas);
+      // initCenteringGuidelines(initialCanvas);
+      // initAligningGuidelines(initialCanvas);
 
       setCanvas(initialCanvas);
       setContainer(initialContainer);
