@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useContactUs } from "@/hooks/services/contactUs";
 import confirm from "@/public/appointments/bookingsMessage.png";
-import { Location } from "@styled-icons/entypo/Location";
+import { LocateIcon } from "lucide-react";
 
 const AppointmentContactForm = () => {
   const [mailSent, setMailSent] = useState<boolean>(false);
@@ -132,7 +132,7 @@ const AppointmentContactForm = () => {
           </button>
 
           <div className="mt-3 mb-6 gap-x-6 flex items-center ">
-            <Location size={16} />
+            <LocateIcon size={16} />
             <p className="font-normal text-[10px] lg:text-[12px] ">
               2A Musari Apena Street, Mafoluku, Lagos State, Nigeria{" "}
             </p>

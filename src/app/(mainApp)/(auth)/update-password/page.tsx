@@ -7,10 +7,9 @@ import { FormField } from "@/components/ui/form";
 import { Button } from "@/components/custom/Button";
 import InputOffsetLabel from "@/components/InputOffsetLabel";
 import { useState } from "react";
-import { Eye } from "@styled-icons/feather/Eye";
-import { EyeOff } from "@styled-icons/feather/EyeOff";
 import { useUpdatePassword } from "@/hooks";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
+import { Eye, EyeOff } from "lucide-react";
 
 type FormValue = {
   password: string;
