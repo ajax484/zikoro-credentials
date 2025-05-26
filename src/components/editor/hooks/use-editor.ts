@@ -1287,7 +1287,7 @@ export const useEditor = ({
 };
 
 function initCenteringGuidelines(canvas) {
-  var canvasWidth = canvas.getWidth(),
+  let canvasWidth = canvas.getWidth(),
     canvasHeight = canvas.getHeight(),
     canvasWidthCenter = canvasWidth / 2,
     canvasHeightCenter = canvasHeight / 2,
@@ -1300,7 +1300,7 @@ function initCenteringGuidelines(canvas) {
     viewportTransform;
 
   for (
-    var i = canvasWidthCenter - centerLineMargin,
+    let i = canvasWidthCenter - centerLineMargin,
       len = canvasWidthCenter + centerLineMargin;
     i <= len;
     i++
@@ -1308,7 +1308,7 @@ function initCenteringGuidelines(canvas) {
     canvasWidthCenterMap[Math.round(i)] = true;
   }
   for (
-    var i = canvasHeightCenter - centerLineMargin,
+    let i = canvasHeightCenter - centerLineMargin,
       len = canvasHeightCenter + centerLineMargin;
     i <= len;
     i++
@@ -1345,7 +1345,7 @@ function initCenteringGuidelines(canvas) {
     ctx.restore();
   }
 
-  var afterRenderActions = [],
+  let afterRenderActions = [],
     isInVerticalCenter,
     isInHorizontalCenter;
 
@@ -1354,7 +1354,7 @@ function initCenteringGuidelines(canvas) {
   });
 
   canvas.on("object:moving", function (e) {
-    var object = e.target,
+    let object = e.target,
       objectCenter = object.getCenterPoint(),
       transform = canvas._currentTransform;
 
@@ -1399,7 +1399,7 @@ function initCenteringGuidelines(canvas) {
 }
 
 function initAligningGuidelines(canvas) {
-  var ctx = canvas.getSelectionContext(),
+  let ctx = canvas.getSelectionContext(),
     aligningLineOffset = 5,
     aligningLineMargin = 4,
     aligningLineWidth = 1,
@@ -1446,7 +1446,7 @@ function initAligningGuidelines(canvas) {
     value1 = Math.round(value1);
     value2 = Math.round(value2);
     for (
-      var i = value1 - aligningLineMargin, len = value1 + aligningLineMargin;
+      let i = value1 - aligningLineMargin, len = value1 + aligningLineMargin;
       i <= len;
       i++
     ) {
@@ -1457,7 +1457,7 @@ function initAligningGuidelines(canvas) {
     return false;
   }
 
-  var verticalLines = [],
+  let verticalLines = [],
     horizontalLines = [];
 
   canvas.on("mouse:down", function () {
@@ -1466,7 +1466,7 @@ function initAligningGuidelines(canvas) {
   });
 
   canvas.on("object:moving", function (e) {
-    var activeObject = e.target,
+    let activeObject = e.target,
       canvasObjects = canvas.getObjects(),
       activeObjectCenter = activeObject.getCenterPoint(),
       activeObjectLeft = activeObjectCenter.x,
@@ -1484,10 +1484,10 @@ function initAligningGuidelines(canvas) {
     // It should be trivial to DRY this up by encapsulating (repeating) creation of x1, x2, y1, and y2 into functions,
     // but we're not doing it here for perf. reasons -- as this a function that's invoked on every mouse move
 
-    for (var i = canvasObjects.length; i--; ) {
+    for (let i = canvasObjects.length; i--; ) {
       if (canvasObjects[i] === activeObject) continue;
 
-      var objectCenter = canvasObjects[i].getCenterPoint(),
+      let objectCenter = canvasObjects[i].getCenterPoint(),
         objectLeft = objectCenter.x,
         objectTop = objectCenter.y,
         objectBoundingRect = canvasObjects[i].getBoundingRect(),
@@ -1789,10 +1789,10 @@ function initAligningGuidelines(canvas) {
   });
 
   canvas.on("after:render", function () {
-    for (var i = verticalLines.length; i--; ) {
+    for (let i = verticalLines.length; i--; ) {
       drawVerticalLine(verticalLines[i]);
     }
-    for (var i = horizontalLines.length; i--; ) {
+    for (let i = horizontalLines.length; i--; ) {
       drawHorizontalLine(horizontalLines[i]);
     }
 
