@@ -14,10 +14,10 @@ import {
   useUpdateOrganization,
   useCreateTeamMember,
 } from "@/hooks/services/workspace";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { generateAlias } from "@/utils/helpers";
+import { Loader } from "lucide-react";
 
 export const countryList = [
   "Afghanistan",
@@ -769,7 +769,7 @@ export default function OnboardingForm({
                   disabled={currentIndex === stages.length - 1}
                   className="text-white font-semibold text-base bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end py-3 px-4 rounded-[8px]"
                 >
-                  {loading && <LoaderAlt size={22} className="animate-spin" />}
+                  {loading && <Loader size={22} className="animate-spin" />}
                   Create Profile
                 </button>{" "}
               </div>

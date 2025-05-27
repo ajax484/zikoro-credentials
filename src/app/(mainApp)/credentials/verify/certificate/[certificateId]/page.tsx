@@ -26,12 +26,6 @@ import { TOrganization } from "@/types/organization";
 import GradientText from "@/components/GradientText";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Facebook,
-  InfoCircle,
-  Instagram,
-  Linkedin,
-} from "styled-icons/bootstrap";
 import { Calendar, Download, Link2, X } from "lucide-react";
 import {
   Popover,
@@ -44,6 +38,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { BsInfoCircle } from "react-icons/bs";
+import { FacebookLogo, InstagramLogo, LinkedinLogo } from "@phosphor-icons/react";
 
 // import { ShareSocial } from "react-share-social";
 
@@ -249,7 +245,7 @@ const CertificateView = ({
             </GradientText>
             {}
             <div className="flex gap-2 items-center text-green-600">
-              <InfoCircle className="size-3" />
+              <BsInfoCircle className="size-3" />
               <span className="font-medium text-xs">verified organisation</span>
             </div>
           </div>
@@ -274,7 +270,7 @@ const CertificateView = ({
                 }
                 className="bg-[#f7f8f9] p-2 border rounded"
               >
-                <Linkedin className="size-4" />
+                <LinkedinLogo className="size-4" />
               </Link>
             )}
             {certificate?.originalCertificate?.workspace?.x && (
@@ -292,7 +288,7 @@ const CertificateView = ({
                 }
                 className="bg-[#f7f8f9] p-2 border rounded"
               >
-                <Facebook className="size-4" />
+                <FacebookLogo className="size-4" />
               </Link>
             )}
             {certificate?.originalCertificate?.workspace?.instagram && (
@@ -302,7 +298,7 @@ const CertificateView = ({
                 }
                 className="bg-[#f7f8f9] p-2 border rounded"
               >
-                <Instagram className="size-4" />
+                <InstagramLogo className="size-4" />
               </Link>
             )}
             {certificate?.originalCertificate?.workspace?.socialLinks &&

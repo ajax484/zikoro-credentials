@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import useUserStore from "@/store/globalUserStore";
 import { format } from "date-fns";
 import { useCopyToClipboard } from "@uidotdev/usehooks";
-import { Copy } from "styled-icons/boxicons-regular";
 import { useGetData } from "@/hooks/services/request";
 import {
   Dialog,
@@ -23,6 +22,7 @@ import {
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { TUser } from "@/types/user";
+import { Copy } from "lucide-react";
 
 type TUserReferrals = Pick<TUser, "created_at" | "firstName" | "lastName">;
 

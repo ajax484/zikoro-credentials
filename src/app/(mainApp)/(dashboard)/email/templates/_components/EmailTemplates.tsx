@@ -19,11 +19,11 @@ import {
 import { TOrganization } from "@/types/organization";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { generateAlphanumericHash } from "@/utils/helpers";
 import { TUser } from "@/types/user";
+import { Loader2 } from "lucide-react";
 
 const CreateTemplateDialog = ({
   open,
@@ -78,7 +78,7 @@ const CreateTemplateDialog = ({
             className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-lg text-gray-50 font-medium"
           >
             {templateIsCreating && (
-              <LoaderAlt size={22} className="animate-spin" />
+              <Loader2 size={22} className="animate-spin" />
             )}
             <span>Create Template</span>
           </Button>

@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Email from "@/public/icons/mdi_email-sent.svg";
-import { Cancel } from "styled-icons/material-rounded";
+import { TbCancel } from "react-icons/tb";
 
 const AssignPage = () => {
   const { organization } = useOrganizationStore();
@@ -61,7 +61,7 @@ const AssignPage = () => {
                 </p>
               </div>
               <div className="flex items-center gap-1">
-                <Cancel className="size-6 text-[#555555]" />
+                <TbCancel className="size-6 text-[#555555]" />
                 <p className="text-sm text-gray-600">
                   {certificate?.failedRecipientCount}
                 </p>

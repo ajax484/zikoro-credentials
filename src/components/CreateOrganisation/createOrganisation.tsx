@@ -1,7 +1,6 @@
 "use client";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { organizationSchema } from "@/schemas";
 import InputOffsetLabel from "@/components/InputOffsetLabel";
@@ -9,14 +8,12 @@ import { useCreateOrganisation } from "@/hooks";
 import { useGetData, useMutateData } from "@/hooks/services/request";
 import useUserStore from "@/store/globalUserStore";
 import { useEffect, useState, useMemo } from "react";
-import { Plus } from "styled-icons/bootstrap";
-import { Minus } from "styled-icons/feather";
 import React from "react";
 import { Form, FormField } from "../ui/form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { generateAlias } from "@/utils/helpers";
-import { Lock, X } from "lucide-react";
+import { Loader, Lock, Minus, Plus, X } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import { useRouter } from "next/navigation";
 import CreateWorkspace from "@/public/images/create_workspace.svg";
@@ -383,7 +380,7 @@ export function CreateOrganization({
               <div className="w-full flex items-center justify-center">
                 <Button type="submit">
                   {loading ? (
-                    <LoaderAlt size={20} className="animate-spin" />
+                    <Loader size={20} className="animate-spin" />
                   ) : (
                     <Lock size={22} />
                   )}

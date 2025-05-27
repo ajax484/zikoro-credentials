@@ -26,11 +26,11 @@ import {
   endOfDay,
 } from "date-fns";
 import GradientText from "@/components/GradientText";
-import { CaretUp } from "styled-icons/bootstrap";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { CartesianGrid, XAxis, YAxis, AreaChart, Area } from "recharts";
 import { cn } from "@/lib/utils";
 import GradientBorderSelect from "@/components/CustomSelect/GradientSelectBorder";
+import { CaretUp } from "@phosphor-icons/react";
 
 const Analytics = ({
   recipient,

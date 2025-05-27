@@ -15,7 +15,7 @@ import {
 import { useFetchForm } from "@/queries/integrations.queries";
 import { findKeysWithSharedValue } from "@/utils/helpers";
 import toast from "react-hot-toast";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
+import { Loader } from "lucide-react";
 
 const MapRecipients: React.FC<IntegrationComponentProps> = ({
   setStep,
@@ -56,7 +56,7 @@ const MapRecipients: React.FC<IntegrationComponentProps> = ({
 
   return (
     <section className="flex flex-col gap-y-4">
-      {formIsLoading && <LoaderAlt className="mx-auto size-4 animate-spin" />}
+      {formIsLoading && <Loader className="mx-auto size-4 animate-spin" />}
       <div className="flex gap-2 items-center justify-center">
         <Image alt="zikoro" src={Info} height={30} width={30} />
         <h1 className="font-bold text-center text-gray-800">

@@ -1,11 +1,11 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { MailSend } from "styled-icons/boxicons-regular";
 import {
   Check,
   Download,
   Eye,
   MailOpen,
+  MailPlusIcon,
   PrinterIcon,
   Timer,
   X,
@@ -110,10 +110,10 @@ export const issueesColumns: ColumnDef<
     cell: ({ getValue }) => {
       const status = getValue() as string;
       const statusIconMap: Record<string, JSX.Element> = {
-        issued: <MailSend className="size-6" />,
+        issued: <MailPlusIcon className="size-6" />,
         "email opened": <MailOpen className="size-6" />,
         revoked: <X className="size-6" />,
-        default: <MailSend className="size-6" />,
+        default: <MailPlusIcon className="size-6" />,
       };
 
       return (

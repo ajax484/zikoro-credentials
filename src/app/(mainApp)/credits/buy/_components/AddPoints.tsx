@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Check, X } from "lucide-react";
+import { Check, Loader, X } from "lucide-react";
 import React, { useState } from "react";
 import {
   Select,
@@ -18,7 +18,6 @@ import {
 import { applyCredentialsDiscount } from "@/utils/helpers";
 import { useMutateData } from "@/hooks/services/request";
 import { toast } from "react-toastify";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
 
 const AddPoints = ({
   credits,
@@ -511,7 +510,7 @@ const AddPoints = ({
           className="h-10 text-white rounded-r-md rounded-l-none bg-gray-500 font-medium px-0 w-[25%]"
         >
           {retrieveDiscountIsLoading && (
-            <LoaderAlt size={22} className="animate-spin" />
+            <Loader size={22} className="animate-spin" />
           )}
           Apply
         </Button>

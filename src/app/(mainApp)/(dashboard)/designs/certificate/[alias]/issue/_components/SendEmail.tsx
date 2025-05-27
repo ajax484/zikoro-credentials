@@ -31,7 +31,6 @@ import {
   replaceSpecialText,
   uploadFile,
 } from "@/utils/helpers";
-import { Facebook, Instagram, Linkedin, Twitter } from "styled-icons/bootstrap";
 import {
   Dialog,
   DialogContent,
@@ -41,7 +40,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { TOrganization } from "@/types/organization";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
 import {
   Select,
   SelectContent,
@@ -57,6 +55,7 @@ import {
 } from "@/components/ui/popover";
 import { optionalUrl } from "@/app/(mainApp)/(dashboard)/workspace/_components/tabs/SocialLinks";
 import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
+import { FacebookLogo, InstagramLogo, LinkedinLogo } from "@phosphor-icons/react";
 
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
@@ -695,16 +694,16 @@ Event Team.`,
                 {showSocialLinks && (
                   <div className="flex items-center justify-center gap-4 text-gray-600">
                     <div className="flex items-center gap-2">
-                      <Linkedin className="size-4" />
+                      <LinkedinLogo className="size-4" />
                     </div>
                     <div className="flex items-center gap-2">
                       <X className="size-4" />
                     </div>
                     <div className="flex items-center gap-2">
-                      <Facebook className="size-4" />
+                      <FacebookLogo className="size-4" />
                     </div>
                     <div className="flex items-center gap-2">
-                      <Instagram className="size-4" />
+                      <InstagramLogo className="size-4" />
                     </div>
                   </div>
                 )}

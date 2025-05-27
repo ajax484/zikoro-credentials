@@ -8,9 +8,9 @@ import InputOffsetLabel from "@/components/InputOffsetLabel";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useOrganizationStore from "@/store/globalOrganizationStore";
-import { Facebook, Instagram, Linkedin } from "styled-icons/bootstrap";
 import { useMutateData } from "@/hooks/services/request";
 import { useUpdateWorkspaces } from "@/mutations/workspaces.mutations";
+import { FacebookLogo, InstagramLogo, LinkedinLogo } from "@phosphor-icons/react";
 
 export const optionalUrl = z
   .string()
@@ -77,7 +77,7 @@ const SocialLinks = () => {
                   label="Linkedin"
                   append={
                     <div className="bg-white p-1 rounded-lg">
-                      <Linkedin className="size-6" />
+                      <LinkedinLogo className="size-6" />
                     </div>
                   }
                 >
@@ -123,7 +123,7 @@ const SocialLinks = () => {
                   label="instagram"
                   append={
                     <div className="bg-white p-1 rounded-lg">
-                      <Instagram className="size-6" />
+                      <InstagramLogo className="size-6" />
                     </div>
                   }
                 >
@@ -146,7 +146,7 @@ const SocialLinks = () => {
                   label="Facebook"
                   append={
                     <div className="bg-white p-1 rounded-lg">
-                      <Facebook className="size-6" />
+                      <FacebookLogo className="size-6" />
                     </div>
                   }
                 >

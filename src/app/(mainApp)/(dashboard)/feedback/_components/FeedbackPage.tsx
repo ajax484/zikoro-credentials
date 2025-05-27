@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import { ThumbUp } from "styled-icons/material-rounded";
 import { FeedBackComp } from "./FeedbackComp";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
+import { ThumbsUp } from "lucide-react";
 
 export default function FeedBack() {
   const [showSuccess, setShowSuccess] = useState(false);
@@ -21,7 +21,7 @@ export default function FeedBack() {
         </DialogContent>
       </Dialog>
       <div className="w-full bg-white rounded-lg h-[40vh] shadow flex flex-col items-center justify-center gap-y-3">
-        <ThumbUp size={36} className="text-basePrimary" />
+        <ThumbsUp size={36} className="text-basePrimary" />
         <div className="text-center text-lg sm:text-3xl font-semibold">
           Thank you for your feedback!
         </div>

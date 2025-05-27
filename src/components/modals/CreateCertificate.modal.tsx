@@ -20,8 +20,7 @@ import {
   SelectLabel,
 } from "@/components/ui/select";
 import { Button } from "../ui/button";
-import { PlusCircle } from "lucide-react";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
+import { Loader, PlusCircle } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "../ui/label";
 import { AnimatePresence, motion } from "motion/react";
@@ -369,7 +368,7 @@ const CreateCertificateDialog = ({
                 className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-lg text-gray-50 font-medium"
               >
                 {certificateIsCreating && (
-                  <LoaderAlt size={22} className="animate-spin" />
+                  <Loader size={22} className="animate-spin" />
                 )}
                 <span>Create Credential</span>
               </Button>

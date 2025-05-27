@@ -8,7 +8,7 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
+import { Loader } from "lucide-react";
 
 const AddVariables = ({
   attributes,
@@ -63,7 +63,7 @@ const AddVariables = ({
             onClick={onSubmit}
             className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-lg text-gray-50 font-medium"
           >
-            {isSaving && <LoaderAlt size={22} className="animate-spin" />}
+            {isSaving && <Loader size={22} className="animate-spin" />}
             <span>Add {attribute}</span>
           </Button>
           <DialogClose>

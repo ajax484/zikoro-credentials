@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown } from "styled-icons/bootstrap";
 import {
   NavModalIcon,
   NavModalIcon2,
@@ -12,6 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import logo from "@/public/logo.png";
+import { ChevronDown } from "lucide-react";
 
 const Navbar = () => {
   const router = useRouter();

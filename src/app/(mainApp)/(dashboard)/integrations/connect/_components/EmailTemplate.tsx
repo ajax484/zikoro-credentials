@@ -21,14 +21,13 @@ import useOrganizationStore from "@/store/globalOrganizationStore";
 import { toast } from "react-toastify";
 import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
-import { ImageIcon, X } from "lucide-react";
+import { ImageIcon, Loader, X } from "lucide-react";
 import {
   generateAlphanumericHash,
   getTextColorFromBackground,
   replaceSpecialText,
   uploadFile,
 } from "@/utils/helpers";
-import { Facebook, Instagram, Linkedin } from "styled-icons/bootstrap";
 import {
   Dialog,
   DialogContent,
@@ -38,7 +37,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { TOrganization } from "@/types/organization";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
 import {
   Select,
   SelectContent,
@@ -55,6 +53,7 @@ import {
 import { optionalUrl } from "@/app/(mainApp)/(dashboard)/workspace/_components/tabs/SocialLinks";
 import { IntegrationComponentProps } from "./ConnectIntegrations";
 import { useCreateIntegration } from "@/mutations/integrations.mutations";
+import { FacebookLogo, InstagramLogo, LinkedinLogo } from "@phosphor-icons/react";
 
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
@@ -133,7 +132,7 @@ const CreateTemplateDialog = ({
             className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-lg text-gray-50 font-medium"
           >
             {templateIsCreating && (
-              <LoaderAlt size={22} className="animate-spin" />
+              <Loader size={22} className="animate-spin" />
             )}
             <span>Create Integration</span>
           </Button>
@@ -706,16 +705,16 @@ Event Team.`,
                 {showSocialLinks && (
                   <div className="flex items-center justify-center gap-4 text-gray-600">
                     <div className="flex items-center gap-2">
-                      <Linkedin className="size-4" />
+                      <LinkedinLogo className="size-4" />
                     </div>
                     <div className="flex items-center gap-2">
                       <X className="size-4" />
                     </div>
                     <div className="flex items-center gap-2">
-                      <Facebook className="size-4" />
+                      <FacebookLogo className="size-4" />
                     </div>
                     <div className="flex items-center gap-2">
-                      <Instagram className="size-4" />
+                      <InstagramLogo className="size-4" />
                     </div>
                   </div>
                 )}

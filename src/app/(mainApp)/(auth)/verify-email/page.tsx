@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import VerificationInput from "react-verification-input";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
 import mailImage from "@/public/mail64.png";
+import { Loader } from "lucide-react";
 
 type SearchParams = {
   email: string;
@@ -86,7 +86,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
             onClick={verify}
             className="bg-basePrimary gap-x-2 text-gray-50 mt-3  font-medium flex items-center justify-center w-full  h-12 2xl:h-14 rounded-lg"
           >
-            {isVerifying && <LoaderAlt size={22} className="animate-spin" />}
+            {isVerifying && <Loader size={22} className="animate-spin" />}
             <p>{type === "reset-password" ? "Verify OTP" : "Verify"}</p>
           </Button>
         </div>

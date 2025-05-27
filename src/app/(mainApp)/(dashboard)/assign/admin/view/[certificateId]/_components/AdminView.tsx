@@ -13,7 +13,6 @@ import History from "./tabs/History";
 import Analytics from "./tabs/Analytics";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
-import { ArrowBack } from "styled-icons/boxicons-regular";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -34,6 +33,7 @@ import { cn } from "@/lib/utils";
 import SendIcon from "@/public/icons/fa_send.svg";
 import { ActionModal } from "@/app/(mainApp)/credentials/verify/certificate/[certificateId]/page";
 import { initialize } from "next/dist/server/lib/render-server";
+import { IoArrowBack } from "react-icons/io5";
 
 interface TTab {
   label: string;
@@ -495,7 +495,7 @@ const CertificateView = ({
     <section className="space-y-4">
       <section className="flex items-center justify-between">
         <button onClick={() => router.back()} aria-label="Back">
-          <ArrowBack className="size-4" />
+          <IoArrowBack className="size-4" />
         </button>
         <h1 className="text-lg font-medium capitalize">
           {certificate.originalCertificate.name}

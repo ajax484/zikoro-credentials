@@ -45,7 +45,6 @@ import {
 } from "date-fns";
 import GradientText from "@/components/GradientText";
 import { cn } from "@/lib/utils";
-import { CaretUp } from "styled-icons/fluentui-system-filled";
 import { Label, Pie, PieChart } from "recharts";
 import {
   buildStyles,
@@ -53,6 +52,7 @@ import {
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useRouter } from "next/navigation";
+import { CaretUp } from "@phosphor-icons/react";
 
 export type TimePeriod = "this week" | "this month" | "this year" | "all time";
 

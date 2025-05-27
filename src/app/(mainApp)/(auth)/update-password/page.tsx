@@ -8,8 +8,7 @@ import { Button } from "@/components/custom/Button";
 import InputOffsetLabel from "@/components/InputOffsetLabel";
 import { useState } from "react";
 import { useUpdatePassword } from "@/hooks";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader } from "lucide-react";
 
 type FormValue = {
   password: string;
@@ -69,7 +68,7 @@ export default function Page() {
               disabled={loading}
               className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-lg text-gray-50 font-medium"
             >
-              {loading && <LoaderAlt size={22} className="animate-spin" />}
+              {loading && <Loader size={22} className="animate-spin" />}
               <span>Reset Password</span>
             </Button>
           </form>

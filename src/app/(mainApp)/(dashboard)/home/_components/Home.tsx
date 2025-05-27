@@ -22,7 +22,6 @@ import ShareIcon from "@/public/icons/ShareNetwork.svg";
 import NibIcon from "@/public/icons/PenNib.svg";
 import Assign from "@/public/icons/PaperPlaneTilt.svg";
 import Analytics from "@/public/icons/ChartBar.svg";
-import { InfoCircle } from "styled-icons/bootstrap";
 import { generateAlphanumericHash } from "@/utils/helpers";
 import { useFetchWorkspaces } from "@/queries/Workspaces.queries";
 import {
@@ -35,6 +34,7 @@ import { useFetchRecipients } from "@/queries/recipients.queries";
 import { motion } from "framer-motion";
 import CreateCertificateDialog from "@/components/modals/CreateCertificate.modal";
 import { useCreateCertificate } from "@/mutations/certificates.mutations";
+import { BsInfoCircle } from "react-icons/bs";
 
 const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
   const { user, setUser } = useUserStore();
@@ -527,7 +527,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                     {!recentCertificate && (
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
-                          <InfoCircle size={20} className="text-red-600" />
+                          <BsInfoCircle size={20} className="text-red-600" />
                           <span className="text-xs text-gray-500">
                             Looks like you haven't started designing
                           </span>
