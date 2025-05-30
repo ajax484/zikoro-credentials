@@ -22,8 +22,10 @@ export const useHotkeys = ({
     const isCtrlKey = event.ctrlKey || event.metaKey;
     const isBackspace = event.key === "Backspace";
     const isInput = ["INPUT", "TEXTAREA"].includes(
-      (event.target as HTMLElement).tagName,
+      (event.target as HTMLElement).tagName
     );
+
+    console.log(isInput);
 
     if (isInput) return;
 
@@ -66,7 +68,7 @@ export const useHotkeys = ({
         .filter((object) => object.selectable);
 
       canvas?.setActiveObject(
-        new fabric.ActiveSelection(allObjects, { canvas }),
+        new fabric.ActiveSelection(allObjects, { canvas })
       );
       canvas?.renderAll();
     }

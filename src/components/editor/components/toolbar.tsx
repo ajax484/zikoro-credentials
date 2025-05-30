@@ -227,7 +227,7 @@ export const Toolbar = ({
 
     const handleKeyDown = (e: KeyboardEventWithKey) => {
       // Delete/Backspace handling
-      if (e.key === "Delete" || e.key === "Backspace") {
+      if (e.key === "Delete") {
         editor?.delete();
       }
       // Copy handling (Ctrl+C/Cmd+C)

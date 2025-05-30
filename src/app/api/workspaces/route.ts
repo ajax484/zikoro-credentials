@@ -6,18 +6,7 @@ export async function GET(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
 
   if (req.method === "GET") {
-    try {
-
-
-
-
-
-
-
-
-
-
-      
+    try {      
       const { searchParams } = new URL(req.url);
       const userEmail = searchParams.get("userEmail");
 
