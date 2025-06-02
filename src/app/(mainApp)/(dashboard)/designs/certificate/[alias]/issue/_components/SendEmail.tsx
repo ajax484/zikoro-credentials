@@ -24,7 +24,7 @@ import { toast } from "react-toastify";
 import { profile } from "console";
 import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
-import { ImageIcon, Link2, X } from "lucide-react";
+import { ImageIcon, Link2, Loader, X } from "lucide-react";
 import {
   generateAlphanumericHash,
   getTextColorFromBackground,
@@ -55,7 +55,12 @@ import {
 } from "@/components/ui/popover";
 import { optionalUrl } from "@/app/(mainApp)/(dashboard)/workspace/_components/tabs/SocialLinks";
 import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
-import { FacebookLogo, InstagramLogo, LinkedinLogo } from "@phosphor-icons/react";
+import {
+  FacebookLogo,
+  InstagramLogo,
+  LinkedinLogo,
+} from "@phosphor-icons/react";
+import { useIssueCertificates } from "@/mutations/certificates.mutations";
 
 const sendEmailSchema = z.object({
   body: z.string().nonempty("Enter a valid body"),
@@ -130,7 +135,7 @@ const CreateTemplateDialog = ({
             className="mt-4 w-full gap-x-2 hover:bg-opacity-70 bg-basePrimary h-12 rounded-lg text-gray-50 font-medium"
           >
             {templateIsCreating && (
-              <LoaderAlt size={22} className="animate-spin" />
+              <Loader size={22} className="animate-spin" />
             )}
             <span>Create Template</span>
           </Button>
@@ -160,9 +165,9 @@ const SendEmail = ({
     `/workspaces/${organization?.organizationAlias}/certificates/recipients/templates`,
     []
   );
-  const { mutateData, isLoading } = useMutateData(
-    `/certificates/${certificate?.certificateAlias}/recipients/release`
-  );
+
+  const { mutateAsync: issueCertificates, isPending: issuingCertificates } =
+    useIssueCertificates(certificate?.certificateAlias);
   const { mutateData: createTemplate, isLoading: templateIsCreating } =
     useMutateData(`/certificates/recipients/templates`);
 
@@ -234,36 +239,34 @@ Event Team.`,
     )
       return toast.error(`Insufficient ${creditType} credits`);
 
-    await mutateData({
-      payload: {
-        certificateGroupId: certificate.id,
-        ...data,
-        action: "release",
-        recipients: recipients.map(
-          ({
-            recipientEmail,
-            recipientFirstName,
-            recipientLastName,
-            recipientAlias,
-            profilePicture,
-            logoUrl,
-            ...metadata
-          }) => ({
-            metadata,
-            recipientEmail: recipientEmail.trim(),
-            recipientFirstName: recipientFirstName.trim(),
-            recipientLastName: recipientLastName.trim(),
-            recipientAlias: recipientAlias.trim(),
-            profilePicture,
-            logoUrl,
-          })
-        ),
-        status: "email sent",
-        createdBy: user?.id,
-        workspaceAlias: organization?.organizationAlias,
-        workspaceId: organization?.id,
-        organization,
-      },
+    await issueCertificates({
+      certificateGroupId: certificate.id,
+      ...data,
+      action: "release",
+      recipients: recipients.map(
+        ({
+          recipientEmail,
+          recipientFirstName,
+          recipientLastName,
+          recipientAlias,
+          profilePicture,
+          logoUrl,
+          ...metadata
+        }) => ({
+          metadata,
+          recipientEmail: recipientEmail.trim(),
+          recipientFirstName: recipientFirstName.trim(),
+          recipientLastName: recipientLastName.trim(),
+          recipientAlias: recipientAlias.trim(),
+          profilePicture,
+          logoUrl,
+        })
+      ),
+      status: "email sent",
+      createdBy: user?.id,
+      workspaceAlias: organization?.organizationAlias,
+      workspaceId: organization?.id,
+      organization,
     });
     router.push("/assign");
   };
@@ -360,7 +363,7 @@ Event Team.`,
             </SelectContent>
           </Select>
           <Button
-            disabled={isLoading}
+            disabled={issuingCertificates}
             className="bg-basePrimary text-white"
             type="button"
             onClick={() => updatePage(0)}
@@ -721,7 +724,7 @@ Event Team.`,
               <Button
                 type="button"
                 className="text-basePrimary text-sm border border-basePrimary bg-white hover:bg-white"
-                disabled={isLoading}
+                disabled={issuingCertificates}
               >
                 Save as template
               </Button>
@@ -730,7 +733,7 @@ Event Team.`,
           <Button
             className="bg-basePrimary text-white"
             type="submit"
-            disabled={isLoading}
+            disabled={issuingCertificates}
           >
             Send email ({recipients.length} {creditType} credits)
           </Button>

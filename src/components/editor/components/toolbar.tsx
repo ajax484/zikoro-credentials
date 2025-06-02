@@ -226,6 +226,9 @@ export const Toolbar = ({
     }
 
     const handleKeyDown = (e: KeyboardEventWithKey) => {
+      const isInput = ["INPUT", "TEXTAREA"].includes(
+        (e.target as HTMLElement).tagName
+      );
       // Delete/Backspace handling
       if (e.key === "Delete") {
         editor?.delete();

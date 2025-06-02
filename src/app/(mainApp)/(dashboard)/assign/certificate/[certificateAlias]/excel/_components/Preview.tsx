@@ -25,18 +25,21 @@ const Preview = ({
   );
 
   const submitRecipients = async () => {
-    const recipients = data.map((row) => {
-      const recipient = {};
+    const recipients = data
+      .filter((row) => !row.every((value) => !value) || row.length > 0)
+      .map((row) => {
+        console.log(row);
+        const recipient = {};
 
-      Array.from(headers).forEach(([key, value]) => {
-        const rowValue = headerMap.get(value) ?? "";
-        recipient[key.value] = row[rowValue]?.trim() || "";
+        Array.from(headers).forEach(([key, value]) => {
+          const rowValue = headerMap.get(value) ?? "";
+          recipient[key.value] = row?.[rowValue];
 
-        console.log(key.value, row[rowValue]);
-      });
+          console.log(key.value, row[rowValue]);
+        });
 
-      return recipient;
-    }) as {
+        return recipient;
+      }) as {
       recipientFirstName: string;
       recipientLastName: string;
       recipientEmail: string;
@@ -85,15 +88,17 @@ const Preview = ({
             </tr>
           </thead>
           <tbody>
-            {data.map((row, index) => (
-              <tr>
-                {Array.from(headers).map(([key, value]) => (
-                  <td className="py-2 px-4 border-b text-gray-500 text-center">
-                    {showRow(value, row)}
-                  </td>
-                ))}
-              </tr>
-            ))}
+            {data
+              .filter((row) => !row.every((value) => !value))
+              .map((row, index) => (
+                <tr>
+                  {Array.from(headers).map(([key, value]) => (
+                    <td className="py-2 px-4 border-b text-gray-500 text-center">
+                      {showRow(value, row)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

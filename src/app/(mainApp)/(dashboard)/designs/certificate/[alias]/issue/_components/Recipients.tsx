@@ -154,7 +154,7 @@ const RecipientsPage = ({
       ? "silver"
       : "bronze";
 
-  console.log(form.formState.errors);
+  console.log(recipients);
 
   if (creditsIsLoading) return <div>Loading...</div>;
 
@@ -203,8 +203,8 @@ const RecipientsPage = ({
                       <Avatar className="w-24 h-24">
                         <AvatarImage src={recipient.profilePicture} />
                         <AvatarFallback>
-                          {(recipient.recipientFirstName[0] || "#") +
-                            (recipient.recipientLastName[0] || "#")}
+                          {(recipient.recipientFirstName?.[0] || "#") +
+                            (recipient.recipientLastName?.[0] || "#")}
                         </AvatarFallback>
                       </Avatar>
                       <label className="absolute bottom-0 right-0 p-1 transition-colors bg-white rounded-full shadow-lg cursor-pointer hover:bg-gray-50">

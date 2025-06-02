@@ -350,3 +350,87 @@ export function useResendCertificates(workspaceAlias: string) {
     },
   });
 }
+
+export function useIssueCertificates(certificateAlias: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: any) => {
+      const { data, status } = await postRequest<CertificateRecipient[]>({
+        endpoint: `/certificates/${certificateAlias}/recipients/release`,
+        payload,
+      });
+
+      if (status !== 201) {
+        throw new Error(data);
+      }
+
+      return data.data;
+    },
+    onMutate: () => {
+      // Show loading toast
+      return toast.loading("Issuing certificates...");
+    },
+    onSuccess: (updatedRecipients, _, toastId) => {
+      // Update workspace in any query where it exists
+      queryClient.setQueriesData<
+        PaginatedData<CertificateRecipient> | CertificateRecipient[]
+      >(
+        {
+          predicate: (query) =>
+            query.queryKey.includes("certificates recipients") &&
+            query.queryKey.includes(certificateAlias),
+        },
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          console.log(updatedRecipients);
+          console.log(oldData);
+
+          if (Array.isArray(oldData)) {
+            return [
+              ...oldData.filter(
+                ({ id }) =>
+                  !updatedRecipients.find(
+                    ({ id: updatedId }) => updatedId === id
+                  )
+              ),
+              ...updatedRecipients,
+            ];
+          } else if ("data" in oldData) {
+            return {
+              ...oldData,
+              data: [
+                ...oldData.data.filter(
+                  ({ id }) =>
+                    !updatedRecipients.find(
+                      ({ id: updatedId }) => updatedId === id
+                    )
+                ),
+                ...updatedRecipients,
+              ],
+            };
+          }
+        }
+      );
+
+      // Update toast to success
+      toast.update(toastId, {
+        render: "Issue successful!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    },
+    onError: (error, _, toastId) => {
+      console.error(error);
+      // Update toast to error
+      toast.update(toastId, {
+        render: "Failed to issue certificates. Please try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    },
+  });
+}
