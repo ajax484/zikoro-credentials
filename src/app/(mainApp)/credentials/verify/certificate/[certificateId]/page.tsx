@@ -172,7 +172,9 @@ const CertificateView = ({
       }
     };
 
-    generateImage();
+    if (!imageSrc) {
+      generateImage();
+    }
   }, [editor, certificate]);
 
   return (
