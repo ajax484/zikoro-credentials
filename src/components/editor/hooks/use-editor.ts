@@ -230,34 +230,63 @@ const buildEditor = ({
       const options = generateSaveOptions();
       const data = JSON.parse(json);
 
-      // canvas.loadFromJSON(data, () => {
-      //   console.log(data);
-      //   autoZoom();
-      //   canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
-      //   dataUrl = canvas.toDataURL(options);
-      //   console.log(dataUrl);
-      // });
-
-      // Wrap canvas loading in a Promise
       return await new Promise<string>((resolve, reject) => {
-        canvas.loadFromJSON(data, () => {
+        canvas.loadFromJSON(data, async () => {
           try {
             autoZoom();
             canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
-            // canvas.renderAll(); // Ensure all objects are rendered
 
-            // Generate data URL after rendering
+            const barcodeObjects = canvas
+              .getObjects()
+              .filter(
+                (object) =>
+                  object instanceof fabric.Image && object.options?.isBarCode
+              );
+
+            for (const object of barcodeObjects) {
+              try {
+                const { value, type, barCodeType } = object.options || {};
+                if (!value || !type || !barCodeType) continue;
+
+                const apiUrl = `https://barcodeapi.org/api/${barCodeType}/${encodeURIComponent(
+                  value
+                )}`;
+                const response = await fetch(apiUrl, { cache: "no-store" });
+                const tokens = response.headers.get("X-RateLimit-Tokens");
+                console.log("Tokens remaining:", tokens);
+
+                const blob = await response.blob();
+                const fileName = `${type}:${value}-${Date.now()}.png`;
+                const file = new File([blob], fileName, {
+                  type: blob.type,
+                  lastModified: Date.now(),
+                });
+
+                const { url: imageUrl, error } = await uploadFile(
+                  file,
+                  "image"
+                );
+                if (error || !imageUrl) continue;
+
+                object.set({ src: imageUrl });
+                object.setSrc(imageUrl, () => canvas.renderAll(), {
+                  crossOrigin: "anonymous",
+                });
+              } catch (barcodeError) {
+                console.error("Error processing barcode image:", barcodeError);
+              }
+            }
+
             const dataUrl = canvas.toDataURL(options);
-            console.log(dataUrl);
             resolve(dataUrl);
-          } catch (error) {
-            reject(error);
+          } catch (canvasError) {
+            reject(canvasError);
           }
         });
       });
     } catch (error) {
       console.error("Error loading JSON:", error);
-      throw error; // Propagate the error
+      throw error;
     }
   };
 
@@ -316,6 +345,7 @@ const buildEditor = ({
         zoomRatio < 0.2 ? 0.2 : zoomRatio
       );
     },
+    
     changeSize: (value: { width: number; height: number }) => {
       const workspace = getWorkspace();
 
@@ -1250,7 +1280,6 @@ export const useEditor = ({
 
       // initCenteringGuidelines(initialCanvas);
       // initAligningGuidelines(initialCanvas);
-
 
       setCanvas(initialCanvas);
       setContainer(initialContainer);

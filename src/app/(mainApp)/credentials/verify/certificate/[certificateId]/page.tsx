@@ -39,7 +39,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { BsInfoCircle } from "react-icons/bs";
-import { FacebookLogo, InstagramLogo, LinkedinLogo } from "@phosphor-icons/react";
+import {
+  FacebookLogo,
+  InstagramLogo,
+  LinkedinLogo,
+} from "@phosphor-icons/react";
 
 // import { ShareSocial } from "react-share-social";
 
@@ -144,23 +148,23 @@ const CertificateView = ({
   const [imageSrc, setImageSrc] = useState("");
 
   const [imageIsLoading, setImageIsLoading] = useState(false);
+
+  const [firstGenerate, setFirstGenerate] = useState(true);
+
   useEffect(() => {
     const generateImage = async () => {
       setImageIsLoading(true);
       try {
-        if (editor) {
-          await editor.transformBarCodes();
-          const src = editor.generateLink(true);
-
-          base64ToFile(
-            src,
-            certificate.recipientEmail + "-" + new Date().getTime() + ".png"
-          );
-          const { url: imageUrl, error } = await uploadFile(src, "image");
-          if (error) return;
-          if (!imageUrl) return;
-          setImageSrc(imageUrl);
+        if (!editor) return;
+        if (firstGenerate) {
+          setFirstGenerate(false);
+          const url = await editor?.loadJsonAsync(newState);
         }
+
+        const url = await editor?.loadJsonAsync(newState);
+        console.log(url);
+        if (!url) throw new Error("No url");
+        setImageSrc(url);
       } catch (error) {
         console.error("Error generating certificate image:", error);
       } finally {
@@ -169,7 +173,7 @@ const CertificateView = ({
     };
 
     generateImage();
-  }, [certificate]);
+  }, [editor, certificate]);
 
   return (
     <section className="space-y-6">
@@ -186,11 +190,14 @@ const CertificateView = ({
         </div>
 
         <div className="relative h-full w-full flex justify-center items-center flex-1 px-4 py-4">
-          {
+          {imageIsLoading ? (
+            <div className="flex items-center justify-center h-[500px] w-full">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid" />
+            </div>
+          ) : (
             <img
               alt="certificate"
-              // src={imageSrc}
-              src={editor && editor.generateLink(true)}
+              src={imageSrc}
               style={{ width: "50%" }}
               className="h-auto"
               onError={(e) => {
@@ -198,7 +205,7 @@ const CertificateView = ({
                 e.currentTarget.style.display = "none";
               }}
             />
-          }
+          )}
           {/* {imageSrc && !imageIsLoading ? (
             <img
               alt="certificate"
