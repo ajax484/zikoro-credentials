@@ -555,7 +555,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                       assignedCertificates?.length === 0 && (
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
-                            <InfoCircle size={20} className="text-red-600" />
+                            <BsInfoCircle size={20} className="text-red-600" />
                             <span className="text-xs text-gray-500">
                               Looks like you haven't assigned any recipients
                             </span>

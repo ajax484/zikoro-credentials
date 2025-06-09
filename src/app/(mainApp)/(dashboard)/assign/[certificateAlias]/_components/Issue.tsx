@@ -2,7 +2,6 @@ import { DataTable } from "@/components/DataTable/data-table";
 import Filter from "@/components/Filter";
 import { Button } from "@/components/ui/button";
 import { useFilter } from "@/hooks";
-import useSearch from "@/hooks/common/useSearch";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { fabric } from "fabric";
 import { TFilter } from "@/types/filter";
@@ -12,13 +11,12 @@ import {
   replaceSpecialText,
   replaceURIVariable,
 } from "@/utils/helpers";
-import { Send, Trash } from "lucide-react";
+import { PrinterIcon, Send, Trash } from "lucide-react";
 import React, {
   useEffect,
   useMemo,
   useRef,
   useState,
-  useCallback,
 } from "react";
 import { PiExport } from "react-icons/pi";
 import { issueesColumns } from "./columns";
@@ -61,12 +59,6 @@ import {
 import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
 import { useEditor } from "@/components/editor/hooks/use-editor";
 import { Label } from "@/components/ui/label";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 const issueesFilter: TFilter<
   CertificateRecipient & { certificate: TCertificate }
@@ -413,8 +405,8 @@ const Issue = ({
             }
             // onClick={exportRecipients}
           >
-            <PiExport className="size-4" />
-            <span>Export</span>
+            <PrinterIcon className="size-4" />
+            <span>Print</span>
           </button>
         </DialogTrigger>
         <DialogContent className="px-4 py-6">
@@ -655,59 +647,6 @@ const Issue = ({
       alert("Error generating certificates. Check console for details.");
     }
   }
-
-  // const exportRecipientsFn = (
-  //   name = `credentials_recipients_${
-  //     organization?.organizationName
-  //   }_${new Date().toISOString()}`
-  // ) => {
-  //   const omittedFields: (keyof (CertificateRecipient & {
-  //     certificate: TCertificate;
-  //   }))[] = ["certificateId", "certificateGroupId", "id", "statusDetails"];
-
-  //   const normalizedData = convertCamelToNormal<
-  //     CertificateRecipient & {
-  //       certificate: TCertificate;
-  //     }
-  //   >(
-  //     filteredIssuees.map((obj) =>
-  //       Object.keys(obj).reduce(
-  //         (newObj, key) => {
-  //           if (
-  //             !omittedFields.includes(
-  //               key as keyof (CertificateRecipient & {
-  //                 certificate: TCertificate;
-  //               })
-  //             )
-  //           ) {
-  //             (newObj as any)[key] =
-  //               key === "created_at"
-  //                 ? obj[key]
-  //                   ? format(new Date(obj[key]), "MM/dd/yyyy")
-  //                   : "N/A"
-  //                 : key === "certificate"
-  //                 ? obj[key].name
-  //                 : (obj as any)[key];
-  //           }
-  //           return newObj;
-  //         },
-  //         {} as Partial<
-  //           CertificateRecipient & {
-  //             certificate: TCertificate;
-  //           }
-  //         >
-  //       )
-  //     ) as (CertificateRecipient & {
-  //       certificate: TCertificate;
-  //     })[],
-  //     " "
-  //   );
-
-  //   const worksheet = XLSX.utils.json_to_sheet(normalizedData);
-  //   const workbook = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-  //   XLSX.writeFile(workbook, `${name}.xlsx`);
-  // };
 
   const { data: credits, isFetching: creditsIsLoading } =
     useFetchWorkspaceCredits(organization?.id!);

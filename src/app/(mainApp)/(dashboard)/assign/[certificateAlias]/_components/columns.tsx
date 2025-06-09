@@ -17,7 +17,11 @@ import {
 } from "@/types/certificates";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
-import { replaceSpecialText, replaceURIVariable } from "@/utils/helpers";
+import {
+  convertCamelToNormal,
+  replaceSpecialText,
+  replaceURIVariable,
+} from "@/utils/helpers";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { useEditor } from "@/components/editor/hooks/use-editor";
 import { useEffect, useRef, useState } from "react";
@@ -43,6 +47,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import printJS from "print-js";
+import * as XLSX from "xlsx";
+import { PiExport } from "react-icons/pi";
 
 export const issueesColumns: ColumnDef<
   CertificateRecipient & { certificate: TCertificate }
@@ -158,7 +164,80 @@ export const issueesColumns: ColumnDef<
   },
   {
     accessorKey: "certificateId",
-    header: "",
+    header: ({ table }) => {
+      const selected = table
+        .getSelectedRowModel()
+        .rows.map((row) => row.original);
+
+      const { organization } = useOrganizationStore();
+
+      const exportRecipients = (
+        name = `credentials_recipients_${
+          organization?.organizationName
+        }_${new Date().toISOString()}`
+      ) => {
+        const omittedFields: (keyof (CertificateRecipient & {
+          certificate: TCertificate;
+        }))[] = ["certificateId", "certificateGroupId", "id", "statusDetails"];
+
+        const normalizedData = convertCamelToNormal<
+          CertificateRecipient & {
+            certificate: TCertificate;
+          }
+        >(
+          selected.map((obj) =>
+            Object.keys(obj).reduce(
+              (newObj, key) => {
+                if (
+                  !omittedFields.includes(
+                    key as keyof (CertificateRecipient & {
+                      certificate: TCertificate;
+                    })
+                  )
+                ) {
+                  (newObj as any)[key] =
+                    key === "created_at"
+                      ? obj[key]
+                        ? format(new Date(obj[key]), "MM/dd/yyyy")
+                        : "N/A"
+                      : key === "certificate"
+                      ? obj[key].name
+                      : (obj as any)[key];
+                }
+                return newObj;
+              },
+              {} as Partial<
+                CertificateRecipient & {
+                  certificate: TCertificate;
+                }
+              >
+            )
+          ) as (CertificateRecipient & {
+            certificate: TCertificate;
+          })[],
+          " "
+        );
+
+        const worksheet = XLSX.utils.json_to_sheet(normalizedData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.writeFile(workbook, `${name}.xlsx`);
+      };
+
+      if (selected.length === 0) return null;
+
+      return (
+        <div className="flex items-center justify-center">
+          <button
+            onClick={() => exportRecipients()}
+            className="flex items-center gap-1 justify-center border px-4 py-2 border-black rounded-md text-xs"
+          >
+            <PiExport className="size-4" />
+            <span>Export</span>
+          </button>
+        </div>
+      );
+    },
     cell: ({ getValue, row }) => {
       const certificateId = getValue() as number;
       const { certificate, ...recipient } = row.original;

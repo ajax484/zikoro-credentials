@@ -15,17 +15,18 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     const workspaceAlias = searchParams.get("workspaceAlias");
     const certificateAlias = searchParams.get("certificateAlias");
     const page = parseInt(searchParams.get("page") || "1", 10);
-    const limit = parseInt(searchParams.get("limit") || "10", 10);
+    const limitQuery = searchParams.get("limit");
 
-    if ((!workspaceAlias && !certificateAlias) || isNaN(page) || isNaN(limit)) {
+    const limit = limitQuery
+      ? parseInt(searchParams.get("limit") || "10", 10)
+      : null;
+
+    if ((!workspaceAlias && !certificateAlias) || isNaN(page)) {
       return NextResponse.json(
         { error: "Invalid query parameters" },
         { status: 400 }
       );
     }
-
-    const from = (page - 1) * limit;
-    const to = from + limit - 1;
 
     // Fetch certificate recipients with the workspace alias filter
     let query = supabase
@@ -43,9 +44,15 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
       );
     }
 
-    const { data, error, count } = await query
-      .order("created_at", { ascending: false })
-      .range(from, to);
+    if (limit) {
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
+      query.range(from, to);
+    }
+
+    const { data, error, count } = await query.order("created_at", {
+      ascending: false,
+    });
 
     console.log(data);
 

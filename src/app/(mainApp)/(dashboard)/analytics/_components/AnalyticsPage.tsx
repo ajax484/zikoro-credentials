@@ -4,7 +4,7 @@ import { useGetData } from "@/hooks/services/request";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import Image from "next/image";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { ReactNode, useEffect, useMemo, useState } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -53,6 +53,22 @@ import {
 import "react-circular-progressbar/dist/styles.css";
 import { useRouter } from "next/navigation";
 import { CaretUp } from "@phosphor-icons/react";
+import {
+  useFetchCertificates,
+  useFetchWorkspaceCertificatesRecipients,
+} from "@/queries/certificates.queries";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useResendCertificates } from "@/mutations/certificates.mutations";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export type TimePeriod = "this week" | "this month" | "this year" | "all time";
 
@@ -69,12 +85,14 @@ const OverviewCard = ({
   info,
   icon,
   isLoading,
+  extra,
 }: {
   title: string;
   value: number;
   info: string;
   icon: string;
   isLoading?: boolean;
+  extra?: ReactNode;
 }) => {
   return (
     <div className="bg-[#F7F8FF] py-12 px-4 rounded-lg border border-gray-200 flex flex-col justify-center items-center gap-2 relative">
@@ -87,24 +105,26 @@ const OverviewCard = ({
       ) : (
         <p className="text-4xl font-bold">{value}</p>
       )}
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              aria-label="info"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              className="absolute bottom-2 right-2"
-            >
-              <InfoIcon className="size-4 text-gray-600" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent className="bg-[#F7F8FF] p-4 rounded-lg border border-gray-200 text-gray-700">
-            <p>{info}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <div className="flex justify-between items-center absolute inset-x-0 bottom-2 px-2">
+        {title === "Unopened Credentials" ? extra : <div />}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                aria-label="info"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <InfoIcon className="size-4 text-gray-600" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent className="bg-[#F7F8FF] p-4 rounded-lg border border-gray-200 text-gray-700">
+              <p>{info}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     </div>
   );
 };
@@ -236,20 +256,16 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
 
   const [timePeriod, setTimePeriod] = React.useState<TimePeriod>("all time");
 
-  const {
-    data: certificates,
-    isLoading: certificatesIsLoading,
-    error,
-  } = useGetData<TCertificate[]>(
-    `/certificates?workspaceAlias=${organization?.organizationAlias}`,
-    []
-  );
+  const { data: certificates, isFetching: certificatesIsLoading } =
+    useFetchCertificates(organization?.organizationAlias!);
 
-  const { data: recipients, isLoading: recipientsIsLoading } = useGetData<
-    CertificateRecipient[]
-  >(
-    `/workspaces/${organization?.organizationAlias}/certificates/recipients`,
-    []
+  const {
+    data: { data: recipients },
+    isFetching: recipientsIsLoading,
+  } = useFetchWorkspaceCertificatesRecipients(
+    organization?.organizationAlias!,
+    { page: 1, limit: null },
+    ""
   );
 
   const [certificate, setCertificate] = useState<TCertificate | null>(
@@ -369,7 +385,11 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
     (recipient) =>
       recipient.statusDetails &&
       recipient.statusDetails.some((status) => status.action === "email opened")
-  ).length;
+  );
+
+  const unopenedCredentials = filteredRecipients.filter(
+    (recipient) => !openedCredentials.includes(recipient)
+  );
 
   const totalOpens = filteredRecipients.reduce(
     (acc, curr) =>
@@ -380,9 +400,80 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
   );
 
   const openedCredentialsPercentage =
-    (openedCredentials / filteredRecipients.length) * 100 || 0;
+    (openedCredentials.length / filteredRecipients.length) * 100 || 0;
 
   console.log(sharedRecipientsPercentage);
+
+  const { mutateAsync: resendCertificates, isPending: isLoadingResend } =
+    useResendCertificates(organization?.organizationAlias!);
+
+  const unopenedCredentialsDialog = (
+    <Dialog>
+      <DialogTrigger asChild>
+        <button
+          aria-label="info"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          className="text-xs underline"
+        >
+          View
+        </button>
+      </DialogTrigger>
+      <DialogContent className="px-4 py-6 !max-w-[50vw]">
+        <DialogHeader className="px-3">
+          <DialogTitle>Unopened Credentials</DialogTitle>
+        </DialogHeader>
+        <ScrollArea className="h-[60vh] overflow-x-auto">
+          <table className="w-full text-sm text-gray-700">
+            <thead>
+              <tr className="bg-[#f7f8ff] p-4 border-b">
+                <th className="p-1">Recipient</th>
+                <th className="p-1">Email</th>
+                <th className="p-1">Status</th>
+                <th className="p-1"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {unopenedCredentials.map((recipient) => (
+                <tr className="bg-[#f7f8ff] p-4 border-b" key={recipient.id}>
+                  <td className="p-1">
+                    {recipient.recipientFirstName +
+                      " " +
+                      recipient.recipientLastName}
+                  </td>
+                  <td className="p-1">{recipient.recipientEmail}</td>
+                  <td className="p-1">Unopened</td>
+                  <td className="p-1">
+                    <Button
+                      variant={"outline"}
+                      onClick={async () => {
+                        await resendCertificates({
+                          recipients: [
+                            {
+                              id: recipient.id,
+                              statusDetails: recipient.statusDetails,
+                            },
+                          ],
+                        });
+                      }}
+                    >
+                      Resend Email
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </ScrollArea>
+        <DialogFooter>
+          <DialogClose>
+            <Button className="bg-basePrimary w-full">Close</Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 
   return (
     <section className="space-y-6">
@@ -427,16 +518,26 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
       <div className="bg-white p-4 rounded-lg border border-gray-200 space-y-4">
         <h2 className="text-lg font-semibold">Overview</h2>
         <div className="grid grid-cols-4 gap-4">
+          {!certificate ? (
+            <OverviewCard
+              title="Total Created"
+              value={totalCertificatesCreated}
+              info="Total number of credentials created"
+              icon={CertificateIcon2}
+            />
+          ) : (
+            <OverviewCard
+              title="Unopened Credentials"
+              value={filteredRecipients.length - openedCredentials.length}
+              info="Total number of credentials unopened"
+              icon={Document}
+              extra={unopenedCredentialsDialog}
+            />
+          )}
           <OverviewCard
-            title="Total Certificates Created"
-            value={totalCertificatesCreated}
-            info="Total number of certificates created"
-            icon={CertificateIcon2}
-          />
-          <OverviewCard
-            title="Total Certificates Issued"
+            title="Total Credentials Issued"
             value={totalCertificatesIssued}
-            info="Total number of certificates issued"
+            info="Total number of credentials issued"
             icon={Badge}
           />
           <OverviewCard
@@ -446,9 +547,9 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
             icon={Recipients}
           />
           <OverviewCard
-            title="Shared Certificates"
+            title="Shared Credentials"
             value={sharedCertificates}
-            info="Total number of certificates shared on social media"
+            info="Total number of credentials shared on social media"
             icon={Document}
           />
         </div>
@@ -582,8 +683,8 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
               </div>
               <h3>Viewed Credentials</h3>
               <div className="flex items-center gap-2">
-                <b>{openedCredentials}</b> of <b>{filteredRecipients.length}</b>{" "}
-                credentials viewed
+                <b>{openedCredentials.length}</b> of{" "}
+                <b>{filteredRecipients.length}</b> credentials viewed
               </div>
               <p>
                 <b>{totalOpens}</b> total views

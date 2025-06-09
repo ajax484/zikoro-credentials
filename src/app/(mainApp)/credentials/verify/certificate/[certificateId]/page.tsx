@@ -44,6 +44,7 @@ import {
   InstagramLogo,
   LinkedinLogo,
 } from "@phosphor-icons/react";
+import { PiLinkedinLogoBold, PiLinkedinLogoDuotone } from "react-icons/pi";
 
 // import { ShareSocial } from "react-share-social";
 
@@ -176,6 +177,21 @@ const CertificateView = ({
       generateImage();
     }
   }, [editor, certificate]);
+
+  const generateLinkedInCertUrl = () => {
+    if (!certificate || !certificate.originalCertificate) return "";
+
+    const name = encodeURIComponent(certificate.originalCertificate.name);
+    const issueYear = new Date(certificate.created_at).getFullYear();
+    const issueMonth = new Date(certificate.created_at).getMonth() + 1; // LinkedIn uses 1-based index for months
+    const certId = certificate.certificateId;
+    const certUrl = encodeURIComponent(window.location.href);
+    const organizationName = encodeURIComponent(
+      certificate.originalCertificate.event?.organisationName || ""
+    );
+
+    return `https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name=${name}&issueYear=${issueYear}&issueMonth=${issueMonth}&certId=${certId}&certUrl=${certUrl}&organizationName=${organizationName}`;
+  };
 
   return (
     <section className="space-y-6">
@@ -468,6 +484,15 @@ const CertificateView = ({
               </PopoverContent>
             </Popover>
           </div>
+          <Link
+            className="w-full flex gap-2 border p-2 rounded-lg justify-center items-center"
+            href={generateLinkedInCertUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <PiLinkedinLogoBold className="size-6" />
+            <span>Add to Linkedin profile</span>
+          </Link>
         </div>
       </section>
       {certificate?.originalCertificate?.certificateSettings?.skills &&

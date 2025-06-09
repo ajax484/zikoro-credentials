@@ -78,7 +78,7 @@ export function useFetchRecentCertificate(workspaceAlias: string) {
 
 export function useFetchWorkspaceCertificatesRecipients(
   workspaceAlias: string,
-  pagination: { page: number; limit: number },
+  pagination: { page: number; limit: number | null },
   searchTerm: string
 ) {
   const { data, isFetching, status, error, refetch } = useQuery({

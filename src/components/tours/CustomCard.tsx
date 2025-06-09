@@ -89,19 +89,15 @@ const CustomCard = ({
       </div>
 
       <div className="flex items-center justify-between px-4 pt-2 pb-4">
-        {currentStep === totalSteps - 1 ? (
-          <div className="flex items-center gap-2">
-            <Checkbox
-              className="data-[state=checked]:bg-basePrimary"
-              checked={disableTour}
-              onCheckedChange={(value) => setDisableTour(value as boolean)}
-              aria-label="Disabled tour"
-            />
-            <span className="text-sm text-gray-600">Disable tour</span>
-          </div>
-        ) : (
-          <div />
-        )}
+        <div className="flex items-center gap-2">
+          <Checkbox
+            className="data-[state=checked]:bg-basePrimary"
+            checked={disableTour}
+            onCheckedChange={(value) => setDisableTour(value as boolean)}
+            aria-label="Disabled tour"
+          />
+          <span className="text-sm text-gray-600">Disable tour</span>
+        </div>
 
         <button
           className="text-basePrimary underline underline-offset-2 text-sm"

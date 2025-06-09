@@ -52,6 +52,7 @@ const Connect: React.FC<IntegrationComponentProps> = ({
   workspacesIsLoading,
   workspace,
   updateWorkspace,
+  selectedIntegration,
 }) => {
   return (
     <section className="space-y-6">
@@ -84,7 +85,8 @@ const Connect: React.FC<IntegrationComponentProps> = ({
           <div
             className={cn(
               "rounded-lg border p-4 space-y-4 flex-1",
-              option.value === "google form" && "opacity-50"
+              option.value === "google form" && "opacity-50",
+              option.value === selectedIntegration && "border-basePrimary"
             )}
           >
             <div className="flex justify-between items-center">
