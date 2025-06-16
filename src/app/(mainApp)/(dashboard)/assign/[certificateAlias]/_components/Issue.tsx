@@ -545,41 +545,6 @@ const Issue = ({
 
       let dataUrls: string[] = [];
 
-      dataUrls = await Promise.all(
-        exportedCertificates.map(async (recipient) => {
-          let newState = JSON.parse(
-            replaceURIVariable(
-              replaceSpecialText(
-                JSON.stringify(recipient?.certificate?.JSON?.json || {}),
-                {
-                  asset: recipient.certificate,
-                  recipient: recipient,
-                  organization: organization!,
-                }
-              ),
-              recipient.certificateId || ""
-            )
-          );
-
-          // Handle image replacement
-          newState = String(newState).replaceAll(
-            "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
-            recipient?.profilePicture?.trim()!
-          );
-
-          // editor?.clear();
-          editor?.changeSize({
-            width: recipient.certificate.JSON.width || 1200,
-            height: recipient.certificate.JSON?.height || 900,
-          });
-          const url = await editor?.loadJsonAsync(newState);
-
-          console.log(url);
-          return url || "";
-          // return "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg";
-        })
-      );
-
       if (firstGenerate) {
         setFirstGenerate(false);
         dataUrls = await Promise.all(
@@ -617,6 +582,41 @@ const Issue = ({
           })
         );
       }
+
+      dataUrls = await Promise.all(
+        exportedCertificates.map(async (recipient) => {
+          let newState = JSON.parse(
+            replaceURIVariable(
+              replaceSpecialText(
+                JSON.stringify(recipient?.certificate?.JSON?.json || {}),
+                {
+                  asset: recipient.certificate,
+                  recipient: recipient,
+                  organization: organization!,
+                }
+              ),
+              recipient.certificateId || ""
+            )
+          );
+
+          // Handle image replacement
+          newState = String(newState).replaceAll(
+            "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
+            recipient?.profilePicture?.trim()!
+          );
+
+          // editor?.clear();
+          editor?.changeSize({
+            width: recipient.certificate.JSON.width || 1200,
+            height: recipient.certificate.JSON?.height || 900,
+          });
+          const url = await editor?.loadJsonAsync(newState);
+
+          console.log(url);
+          return url || "";
+          // return "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg";
+        })
+      );
 
       console.log(dataUrls);
 

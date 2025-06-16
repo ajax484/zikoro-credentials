@@ -157,12 +157,14 @@ const CertificateView = ({
       setImageIsLoading(true);
       try {
         if (!editor) return;
+        let url;
         if (firstGenerate) {
           setFirstGenerate(false);
-          const url = await editor?.loadJsonAsync(newState);
+          url = await editor?.loadJsonAsync(newState);
+          url = await editor?.loadJsonAsync(newState);
         }
 
-        const url = await editor?.loadJsonAsync(newState);
+        url = await editor?.loadJsonAsync(newState);
         if (!url) throw new Error("No url");
         setImageSrc(url);
       } catch (error) {
