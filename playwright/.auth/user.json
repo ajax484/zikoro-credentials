@@ -1,0 +1,29 @@
+{
+  "cookies": [
+    {
+      "name": "sb-ddlepujpbqjoogkmiwfu-auth-token",
+      "value": "base64-eyJhY2Nlc3NfdG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0ltdHBaQ0k2SWxkMmIybFRTWEZVVWtWT1dIUlpaRGNpTENKMGVYQWlPaUpLVjFRaWZRLmV5SnBjM01pT2lKb2RIUndjem92TDJSa2JHVndkV3B3WW5GcWIyOW5hMjFwZDJaMUxuTjFjR0ZpWVhObExtTnZMMkYxZEdndmRqRWlMQ0p6ZFdJaU9pSXhNVEJpTlRFeU55MDBZamszTFRRME56a3RZV0V6T0MwNU5qRmhNekZpTnpkbFpUVWlMQ0poZFdRaU9pSmhkWFJvWlc1MGFXTmhkR1ZrSWl3aVpYaHdJam94TnpRNU5qSTRNREkzTENKcFlYUWlPakUzTkRrMk1qUTBNamNzSW1WdFlXbHNJam9pZFdKaGFIbDFjM1ZtTkRnMFFHZHRZV2xzTG1OdmJTSXNJbkJvYjI1bElqb2lJaXdpWVhCd1gyMWxkR0ZrWVhSaElqcDdJbkJ5YjNacFpHVnlJam9pWlcxaGFXd2lMQ0p3Y205MmFXUmxjbk1pT2xzaVpXMWhhV3dpWFgwc0luVnpaWEpmYldWMFlXUmhkR0VpT25zaVpXMWhhV3dpT2lKMVltRm9lWFZ6ZFdZME9EUkFaMjFoYVd3dVkyOXRJaXdpWlcxaGFXeGZkbVZ5YVdacFpXUWlPbVpoYkhObExDSndhRzl1WlY5MlpYSnBabWxsWkNJNlptRnNjMlVzSW5OMVlpSTZJakV4TUdJMU1USTNMVFJpT1RjdE5EUTNPUzFoWVRNNExUazJNV0V6TVdJM04yVmxOU0o5TENKeWIyeGxJam9pWVhWMGFHVnVkR2xqWVhSbFpDSXNJbUZoYkNJNkltRmhiREVpTENKaGJYSWlPbHQ3SW0xbGRHaHZaQ0k2SW5CaGMzTjNiM0prSWl3aWRHbHRaWE4wWVcxd0lqb3hOelE1TmpJME5ESTNmVjBzSW5ObGMzTnBiMjVmYVdRaU9pSXhOREF5TWpJek1pMHpPVEZoTFRReU5UY3RPRGs0TUMwME1tWTNZekV3TlRsaVptSWlMQ0pwYzE5aGJtOXVlVzF2ZFhNaU9tWmhiSE5sZlEuTEFDb2RYZGU4Z01Db3dQRGdLc05sRERXT0lXcXRMWVZwbGRwZ2JnX3MzTSIsInRva2VuX3R5cGUiOiJiZWFyZXIiLCJleHBpcmVzX2luIjozNjAwLCJleHBpcmVzX2F0IjoxNzQ5NjI4MDI3LCJyZWZyZXNoX3Rva2VuIjoiN2J6eTd1cTZzYzZ1IiwidXNlciI6eyJpZCI6IjExMGI1MTI3LTRiOTctNDQ3OS1hYTM4LTk2MWEzMWI3N2VlNSIsImF1ZCI6ImF1dGhlbnRpY2F0ZWQiLCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImVtYWlsIjoidWJhaHl1c3VmNDg0QGdtYWlsLmNvbSIsImVtYWlsX2NvbmZpcm1lZF9hdCI6IjIwMjQtMDQtMTJUMTk6NTY6NDcuMTMzN1oiLCJwaG9uZSI6IiIsImNvbmZpcm1hdGlvbl9zZW50X2F0IjoiMjAyNC0wNC0xMlQxOTo1NjozMi4xNDQzMzhaIiwiY29uZmlybWVkX2F0IjoiMjAyNC0wNC0xMlQxOTo1Njo0Ny4xMzM3WiIsInJlY292ZXJ5X3NlbnRfYXQiOiIyMDI0LTA3LTIxVDE2OjQ3OjE2LjY3MDg5MVoiLCJsYXN0X3NpZ25faW5fYXQiOiIyMDI1LTA2LTExVDA2OjQ3OjA3LjYxMDcwOTAxM1oiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6InViYWh5dXN1ZjQ4NEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwic3ViIjoiMTEwYjUxMjctNGI5Ny00NDc5LWFhMzgtOTYxYTMxYjc3ZWU1In0sImlkZW50aXRpZXMiOlt7ImlkZW50aXR5X2lkIjoiNzBlYmFjYzctYTRlYi00MjIzLTg0MjMtNjI2MWZlNTEyMjFhIiwiaWQiOiIxMTBiNTEyNy00Yjk3LTQ0NzktYWEzOC05NjFhMzFiNzdlZTUiLCJ1c2VyX2lkIjoiMTEwYjUxMjctNGI5Ny00NDc5LWFhMzgtOTYxYTMxYjc3ZWU1IiwiaWRlbnRpdHlfZGF0YSI6eyJlbWFpbCI6InViYWh5dXN1ZjQ4NEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwic3ViIjoiMTEwYjUxMjctNGI5Ny00NDc5LWFhMzgtOTYxYTMxYjc3ZWU1In0sInByb3ZpZGVyIjoiZW1haWwiLCJsYXN0X3NpZ25faW5fYXQiOiIyMDI0LTA0LTA4VDIwOjE0OjM2LjczMTI4M1oiLCJjcmVhdGVkX2F0IjoiMjAyNC0wNC0wOFQyMDoxNDozNi43MzEzMzRaIiwidXBkYXRlZF9hdCI6IjIwMjQtMDQtMDhUMjA6MTQ6MzYuNzMxMzM0WiIsImVtYWlsIjoidWJhaHl1c3VmNDg0QGdtYWlsLmNvbSJ9XSwiY3JlYXRlZF9hdCI6IjIwMjQtMDQtMDhUMjA6MTQ6MzYuNzI3MDQ0WiIsInVwZGF0ZWRfYXQiOiIyMDI1LTA2LTExVDA2OjQ3OjA3LjYxNDY4WiIsImlzX2Fub255bW91cyI6ZmFsc2V9fQ",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1784184428.344193,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://localhost:3000",
+      "localStorage": [
+        {
+          "name": "user",
+          "value": "{\"state\":{\"user\":{\"id\":13,\"created_at\":\"2024-01-20T13:43:29+00:00\",\"userEmail\":\"ubahyusuf484@gmail.com\",\"firstName\":\"Bilal\",\"lastName\":\"Ubangida\",\"jobTitle\":\"software engineer\",\"organization\":\"Advanced technology Limited\",\"city\":\"Ketu\",\"country\":\"Nigeria\",\"phoneNumber\":\"080293365708029336571\",\"whatsappNumber\":\"+2348029336571\",\"profilePicture\":\"\",\"bio\":\"this is my bio\",\"x\":\"twitter\",\"linkedin\":\"linkedin\",\"instagram\":\"insta\",\"facebook\":\"facebook\",\"referralCode\":\"DOJS0GN73M\",\"referredBy\":null,\"industry\":null,\"freeCreditClaimed\":true,\"welcome_email_sent\":false,\"completedCredentialWorkthrough\":{\"dashboardTour\":true},\"authUserId\":null}},\"version\":0}"
+        },
+        {
+          "name": "organization",
+          "value": "{\"state\":{\"organization\":{\"id\":469,\"created_at\":\"2025-03-11T11:43:44.629212+00:00\",\"organizationName\":\"integration_workspace\",\"subscriptionPlan\":\"Free\",\"subscritionStartDate\":null,\"subscriptionEndDate\":null,\"organizationOwner\":\"ubahyusuf484@gmail.com\",\"BillingAddress\":null,\"TaxID\":null,\"payoutAccountDetails\":null,\"organizationOwnerId\":13,\"organizationType\":\"Private\",\"organizationLogo\":null,\"country\":null,\"eventPhoneNumber\":\"08029336571\",\"eventWhatsApp\":null,\"eventContactEmail\":\"ubahyusuf484@gmail.com\",\"x\":null,\"linkedIn\":null,\"instagram\":null,\"facebook\":null,\"certificateAsset\":null,\"tiktok\":null,\"teamMembers\":[{\"userId\":13,\"userFirstName\":\"Bilal\",\"userLastName\":\"Ubangida\",\"userEmail\":\"ubahyusuf484@gmail.com\",\"userRole\":\"owner\"}],\"favicon\":null,\"subDomain\":null,\"organizationAlias\":\"781ddee2cf18471697f1\",\"subscriptionExpiryDate\":null,\"socialLinks\":null,\"city\":null,\"description\":null,\"state\":null,\"role\":[{\"userRole\":\"owner\"}],\"verification\":[{\"id\":41,\"created_at\":\"2025-06-04T11:58:44.428873+00:00\",\"workspaceAlias\":\"781ddee2cf18471697f1\",\"address\":\"5 Agbaje street, Alapere ketu Lagos\",\"country\":\"Nigeria\",\"document\":{\"url\":\"http://res.cloudinary.com/zikoro/image/upload/v1749038317/ZIKORO/s134ggxvezwi48ktemxm.png\",\"name\":\"42d85956-bef8-4146-9e25-431015e6d516.png\"},\"status\":\"verified\",\"createdBy\":13,\"verifiedBy\":null,\"incorporationYear\":2025}]}},\"version\":0}"
+        }
+      ]
+    }
+  ]
+}

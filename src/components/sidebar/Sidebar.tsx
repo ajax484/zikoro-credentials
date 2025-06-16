@@ -16,7 +16,6 @@ import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import useUserStore from "@/store/globalUserStore";
 import { LogOutIcon } from "lucide-react";
-import { logout } from "@/app/actions/auth";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { openWhatsApp } from "@/utils/helpers";
 import {
@@ -28,6 +27,7 @@ import { NavModalIcon } from "@/constants";
 import Integrations from "@/public/icons/PlugsConnected.svg";
 import AppIcon from "@/public/icons/SquaresFour.svg";
 import { motion } from "framer-motion";
+import { useLogOut } from "@/hooks";
 
 export function SupportMailIcon() {
   return (
@@ -150,6 +150,7 @@ const Sidebar = () => {
   const { organization, setOrganization } = useOrganizationStore();
   const pathname = usePathname();
   const router = useRouter();
+  const { logOut } = useLogOut();
 
   const close = () => {
     router.push("/");
@@ -197,7 +198,7 @@ const Sidebar = () => {
         id="sidebar"
       >
         <motion.div
-          className="flex items-center w-fit mb-10"
+          className="flex items-center w-fit mb-4"
           variants={navItemVariants}
         >
           <Image
@@ -429,7 +430,7 @@ const Sidebar = () => {
           </ul>
         </nav>
 
-        <motion.button
+        {/* <motion.button
           type="button"
           className="flex items-center py-2.5 px-2"
           variants={navItemVariants}
@@ -460,11 +461,11 @@ const Sidebar = () => {
           <motion.span variants={childrenVariants} className="text-sm truncate">
             {user?.firstName}
           </motion.span>
-        </motion.button>
+        </motion.button> */}
 
         <motion.button
           onClick={async () => {
-            await logout();
+            await logOut();
             localStorage.removeItem("user");
             window.location.href = "/";
           }}

@@ -163,7 +163,6 @@ const CertificateView = ({
         }
 
         const url = await editor?.loadJsonAsync(newState);
-        console.log(url);
         if (!url) throw new Error("No url");
         setImageSrc(url);
       } catch (error) {

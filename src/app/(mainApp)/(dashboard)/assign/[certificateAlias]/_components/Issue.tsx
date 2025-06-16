@@ -12,12 +12,7 @@ import {
   replaceURIVariable,
 } from "@/utils/helpers";
 import { PrinterIcon, Send, Trash } from "lucide-react";
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { PiExport } from "react-icons/pi";
 import { issueesColumns } from "./columns";
 import logo from "@/public/icons/logo.svg";
@@ -59,6 +54,7 @@ import {
 import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
 import { useEditor } from "@/components/editor/hooks/use-editor";
 import { Label } from "@/components/ui/label";
+import { Hint } from "@/components/hint";
 
 const issueesFilter: TFilter<
   CertificateRecipient & { certificate: TCertificate }
@@ -204,12 +200,31 @@ const Issue = ({
 
     return (
       <Dialog>
-        <DialogTrigger asChild>
-          <button
-            className={cn(
-              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
-                0 ||
+        <Hint
+          label={"Select a issuees to enable"}
+          side="bottom"
+          sideOffset={10}
+        >
+          <DialogTrigger asChild>
+            <button
+              className={cn(
+                "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
+                filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
+                  0 ||
+                  (!filteredIssuees
+                    .filter(({ id }) => rowSelection[id])
+                    .every(({ isValid }) => isValid) &&
+                    !filteredIssuees
+                      .filter(({ id }) => rowSelection[id])
+                      .every(({ isValid }) => !isValid)) ||
+                  isLoadingRecall ||
+                  isLoadingReissue
+                  ? "border-gray-600 text-gray-600"
+                  : "border-red-600  text-red-600"
+              )}
+              disabled={
+                filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
+                  0 ||
                 (!filteredIssuees
                   .filter(({ id }) => rowSelection[id])
                   .every(({ isValid }) => isValid) &&
@@ -218,32 +233,19 @@ const Issue = ({
                     .every(({ isValid }) => !isValid)) ||
                 isLoadingRecall ||
                 isLoadingReissue
-                ? "border-gray-600 text-gray-600"
-                : "border-red-600  text-red-600"
-            )}
-            disabled={
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
-                0 ||
-              (!filteredIssuees
-                .filter(({ id }) => rowSelection[id])
-                .every(({ isValid }) => isValid) &&
-                !filteredIssuees
+              }
+            >
+              <Trash className="size-4" />
+              <span>
+                {filteredIssuees
                   .filter(({ id }) => rowSelection[id])
-                  .every(({ isValid }) => !isValid)) ||
-              isLoadingRecall ||
-              isLoadingReissue
-            }
-          >
-            <Trash className="size-4" />
-            <span>
-              {filteredIssuees
-                .filter(({ id }) => rowSelection[id])
-                .every(({ isValid }) => isValid)
-                ? "Revoke"
-                : "Reissue"}
-            </span>
-          </button>
-        </DialogTrigger>
+                  .every(({ isValid }) => isValid)
+                  ? "Revoke"
+                  : "Reissue"}
+              </span>
+            </button>
+          </DialogTrigger>
+        </Hint>
         <DialogContent className="px-4 py-6 z-[1000]">
           <div className="space-y-4">
             <div className="flex flex-col gap-4 items-center py-4">
@@ -326,26 +328,33 @@ const Issue = ({
 
     return (
       <Dialog>
-        <DialogTrigger asChild>
-          <button
-            className={cn(
-              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length === 0
-                ? "border-gray-600 text-gray-600"
-                : "border-basePrimary text-basePrimary"
-            )}
-            disabled={
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
-                0 ||
-              isLoadingRecall ||
-              isLoadingReissue ||
-              isLoadingResend
-            }
-          >
-            <Send className="size-4" />
-            <span>Resend</span>
-          </button>
-        </DialogTrigger>
+        <Hint
+          label={"Select a issuees to enable"}
+          side="bottom"
+          sideOffset={10}
+        >
+          <DialogTrigger asChild>
+            <button
+              className={cn(
+                "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm",
+                filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
+                  0
+                  ? "border-gray-600 text-gray-600"
+                  : "border-basePrimary text-basePrimary"
+              )}
+              disabled={
+                filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
+                  0 ||
+                isLoadingRecall ||
+                isLoadingReissue ||
+                isLoadingResend
+              }
+            >
+              <Send className="size-4" />
+              <span>Resend</span>
+            </button>
+          </DialogTrigger>
+        </Hint>
         <DialogContent className="px-4 py-6 z-[1000]">
           <div className="space-y-4">
             <div className="flex flex-col gap-4 items-center py-4">
@@ -385,30 +394,36 @@ const Issue = ({
 
     return (
       <Dialog>
-        <DialogTrigger asChild>
-          <button
-            className={cn(
-              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm disabled:border-gray-600 disabled:text-gray-600 border-basePrimary text-basePrimary"
-            )}
-            disabled={
-              filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
-                0 ||
-              isLoadingRecall ||
-              isLoadingReissue ||
-              isLoadingResend ||
-              !filteredIssuees
-                .filter(({ id }) => rowSelection[id])
-                .every(
-                  (item, _, arr) =>
-                    item.certificateGroupId === arr[0]?.certificateGroupId
-                )
-            }
-            // onClick={exportRecipients}
-          >
-            <PrinterIcon className="size-4" />
-            <span>Print</span>
-          </button>
-        </DialogTrigger>
+        <Hint
+          label={"Select a issuees to enable"}
+          side="bottom"
+          sideOffset={10}
+        >
+          <DialogTrigger asChild>
+            <button
+              className={cn(
+                "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm disabled:border-gray-600 disabled:text-gray-600 border-basePrimary text-basePrimary"
+              )}
+              disabled={
+                filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
+                  0 ||
+                isLoadingRecall ||
+                isLoadingReissue ||
+                isLoadingResend ||
+                !filteredIssuees
+                  .filter(({ id }) => rowSelection[id])
+                  .every(
+                    (item, _, arr) =>
+                      item.certificateGroupId === arr[0]?.certificateGroupId
+                  )
+              }
+              // onClick={exportRecipients}
+            >
+              <PrinterIcon className="size-4" />
+              <span>Print</span>
+            </button>
+          </DialogTrigger>
+        </Hint>
         <DialogContent className="px-4 py-6">
           <div className="space-y-4">
             <div className="flex flex-col gap-4 items-center py-4">

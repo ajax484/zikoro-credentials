@@ -10,6 +10,7 @@ import useUserStore from "@/store/globalUserStore";
 import { createClient } from "@/utils/supabase/client";
 import { TUser } from "@/types/user";
 import { nanoid } from "nanoid";
+import useOrganizationStore from "@/store/globalOrganizationStore";
 
 const supabase = createClient();
 
@@ -48,9 +49,7 @@ export function useRegistration() {
         //  saveCookie("user", data);
         toast.success("Registration Successful");
         router.push(
-          `/verify-email?email=${
-            values.email
-          }&type=verify${
+          `/verify-email?email=${values.email}&type=verify${
             workspaceAlias ? `&workspaceAlias=${workspaceAlias}` : ""
           }`
         );
@@ -106,10 +105,12 @@ export function useLogin() {
 export function useLogOut(redirectPath: string = "/") {
   const router = useRouter();
   const { setUser } = useUserStore();
+  const { setOrganization } = useOrganizationStore();
 
   async function logOut() {
     await supabase.auth.signOut();
     setUser(null);
+    setOrganization(null);
     router.push(redirectPath);
   }
 
@@ -334,7 +335,7 @@ export function useOnboarding() {
           payload: "",
         });
       }
-      
+
       const { data, error, status } = await supabase
         .from("users")
         .insert({
