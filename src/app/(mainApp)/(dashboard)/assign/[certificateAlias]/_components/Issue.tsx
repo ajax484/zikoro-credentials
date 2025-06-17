@@ -415,12 +415,13 @@ const Issue = ({
                   .every(
                     (item, _, arr) =>
                       item.certificateGroupId === arr[0]?.certificateGroupId
-                  )
+                  ) ||
+                isPrintLoading
               }
               // onClick={exportRecipients}
             >
               <PrinterIcon className="size-4" />
-              <span>Print</span>
+              <span>{isPrintLoading ? "Preparing..." : "Print"}</span>
             </button>
           </DialogTrigger>
         </Hint>
@@ -537,54 +538,19 @@ const Issue = ({
 
   const [firstGenerate, setFirstGenerate] = useState(true);
 
+  const [isPrintLoading, setIsPrintLoading] = useState(false);
+
   async function exportRecipientsFn(options?: { imagesPerRow?: number }) {
     try {
+      setIsPrintLoading(true);
       const exportedCertificates = filteredIssuees.filter(
         ({ id }) => rowSelection[id]
       );
 
-      let dataUrls: string[] = [];
+      let dataUrls: string[] | undefined = [];
 
-      if (firstGenerate) {
-        setFirstGenerate(false);
-        dataUrls = await Promise.all(
-          exportedCertificates.map(async (recipient) => {
-            let newState = JSON.parse(
-              replaceURIVariable(
-                replaceSpecialText(
-                  JSON.stringify(recipient?.certificate?.JSON?.json || {}),
-                  {
-                    asset: recipient.certificate,
-                    recipient: recipient,
-                    organization: organization!,
-                  }
-                ),
-                recipient.certificateId || ""
-              )
-            );
-
-            // Handle image replacement
-            newState = String(newState).replaceAll(
-              "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
-              recipient?.profilePicture?.trim()!
-            );
-
-            // editor?.clear();
-            editor?.changeSize({
-              width: recipient.certificate.JSON.width || 1200,
-              height: recipient.certificate.JSON?.height || 900,
-            });
-            const url = await editor?.loadJsonAsync(newState);
-
-            console.log(url);
-            return url || "";
-            // return "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg";
-          })
-        );
-      }
-
-      dataUrls = await Promise.all(
-        exportedCertificates.map(async (recipient) => {
+      const jsonData = exportedCertificates.map((recipient) => ({
+        json: (() => {
           let newState = JSON.parse(
             replaceURIVariable(
               replaceSpecialText(
@@ -605,18 +571,20 @@ const Issue = ({
             recipient?.profilePicture?.trim()!
           );
 
-          // editor?.clear();
-          editor?.changeSize({
-            width: recipient.certificate.JSON.width || 1200,
-            height: recipient.certificate.JSON?.height || 900,
-          });
-          const url = await editor?.loadJsonAsync(newState);
+          return newState;
+        })(),
+        width: recipient?.certificate?.JSON.width || 1200,
+        height: recipient.certificate.JSON?.height || 900,
+      }));
 
-          console.log(url);
-          return url || "";
-          // return "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg";
-        })
-      );
+      if (firstGenerate) {
+        setFirstGenerate(false);
+        await editor?.loadMultipleJsonAsync(jsonData);
+      }
+
+      dataUrls = await editor?.loadMultipleJsonAsync(jsonData);
+
+      if (!dataUrls) return;
 
       console.log(dataUrls);
 
@@ -660,6 +628,8 @@ const Issue = ({
     } catch (error) {
       console.error("Export failed:", error);
       alert("Error generating certificates. Check console for details.");
+    } finally {
+      setIsPrintLoading(false);
     }
   }
 

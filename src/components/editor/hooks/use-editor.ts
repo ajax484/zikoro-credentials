@@ -100,9 +100,6 @@ const buildEditor = ({
       unit: "pt",
       format: [options.width, options.height],
     });
-    // const imgProperties = pdf.getImageProperties(dataUrl);
-    // const pdfWidth = pdf.internal.pageSize.getWidth();
-    // const pdfHeight = pdf.internal.pageSize.getHeight();
 
     pdf.addImage(dataUrl, "png", 0, 0, width, height);
     pdf.save(name || "untitled.pdf");
@@ -131,9 +128,6 @@ const buildEditor = ({
       unit: "pt",
       format: [options.width, options.height],
     });
-    // const imgProperties = pdf.getImageProperties(dataUrl);
-    // const pdfWidth = pdf.internal.pageSize.getWidth();
-    // const pdfHeight = pdf.internal.pageSize.getHeight();
 
     pdf.addImage(dataUrl, "png", 0, 0, width, height);
     pdf.autoPrint({ variant: "non-conform" });
@@ -172,8 +166,6 @@ const buildEditor = ({
       next(url);
     });
 
-    // console.log(dataUrl);
-
     return dataUrl;
   };
 
@@ -182,8 +174,6 @@ const buildEditor = ({
 
     isLive && canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
     const dataUrl = canvas.toDataURL(options);
-
-    // console.log(dataUrl);
 
     return dataUrl;
   };
@@ -225,84 +215,117 @@ const buildEditor = ({
     });
   };
 
-  const loadJsonAsync = async (json: string): Promise<string> => {
-    try {
-      const options = generateSaveOptions();
-      const data = JSON.parse(json);
+  // Optimized barcode processing with batch operations
+  const processBarcodeObjects = async () => {
+    const barcodeObjects = canvas
+      .getObjects()
+      .filter(
+        (object) => object instanceof fabric.Image && object.options?.isBarCode
+      );
 
-      return await new Promise<string>((resolve, reject) => {
-        canvas.loadFromJSON(data, async () => {
+    if (barcodeObjects.length === 0) return;
+
+    console.log(`Processing ${barcodeObjects.length} barcode objects`);
+
+    // Process barcodes in parallel with limited concurrency
+    const BATCH_SIZE = 3; // Limit concurrent requests
+    const batches = [];
+
+    for (let i = 0; i < barcodeObjects.length; i += BATCH_SIZE) {
+      batches.push(barcodeObjects.slice(i, i + BATCH_SIZE));
+    }
+
+    for (const batch of batches) {
+      await Promise.all(
+        batch.map(async (object) => {
           try {
-            autoZoom();
-            canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+            const { value, barCodeType } = object.options || {};
 
-            console.log("here");
+            if (!value || !barCodeType) return;
 
-            const barcodeObjects = canvas
-              .getObjects()
-              .filter(
-                (object) =>
-                  object instanceof fabric.Image && object.options?.isBarCode
-              );
+            const apiUrl = `https://barcodeapi.org/api/${barCodeType}/${encodeURIComponent(
+              value
+            )}`;
+            const response = await fetch(apiUrl, { cache: "no-store" });
 
-            console.log(barcodeObjects.length);
-
-            for (const object of barcodeObjects) {
-              try {
-                const { value, barCodeType } = object.options || {};
-
-                console.log(value, barCodeType);
-                if (!value || !barCodeType) continue;
-
-                const apiUrl = `https://barcodeapi.org/api/${barCodeType}/${encodeURIComponent(
-                  value
-                )}`;
-                const response = await fetch(apiUrl, { cache: "no-store" });
-                const tokens = response.headers.get("X-RateLimit-Tokens");
-                console.log("Tokens remaining:", tokens);
-
-                const blob = await response.blob();
-                const fileName = `${barCodeType}:${value}-${Date.now()}.png`;
-                const file = new File([blob], fileName, {
-                  type: blob.type,
-                  lastModified: Date.now(),
-                });
-
-                const { url: imageUrl, error } = await uploadFile(
-                  file,
-                  "image"
-                );
-                console.log(imageUrl);
-
-                if (error || !imageUrl) continue;
-
-                console.log(imageUrl);
-
-                // object.set({ src: imageUrl });
-                object.setSrc(
-                  imageUrl,
-                  function (img) {
-                    img.set({
-                      left: object.left,
-                      top: object.top,
-                      height: object.height,
-                      width: object.width,
-                    });
-                    console.log(img.src);
-                    canvas.renderAll();
-                  },
-                  {
-                    crossOrigin: "anonymous",
-                  }
-                );
-              } catch (barcodeError) {
-                console.error("Error processing barcode image:", barcodeError);
-              }
+            if (!response.ok) {
+              console.error("Failed to fetch barcode:", response.statusText);
+              return;
             }
 
+            const blob = await response.blob();
+            const fileName = `${barCodeType}:${value}-${Date.now()}.png`;
+            const file = new File([blob], fileName, {
+              type: blob.type,
+              lastModified: Date.now(),
+            });
+
+            const { url: imageUrl, error } = await uploadFile(file, "image");
+
+            if (error || !imageUrl) {
+              console.error("Failed to upload barcode image:", error);
+              return;
+            }
+
+            // Update the object's source with the new URL
+            await new Promise<void>((resolve) => {
+              object.setSrc(
+                imageUrl,
+                function (img) {
+                  img.set({
+                    left: object.left,
+                    top: object.top,
+                    height: object.height,
+                    width: object.width,
+                  });
+                  resolve();
+                },
+                {
+                  crossOrigin: "anonymous",
+                }
+              );
+            });
+          } catch (barcodeError) {
+            console.error("Error processing barcode image:", barcodeError);
+          }
+        })
+      );
+    }
+
+    canvas.renderAll();
+  };
+
+  // Optimized loadJsonAsync with better error handling and performance
+  const loadJsonAsync = async (json: string): Promise<string> => {
+    try {
+      const data = JSON.parse(json);
+      const options = generateSaveOptions();
+
+      return await new Promise<string>((resolve, reject) => {
+        // Set a timeout to prevent hanging
+        const timeout = setTimeout(() => {
+          reject(new Error("Canvas loading timeout"));
+        }, 30000); // 30 second timeout
+
+        canvas.loadFromJSON(data, async () => {
+          try {
+            clearTimeout(timeout);
+
+            // Set viewport and zoom
+            canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+
+            // Process barcode objects if they exist
+            await processBarcodeObjects();
+
+            // Wait for images to load with shorter delay
+            await new Promise((resolve) => setTimeout(resolve, 50));
+
+            // Generate the final data URL
             const dataUrl = canvas.toDataURL(options);
             resolve(dataUrl);
           } catch (canvasError) {
+            clearTimeout(timeout);
+            console.error("Error in loadJsonAsync:", canvasError);
             reject(canvasError);
           }
         });
@@ -311,6 +334,34 @@ const buildEditor = ({
       console.error("Error loading JSON:", error);
       throw error;
     }
+  };
+
+  // Batch processing method for multiple certificates
+  const loadMultipleJsonAsync = async (
+    jsonDataArray: Array<{ json: string; width: number; height: number }>
+  ): Promise<string[]> => {
+    const results: string[] = [];
+
+    for (const { json, width, height } of jsonDataArray) {
+      try {
+        // Change canvas size only when needed
+        const workspace = getWorkspace();
+        const currentWidth = workspace?.width || 0;
+        const currentHeight = workspace?.height || 0;
+
+        if (currentWidth !== width || currentHeight !== height) {
+          workspace?.set({ width, height });
+        }
+
+        const dataUrl = await loadJsonAsync(json);
+        results.push(dataUrl);
+      } catch (error) {
+        console.error("Error processing certificate:", error);
+        results.push(""); // Add empty string for failed certificates
+      }
+    }
+
+    return results;
   };
 
   const getWorkspace = () => {
@@ -346,6 +397,7 @@ const buildEditor = ({
     saveJson,
     loadJson,
     loadJsonAsync,
+    loadMultipleJsonAsync,
     canUndo,
     canRedo,
     autoZoom,
@@ -482,7 +534,7 @@ const buildEditor = ({
         value,
         (image) => {
           const workspace = getWorkspace();
-          if (!workspace) return; // Prevent errors if workspace is null
+          if (!workspace) return;
 
           console.log(image);
 
@@ -541,15 +593,6 @@ const buildEditor = ({
 
         const blob = await response.blob();
 
-        // const imgSrc = URL.createObjectURL(blob);
-
-        // console.log(imgSrc);
-
-        // base64ToFile(
-        //   imgSrc,
-        //   type + ":" + value + new Date().getUTCMilliseconds() + ".png"
-        // );
-
         const blobUrl = new File(
           [blob],
           type + ":" + value + new Date().getUTCMilliseconds() + ".png",
@@ -590,171 +633,18 @@ const buildEditor = ({
 
             console.log(image.options?.isBarCode);
 
-            // image.scaleToWidth(workspace?.width || 0);
-            // image.scaleToHeight(workspace?.height || 0);
-
             addToCanvas(image);
           },
           {
             crossOrigin: "anonymous",
           }
         );
-
-        // fabric.Image.fromURL(
-        //   "https://api.qrserver.com/v1/create-qr-code/?size=150x150&format=svg" +
-        //     "&bgcolor=" +
-        //     (rgbaToHex(bgcolor) || "#ffffff") +
-        //     "&color=" +
-        //     (rgbaToHex(color) || "#000000") +
-        //     "&data=" +
-        //     encodeURIComponent(value),
-        //   (image: fabric.Image) => {
-        //     console.log(image);
-        //     const workspace = getWorkspace();
-
-        //     // image.scaleToWidth(workspace?.width || 0);
-        //     // image.scaleToHeight(workspace?.height || 0);
-
-        //     addToCanvas(image);
-        //   },
-        //   {
-        //     crossOrigin: "anonymous",
-        //   }
-        // );
       } catch (error) {
         console.log(error);
       }
     },
     transformBarCodes: async () => {
-      const objects = canvas
-        .getObjects()
-        // .forEach((object) => console.log(object.isBarCode))
-        .filter(
-          (object) =>
-            object instanceof fabric.Image && object.options?.isBarCode
-        );
-
-      for (const object of objects) {
-        try {
-          console.log(object.options);
-          let text = object.options?.value;
-
-          // if (object.options?.barCodeFunction === "verify") {
-          //   text = `https://credentials.zikoro.com/credentials/verify/certificate/${certificate.certificateId}`;
-          // }
-
-          // if (object.options?.barCodeFunction === "attribute") {
-          //   text = certificate?.metadata[object.options?.value];
-          // }
-
-          console.log(text);
-
-          const url = `https://barcodeapi.org/api/${
-            object.options?.barCodeType
-          }/${encodeURIComponent(text)}`;
-
-          console.log(url);
-          const response = await fetch(url, { cache: "no-store" });
-
-          const tokens = response.headers.get("X-RateLimit-Tokens");
-          console.log("Tokens remaining: " + tokens);
-
-          const blob = await response.blob();
-
-          const blobUrl = new File(
-            [blob],
-            object.options?.type +
-              ":" +
-              object.options?.value +
-              new Date().getUTCMilliseconds() +
-              ".png",
-            {
-              type: blob.type,
-              lastModified: Date.now(),
-            }
-          );
-
-          const { url: imageUrl, error } = await uploadFile(blobUrl, "image");
-
-          console.log(imageUrl);
-
-          if (error) return;
-          if (!imageUrl) return;
-
-          object.set({
-            src: imageUrl,
-          });
-
-          object.setSrc(
-            imageUrl,
-            function (img) {
-              console.log(img.src);
-              canvas.renderAll();
-            },
-            {
-              crossOrigin: "anonymous",
-            }
-          );
-
-          // oldImage.set({
-          //   src: imageUrl,
-          // })
-
-          // canvas.renderAll();
-
-          // fabric.Image.fromURL(
-          //   imageUrl,
-          //   (newImg) => {
-          //     newImg.set({
-          //       left: object.left,
-          //       top: object.top,
-          //       angle: object.angle,
-          //       scaleX: object.scaleX,
-          //       scaleY: object.scaleY,
-          //       opacity: object.opacity,
-          //       flipX: object.flipX,
-          //       flipY: object.flipY,
-          //     });
-
-          //     console.log(newImg.src, object.options.value);
-          //     // Replace the old image with the new one
-          //     // canvas.remove(oldImage);
-          //     canvas.remove(object);
-          //     addToCanvas(newImg);
-
-          //   },
-          //   {
-          //     crossOrigin: "anonymous",
-          //   }
-          // );// fabric.Image.fromURL(
-          //   imageUrl,
-          //   (newImg) => {
-          //     newImg.set({
-          //       left: object.left,
-          //       top: object.top,
-          //       angle: object.angle,
-          //       scaleX: object.scaleX,
-          //       scaleY: object.scaleY,
-          //       opacity: object.opacity,
-          //       flipX: object.flipX,
-          //       flipY: object.flipY,
-          //     });
-
-          //     console.log(newImg.src, object.options.value);
-          //     // Replace the old image with the new one
-          //     // canvas.remove(oldImage);
-          //     canvas.remove(object);
-          //     addToCanvas(newImg);
-
-          //   },
-          //   {
-          //     crossOrigin: "anonymous",
-          //   }
-          // );
-        } catch (error) {
-          console.log(error);
-        }
-      }
+      await processBarcodeObjects();
     },
     clear: () => {
       canvas.clear();
@@ -803,7 +693,6 @@ const buildEditor = ({
       canvas.getActiveObjects().forEach((object: fabric.Object) => {
         if (isTextType(object.type)) {
           // @ts-ignore
-          // Faulty TS library, fontSize exists.
           object.set({ fontSize: value });
         }
       });
@@ -817,7 +706,6 @@ const buildEditor = ({
       }
 
       // @ts-ignore
-      // Faulty TS library, fontSize exists.
       const value = selectedObject.get("fontSize") || FONT_SIZE;
 
       return value;
@@ -826,7 +714,6 @@ const buildEditor = ({
       canvas.getActiveObjects().forEach((object) => {
         if (isTextType(object.type)) {
           // @ts-ignore
-          // Faulty TS library, textAlign exists.
           object.set({ textAlign: value });
         }
       });
@@ -840,7 +727,6 @@ const buildEditor = ({
       }
 
       // @ts-ignore
-      // Faulty TS library, textAlign exists.
       const value = selectedObject.get("textAlign") || "left";
 
       return value;
@@ -849,7 +735,6 @@ const buildEditor = ({
       canvas.getActiveObjects().forEach((object) => {
         if (isTextType(object.type)) {
           // @ts-ignore
-          // Faulty TS library, underline exists.
           object.set({ underline: value });
         }
       });
@@ -863,7 +748,6 @@ const buildEditor = ({
       }
 
       // @ts-ignore
-      // Faulty TS library, underline exists.
       const value = selectedObject.get("underline") || false;
 
       return value;
@@ -872,7 +756,6 @@ const buildEditor = ({
       canvas.getActiveObjects().forEach((object) => {
         if (isTextType(object.type)) {
           // @ts-ignore
-          // Faulty TS library, linethrough exists.
           object.set({ linethrough: value });
         }
       });
@@ -886,7 +769,6 @@ const buildEditor = ({
       }
 
       // @ts-ignore
-      // Faulty TS library, linethrough exists.
       const value = selectedObject.get("linethrough") || false;
 
       return value;
@@ -895,7 +777,6 @@ const buildEditor = ({
       canvas.getActiveObjects().forEach((object) => {
         if (isTextType(object.type)) {
           // @ts-ignore
-          // Faulty TS library, fontStyle exists.
           object.set({ fontStyle: value });
         }
       });
@@ -909,7 +790,6 @@ const buildEditor = ({
       }
 
       // @ts-ignore
-      // Faulty TS library, fontStyle exists.
       const value = selectedObject.get("fontStyle") || "normal";
 
       return value;
@@ -918,7 +798,6 @@ const buildEditor = ({
       canvas.getActiveObjects().forEach((object) => {
         if (isTextType(object.type)) {
           // @ts-ignore
-          // Faulty TS library, fontWeight exists.
           object.set({ fontWeight: value });
         }
       });
@@ -954,7 +833,6 @@ const buildEditor = ({
       canvas.getActiveObjects().forEach((object: fabric.Object) => {
         if (isTextType(object.type)) {
           // @ts-ignore
-          // Faulty TS library, fontFamily exists.
           object.set({ fontFamily: value });
         }
       });
@@ -1108,7 +986,6 @@ const buildEditor = ({
       }
 
       // @ts-ignore
-      // Faulty TS library, fontWeight exists.
       const value = selectedObject.get("fontWeight") || FONT_WEIGHT;
 
       return value;
@@ -1121,7 +998,6 @@ const buildEditor = ({
       }
 
       // @ts-ignore
-      // Faulty TS library, fontFamily exists.
       const value = selectedObject.get("fontFamily") || fontFamily;
 
       return value;
@@ -1237,8 +1113,6 @@ export const useEditor = ({
     setHistoryIndex,
   });
 
-  // useSmartGuides(canvas, {});
-
   const editor = useMemo(() => {
     if (canvas) {
       return buildEditor({
@@ -1325,33 +1199,14 @@ export const useEditor = ({
       initialCanvas.centerObject(initialWorkspace);
       initialCanvas.clipPath = initialWorkspace;
 
-      // initCenteringGuidelines(initialCanvas);
-      // initAligningGuidelines(initialCanvas);
-
       setCanvas(initialCanvas);
       setContainer(initialContainer);
-
-      // initialCanvas
-      //   .getObjects()
-      //   .filter(
-      //     (object) => object instanceof fabric.Image && object.isBackground
-      //   )
-      //   .forEach((bgImage) => {
-      //     console.log("here");
-      //     initialCanvas.sendToBack(bgImage);
-      //     bgImage.scaleToWidth(initialWorkspace.width || 1200);
-      //     bgImage.scaleToHeight(initialWorkspace.height || 900);
-      //     initialCanvas.renderAll();
-      //   });
 
       const currentState = JSON.stringify(initialCanvas.toJSON(JSON_KEYS));
       canvasHistory.current = [currentState];
       setHistoryIndex(0);
     },
-    [
-      canvasHistory, // No need, this is from useRef
-      setHistoryIndex, // No need, this is from useState
-    ]
+    [canvasHistory, setHistoryIndex]
   );
 
   return { init, editor };

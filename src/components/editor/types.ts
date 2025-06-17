@@ -237,6 +237,9 @@ export interface Editor {
   saveJson: () => void;
   loadJson: (json: string) => void;
   loadJsonAsync: (json: string) => Promise<string>;
+  loadMultipleJsonAsync: (
+    jsonDataArray: Array<{ json: string; width: number; height: number }>
+  ) => Promise<string[]>;
   onUndo: () => void;
   onRedo: () => void;
   canUndo: () => boolean;

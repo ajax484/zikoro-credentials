@@ -32,7 +32,6 @@ import {
 import { cn } from "@/lib/utils";
 import SendIcon from "@/public/icons/fa_send.svg";
 import { ActionModal } from "@/app/(mainApp)/credentials/verify/certificate/[certificateId]/page";
-import { initialize } from "next/dist/server/lib/render-server";
 import { IoArrowBack } from "react-icons/io5";
 
 interface TTab {
@@ -210,8 +209,7 @@ const CertificateView = ({
               <div className="text-gray-800 font-medium flex flex-col gap-2 text-center">
                 <span>
                   Are you sure you want to{" "}
-                  {certificate.isValid ? "revoke" : "reissue"} these this
-                  credential?
+                  {certificate.isValid ? "revoke" : "reissue"} this credential?
                 </span>
               </div>
             </div>
@@ -263,7 +261,7 @@ const CertificateView = ({
               <Image src={SendIcon} alt="resend" width={40} height={40} />
               <h2 className="font-semibold text-center"> Resend Credentials</h2>
               <div className="text-gray-800 font-medium flex flex-col gap-2 text-center">
-                <span>Are you sure you want to resend these credential?</span>
+                <span>Are you sure you want to resend this credential?</span>
               </div>
             </div>
             <div className="flex w-full">
@@ -386,8 +384,6 @@ const CertificateView = ({
     );
   };
 
-  const btnRef = useRef<HTMLButtonElement>(null);
-
   function toggleShareDropDown() {
     showShareDropDown((prev) => !prev);
   }
@@ -402,34 +398,40 @@ const CertificateView = ({
     };
   }, []);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPrintLoading, setIsPrintLoading] = useState(false);
 
   const handlePrint = async () => {
-    const imageUrl = editor?.generateLink(true);
-    if (!imageUrl || typeof window === undefined) {
+    if (!editor || typeof window === "undefined") {
       return;
     }
 
-    setIsLoading(true);
+    setIsPrintLoading(true);
 
     try {
-      // Fetch the image to ensure it exists
-      const response = await fetch(imageUrl);
-      if (!response.ok) {
-        throw new Error("Failed to fetch image.");
+      console.log("Generating print image...");
+
+      // Use loadJsonAsync to generate a fresh image with all barcodes processed
+      const imageUrl = await editor.loadJsonAsync(newState);
+
+      if (!imageUrl) {
+        throw new Error("Failed to generate image for printing");
       }
+
+      console.log("Print image generated, opening print window...");
 
       // Open a new window with the image
       const printWindow = window.open("", "_blank");
       if (!printWindow) {
-        throw new Error("Failed to open print window.");
+        throw new Error(
+          "Failed to open print window. Please check popup blocker settings."
+        );
       }
 
       // Write the image to the new window
       printWindow.document.write(`
         <html>
           <head>
-            <title>Print Image</title>
+            <title>Print Certificate</title>
             <style>
               /* Remove default margins and padding */
               body, html { 
@@ -452,44 +454,67 @@ const CertificateView = ({
             </style>
           </head>
           <body>
-            <img src="${imageUrl}" alt="Printable Image" onload="window.print()" />
+            <img src="${imageUrl}" alt="Certificate" onload="window.print(); window.onafterprint = function() { window.close(); }" />
           </body>
         </html>
       `);
 
-      // Close the window after printing
+      // Close the document to finish loading
       printWindow.document.close();
-      printWindow.onbeforeunload = () => {
-        printWindow.close();
-      };
-    } catch (err) {
-      console.error(err);
+
+      console.log("Print window opened successfully");
+    } catch (error) {
+      console.error("Print error:", error);
+      alert(`Failed to print certificate: ${error.message}`);
     } finally {
-      setIsLoading(false);
+      setIsPrintLoading(false);
     }
   };
 
   const [imageSrc, setImageSrc] = useState<string>("");
-
   const [imageIsLoading, setImageIsLoading] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  const [firstGenerate, setFirstGenerate] = useState(true);
+
   useEffect(() => {
     const generateImage = async () => {
+      if (!editor || imageIsLoading) return;
+
       setImageIsLoading(true);
+      setImageError(null);
+
       try {
-        if (editor) {
-          await editor.transformBarCodes();
-          const src = editor.generateLink(true);
-          setImageSrc(src);
+        console.log("Generating certificate image...");
+
+        if (firstGenerate) {
+          setFirstGenerate(false);
+          await editor.loadJsonAsync(newState);
         }
+
+        const url = await editor.loadJsonAsync(newState);
+
+        if (!url) {
+          throw new Error("Failed to generate image URL");
+        }
+
+        console.log(url);
+
+        setImageSrc(url);
+        console.log("Certificate image generated successfully");
       } catch (error) {
         console.error("Error generating certificate image:", error);
+        setImageError("Failed to generate certificate image");
       } finally {
         setImageIsLoading(false);
       }
     };
 
-    generateImage();
-  }, [certificate]);
+    // Only generate if we don't have an image yet and editor is available
+    if (editor && !imageSrc && !imageIsLoading) {
+      generateImage();
+    }
+  }, [editor, newState, imageSrc, imageIsLoading]);
 
   return (
     <section className="space-y-4">
@@ -506,23 +531,13 @@ const CertificateView = ({
           <Download />
           <button
             onClick={handlePrint}
-            // onClick={() => {
-            //   if (typeof window !== "undefined") {
-            //     const imageUrl = editor?.generateLink(true);
-            //     window.open(
-            //       imageUrl,
-            //       certificate.certificateId!,
-            //       `width=${initialData.width},height=${initialData.height}`
-            //     );
-            //   }
-            // }}
-            disabled={isLoading}
+            disabled={isPrintLoading}
             className={cn(
-              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm border-basePrimary text-basePrimary"
+              "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm border-basePrimary text-basePrimary disabled:opacity-50 disabled:cursor-not-allowed"
             )}
           >
             <PrinterIcon className="size-4" />
-            <span> {isLoading ? "Loading..." : "Print"}</span>
+            <span>{isPrintLoading ? "Preparing..." : "Print"}</span>
           </button>
         </div>
       </section>
@@ -570,36 +585,44 @@ const CertificateView = ({
             <span>User View</span>
           </Link>
           <div className="relative h-full w-full flex justify-center items-center flex-1">
-            {
+            {imageIsLoading ? (
+              <div className="flex items-center justify-center h-[500px] w-full">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid" />
+                <span className="ml-4 text-gray-600">
+                  Generating certificate...
+                </span>
+              </div>
+            ) : imageError ? (
+              <div className="flex items-center justify-center h-[500px] w-full">
+                <div className="text-red-600 text-center">
+                  <p>{imageError}</p>
+                  <button
+                    onClick={() => {
+                      setImageSrc("");
+                      setImageError(null);
+                    }}
+                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Retry
+                  </button>
+                </div>
+              </div>
+            ) : imageSrc ? (
               <img
                 alt="certificate"
-                // src={imageSrc}
-                src={editor && editor.generateLink(true)}
+                src={imageSrc}
                 style={{ width: "50%" }}
                 className="h-auto"
                 onError={(e) => {
                   console.error("Failed to load certificate image", e);
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-            }
-            {/* {imageSrc && !imageIsLoading ? (
-              <img
-                alt="certificate"
-                // src={imageSrc}
-                src={editor && editor.generateLink(true)}
-                style={{ width: "50%" }}
-                className="h-auto"
-                onError={(e) => {
-                  console.error("Failed to load certificate image", e);
-                  e.currentTarget.style.display = "none";
+                  setImageError("Failed to load certificate image");
                 }}
               />
             ) : (
               <div className="flex items-center justify-center h-[500px] w-full">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid" />
+                <div className="text-gray-600">Loading certificate...</div>
               </div>
-            )} */}
+            )}
           </div>
         </div>
       </section>
@@ -621,7 +644,7 @@ const CertificateView = ({
         </Popover>
         <Popover>
           <PopoverTrigger>
-            <Download className="size-4" />
+            <DownloadIcon className="size-4" />
           </PopoverTrigger>
           <PopoverContent className="p-4 flex w-[150px] items-center justify-between gap-2 bg-white rounded-lg text-basePrimary">
             <button

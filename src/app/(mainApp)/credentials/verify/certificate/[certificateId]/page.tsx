@@ -2,7 +2,6 @@
 import { formatDateToHumanReadable } from "@/utils/date";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-// import { exportComponentAsPNG } from "react-component-export-image";
 import {
   base64ToFile,
   replaceSpecialText,
@@ -46,8 +45,6 @@ import {
 } from "@phosphor-icons/react";
 import { PiLinkedinLogoBold, PiLinkedinLogoDuotone } from "react-icons/pi";
 
-// import { ShareSocial } from "react-share-social";
-
 const CertificateView = ({
   certificate,
   recordShare,
@@ -66,7 +63,6 @@ const CertificateView = ({
   const canvasRef = useRef(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // console.log(certificate?.originalCertificate, "initialData");
   console.log(certificate, "initialData");
 
   let newState = JSON.parse(
@@ -82,8 +78,6 @@ const CertificateView = ({
       certificate.certificateId || ""
     )
   );
-
-  // console.log(certificate.originalCertificate.certificateSettings.skills);
 
   // Find placeholder in newState and replace with profile picture in the string
   newState = String(newState).replaceAll(
@@ -147,44 +141,54 @@ const CertificateView = ({
       : "unverified";
 
   const [imageSrc, setImageSrc] = useState("");
-
   const [imageIsLoading, setImageIsLoading] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
 
   const [firstGenerate, setFirstGenerate] = useState(true);
 
   useEffect(() => {
     const generateImage = async () => {
+      if (!editor || imageIsLoading) return;
+
       setImageIsLoading(true);
+      setImageError(null);
+
       try {
-        if (!editor) return;
-        let url;
+        console.log("Generating certificate image...");
+
         if (firstGenerate) {
           setFirstGenerate(false);
-          url = await editor?.loadJsonAsync(newState);
-          url = await editor?.loadJsonAsync(newState);
+          await editor.loadJsonAsync(newState);
         }
 
-        url = await editor?.loadJsonAsync(newState);
-        if (!url) throw new Error("No url");
+        const url = await editor.loadJsonAsync(newState);
+
+        if (!url) {
+          throw new Error("Failed to generate image URL");
+        }
+
         setImageSrc(url);
+        console.log("Certificate image generated successfully");
       } catch (error) {
         console.error("Error generating certificate image:", error);
+        setImageError("Failed to generate certificate image");
       } finally {
         setImageIsLoading(false);
       }
     };
 
-    if (!imageSrc) {
+    // Only generate if we don't have an image yet and editor is available
+    if (editor && !imageSrc && !imageIsLoading) {
       generateImage();
     }
-  }, [editor, certificate]);
+  }, [editor, newState, imageSrc, imageIsLoading]);
 
   const generateLinkedInCertUrl = () => {
     if (!certificate || !certificate.originalCertificate) return "";
 
     const name = encodeURIComponent(certificate.originalCertificate.name);
     const issueYear = new Date(certificate.created_at).getFullYear();
-    const issueMonth = new Date(certificate.created_at).getMonth() + 1; // LinkedIn uses 1-based index for months
+    const issueMonth = new Date(certificate.created_at).getMonth() + 1;
     const certId = certificate.certificateId;
     const certUrl = encodeURIComponent(window.location.href);
     const organizationName = encodeURIComponent(
@@ -212,8 +216,26 @@ const CertificateView = ({
           {imageIsLoading ? (
             <div className="flex items-center justify-center h-[500px] w-full">
               <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid" />
+              <span className="ml-4 text-gray-600">
+                Generating certificate...
+              </span>
             </div>
-          ) : (
+          ) : imageError ? (
+            <div className="flex items-center justify-center h-[500px] w-full">
+              <div className="text-red-600 text-center">
+                <p>{imageError}</p>
+                <button
+                  onClick={() => {
+                    setImageSrc("");
+                    setImageError(null);
+                  }}
+                  className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          ) : imageSrc ? (
             <img
               alt="certificate"
               src={imageSrc}
@@ -221,29 +243,17 @@ const CertificateView = ({
               className="h-auto"
               onError={(e) => {
                 console.error("Failed to load certificate image", e);
-                e.currentTarget.style.display = "none";
-              }}
-            />
-          )}
-          {/* {imageSrc && !imageIsLoading ? (
-            <img
-              alt="certificate"
-              // src={imageSrc}
-              src={editor && editor.generateLink(true)}
-              style={{ width: "50%" }}
-              className="h-auto"
-              onError={(e) => {
-                console.error("Failed to load certificate image", e);
-                e.currentTarget.style.display = "none";
+                setImageError("Failed to load certificate image");
               }}
             />
           ) : (
             <div className="flex items-center justify-center h-[500px] w-full">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid" />
+              <div className="text-gray-600">Loading certificate...</div>
             </div>
-          )} */}
+          )}
         </div>
       </div>
+
       {certificate?.originalCertificate?.certificateSettings?.description && (
         <div className="bg-white p-4 border rounded-lg w-full h-full space-y-2 flex flex-col items-center gap-4">
           <GradientText className="font-bold" Tag={"h1"}>
@@ -263,13 +273,13 @@ const CertificateView = ({
           />
         </div>
       )}
+
       <section className="grid grid-cols-2 gap-4">
         <div className="bg-white p-4 border rounded-lg w-full h-full space-y-2 flex flex-col items-center gap-2">
           <div className="flex justify-between items-center w-full">
             <GradientText className="font-bold" Tag={"h1"}>
               Issued by
             </GradientText>
-            {}
             <div className="flex gap-2 items-center text-green-600">
               <BsInfoCircle className="size-3" />
               <span className="font-medium text-xs">verified organisation</span>
@@ -332,11 +342,10 @@ const CertificateView = ({
                 0 &&
               certificate?.originalCertificate?.workspace?.socialLinks.map(
                 (link, index) => (
-                  <TooltipProvider>
+                  <TooltipProvider key={index}>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Link
-                          key={index}
                           href={link.url}
                           className="bg-[#f7f8f9] p-2 border rounded"
                         >
@@ -360,6 +369,7 @@ const CertificateView = ({
             </Link>
           </GradientText>
         </div>
+
         <div className="bg-white p-4 border rounded-lg w-full h-full space-y-2 flex flex-col items-center gap-4">
           <GradientText className="font-bold" Tag={"h1"}>
             Issued to
@@ -496,6 +506,7 @@ const CertificateView = ({
           </Link>
         </div>
       </section>
+
       {certificate?.originalCertificate?.certificateSettings?.skills &&
         certificate?.originalCertificate?.certificateSettings?.skills?.length >
           0 && (
@@ -505,8 +516,9 @@ const CertificateView = ({
             </GradientText>
             <div className="flex flex-wrap gap-2">
               {certificate?.originalCertificate?.certificateSettings?.skills.map(
-                ({ value, color }) => (
+                ({ value, color }, index) => (
                   <div
+                    key={index}
                     className="relative text-xs flex items-center gap-1.5 p-2 rounded w-fit md:text-sm"
                     style={{
                       backgroundColor: color + "22",
@@ -563,14 +575,6 @@ const Page = ({ params }: { params: { certificateId: string } }) => {
 
   console.log(certificate, certificateId);
 
-  // if (window.innerWidth < 768) {
-  //   return (
-  //     <div className="min-h-screen flex flex-col md:flex-row justify-center items-center gap-6 pt-20 pb-8 bg-[#F9FAFF]">
-  //       View on a desktop screen for best experience
-  //     </div>
-  //   );
-  // }
-
   return (
     <section className="min-h-screen space-y-6 pt-20 pb-8 bg-[#F9FAFF]">
       {!isLoading && certificate ? (
@@ -607,24 +611,9 @@ export function ActionModal({
   shareText: string;
   recordShare: ({ payload }: { payload: { social: string } }) => Promise<void>;
 }) {
-  // const handleShare = () => {
-  //   const linkedInUrl = new URL(
-  //     "https://www.linkedin.com/sharing/share-offsite/"
-  //   );
-  //   linkedInUrl.searchParams.set("url", pageUrl);
-
-  //   // Additional parameters (optional, can be embedded in the URL if your page supports Open Graph meta tags)
-  //   linkedInUrl.searchParams.set("title", title);
-  //   linkedInUrl.searchParams.set("summary", description);
-  //   linkedInUrl.searchParams.set("source", imageUrl);
-
-  //   window.open(linkedInUrl.toString(), "_blank");
-  // };
-
   const linkToCertificate = window.location.href;
   return (
     <>
-      {/* <Button className="fixed inset-0 bg-none h-full w-full z-[100]"></Button> */}
       <div
         role="button"
         onClick={(e) => {
