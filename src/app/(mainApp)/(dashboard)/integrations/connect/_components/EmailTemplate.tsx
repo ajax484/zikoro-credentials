@@ -23,6 +23,7 @@ import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
 import { ImageIcon, Loader, X } from "lucide-react";
 import {
+  generateAlias,
   generateAlphanumericHash,
   getTextColorFromBackground,
   replaceSpecialText,
@@ -320,6 +321,7 @@ Event Team.`,
       disconnect: false,
       templateId: data?.id,
       workspaceAlias: workspace?.organizationAlias,
+      integrationAlias: generateAlias(),
     });
 
     router.push("/integrations");

@@ -64,6 +64,8 @@ export async function PATCH(
     try {
       const params = await req.json();
 
+      console.log(params);
+
       const { data, error } = await supabase
         .from("credentialsIntegration")
         .update(params)
@@ -73,8 +75,10 @@ export async function PATCH(
 
       if (error) throw error;
 
+      console.log(data);
+
       return NextResponse.json(
-        { msg: "integration updated successfully", data },
+        { data },
         {
           status: 200,
         }
@@ -155,7 +159,7 @@ export async function DELETE(
 
       if (error) throw error;
       return NextResponse.json(
-        { data, msg: "integration deleted successfully" },
+        { data },
         {
           status: 200,
         }

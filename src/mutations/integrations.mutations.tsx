@@ -94,6 +94,7 @@ export function useUpdateIntegration(
         throw new Error(data);
       }
 
+      console.log(data);
       return data.data;
     },
     onMutate: () => {

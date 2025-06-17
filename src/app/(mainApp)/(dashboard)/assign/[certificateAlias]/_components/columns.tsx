@@ -283,74 +283,120 @@ export const issueesColumns: ColumnDef<
 
       if (!row.original?.isValid) return null;
 
-      const [isLoading, setIsLoading] = useState(false);
+      const [isPrintLoading, setIsPrintLoading] = useState(false);
+
+      const [imageIsLoading, setImageIsLoading] = useState(false);
+      const [imageError, setImageError] = useState<string | null>(null);
+      const [imageSrc, setImageSrc] = useState<string>("");
+      const [firstGenerate, setFirstGenerate] = useState(true);
+
+      useEffect(() => {
+        const generateImage = async () => {
+          if (!editor || imageIsLoading) return;
+
+          setImageIsLoading(true);
+          setImageError(null);
+
+          try {
+            console.log("Generating certificate image...");
+
+            if (firstGenerate) {
+              setFirstGenerate(false);
+              await editor.loadJsonAsync(newState);
+            }
+
+            const url = await editor.loadJsonAsync(newState);
+
+            if (!url) {
+              throw new Error("Failed to generate image URL");
+            }
+
+            console.log(url);
+
+            setImageSrc(url);
+            console.log("Certificate image generated successfully");
+          } catch (error) {
+            console.error("Error generating certificate image:", error);
+            setImageError("Failed to generate certificate image");
+          } finally {
+            setImageIsLoading(false);
+          }
+        };
+
+        // Only generate if we don't have an image yet and editor is available
+        if (editor && !imageSrc && !imageIsLoading) {
+          generateImage();
+        }
+      }, [editor, newState, imageSrc, imageIsLoading]);
 
       const handlePrint = async () => {
-        const imageUrl = editor?.generateLink(true);
-        if (!imageUrl || typeof window === undefined) {
+        if (!editor || typeof window === "undefined") {
           return;
         }
 
-        setIsLoading(true);
+        setIsPrintLoading(true);
 
         try {
-          // Fetch the image to ensure it exists
-          const response = await fetch(imageUrl);
-          if (!response.ok) {
-            throw new Error("Failed to fetch image.");
+          console.log("Generating print image...");
+
+          // Use loadJsonAsync to generate a fresh image with all barcodes processed
+          const imageUrl = await editor.loadJsonAsync(newState);
+
+          if (!imageUrl) {
+            throw new Error("Failed to generate image for printing");
           }
 
-          console.log(imageUrl, "image");
+          console.log("Print image generated, opening print window...");
 
-          printJS(imageUrl, "image");
+          // Open a new window with the image
+          const printWindow = window.open("", "_blank");
+          if (!printWindow) {
+            throw new Error(
+              "Failed to open print window. Please check popup blocker settings."
+            );
+          }
 
-          // // Open a new window with the image
-          // const printWindow = window.open("", "_blank");
-          // if (!printWindow) {
-          //   throw new Error("Failed to open print window.");
-          // }
+          // Write the image to the new window
+          printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print Certificate</title>
+            <style>
+              /* Remove default margins and padding */
+              body, html { 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                height: 100% !important; 
+                width: 100% !important; 
+              }
+              /* Ensure the image takes up the full page */
+              img { 
+                width: 100% !important; 
+                height: 100% !important; 
+                object-fit: contain; /* Ensures the image fits within the page */
+              }
+              /* Hide print metadata (headers and footers) */
+              @page { 
+                size: auto; /* Use the size of the image */
+                margin: 0 !important; /* Remove default margins */
+              }
+            </style>
+          </head>
+          <body>
+            <img src="${imageUrl}" alt="Certificate" onload="window.print(); window.onafterprint = function() { window.close(); }" />
+          </body>
+        </html>
+      `);
 
-          // // Write the image to the new window
-          // printWindow.document.write(`
-          //   <html>
-          //     <head>
-          //       <title>Print Image</title>
-          //       <style>
-          //         /* Remove default margins and padding */
-          //         body, html {
-          //           margin: 0 !important;
-          //           padding: 0 !important;
-          //           height: ${certificate?.JSON?.height} !important;
-          //           width: ${certificate?.JSON?.width} !important;
-          //         }
-          //         /* Ensure the image takes up the full page */
-          //         img {
-          //           width: 100% !important;
-          //           height: 100% !important;
-          //           object-fit: contain; /* Ensures the image fits within the page */
-          //         }
-          //         /* Hide print metadata (headers and footers) */
-          //         @page {
-          //           size: auto; /* Use the size of the image */
-          //           margin: 25mm 25mm 25mm 25mm !important;
-          //         }
-          //       </style>
-          //     </head>
-          //     <body>
-          //       <img src="${imageUrl}" alt="Printable Image" onload="window.print()" />
-          //     </body>
-          //   </html>
-          // `);
+          // Close the document to finish loading
+          printWindow.document.close();
 
-          // // Close the window after printing
-          // printWindow.document.close();
-          // printWindow.onbeforeunload = () => {
-          //   printWindow.close();
-          // };
-        } catch (err) {
-          console.error(err);
+          console.log("Print window opened successfully");
+        } catch (error) {
+          console.error("Print error:", error);
+          alert(`Failed to print certificate: ${error.message}`);
         } finally {
-          setIsLoading(false);
+          setIsPrintLoading(false);
         }
       };
 
@@ -393,12 +439,7 @@ export const issueesColumns: ColumnDef<
                 <button
                   aria-label="Print"
                   onClick={handlePrint}
-                  // onClick={() =>
-                  //   editor?.printPdf({
-                  //     width: certificate?.JSON?.width,
-                  //     height: certificate?.JSON?.height,
-                  //   })
-                  // }
+                  disabled={isPrintLoading}
                   className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center hover:bg-basePrimary/20 hover:text-basePrimary"
                 >
                   <PrinterIcon className="size-5" />

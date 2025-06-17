@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useFetchIntegration } from "@/queries/integrations.queries";
 import { CredentialsIntegration } from "@/types/integrations";
+import MapAttendees from "./MapAttendees";
 
 export interface IntegrationComponentProps {
   selectedIntegration: string;
@@ -83,6 +84,10 @@ const steps: Steps = {
   2: {
     heading: "Map Recipients",
     Component: MapRecipients,
+  },
+  2.5: {
+    heading: "Map Attendees",
+    Component: MapAttendees,
   },
   3: {
     heading: "Delivery Settings",
@@ -206,8 +211,6 @@ const ConnectIntegrations = ({
     setScheduleDate(value);
   };
 
-
-  
   const [headers, setHeaders] = useState<Map<Header, any>>(
     new Map([
       [
@@ -258,24 +261,24 @@ const ConnectIntegrations = ({
 
   const selectIntegration = (value: string) => {
     selectIntegrationType(value);
-    if (value === "event") {
-      updateHeader(
-        {
-          label: "First name",
-          value: "recipientFirstName",
-          isRequired: true,
-        },
-        "firstName"
-      );
-      updateHeader(
-        { label: "Last name", value: "recipientLastName", isRequired: true },
-        "lastName"
-      );
-      updateHeader(
-        { label: "Email", value: "recipientEmail", isRequired: true },
-        "email"
-      );
-    }
+    // if (value === "event") {
+    //   updateHeader(
+    //     {
+    //       label: "First name",
+    //       value: "recipientFirstName",
+    //       isRequired: true,
+    //     },
+    //     "firstName"
+    //   );
+    //   updateHeader(
+    //     { label: "Last name", value: "recipientLastName", isRequired: true },
+    //     "lastName"
+    //   );
+    //   updateHeader(
+    //     { label: "Email", value: "recipientEmail", isRequired: true },
+    //     "email"
+    //   );
+    // }
 
     setStep(1.5);
   };

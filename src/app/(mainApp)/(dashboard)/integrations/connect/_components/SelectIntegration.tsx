@@ -131,7 +131,7 @@ const SelectIntegration: React.FC<IntegrationComponentProps> = ({
       <div className="flex justify-center items-center w-full mt-4  ">
         <Button
           disabled={certificatesIsLoading || !certificate || !integratedId}
-          onClick={() => setStep(selectedIntegration === "event" ? 3 : 2)}
+          onClick={() => setStep(selectedIntegration === "event" ? 2.5 : 2)}
           size={"sm"}
           className="w-1/2"
         >

@@ -104,6 +104,8 @@ export async function POST(
 
       if (error) throw error;
 
+      console.log(body.integrationSettings);
+
       const { data: returnData, error: updateError } = await supabase
         .from(
           body.integrationType === "form"
