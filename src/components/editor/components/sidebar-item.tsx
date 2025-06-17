@@ -26,7 +26,12 @@ export const SidebarItem = ({
     }
 
     const handleKeyDown = (e: KeyboardEventWithKey) => {
-      if (e.key === numKey) {
+      const isCtrlKey = e.ctrlKey || e.metaKey;
+      const isInput = ["INPUT", "TEXTAREA"].includes(
+        (e.target as HTMLElement).tagName
+      );
+
+      if (isCtrlKey && e.key === numKey) {
         console.log("Delete/Backspace key pressed");
         // Your delete logic here
         onClick();
@@ -41,7 +46,7 @@ export const SidebarItem = ({
   }, []);
 
   return (
-    <Hint label={label + `(${numKey})`} side="bottom" sideOffset={10}>
+    <Hint label={label + ` (ctrl + ${numKey})`} side="bottom" sideOffset={10}>
       <Button
         variant="ghost"
         onClick={onClick}

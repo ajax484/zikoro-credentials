@@ -264,11 +264,7 @@ export async function POST(
 
     return NextResponse.json(
       {
-        data: {
-          msg: `Certificates ${action}${
-            action === "release" ? "d" : "ed"
-          } successfully`,
-        },
+        data: recipientData,
       },
       { status: 201 }
     );

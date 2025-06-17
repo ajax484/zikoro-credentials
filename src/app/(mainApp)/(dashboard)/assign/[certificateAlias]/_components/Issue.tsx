@@ -580,6 +580,7 @@ const Issue = ({
       if (firstGenerate) {
         setFirstGenerate(false);
         await editor?.loadMultipleJsonAsync(jsonData);
+        await editor?.loadMultipleJsonAsync(jsonData);
       }
 
       dataUrls = await editor?.loadMultipleJsonAsync(jsonData);
