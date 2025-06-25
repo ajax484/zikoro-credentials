@@ -1,7 +1,7 @@
 "use client";
 import useUserStore from "@/store/globalUserStore";
 import React, { useEffect, useState } from "react";
-import Badge from "@/public/icons/badge.svg";
+import Question from "@/public/icons/Question.svg";
 import Certificate from "@/public/icons/ph_certificate-duotone.svg";
 import Image from "next/image";
 import { useMutateData } from "@/hooks/services/request";
@@ -273,23 +273,23 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                 workspaces={workspaces}
                 workspacesIsLoading={workspacesIsLoading}
               />
-              <button
-                disabled
+              <Link
+                href={"https://help.zikoro.com/credentials"}
+                target={"_blank"}
+                rel={"noreferrer"}
                 className="rounded-lg flex flex-col items-center justify-center px-2 py-12 bg-white border relative"
               >
-                <div className="absolute inset-0 bg-white/50 rounded" />
                 <Image
-                  src={Badge}
+                  src={Question}
                   alt={"badge certificate"}
                   width={32}
                   height={32}
-                  className="rounded-full"
+                  className="rounded-full mb-2"
                 />
-                <p className="font-semibold text-zikoroBlack">
-                  Create new event badge
+                <p className="font-semibold text-zikoroBlack text-sm text-center">
+                  Explore quick tutorials to become a pro in no time
                 </p>
-                <small className="text-sm text-gray-600">Coming soon</small>
-              </button>
+              </Link>
               <div className="bg-white text-zikoroBlack px-1 py-4 rounded-xl flex flex-col justify-center items-center gap-y-2 border">
                 <div className="">
                   <div className="flex gap-8 justify-center">
