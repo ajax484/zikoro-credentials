@@ -248,6 +248,31 @@ export function FooterMail() {
   );
 }
 
+export function FooterHelp() {
+  return (
+    <div className="block lg:hidden">
+      <svg
+        width="44"
+        height="45"
+        viewBox="0 0 44 45"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle cx="22" cy="22.5" r="21.5" fill="white" stroke="#E0E0E0" />
+        <path
+          d="M22 14.5c-3.038 0-5.5 2.239-5.5 5h2c0-1.657 1.57-3 3.5-3s3.5 1.343 3.5 3c0 1.437-1.103 2.145-2.239 2.918-1.148.781-2.261 1.578-2.261 3.082v.5h2v-.5c0-.834.754-1.375 1.902-2.148C24.978 22.671 27 21.237 27 19.5c0-2.761-2.462-5-5-5z"
+          stroke="#001FCC"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+        <circle cx="22" cy="30.5" r="1" fill="#001FCC" />
+      </svg>
+    </div>
+  );
+}
+
 export function FooterMenu() {
   return (
     <div className="block lg:hidden">
