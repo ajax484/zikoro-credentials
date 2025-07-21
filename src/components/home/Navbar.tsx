@@ -67,9 +67,8 @@ const Navbar = () => {
   return (
     <div className="py-6 px-3 md:px-6 relative ">
       <div
-        className={`flex items-center lg:max-w-[980px] xl:max-w-[1300px] py-3 px-3 md:px-6 lg:px-[36px] rounded-[64px] justify-between mx-auto ${
-          isScrolled ? "bg-white" : "bg-transparent"
-        }`}
+        className={`flex items-center lg:max-w-[980px] xl:max-w-[1300px] py-3 px-3 md:px-6 lg:px-[36px] rounded-[64px] justify-between mx-auto ${isScrolled ? "bg-white" : "bg-transparent"
+          }`}
       >
         <Image
           src={logo}
@@ -82,16 +81,22 @@ const Navbar = () => {
 
         <div className="gap-x-8 hidden lg:flex ">
           <p
+            className="text-base font-medium cursor-pointer flex gap-2 items-center"
+            onClick={() => setIsPreviewShowing(!isPreviewShowing)}
+          >
+            <span>Other Products</span> <ChevronDown size={20} />
+          </p>
+
+          <p
             className="text-base font-medium cursor-pointer"
             onClick={() => router.push("credentials/verify/certificate")}
           >
             Verify
           </p>
           <p
-            className="text-base font-medium cursor-pointer flex gap-2 items-center"
-            onClick={() => setIsPreviewShowing(!isPreviewShowing)}
+            onClick={() => window.open("https://help.zikoro.com/credentials", "_blank")} className="text-base font-medium cursor-pointer"
           >
-            <span>Other Products</span> <ChevronDown size={20} />
+            Help
           </p>
 
           <p
@@ -203,7 +208,9 @@ const Navbar = () => {
               className="font-medium mt-5"
               onClick={() => setIsPreviewShowing(!isPreviewShowing)}
             >
-              Other Products <ChevronDown size={20} />{" "}
+              <span className="flex items-center gap-x-1">
+                Other Products <ChevronDown size={20} />{" "}
+              </span>
               {isPreviewShowing && (
                 <div
                   className="bg-white flex flex-col mt-3 gap-y-6 p-3 lg:hidden rounded-[10px] w-fit"
@@ -282,6 +289,12 @@ const Navbar = () => {
                   </div>
                 </div>
               )}
+            </li>
+            <li
+              className="mt-5 font-medium "
+              onClick={() => window.open("https://help.zikoro.com/credentials", "_blank")}
+            >
+              Help{" "}
             </li>
             <li
               className="mt-5 font-medium "

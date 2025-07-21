@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import {
+  FooterHelp,
   FooterMail,
   FooterMenu,
   NavModalIcon,
@@ -211,6 +212,20 @@ export default function Footer() {
             <span className="text-[10px] lg:text-base font-normal lg:font-medium">
               Other Products
             </span>
+          </li>
+
+          <li className="flex flex-col items-center justify-center gap-y-2 cursor-pointer">
+            <a
+              href="https://help.zikoro.com/credentials"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center justify-center gap-y-2"
+            >
+              <FooterHelp />
+              <span className="text-[10px] lg:text-base font-normal lg:font-medium">
+                Help
+              </span>
+            </a>
           </li>
 
           {/* Second List Item */}
