@@ -155,7 +155,7 @@ export async function DELETE(
       const { data, error } = await supabase
         .from("credentialsIntegration")
         .delete()
-        .eq("integrationAlias", np );
+        .eq("integrationAlias", integrationId);
 
       if (error) throw error;
       return NextResponse.json(

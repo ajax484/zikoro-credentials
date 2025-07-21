@@ -35,6 +35,7 @@ import { motion } from "framer-motion";
 import CreateCertificateDialog from "@/components/modals/CreateCertificate.modal";
 import { useCreateCertificate } from "@/mutations/certificates.mutations";
 import { BsInfoCircle } from "react-icons/bs";
+import { CredentialType } from "@/types/certificates";
 
 const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
   const { user, setUser } = useUserStore();
@@ -84,7 +85,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
     name: string;
     workspace: TOrganization;
     JSON: Record<string, any> | null;
-    credentialType: "label" | "certificate" | "badge";
+    credentialType: CredentialType;
   }) => {
     if (!organization) return toast.error("Please select an organization");
     const data = await createCertificate({
@@ -277,7 +278,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                 href={"https://help.zikoro.com/credentials"}
                 target={"_blank"}
                 rel={"noreferrer"}
-                className="rounded-lg flex flex-col items-center justify-center px-2 py-12 bg-white border relative"
+                className="rounded-lg flex flex-col items-center justify-center px-4 py-12 bg-white border relative"
               >
                 <Image
                   src={Question}

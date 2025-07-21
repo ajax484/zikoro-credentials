@@ -2,7 +2,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteRequest, postRequest } from "@/utils/api";
 import { toast } from "react-toastify";
-import { CertificateRecipient, TCertificate } from "@/types/certificates";
+import { CertificateRecipient, CertificateTemplate, TCertificate } from "@/types/certificates";
 import { PaginatedData } from "@/types/request";
 
 export function useCreateCertificate() {
@@ -61,6 +61,77 @@ export function useCreateCertificate() {
       });
 
       return certificate;
+    },
+    onError: (error, _, toastId) => {
+      console.error(error);
+      // Update toast to error
+      toastId &&
+        toast.update(toastId, {
+          render: "Failed to create certificate. Please try again.",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+    },
+  });
+}
+
+export function useCreateTemplate() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: Partial<CertificateTemplate>) => {
+      const { data, status } = await postRequest<CertificateTemplate>({
+        endpoint: `/certificates/templates`,
+        payload,
+      });
+
+      if (status !== 201) {
+        throw new Error(data.error!);
+      }
+
+      return data.data;
+    },
+    onMutate: ({ name }) => {
+      // Show loading toast
+      return toast.loading(`creating ${name} ...`);
+    },
+    onSuccess: (certificateTemplate, _, toastId) => {
+      console.log(certificateTemplate);
+      // Update workspace in any query where it exists
+      queryClient.setQueriesData<
+        PaginatedData<CertificateTemplate> | CertificateTemplate[] | CertificateTemplate
+      >(
+        {
+          predicate: (query) => query.queryKey.includes("certificate templates"),
+        },
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          console.log(oldData);
+
+          if (Array.isArray(oldData)) {
+            return [certificateTemplate, ...oldData];
+          } else if ("data" in oldData) {
+            return {
+              ...oldData,
+              data: [certificateTemplate, ...oldData.data],
+            };
+          } else {
+            return certificateTemplate;
+          }
+        }
+      );
+
+      // Update toast to success
+      toast.update(toastId, {
+        render: `${certificateTemplate.name} created successful!`,
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      return certificateTemplate;
     },
     onError: (error, _, toastId) => {
       console.error(error);

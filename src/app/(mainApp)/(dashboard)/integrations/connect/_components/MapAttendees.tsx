@@ -12,10 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useFetchForm } from "@/queries/integrations.queries";
-import { findKeysWithSharedValue } from "@/utils/helpers";
 import toast from "react-hot-toast";
-import { Loader } from "lucide-react";
 
 const MapRecipients: React.FC<IntegrationComponentProps> = ({
   setStep,

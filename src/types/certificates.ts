@@ -46,8 +46,14 @@ export interface TCertificate {
   attributes: string[];
   hasQRCode: boolean;
   assets: TCertificateAssets[];
-  credentialType: "product label" | "certificate" | "event badge" | "shipping label";
+  credentialType: CredentialType;
 }
+
+export type CredentialType =
+  | "product label"
+  | "certificate"
+  | "badge"
+  | "shipping label";
 
 export interface TCertificateAssets {
   url: string;
@@ -118,7 +124,8 @@ export interface CertificateTemplate {
   tags: string[];
   previewUrl: string;
   attributes: string[];
-  credentialType: "product label" | "certificate" | "event badge" | "shipping label";
+  credentialType: CredentialType;
+  sourceId: number;
 }
 
 export interface RecipientEmailTemplate {
