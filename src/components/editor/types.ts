@@ -17,6 +17,7 @@ export const JSON_KEYS = [
   "extension",
   "options",
   "isBackground",
+  "objectId",
 ];
 
 export const filters = [
@@ -118,7 +119,8 @@ export type ActiveTool =
   | "templates"
   | "background"
   | "verification"
-  | "qrCode";
+  | "qrCode"
+  | "layers";
 
 export const FILL_COLOR = "rgba(0,0,0,1)";
 export const STROKE_COLOR = "rgba(0,0,0,1)";
@@ -268,6 +270,12 @@ export interface Editor {
   ) => Promise<string | undefined>;
   transformBarCodes: () => Promise<void>;
   delete: () => void;
+  groupObjects: () => void;
+  ungroupObjects: () => void;
+  getAllObjects: () => fabric.Object[];
+  selectObject: (object: fabric.Object) => void;
+  getActiveObject: () => fabric.Object | null;
+  deleteObject: (object: fabric.Object) => void;
   changeFontSize: (value: number) => void;
   getActiveFontSize: () => number;
   changeTextAlign: (value: string) => void;
@@ -285,8 +293,8 @@ export interface Editor {
   addText: (value: string, options?: ITextboxOptions) => void;
   getActiveOpacity: () => number;
   changeOpacity: (value: number) => void;
-  bringForward: () => void;
-  sendBackwards: () => void;
+  bringForward: (obj?: fabric.Object) => void;
+  sendBackwards: (obj?: fabric.Object) => void;
   clear: () => void;
   changeStrokeWidth: (value: number) => void;
   changeFillColor: (value: string) => void;

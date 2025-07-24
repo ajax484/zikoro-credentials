@@ -14,6 +14,8 @@ import {
   Trash,
   Copy,
   Replace,
+  Group,
+  Ungroup,
 } from "lucide-react";
 
 import { isTextType } from "@/components/editor/utils";
@@ -71,6 +73,8 @@ export const Toolbar = ({
 
   const selectedObject = editor?.selectedObjects[0];
   const selectedObjectType = editor?.selectedObjects[0]?.type;
+
+  console.log(selectedObjectType);
 
   const isText = isTextType(selectedObjectType);
   const isImage = selectedObjectType === "image";
@@ -243,6 +247,12 @@ export const Toolbar = ({
         e.preventDefault();
         editor?.onPaste();
       }
+
+      // close sidebar when pressing escape
+      else if (e.key.toLowerCase() === "escape") {
+        e.preventDefault();
+        onChangeActiveTool("select");
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -256,59 +266,63 @@ export const Toolbar = ({
 
   if (editor?.selectedObjects.length === 0) {
     return (
-      <div className="z-[49] flex h-[56px] w-full shrink-0 items-center gap-x-2 overflow-x-auto border-b bg-[#f7f8ff] p-2" />
+      <div className="z-[49] flex h-[56px] w-full shrink-0 items-center gap-x-2 overflow-x-auto border-b bg-white p-2" />
     );
   }
 
   return (
-    <div className="z-[49] flex h-[56px] w-full shrink-0 items-center gap-x-2 overflow-x-auto border-b bg-[#f7f8ff] p-2">
-      {!isImage && (
-        <div className="flex h-full items-center justify-center">
-          <Hint label="Color" side="bottom" sideOffset={5}>
-            <Button
-              onClick={() => onChangeActiveTool("fill")}
-              size="icon"
-              variant="ghost"
-              className={cn(activeTool === "fill" && "bg-gray-100")}
-            >
-              <div
-                className="size-4 rounded-sm border"
-                style={{ backgroundColor: properties.fillColor }}
-              />
-            </Button>
-          </Hint>
-        </div>
-      )}
-      {!isText && (
-        <div className="flex h-full items-center justify-center">
-          <Hint label="Stroke color" side="bottom" sideOffset={5}>
-            <Button
-              onClick={() => onChangeActiveTool("stroke-color")}
-              size="icon"
-              variant="ghost"
-              className={cn(activeTool === "stroke-color" && "bg-gray-100")}
-            >
-              <div
-                className="size-4 rounded-sm border-2 bg-white"
-                style={{ borderColor: properties.strokeColor }}
-              />
-            </Button>
-          </Hint>
-        </div>
-      )}
-      {!isText && (
-        <div className="flex h-full items-center justify-center">
-          <Hint label="Stroke width" side="bottom" sideOffset={5}>
-            <Button
-              onClick={() => onChangeActiveTool("stroke-width")}
-              size="icon"
-              variant="ghost"
-              className={cn(activeTool === "stroke-width" && "bg-gray-100")}
-            >
-              <BsBorderWidth className="size-4" />
-            </Button>
-          </Hint>
-        </div>
+    <div className="z-[49] flex h-[56px] w-full shrink-0 items-center gap-x-2 overflow-x-auto border-b bg-white p-2">
+      {selectedObjectType !== "group" && (
+        <>
+          {!isImage && (
+            <div className="flex h-full items-center justify-center">
+              <Hint label="Color" side="bottom" sideOffset={5}>
+                <Button
+                  onClick={() => onChangeActiveTool("fill")}
+                  size="icon"
+                  variant="ghost"
+                  className={cn(activeTool === "fill" && "bg-gray-100")}
+                >
+                  <div
+                    className="size-4 rounded-sm border"
+                    style={{ backgroundColor: properties.fillColor }}
+                  />
+                </Button>
+              </Hint>
+            </div>
+          )}
+          {!isText && (
+            <div className="flex h-full items-center justify-center">
+              <Hint label="Stroke color" side="bottom" sideOffset={5}>
+                <Button
+                  onClick={() => onChangeActiveTool("stroke-color")}
+                  size="icon"
+                  variant="ghost"
+                  className={cn(activeTool === "stroke-color" && "bg-gray-100")}
+                >
+                  <div
+                    className="size-4 rounded-sm border-2 bg-white"
+                    style={{ borderColor: properties.strokeColor }}
+                  />
+                </Button>
+              </Hint>
+            </div>
+          )}
+          {!isText && (
+            <div className="flex h-full items-center justify-center">
+              <Hint label="Stroke width" side="bottom" sideOffset={5}>
+                <Button
+                  onClick={() => onChangeActiveTool("stroke-width")}
+                  size="icon"
+                  variant="ghost"
+                  className={cn(activeTool === "stroke-width" && "bg-gray-100")}
+                >
+                  <BsBorderWidth className="size-4" />
+                </Button>
+              </Hint>
+            </div>
+          )}
+        </>
       )}
       {isText && (
         <div className="flex h-full items-center justify-center">
@@ -540,6 +554,31 @@ export const Toolbar = ({
           </Button>
         </Hint>
       </div>
+      {editor && (
+        <div className="flex h-full items-center justify-center space-x-2">
+          {selectedObjectType === "group" ? (
+            <Hint label="Ungroup" side="bottom" sideOffset={5}>
+              <Button
+                onClick={() => editor.ungroupObjects()}
+                size="icon"
+                variant="ghost"
+              >
+                <Ungroup className="size-4" />
+              </Button>
+            </Hint>
+          ) : editor.selectedObjects.length > 1 ? (
+            <Hint label="Group" side="bottom" sideOffset={5}>
+              <Button
+                onClick={() => editor.groupObjects()}
+                size="icon"
+                variant="ghost"
+              >
+                <Group className="size-4" />
+              </Button>
+            </Hint>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 };

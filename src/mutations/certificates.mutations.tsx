@@ -2,7 +2,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteRequest, postRequest } from "@/utils/api";
 import { toast } from "react-toastify";
-import { CertificateRecipient, CertificateTemplate, TCertificate } from "@/types/certificates";
+import {
+  CertificateRecipient,
+  CertificateTemplate,
+  TCertificate,
+} from "@/types/certificates";
 import { PaginatedData } from "@/types/request";
 
 export function useCreateCertificate() {
@@ -100,10 +104,13 @@ export function useCreateTemplate() {
       console.log(certificateTemplate);
       // Update workspace in any query where it exists
       queryClient.setQueriesData<
-        PaginatedData<CertificateTemplate> | CertificateTemplate[] | CertificateTemplate
+        | PaginatedData<CertificateTemplate>
+        | CertificateTemplate[]
+        | CertificateTemplate
       >(
         {
-          predicate: (query) => query.queryKey.includes("certificate templates"),
+          predicate: (query) =>
+            query.queryKey.includes("certificate templates"),
         },
         (oldData) => {
           if (!oldData) return oldData;
@@ -123,6 +130,7 @@ export function useCreateTemplate() {
         }
       );
 
+      console.log(certificateTemplate);
       // Update toast to success
       toast.update(toastId, {
         render: `${certificateTemplate.name} created successful!`,

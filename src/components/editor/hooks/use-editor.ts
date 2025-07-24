@@ -41,6 +41,7 @@ import {
 import { z } from "zod";
 import { barCodeTypeEnum } from "../components/qrcode-sidebar";
 import { AlignGuidelines } from "fabric-guideline-plugin";
+import { nanoid } from "nanoid";
 
 const buildEditor = ({
   save,
@@ -380,6 +381,9 @@ const buildEditor = ({
 
   const addToCanvas = (object: fabric.Object, selectable = true) => {
     center(object);
+    if (!object.objectId) {
+      object.objectId = nanoid(); // this line does not seem to persist
+    }
     object.set({ selectable });
     canvas.add(object);
 
@@ -663,11 +667,81 @@ const buildEditor = ({
           }
         }
 
-        console.log("object", object);
         canvas.remove(object);
       });
       canvas.discardActiveObject();
       canvas.renderAll();
+    },
+    groupObjects: () => {
+      const active = canvas.getActiveObject();
+
+      // If it’s an ActiveSelection, convert it natively
+      if (active && active.type === "activeSelection") {
+        const group = (active as fabric.ActiveSelection).toGroup();
+        canvas.setActiveObject(group);
+        canvas.requestRenderAll();
+        return;
+      }
+
+      // Otherwise, manually group any multiple selection
+      const objects = canvas.getActiveObjects();
+      if (objects.length < 2) return;
+
+      const group = new fabric.Group(objects, {
+        hasControls: false,
+        lockScalingFlip: true,
+      });
+
+      // Clean up old objects & add the new group
+      canvas.discardActiveObject();
+      objects.forEach((obj) => canvas.remove(obj));
+      addToCanvas(group);
+      canvas.setActiveObject(group);
+      canvas.requestRenderAll();
+    },
+    ungroupObjects: () => {
+      const active = canvas.getActiveObject();
+      if (!active) return;
+
+      // Handle native toActiveSelection if it’s a Group
+      if (active.type === "group") {
+        const selection = (active as fabric.Group).toActiveSelection();
+        canvas.setActiveObject(selection);
+        canvas.requestRenderAll();
+        return;
+      }
+
+      // If it’s already an ActiveSelection, do nothing
+      if (active.type === "activeSelection") return;
+
+      // Otherwise, check if multiple were somehow selected
+      const objects = canvas.getActiveObjects();
+      if (objects.length < 2) return;
+
+      // Explode them: remove each from any group and re-add
+      canvas.discardActiveObject();
+      objects.forEach((obj) => {
+        canvas.remove(obj);
+        addToCanvas(obj);
+      });
+      const selection = new fabric.ActiveSelection(objects, { canvas });
+      canvas.setActiveObject(selection);
+      canvas.requestRenderAll();
+    },
+    getAllObjects: () => {
+      return [...canvas.getObjects()];
+    },
+    getActiveObject: () => {
+      return canvas.getActiveObject();
+    },
+    selectObject: (object) => {
+      canvas.setActiveObject(object);
+      canvas.requestRenderAll();
+    },
+    deleteObject: (object) => {
+      canvas.remove(object);
+      canvas.discardActiveObject();
+      canvas.requestRenderAll();
     },
     addText: (value, options) => {
       const object = new fabric.Textbox(value, {
@@ -809,20 +883,28 @@ const buildEditor = ({
       });
       canvas.renderAll();
     },
-    bringForward: () => {
-      canvas.getActiveObjects().forEach((object) => {
-        canvas.bringForward(object);
-      });
+    bringForward: (obj) => {
+      if (obj) {
+        canvas.bringForward(obj);
+      } else {
+        canvas.getActiveObjects().forEach((object) => {
+          canvas.bringForward(object);
+        });
+      }
 
       canvas.renderAll();
 
       const workspace = getWorkspace();
       workspace?.sendToBack();
     },
-    sendBackwards: () => {
-      canvas.getActiveObjects().forEach((object) => {
-        canvas.sendBackwards(object);
-      });
+    sendBackwards: (obj) => {
+      if (obj) {
+        canvas.sendBackwards(obj);
+      } else {
+        canvas.getActiveObjects().forEach((object) => {
+          canvas.sendBackwards(object);
+        });
+      }
 
       canvas.renderAll();
       const workspace = getWorkspace();
@@ -877,13 +959,44 @@ const buildEditor = ({
     addHorizontalLine: () => {
       const object = new fabric.Line([50, 100, 250, 100], {
         stroke: strokeColor,
+        strokeWidth: 10,
+        lockScalingY: true, // prevent vertical scale
+        lockUniScaling: false, // allow independent X/Y, but X is locked
+        hasBorders: true,
+        strokeUniform: true,
       });
 
+      object.setControlsVisibility({
+        ml: true,
+        mr: true,
+        bl: true,
+        br: true,
+        tl: false,
+        tr: false,
+        mt: false,
+        mb: false,
+      });
       addToCanvas(object);
     },
     addVerticalLine: () => {
       const object = new fabric.Line([150, 50, 150, 250], {
         stroke: strokeColor,
+        strokeWidth: 10,
+        lockScalingX: true, // prevent horizontal scale
+        lockUniScaling: false, // allow independent X/Y, but X is locked
+        hasBorders: true,
+        strokeUniform: true,
+      });
+
+      object.setControlsVisibility({
+        ml: false,
+        mr: false,
+        bl: false,
+        br: false,
+        tl: true,
+        tr: true,
+        mt: true,
+        mb: true,
       });
 
       addToCanvas(object);

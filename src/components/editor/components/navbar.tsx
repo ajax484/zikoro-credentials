@@ -42,6 +42,10 @@ import {
 } from "@/components/ui/sheet";
 import DetailsForm from "./detailsForm";
 import React from "react";
+import GradientBox from "@/components/GradientBox";
+import GradientText from "@/components/GradientText";
+import { Gear } from "@phosphor-icons/react";
+import CustomLink from "@/components/CustomLink/CustomLink";
 
 interface NavbarProps {
   id: string;
@@ -106,7 +110,7 @@ export const Navbar = ({
   });
 
   return (
-    <nav className="flex h-[68px] w-full items-center gap-x-8 border-b p-4 lg:pl-[34px] bg-[#f7f8ff]">
+    <nav className="flex h-[68px] w-full items-center gap-x-8 border-b p-4 lg:pl-[34px] bg-white">
       <button
         onClick={() => router.push("/designs")}
         className="flex gap-2 items-center"
@@ -233,7 +237,12 @@ export const Navbar = ({
             </DropdownMenuContent>
           </DropdownMenu> */}
           <Sheet>
-            <SheetTrigger>Open</SheetTrigger>
+            <SheetTrigger>
+              <div className="flex gap-1 items-center">
+                <Gear size={16} />
+                <span>Settings</span>
+              </div>
+            </SheetTrigger>
             <SheetContent className="w-[50vw] h-[100vh] overflow-auto">
               <SheetHeader>
                 <SheetTitle>Credential Details</SheetTitle>
@@ -248,14 +257,16 @@ export const Navbar = ({
             </SheetContent>
           </Sheet>
           <DropdownMenu modal={false}>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm" variant="ghost">
-                Actions
-                <ChevronDown className="ml-2 size-4" />
-              </Button>
+            <DropdownMenuTrigger>
+              <div className="bg-gradient-to-r from-[#001FCC] to-[#9D00FF] p-0.5 rounded-md">
+                <div className="flex gap-2 items-center bg-white px-2 py-1 text-sm rounded-md">
+                  <GradientText Tag={"h1"}>Actions</GradientText>
+                  <ChevronDown className="ml-2 size-4 text-basePrimary" />
+                </div>
+              </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="min-w-60">
-              <DropdownMenuItem>
+              {/* <DropdownMenuItem>
                 <Link
                   href={"/assign?certificateAlias=" + alias}
                   className="flex items-center gap-x-2"
@@ -278,7 +289,7 @@ export const Navbar = ({
                     </p>
                   </div>
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem
                 onClick={() => openFilePicker()}
                 className="flex items-center gap-x-2"
@@ -318,6 +329,9 @@ export const Navbar = ({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <CustomLink href={"/assign?certificateAlias=" + alias}>
+            Assign
+          </CustomLink>
           {/* <UserButton /> */}
         </div>
       </div>

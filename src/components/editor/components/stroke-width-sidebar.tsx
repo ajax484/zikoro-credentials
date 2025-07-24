@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
 
 interface StrokeWidthSidebarProps {
   editor: Editor | undefined;
@@ -43,7 +44,7 @@ export const StrokeWidthSidebar = ({
     <aside
       className={cn(
         "relative z-[40] flex h-full w-[360px] flex-col border-r bg-white",
-        activeTool === "stroke-width" ? "visible" : "hidden",
+        activeTool === "stroke-width" ? "visible" : "hidden"
       )}
     >
       <ToolSidebarHeader
@@ -52,10 +53,21 @@ export const StrokeWidthSidebar = ({
       />
       <ScrollArea>
         <div className="space-y-4 border-b p-4">
-          <Label className="text-sm">Stroke width</Label>
+          <div className="flex justify-between items-center">
+            <Label className="text-sm">Stroke width</Label>
+            <Input
+              onInput={(e) =>
+                onChangeStrokeWidth(Number(e.currentTarget.value))
+              }
+              value={widthValue}
+              type="number"
+              min={10}
+            />
+          </div>
           <Slider
             value={[widthValue]}
             onValueChange={(values) => onChangeStrokeWidth(values[0])}
+            min={10}
           />
         </div>
         <div className="space-y-4 border-b p-4">
@@ -66,7 +78,7 @@ export const StrokeWidthSidebar = ({
             size="lg"
             className={cn(
               "h-16 w-full justify-start text-left",
-              JSON.stringify(typeValue) === `[]` && "border-2 border-blue-500",
+              JSON.stringify(typeValue) === `[]` && "border-2 border-blue-500"
             )}
             style={{
               padding: "8px 16px",
@@ -81,7 +93,7 @@ export const StrokeWidthSidebar = ({
             className={cn(
               "h-16 w-full justify-start text-left",
               JSON.stringify(typeValue) === `[5,5]` &&
-                "border-2 border-blue-500",
+                "border-2 border-blue-500"
             )}
             style={{
               padding: "8px 16px",

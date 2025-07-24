@@ -5,6 +5,26 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Toaster } from "@/components/ui/toaster";
 import MainLayout from "@/components/layout/Main.layout";
+import { fabric } from "fabric";
+
+fabric.Object.prototype.toObject = (function (toObject) {
+  return function (...args) {
+    return {
+      ...toObject.call(this, ...args),
+      objectId: this.objectId,
+      options: this.options,
+    };
+  };
+})(fabric.Object.prototype.toObject);
+
+declare module "fabric" {
+  namespace fabric {
+    interface Object {
+      objectId?: string;
+      options: Record<string, any>;
+    }
+  }
+}
 
 export const metadata: Metadata = {
   title: "Zikoro - Credentials",

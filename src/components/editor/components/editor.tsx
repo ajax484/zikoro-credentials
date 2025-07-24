@@ -24,11 +24,16 @@ import { BackgroundSidebar } from "./background-sidebar";
 import { VerificationSidebar } from "./verification-sidebar";
 
 import { QRCodeSidebar } from "./qrcode-sidebar";
-import { base64ToFile, uploadFile } from "@/utils/helpers";
+import {
+  base64ToFile,
+  generateAlphanumericHash,
+  uploadFile,
+} from "@/utils/helpers";
 import { CredentialsWorkspaceToken } from "@/types/token";
 import { TemplateSidebar } from "./template-sidebar";
 import { AlignGuidelines } from "fabric-guideline-plugin";
 import { RemoveBgSidebar } from "./remove-bg-sidebar";
+import { LayersSidebar } from "./layers-sidebar";
 
 interface EditorProps {
   initialData: ResponseType["data"];
@@ -311,7 +316,7 @@ export const Editor = ({
           activeTool={activeTool}
           onChangeActiveTool={onChangeActiveTool}
         />
-        <SettingsSidebar
+        {/* <SettingsSidebar
           editor={editor}
           activeTool={activeTool}
           onChangeActiveTool={onChangeActiveTool}
@@ -320,6 +325,15 @@ export const Editor = ({
           }}
           saveSettings={debouncedSave}
           settings={settings}
+          isSaving={isSaving}
+        /> */}
+        <LayersSidebar
+          editor={editor}
+          activeTool={activeTool}
+          onChangeActiveTool={onChangeActiveTool}
+          attributes={attributes}
+          setAttributes={setAttributes}
+          save={debouncedSave}
           isSaving={isSaving}
         />
         <main className="relative flex flex-1 flex-col overflow-auto bg-muted">

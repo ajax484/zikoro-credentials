@@ -8,6 +8,7 @@ import {
   Lock,
   Barcode,
   Signature,
+  Layers,
 } from "lucide-react";
 import { ActiveTool } from "@/components/editor/types";
 import { SidebarItem } from "@/components/editor/components/sidebar-item";
@@ -20,7 +21,7 @@ interface SidebarProps {
 
 export const Sidebar = ({ activeTool, onChangeActiveTool }: SidebarProps) => {
   return (
-    <aside className="flex h-full w-[100px] flex-col overflow-y-auto border-r bg-[#f7f8ff]">
+    <aside className="flex h-full w-[100px] flex-col overflow-y-auto border-r bg-white">
       <ul className="flex flex-col">
         <SidebarItem
           icon={LayoutTemplate}
@@ -85,10 +86,10 @@ export const Sidebar = ({ activeTool, onChangeActiveTool }: SidebarProps) => {
           onClick={() => onChangeActiveTool("ai")}
         /> */}
         <SidebarItem
-          icon={Settings}
-          label="Settings"
-          isActive={activeTool === "settings"}
-          onClick={() => onChangeActiveTool("settings")}
+          icon={Layers}
+          label="Layers"
+          isActive={activeTool === "layers"}
+          onClick={() => onChangeActiveTool("layers")}
           numKey={"9"}
         />
       </ul>
