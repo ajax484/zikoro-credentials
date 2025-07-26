@@ -8,7 +8,7 @@ import Link from "next/link";
 import Email from "@/public/icons/mdi_email-sent.svg";
 import Calendar from "@/public/icons/duo-icons_calendar.svg";
 import Solar from "@/public/icons/solar_pen-new-square-bold-duotone.svg";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import useSearch from "@/hooks/common/useSearch";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import SelectOrganization from "@/components/SelectOrganization/SelectOrganization";
@@ -31,6 +31,7 @@ import useUserStore from "@/store/globalUserStore";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Nib from "@/public/icons/iconoir_design-nib-solid2.svg";
@@ -47,7 +48,27 @@ import {
   useDeleteCertificate,
 } from "@/mutations/certificates.mutations";
 import { Input } from "@/components/ui/input";
-import { uploadFile } from "@/utils/helpers";
+import {
+  convertFromPixels,
+  convertToPixels,
+  getRandomNumber,
+  uploadFile,
+} from "@/utils/helpers";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  paperSeries,
+  paperSizes,
+} from "@/components/editor/components/settings-sidebar";
+import { colors } from "@/components/editor/types";
+import { X } from "@phosphor-icons/react";
 
 const Designs = () => {
   const { user, setUser } = useUserStore();
@@ -213,30 +234,42 @@ const Designs = () => {
     isFetching: certificateTemplatesIsLoading,
   } = useFetchCertificateTemplates();
 
-  const ConvertToTemplate = ({
-    certificateAlias,
-  }: {
+  console.log(certificateTemplates);
+
+  interface ConvertToTemplateProps {
     certificateAlias: string;
+    setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
+    openDialog: boolean;
+  }
+
+  const ConvertToTemplate: React.FC<ConvertToTemplateProps> = ({
+    certificateAlias,
+    setOpenDialog,
+    openDialog,
   }) => {
     const { mutateAsync: createTemplate, isPending: isCreating } =
       useCreateTemplate();
-
     const certificate = filteredCertificates.find(
       (certificate) => certificate.certificateAlias === certificateAlias
     );
 
-    if (!certificate) return;
+    if (!certificate) {
+      return <div className="text-red-500">Certificate not found</div>;
+    }
 
     const clsBtnRef = useRef<HTMLButtonElement>(null);
 
-    const [template, setTemplate] = useState<Record<string, any>>({
+    const [template, setTemplate] = useState({
       name: certificate.name,
       attributes: certificate.attributes,
       JSON: certificate.JSON,
       previewUrl: certificate.previewUrl,
       credentialType: certificate.credentialType,
-      sourceId: user?.id!,
+      sourceId: user?.id || "",
       tags: ["user created"],
+      paperSize: certificate.paperSize,
+      category: [],
+      certificateId: certificate.id,
     });
 
     const [previewUrlUploading, setPreviewUrlUploading] = useState(false);
@@ -245,14 +278,12 @@ const Designs = () => {
       const file = e.target.files?.[0];
       if (!file) return;
 
-      // Allowed file types: PNG, JPEG, and PDF
       const allowedTypes = ["image/png", "image/jpeg"];
       if (!allowedTypes.includes(file.type)) {
         toast.error("Please upload a PNG or JPEG file");
         return;
       }
 
-      // Check file size (limit: 5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast.error("File size should be less than 5MB");
         return;
@@ -278,19 +309,16 @@ const Designs = () => {
       setPreviewUrlUploading(false);
     };
 
+    const [newCategory, setNewCategory] = useState("");
+
     return (
-      <Dialog>
-        <DialogTrigger asChild>
-          <button
-            className="w-full hover:bg-gray-100 text-gray-700"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <span className="p-2">Convert to Template</span>
-          </button>
-        </DialogTrigger>
-        <DialogContent className="px-4 py-6 z-[1000]">
-          <DialogHeader className="px-3">
-            <DialogTitle></DialogTitle>
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+        <DialogContent
+          className="px-4 py-6 z-[1000]"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle>Convert to Template</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
@@ -299,65 +327,116 @@ const Designs = () => {
                 Template name
               </label>
               <Input
+                id="name"
                 name="name"
                 type="text"
                 placeholder="Enter template name"
-                className=" placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-                onInput={(e) =>
+                className="h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+                onChange={(e) =>
                   setTemplate((prev) => ({
                     ...prev,
-                    name: e.currentTarget.value,
+                    name: e.target.value,
                   }))
                 }
                 value={template.name}
+                onClick={(e) => e.stopPropagation()}
               />
             </div>
             {!previewUrlUploading ? (
-              <div className="relative bg-basePrimary/10 rounded-lg p-8 flex flex-col gap-2 items-center">
-                <b className="text-sm">Upload a preview url of your template</b>
-                <label
-                  htmlFor="previewUrl"
-                  className="text-basePrimary underline text-sm"
-                >
+              <label
+                htmlFor="previewUrl"
+                className="relative bg-basePrimary/10 rounded-lg p-8 flex flex-col gap-2 items-center cursor-pointer"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <b className="text-sm">
+                  Upload a preview image of your template
+                </b>
+                <div className="text-blue-600 underline text-sm">
                   {template.previewUrl ? (
                     <span className="max-w-full truncate">
                       {certificate.name + ".png"}
                     </span>
                   ) : (
-                    <span>Upload Preview url</span>
+                    <span>Upload Preview Image</span>
                   )}
-
                   <input
+                    id="previewUrl"
                     name="previewUrl"
                     type="file"
                     className="hidden"
-                    accept="image/png, image/jpeg"
-                    onChange={(e) => uploadDocumentFn(e)}
+                    accept="image/png,image/jpeg"
+                    onChange={uploadDocumentFn}
                     disabled={previewUrlUploading}
                   />
-                </label>
-                <p className="text-gray-700 text-xs">accepts png, jpeg.</p>
-              </div>
+                </div>
+                <p className="text-gray-700 text-xs">Accepts PNG, JPEG</p>
+              </label>
             ) : (
               <div className="size-8 border-2 border-gray-300 rounded-full animate-spin border-t-black mx-auto my-8" />
             )}
+
+            <div className="flex flex-col gap-2 w-full">
+              <label htmlFor="category" className="font-medium text-gray-700">
+                Category
+              </label>
+              <Input
+                id="category"
+                name="category"
+                type="text"
+                placeholder="Enter category and press enter"
+                className="h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+                onInput={(e) => setNewCategory(e.currentTarget.value)}
+                value={newCategory}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    setTemplate((prev) => ({
+                      ...prev,
+                      category: [...prev.category, newCategory],
+                    }));
+                    setNewCategory("");
+                  }
+                }}
+              />
+              <div className="flex flex-wrap gap-2 mt-2">
+                {template.category.map((category, index) => (
+                  <div
+                    key={category}
+                    className="rounded-xl py-1 pl-2 pr-1 text-white font-medium relative bg-basePrimary/70 flex gap-2 items-center"
+                  >
+                    <span className="flex-1 truncate">{category}</span>
+                    <button
+                      aria-label="Remove category"
+                      onClick={() => {
+                        setTemplate((prev) => ({
+                          ...prev,
+                          category: prev.category.filter((_, i) => i !== index),
+                        }));
+                      }}
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div className="flex gap-2">
               <Button
                 disabled={isCreating}
-                onClick={(e) => {
-                  clsBtnRef.current?.click();
-                }}
-                className="border-2 bg-white border-basePrimary text-basePrimary w-full"
+                onClick={() => clsBtnRef.current?.click()}
+                variant={"secondary"}
+                className="flex-1"
               >
                 Cancel
               </Button>
               <Button
                 disabled={isCreating}
-                onClick={async (e) => {
-                  clsBtnRef.current?.click();
+                onClick={async () => {
                   await createTemplate(template);
+                  clsBtnRef.current?.click();
                 }}
-                className="bg-basePrimary w-full"
+                className="flex-1"
               >
                 Proceed
               </Button>
@@ -370,6 +449,171 @@ const Designs = () => {
           </DialogClose>
         </DialogContent>
       </Dialog>
+    );
+  };
+
+  const CertificateCard = ({ certificate }: { certificate: TCertificate }) => {
+    const [openDialog, setOpenDialog] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    return (
+      <div
+        key={certificate.id}
+        className="rounded-lg border border-gray-200 bg-white group"
+      >
+        <div className="h-[250px] w-full bg-gray-200 relative">
+          {certificate?.previewUrl && (
+            <Image
+              src={certificate?.previewUrl ?? ""}
+              alt={certificate.name}
+              objectFit="cover"
+              layout="fill"
+            />
+          )}
+          <div className="absolute inset-0 p-2 bg-black/50 group-hover:flex hidden z-10 group-hover:gap-8 group-hover:justify-center group-hover:items-center">
+            <Link
+              className="text-gray-50 hover:text-basePrimary"
+              href={
+                "/credentials/create/" +
+                certificate.certificateAlias +
+                "?type=certificate&workspaceId=" +
+                organization?.id +
+                "&workspaceAlias=" +
+                organization?.organizationAlias
+              }
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="36"
+                height="36"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d="m14.06 9.02l.92.92L5.92 19H5v-.92zM17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83l3.75 3.75l1.83-1.83a.996.996 0 0 0 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29m-3.6 3.19L3 17.25V21h3.75L17.81 9.94z"
+                />
+              </svg>
+            </Link>
+            <Link
+              className="text-gray-50 hover:text-basePrimary"
+              href={"/assign?certificateAlias=" + certificate.certificateAlias}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="36"
+                height="36"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8"
+                />
+              </svg>
+            </Link>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 p-2">
+          <div className="flex-1 space-y-2">
+            <p className="font-medium text-gray-700 text-sm capitalize">
+              {certificate.name}
+            </p>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1">
+                <Image
+                  src={Email}
+                  alt={"email"}
+                  width={20}
+                  height={20}
+                  className="rounded-full"
+                />
+                <p className="text-xs text-gray-600">
+                  {certificate?.recipientCount}
+                </p>
+              </div>
+              <div className="flex items-center gap-1">
+                <Image
+                  src={Calendar}
+                  alt={"calendar"}
+                  width={20}
+                  height={20}
+                  className="rounded-full"
+                />
+                <p className="text-xs text-gray-600">
+                  {format(certificate.created_at, "dd/MM/yyyy")}
+                </p>
+              </div>
+            </div>
+          </div>
+          <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+            <DropdownMenuTrigger asChild>
+              <button
+                aria-label="More options"
+                className="p-2 z-[10] rotate-90"
+              >
+                <svg
+                  stroke="currentColor"
+                  fill="currentColor"
+                  strokeWidth={0}
+                  viewBox="0 0 16 16"
+                  height="1.5em"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M3 9.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem className="w-full">
+                <button
+                  className="w-full hover:bg-gray-100 text-gray-700 py-2"
+                  onClick={(e) => {
+                    organization &&
+                      createCertificateFn({
+                        name: certificate.name + " (copy)",
+                        workspace: organization,
+                        JSON: certificate.JSON,
+                        credentialType: certificate.credentialType,
+                      });
+                    setDropdownOpen(false);
+                  }}
+                >
+                  <span className="p-2">Make a copy</span>
+                </button>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenDialog(true);
+                  setDropdownOpen(false);
+                }}
+                className="text-center p-2 hover:bg-gray-100 text-gray-700"
+              >
+                <button className="w-full hover:bg-gray-100 text-gray-700 p-2">
+                  Convert to Template
+                </button>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-center p-2 hover:bg-gray-100 text-red-700"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDropdownOpen(false);
+                }}
+              >
+                <Delete certificateAlias={certificate.certificateAlias} />
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <ConvertToTemplate
+            certificateAlias={certificate.certificateAlias}
+            setOpenDialog={setOpenDialog}
+            openDialog={openDialog}
+          />
+        </div>
+      </div>
     );
   };
 
@@ -531,157 +775,10 @@ const Designs = () => {
                       }
                     />
                     {filteredCertificates?.map((certificate) => (
-                      <div
+                      <CertificateCard
                         key={certificate.id}
-                        className="rounded-lg border border-gray-200 bg-white group"
-                      >
-                        <div className="h-[250px] w-full bg-gray-200 relative">
-                          {certificate?.previewUrl && (
-                            <Image
-                              src={certificate?.previewUrl ?? ""}
-                              alt={certificate.name}
-                              objectFit="cover"
-                              layout="fill"
-                            />
-                          )}
-                          <div className="absolute inset-0 p-2 bg-black/50 group-hover:flex hidden z-10 group-hover:gap-8 group-hover:justify-center group-hover:items-center">
-                            <Link
-                              className="text-gray-50 hover:text-basePrimary"
-                              href={
-                                "/credentials/create/" +
-                                certificate.certificateAlias +
-                                "?type=certificate&workspaceId=" +
-                                organization?.id +
-                                "&workspaceAlias=" +
-                                organization?.organizationAlias
-                              }
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="36"
-                                height="36"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  fill="currentColor"
-                                  d="m14.06 9.02l.92.92L5.92 19H5v-.92zM17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83l3.75 3.75l1.83-1.83a.996.996 0 0 0 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29m-3.6 3.19L3 17.25V21h3.75L17.81 9.94z"
-                                />
-                              </svg>
-                            </Link>
-                            <Link
-                              className="text-gray-50 hover:text-basePrimary"
-                              href={
-                                "/assign?certificateAlias=" +
-                                certificate.certificateAlias
-                              }
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="36"
-                                height="36"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  fill="currentColor"
-                                  d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8"
-                                />
-                              </svg>
-                            </Link>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 p-2">
-                          <div className="flex-1 space-y-2">
-                            <p className="font-medium text-gray-700 text-sm capitalize">
-                              {certificate.name}
-                            </p>
-                            <div className="flex items-center gap-4">
-                              <div className="flex items-center gap-1">
-                                <Image
-                                  src={Email}
-                                  alt={"email"}
-                                  width={20}
-                                  height={20}
-                                  className="rounded-full"
-                                />
-                                <p className="text-xs text-gray-600">
-                                  {certificate?.recipientCount}
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Image
-                                  src={Calendar}
-                                  alt={"calendar"}
-                                  width={20}
-                                  height={20}
-                                  className="rounded-full"
-                                />
-                                <p className="text-xs text-gray-600">
-                                  {format(certificate.created_at, "dd/MM/yyyy")}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <button
-                                aria-label="More options"
-                                className="p-2 z-[10] rotate-90"
-                              >
-                                <svg
-                                  stroke="currentColor"
-                                  fill="currentColor"
-                                  strokeWidth={0}
-                                  viewBox="0 0 16 16"
-                                  height="1.5em"
-                                  width="1.5em"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M3 9.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                              <ul>
-                                <li className="w-full">
-                                  <button
-                                    className="w-full hover:bg-gray-100 text-gray-700 py-2"
-                                    onClick={(e) => {
-                                      organization &&
-                                        createCertificateFn({
-                                          name: certificate.name + " (copy)",
-                                          workspace: organization,
-                                          JSON: certificate.JSON,
-                                          credentialType:
-                                            certificate.credentialType,
-                                        });
-                                    }}
-                                  >
-                                    <span className="p-2">Make a copy</span>
-                                  </button>
-                                </li>
-                                <li className="text-center p-2 hover:bg-gray-100 text-gray-700">
-                                  <ConvertToTemplate
-                                    certificateAlias={
-                                      certificate.certificateAlias
-                                    }
-                                  />
-                                </li>
-                                <li className="text-center p-2 hover:bg-gray-100 text-red-700">
-                                  <Delete
-                                    certificateAlias={
-                                      certificate.certificateAlias
-                                    }
-                                  />
-                                </li>
-                              </ul>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </div>
+                        certificate={certificate}
+                      />
                     ))}
                   </>
                 )}

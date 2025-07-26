@@ -382,7 +382,13 @@ const buildEditor = ({
   const addToCanvas = (object: fabric.Object, selectable = true) => {
     center(object);
     if (!object.objectId) {
-      object.objectId = nanoid(); // this line does not seem to persist
+      object.objectId = nanoid();
+      // object name should be its position within the array of objects of similar type
+      object.objectName =
+        (object.type || "object").toLowerCase() +
+        " " +
+        canvas.getObjects().filter((o) => o.type === object.type).length;
+      object.locked = false;
     }
     object.set({ selectable });
     canvas.add(object);
@@ -743,6 +749,57 @@ const buildEditor = ({
       canvas.discardActiveObject();
       canvas.requestRenderAll();
     },
+    updateObject: (object: fabric.Object, options: Record<string, any>) => {
+      canvas.setActiveObject(object);
+      object.set({ ...object.options, ...options });
+      canvas.requestRenderAll();
+    },
+    lockSelectedObjects: (object?: fabric.Object) => {
+      const applyLock = (obj: fabric.Object) => {
+        obj.set({
+          lockMovementX: true,
+          lockMovementY: true,
+          lockScalingX: true,
+          lockScalingY: true,
+          lockRotation: true,
+          locked: true,
+        });
+      };
+
+      if (object) {
+        applyLock(object);
+      } else {
+        canvas.getActiveObjects().forEach((object) => {
+          applyLock(object);
+        });
+      }
+
+      canvas.requestRenderAll();
+    },
+
+    unlockSelectedObjects: (object?: fabric.Object) => {
+      const applyUnlock = (obj: fabric.Object) => {
+        obj.set({
+          lockMovementX: false,
+          lockMovementY: false,
+          lockScalingX: false,
+          lockScalingY: false,
+          lockRotation: false,
+          locked: false,
+        });
+      };
+
+      if (object) {
+        applyUnlock(object);
+      } else {
+        canvas.getActiveObjects().forEach((object) => {
+          applyUnlock(object);
+        });
+      }
+
+      canvas.requestRenderAll();
+    },
+
     addText: (value, options) => {
       const object = new fabric.Textbox(value, {
         ...TEXT_OPTIONS,
@@ -764,14 +821,27 @@ const buildEditor = ({
       return value;
     },
     changeFontSize: (value: number) => {
-      canvas.getActiveObjects().forEach((object: fabric.Object) => {
-        if (isTextType(object.type)) {
-          // @ts-ignore
-          object.set({ fontSize: value });
+      const objects = canvas.getActiveObjects();
+
+      objects.forEach((object: fabric.Object) => {
+        if (object.type === "group" && object instanceof fabric.Group) {
+          object.getObjects().forEach((child) => {
+            if (isTextType(child.type)) {
+              // @ts-ignore
+              child.set({ fontSize: value });
+            }
+          });
+        } else {
+          if (isTextType(object.type)) {
+            // @ts-ignore
+            object.set({ fontSize: value });
+          }
         }
       });
-      canvas.renderAll();
+
+      canvas.requestRenderAll();
     },
+
     getActiveFontSize: () => {
       const selectedObject = selectedObjects[0];
 
@@ -785,13 +855,25 @@ const buildEditor = ({
       return value;
     },
     changeTextAlign: (value: string) => {
-      canvas.getActiveObjects().forEach((object) => {
-        if (isTextType(object.type)) {
-          // @ts-ignore
-          object.set({ textAlign: value });
+      const objects = canvas.getActiveObjects();
+
+      objects.forEach((object: fabric.Object) => {
+        if (object.type === "group" && object instanceof fabric.Group) {
+          object.getObjects().forEach((child) => {
+            if (isTextType(child.type)) {
+              // @ts-ignore
+              child.set({ textAlign: value });
+            }
+          });
+        } else {
+          if (isTextType(object.type)) {
+            // @ts-ignore
+            object.set({ textAlign: value });
+          }
         }
       });
-      canvas.renderAll();
+
+      canvas.requestRenderAll();
     },
     getActiveTextAlign: () => {
       const selectedObject = selectedObjects[0];
@@ -807,12 +889,22 @@ const buildEditor = ({
     },
     changeFontUnderline: (value: boolean) => {
       canvas.getActiveObjects().forEach((object) => {
-        if (isTextType(object.type)) {
-          // @ts-ignore
-          object.set({ underline: value });
+        if (object.type === "group" && object instanceof fabric.Group) {
+          object.getObjects().forEach((child) => {
+            if (isTextType(child.type)) {
+              // @ts-ignore
+              child.set({ underline: value });
+            }
+          });
+        } else {
+          if (isTextType(object.type)) {
+            // @ts-ignore
+            object.set({ underline: value });
+          }
         }
       });
-      canvas.renderAll();
+
+      canvas.requestRenderAll();
     },
     getActiveFontUnderline: () => {
       const selectedObject = selectedObjects[0];
@@ -828,12 +920,22 @@ const buildEditor = ({
     },
     changeFontLinethrough: (value: boolean) => {
       canvas.getActiveObjects().forEach((object) => {
-        if (isTextType(object.type)) {
-          // @ts-ignore
-          object.set({ linethrough: value });
+        if (object.type === "group" && object instanceof fabric.Group) {
+          object.getObjects().forEach((child) => {
+            if (isTextType(child.type)) {
+              // @ts-ignore
+              child.set({ linethrough: value });
+            }
+          });
+        } else {
+          if (isTextType(object.type)) {
+            // @ts-ignore
+            object.set({ linethrough: value });
+          }
         }
       });
-      canvas.renderAll();
+
+      canvas.requestRenderAll();
     },
     getActiveFontLinethrough: () => {
       const selectedObject = selectedObjects[0];
@@ -849,12 +951,22 @@ const buildEditor = ({
     },
     changeFontStyle: (value: string) => {
       canvas.getActiveObjects().forEach((object) => {
-        if (isTextType(object.type)) {
-          // @ts-ignore
-          object.set({ fontStyle: value });
+        if (object.type === "group" && object instanceof fabric.Group) {
+          object.getObjects().forEach((child) => {
+            if (isTextType(child.type)) {
+              // @ts-ignore
+              child.set({ fontStyle: value });
+            }
+          });
+        } else {
+          if (isTextType(object.type)) {
+            // @ts-ignore
+            object.set({ fontStyle: value });
+          }
         }
       });
-      canvas.renderAll();
+
+      canvas.requestRenderAll();
     },
     getActiveFontStyle: () => {
       const selectedObject = selectedObjects[0];
@@ -870,18 +982,35 @@ const buildEditor = ({
     },
     changeFontWeight: (value: number) => {
       canvas.getActiveObjects().forEach((object) => {
-        if (isTextType(object.type)) {
-          // @ts-ignore
-          object.set({ fontWeight: value });
+        if (object.type === "group" && object instanceof fabric.Group) {
+          object.getObjects().forEach((child) => {
+            if (isTextType(child.type)) {
+              // @ts-ignore
+              child.set({ fontWeight: value });
+            }
+          });
+        } else {
+          if (isTextType(object.type)) {
+            // @ts-ignore
+            object.set({ fontWeight: value });
+          }
         }
       });
-      canvas.renderAll();
+
+      canvas.requestRenderAll();
     },
     changeOpacity: (value: number) => {
       canvas.getActiveObjects().forEach((object) => {
-        object.set({ opacity: value });
+        if (object.type === "group" && object instanceof fabric.Group) {
+          object.getObjects().forEach((child) => {
+            child.set({ opacity: value });
+          });
+        } else {
+          object.set({ opacity: value });
+        }
       });
-      canvas.renderAll();
+
+      canvas.requestRenderAll();
     },
     bringForward: (obj) => {
       if (obj) {
@@ -910,51 +1039,122 @@ const buildEditor = ({
       const workspace = getWorkspace();
       workspace?.sendToBack();
     },
+    moveObjectToIndex: (obj: fabric.Object, targetIndex: number) => {
+      if (!obj || !canvas) return;
+
+      // Get all objects in the canvas
+      const objects = canvas.getObjects();
+      // Find the current index of the object
+      const currentIndex = objects.indexOf(obj);
+      if (currentIndex === -1) return; // Object not found
+
+      // Ensure targetIndex is within bounds
+      const maxIndex = objects.length - 1;
+      const clampedTargetIndex = Math.max(0, Math.min(targetIndex, maxIndex));
+
+      // Calculate the number of steps to move
+      const steps = clampedTargetIndex - currentIndex;
+
+      if (steps > 0) {
+        // Move forward
+        for (let i = 0; i < steps; i++) {
+          canvas.bringForward(obj);
+        }
+      } else if (steps < 0) {
+        // Move backward
+        for (let i = 0; i < Math.abs(steps); i++) {
+          canvas.sendBackwards(obj);
+        }
+      }
+
+      canvas.requestRenderAll();
+    },
     changeFontFamily: (value: string) => {
       setFontFamily(value);
       canvas.getActiveObjects().forEach((object: fabric.Object) => {
-        if (isTextType(object.type)) {
-          // @ts-ignore
+        if (object.type === "group" && object instanceof fabric.Group) {
+          object.getObjects().forEach((child) => {
+            if (isTextType(child.type)) {
+              child.set({ fontFamily: value });
+            }
+          });
+        } else if (isTextType(object.type)) {
           object.set({ fontFamily: value });
         }
       });
-      canvas.renderAll();
+      canvas.requestRenderAll();
     },
+
     changeFillColor: (value: string) => {
       setFillColor(value);
       canvas.getActiveObjects().forEach((object) => {
-        object.set({ fill: value });
+        if (object.type === "group" && object instanceof fabric.Group) {
+          object.getObjects().forEach((child) => {
+            child.set({ fill: value });
+          });
+        } else {
+          object.set({ fill: value });
+        }
       });
-      canvas.renderAll();
+      canvas.requestRenderAll();
     },
     changeStrokeColor: (value: string) => {
       setStrokeColor(value);
-      canvas.getActiveObjects().forEach((object) => {
-        // Text types don't have stroke
-        if (isTextType(object.type)) {
-          object.set({ fill: value });
-          return;
-        }
 
-        object.set({ stroke: value });
+      canvas.getActiveObjects().forEach((object) => {
+        const applyStroke = (obj: fabric.Object) => {
+          if (isTextType(obj.type)) {
+            obj.set({ fill: value });
+          } else {
+            obj.set({ stroke: value });
+          }
+        };
+
+        if (object.type === "group" && object instanceof fabric.Group) {
+          object.getObjects().forEach(applyStroke);
+        } else {
+          applyStroke(object);
+        }
       });
+
       canvas.freeDrawingBrush.color = value;
-      canvas.renderAll();
+      canvas.requestRenderAll();
     },
+
     changeStrokeWidth: (value: number) => {
       setStrokeWidth(value);
+
       canvas.getActiveObjects().forEach((object) => {
-        object.set({ strokeWidth: value });
+        const applyStrokeWidth = (obj: fabric.Object) => {
+          obj.set({ strokeWidth: value });
+        };
+
+        if (object.type === "group" && object instanceof fabric.Group) {
+          object.getObjects().forEach(applyStrokeWidth);
+        } else {
+          applyStrokeWidth(object);
+        }
       });
+
       canvas.freeDrawingBrush.width = value;
-      canvas.renderAll();
+      canvas.requestRenderAll();
     },
     changeStrokeDashArray: (value: number[]) => {
       setStrokeDashArray(value);
+
       canvas.getActiveObjects().forEach((object) => {
-        object.set({ strokeDashArray: value });
+        const applyDashArray = (obj: fabric.Object) => {
+          obj.set({ strokeDashArray: value });
+        };
+
+        if (object.type === "group" && object instanceof fabric.Group) {
+          object.getObjects().forEach(applyDashArray);
+        } else {
+          applyDashArray(object);
+        }
       });
-      canvas.renderAll();
+
+      canvas.requestRenderAll();
     },
     addHorizontalLine: () => {
       const object = new fabric.Line([50, 100, 250, 100], {

@@ -18,6 +18,8 @@ export const JSON_KEYS = [
   "options",
   "isBackground",
   "objectId",
+  "objectName",
+  "locked",
 ];
 
 export const filters = [
@@ -276,6 +278,9 @@ export interface Editor {
   selectObject: (object: fabric.Object) => void;
   getActiveObject: () => fabric.Object | null;
   deleteObject: (object: fabric.Object) => void;
+  updateObject: (object: fabric.Object, options: Record<string, any>) => void;
+  lockSelectedObjects: (object?: fabric.Object) => void;
+  unlockSelectedObjects: (object?: fabric.Object) => void;
   changeFontSize: (value: number) => void;
   getActiveFontSize: () => number;
   changeTextAlign: (value: string) => void;
@@ -295,6 +300,7 @@ export interface Editor {
   changeOpacity: (value: number) => void;
   bringForward: (obj?: fabric.Object) => void;
   sendBackwards: (obj?: fabric.Object) => void;
+  moveObjectToIndex: (obj: fabric.Object, targetIndex: number) => void;
   clear: () => void;
   changeStrokeWidth: (value: number) => void;
   changeFillColor: (value: string) => void;

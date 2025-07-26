@@ -47,6 +47,7 @@ export interface TCertificate {
   hasQRCode: boolean;
   assets: TCertificateAssets[];
   credentialType: CredentialType;
+  paperSize: string;
 }
 
 export type CredentialType =
@@ -126,6 +127,9 @@ export interface CertificateTemplate {
   attributes: string[];
   credentialType: CredentialType;
   sourceId: number;
+  paperSize: string;
+  certificateId: number;
+  category: string[];
 }
 
 export interface RecipientEmailTemplate {

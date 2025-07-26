@@ -17,6 +17,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { CertificateTemplate } from "@/types/certificates";
 import { useGetData } from "@/hooks/services/request";
 import { useFetchCertificateTemplates } from "@/queries/certificates.queries";
+import { useState } from "react";
 
 interface TemplateSidebarProps {
   editor: Editor | undefined;
@@ -45,6 +46,14 @@ export const TemplateSidebar = ({
     editor?.loadJson(JSON.stringify(template.JSON));
   };
 
+  const [orientation, setOrientation] = useState<
+    "landscape" | "portrait" | "default"
+  >("default");
+
+  const toggleOrientation = (orientation: "landscape" | "portrait") => {
+    setOrientation((prev) => (prev === orientation ? "default" : orientation));
+  };
+
   return (
     <aside
       className={cn(
@@ -69,12 +78,44 @@ export const TemplateSidebar = ({
           </p>
         </div>
       )}
+      <div className="flex px-4 gap-0.5 items-center">
+        <button
+          onClick={() => toggleOrientation("landscape")}
+          className={cn(
+            "w-full border-basePrimary border-2",
+            orientation === "landscape"
+              ? "text-white bg-basePrimary"
+              : "text-basePrimary bg-white"
+          )}
+        >
+          landscape
+        </button>
+        <button
+          onClick={() => toggleOrientation("portrait")}
+          className={cn(
+            "w-full border-basePrimary border-2",
+            orientation === "portrait"
+              ? "text-white bg-basePrimary"
+              : "text-basePrimary bg-white"
+          )}
+        >
+          portrait
+        </button>
+      </div>
       <ScrollArea>
         <div className="p-4">
           <div className="grid grid-cols-2 gap-4">
             {templates &&
               templates
                 .filter((template) => template.credentialType === type)
+                .filter(
+                  (template) =>
+                    orientation === "default" ||
+                    (orientation === "landscape" &&
+                      template.JSON.width > template.JSON.height) ||
+                    (orientation === "portrait" &&
+                      template.JSON.width < template.JSON.height)
+                )
                 .map((template) => {
                   return (
                     <button

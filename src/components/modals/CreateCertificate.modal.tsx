@@ -135,7 +135,7 @@ const CreateCertificateDialog = ({
                     value as
                       | "product label"
                       | "certificate"
-                      | "badge"
+                      | "event badge"
                       | "shipping label"
                   )
                 }

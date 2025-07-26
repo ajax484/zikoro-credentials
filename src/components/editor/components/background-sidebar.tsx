@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AlertTriangle, Loader, Upload } from "lucide-react";
 
-import { ActiveTool, Editor } from "@/components/editor/types";
+import { ActiveTool, colors, Editor } from "@/components/editor/types";
 import { ToolSidebarClose } from "@/components/editor/components/tool-sidebar-close";
 import { ToolSidebarHeader } from "@/components/editor/components/tool-sidebar-header";
 
@@ -18,10 +18,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { uploadFile } from "@/utils/helpers";
 import { Input } from "@/components/ui/input";
-import { useSearchParams } from "next/navigation";
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
+import { CaretLeft, CaretRight, Palette } from "@phosphor-icons/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChromePicker, CirclePicker } from "react-color";
+import { rgbaObjectToString } from "../utils";
 
 interface ImageSidebarProps {
   editor: Editor | undefined;
@@ -206,6 +222,30 @@ export const BackgroundSidebar = ({
     onChangeActiveTool("select");
   };
 
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
+
+  const [background, setBackground] = useState(workspace?.fill ?? "#ffffff");
+
+  const changeBackground = (value: string) => {
+    setBackground(value);
+    editor?.changeBackground(value);
+  };
+
   return (
     <aside
       className={cn(
@@ -219,6 +259,60 @@ export const BackgroundSidebar = ({
       />
       <div className="flex flex-col gap-2 items-center py-4">
         {" "}
+        <Carousel className="w-full mb-4" setApi={setApi}>
+          <CarouselContent className="-ml-1 relative px-8 gap-4">
+            <CarouselItem className="pl-2 md:basis-1/2 lg:basis-1/6">
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <div className="size-10 bg-white rounded-full flex items-center justify-center border">
+                    <Palette size={32} />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <ChromePicker
+                    color={background}
+                    onChange={(color: { rgb: any }) => {
+                      const formattedValue = rgbaObjectToString(color.rgb);
+                      changeBackground(formattedValue);
+                    }}
+                    className="rounded-lg border"
+                  />
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </CarouselItem>
+            {colors.map((color, index) => (
+              <CarouselItem
+                key={color}
+                className="pl-2 md:basis-1/2 lg:basis-1/6"
+              >
+                <button
+                  aria-label={color}
+                  onClick={() => changeBackground(color)}
+                  type="button"
+                  className={cn(
+                    "size-10 rounded-full border-gray-200 border-2 hover:border-gray-500 transition-colors duration-200",
+                    background === color && "border-basePrimary"
+                  )}
+                  style={{ backgroundColor: color }}
+                />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <button
+            aria-label="Previous"
+            className="bg-white border px-1 py-2 z-[999] absolute -translate-y-1/2 top-1/2 -left-0"
+            onClick={() => api?.scrollPrev()}
+          >
+            <CaretLeft className="size-4" />
+          </button>
+          <button
+            aria-label="Next"
+            className="bg-white border px-1 py-2 z-[999] absolute -translate-y-1/2 top-1/2 -right-0"
+            onClick={() => api?.scrollNext()}
+          >
+            <CaretRight className="size-4" />
+          </button>
+        </Carousel>
         <Button
           disabled={backgroundUploading}
           onClick={() => document.getElementById("background-input")?.click()}

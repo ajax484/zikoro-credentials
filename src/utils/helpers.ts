@@ -508,3 +508,7 @@ export const convertFromPixels = (pixels: number, unit: string) => {
       return pixels;
   }
 };
+
+export function getRandomNumber(min: number, max: number) {
+  return Math.random() * (max - min) + min;
+}

@@ -253,6 +253,7 @@ export const Navbar = ({
                 saveSettings={saveSettings}
                 settings={settings}
                 isSaving={isSaving}
+                editor={editor}
               />
             </SheetContent>
           </Sheet>

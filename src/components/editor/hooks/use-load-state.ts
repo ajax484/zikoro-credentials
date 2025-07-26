@@ -31,12 +31,25 @@ export const useLoadState = ({
       canvas.loadFromJSON(data, () => {
         const currentState = JSON.stringify(canvas.toJSON(JSON_KEYS));
 
+        const objectTypeCount: Record<string, number> = {};
         canvas.forEachObject((object) => {
+          const type = object.type || "object";
+          if (!objectTypeCount[type]) {
+            objectTypeCount[type] = 0;
+          }
+          objectTypeCount[type] += 1;
+
           object.set({
             objectId: nanoid(),
+            objectName:
+              object.objectName ||
+              (object.type || "object").toLowerCase() +
+                " " +
+                objectTypeCount[type],
           });
 
           console.log(object.objectId);
+          console.log(object.objectName);
         });
 
         canvas.renderAll();

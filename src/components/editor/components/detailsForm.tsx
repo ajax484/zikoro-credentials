@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -13,12 +13,26 @@ import COLORTAG from "@/utils/colorTag";
 import { Button } from "@/components/ui/button";
 import TextEditor from "@/components/textEditor/Editor";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { paperSeries, paperSizes } from "./settings-sidebar";
+import { convertFromPixels, convertToPixels } from "@/utils/helpers";
+import { Editor } from "../types";
+import { ArrowUpDownIcon } from "lucide-react";
 
 interface DetailsFormProps {
   onChangeSettings: (settings: any) => void;
   settings: any;
   saveSettings: () => void;
   isSaving: boolean;
+  editor: Editor | undefined;
 }
 
 const DetailsForm: React.FC<DetailsFormProps> = ({
@@ -26,6 +40,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
   settings,
   saveSettings,
   isSaving,
+  editor,
 }) => {
   console.log(settings);
   const [skills, setSkills] = useState<{ value: string; color: string }[]>(
@@ -37,6 +52,55 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
 
   console.log(isSaving);
 
+  const UnitSwitcher = () => (
+    <div className="flex flex-col gap-2 w-full">
+      <label className="font-medium text-gray-700">Unit</label>
+      <select
+        aria-label="Unit"
+        value={unit}
+        onChange={(e) => {
+          setUnit(e.currentTarget.value as "px" | "in" | "cm");
+          onChangeSettings({
+            unit: e.currentTarget.value as "px" | "in" | "cm",
+          });
+        }}
+        className="w-full p-2 border rounded bg-transparent"
+      >
+        <option value="px">Pixels (px)</option>
+        <option value="in">Inches (in)</option>
+        <option value="cm">Centimeters (cm)</option>
+      </select>
+    </div>
+  );
+
+  const workspace = editor?.getWorkspace();
+  const [unit, setUnit] = useState<"px" | "in" | "cm">(settings?.unit ?? "px");
+
+  // Initialize with pixel values from workspace
+  const initialWidth = useMemo(() => workspace?.width ?? 0, [workspace]);
+  const initialHeight = useMemo(() => workspace?.height ?? 0, [workspace]);
+
+  const [sizing, setSizing] = useState(settings?.sizing ?? "custom");
+  const [width, setWidth] = useState(initialWidth);
+  const [height, setHeight] = useState(initialHeight);
+
+  const handleDimensionChange = (
+    dimension: "width" | "height",
+    value: string
+  ) => {
+    const parsed = parseFloat(value);
+    if (isNaN(parsed)) return;
+
+    const pixels = convertToPixels(parsed, unit);
+    if (dimension === "width") {
+      setWidth(pixels);
+      editor?.changeSize({ width: pixels, height });
+    } else {
+      setHeight(pixels);
+      editor?.changeSize({ width, height: pixels });
+    }
+  };
+
   return (
     <div className="space-y-6 py-6">
       <div className="flex flex-col gap-2 w-full">
@@ -47,6 +111,103 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
           value={settings.description}
           onChangeContent={(description) => onChangeSettings({ description })}
         />
+      </div>
+      <div className="space-y-4 p-4">
+        <div className="flex flex-col gap-2 w-full">
+          <label className="font-medium text-gray-700">Paper Sizes</label>
+          <Select
+            value={sizing}
+            onValueChange={(value) => {
+              const paperSize = paperSizes.find(
+                (size) => size.sizing === value
+              );
+              if (!paperSize) return;
+              const { height, width, sizing } = paperSize;
+              const heightInPixels = convertToPixels(Number(height), "cm");
+              const widthInPixels = convertToPixels(Number(width), "cm");
+              setHeight(heightInPixels);
+              setWidth(widthInPixels);
+              editor?.changeSize({
+                width: widthInPixels,
+                height: heightInPixels,
+              });
+              setSizing(sizing);
+              onChangeSettings({ sizing });
+            }}
+          >
+            <SelectTrigger className="w-full rounded-lg text-sm font-medium bg-transparent">
+              <SelectValue placeholder="Select paper size" />
+            </SelectTrigger>
+            <SelectContent className="z-[1001]">
+              {paperSeries.map((seriesGroup) => {
+                const sizesInSeries = paperSizes.filter(
+                  (size) => size.series === seriesGroup
+                );
+
+                if (sizesInSeries.length === 0) return null;
+
+                return (
+                  <SelectGroup key={seriesGroup}>
+                    <SelectLabel className="capitalize">
+                      {seriesGroup}
+                    </SelectLabel>
+                    {sizesInSeries.map((size) => {
+                      const { height, width, label, sizing } = size;
+
+                      return (
+                        <SelectItem
+                          key={sizing}
+                          value={sizing}
+                          data-height={height}
+                          data-width={width}
+                        >
+                          {label}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectGroup>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <UnitSwitcher />
+
+        {/* Height Input */}
+        <div className="flex flex-col gap-2 w-full">
+          <label className="font-medium text-gray-700">Height</label>
+          <Input
+            value={convertFromPixels(height, unit)}
+            onChange={(e) => handleDimensionChange("height", e.target.value)}
+            type="number"
+          />
+        </div>
+
+        {/* Swap Button */}
+        <button
+          aria-label="Swap width and height"
+          onClick={() => {
+            const newWidth = height;
+            const newHeight = width;
+            setWidth(newWidth);
+            setHeight(newHeight);
+            editor?.changeSize({ width: newWidth, height: newHeight });
+          }}
+        >
+          <ArrowUpDownIcon className="w-6 h-6" />
+        </button>
+
+           <div className="flex flex-col gap-2 w-full">
+          <label className="font-medium text-gray-700">
+            Width
+          </label>
+          <Input
+            value={convertFromPixels(width, unit)}
+            onChange={(e) => handleDimensionChange("width", e.target.value)}
+            type="number"
+          />
+        </div>
       </div>
       <div className="flex flex-col gap-2 w-full">
         <label className="font-medium text-gray-700">Skills:</label>
@@ -156,7 +317,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
           ))}
         </div>
       </div>
-      <div className="flex flex-col gap-2 w-full">
+      {/* <div className="flex flex-col gap-2 w-full">
         <label className="font-medium text-gray-700">Expiry Date:</label>
         <Input
           placeholder="Enter expiry date"
@@ -168,7 +329,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
             onChangeSettings({ expiryDate: e.currentTarget.value })
           }
         />
-      </div>
+      </div> */}
       <Button onClick={saveSettings} className="w-full" disabled={isSaving}>
         {isSaving ? "Saving..." : "Save"}
       </Button>

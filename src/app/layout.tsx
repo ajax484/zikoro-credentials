@@ -12,7 +12,9 @@ fabric.Object.prototype.toObject = (function (toObject) {
     return {
       ...toObject.call(this, ...args),
       objectId: this.objectId,
+      objectName: this.objectName,
       options: this.options,
+      locked: this.locked,
     };
   };
 })(fabric.Object.prototype.toObject);
@@ -21,7 +23,9 @@ declare module "fabric" {
   namespace fabric {
     interface Object {
       objectId?: string;
+      objectName?: string;
       options: Record<string, any>;
+      locked?: boolean;
     }
   }
 }
