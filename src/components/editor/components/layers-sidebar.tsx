@@ -68,8 +68,12 @@ export const LayersSidebar = ({
   ) => {
     e.preventDefault();
     const draggedId = e.dataTransfer.getData("text/plain");
+    console.log(draggedId);
     const draggedObj = layers.find((obj) => obj.objectId === draggedId);
     if (!draggedObj || !targetObj || draggedObj === targetObj) return;
+
+    console.log(draggedObj.type);
+    console.log(draggedObj.objectId);
 
     const newLayers = [...layers];
     const draggedIndex = newLayers.findIndex(

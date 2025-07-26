@@ -39,8 +39,8 @@ export const ShapeSidebar = ({
       )}
     >
       <ToolSidebarHeader
-        title="Shapes"
-        description="Add shapes to your credential"
+        title="Elements"
+        description="Add elements to your credential"
       />
       <ScrollArea>
         <div className="grid grid-cols-3 gap-4 p-4">

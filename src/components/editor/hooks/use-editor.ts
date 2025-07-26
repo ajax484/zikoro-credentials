@@ -390,6 +390,7 @@ const buildEditor = ({
         canvas.getObjects().filter((o) => o.type === object.type).length;
       object.locked = false;
     }
+    console.log(object.objectId);
     object.set({ selectable });
     canvas.add(object);
 
@@ -684,6 +685,7 @@ const buildEditor = ({
       // If it’s an ActiveSelection, convert it natively
       if (active && active.type === "activeSelection") {
         const group = (active as fabric.ActiveSelection).toGroup();
+        group.objectId = nanoid();
         canvas.setActiveObject(group);
         canvas.requestRenderAll();
         return;

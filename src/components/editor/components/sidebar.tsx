@@ -67,7 +67,7 @@ export const Sidebar = ({ activeTool, onChangeActiveTool }: SidebarProps) => {
         />
         <SidebarItem
           icon={Shapes}
-          label="Shapes"
+          label="Elements"
           isActive={activeTool === "shapes"}
           onClick={() => onChangeActiveTool("shapes")}
           numKey={"7"}

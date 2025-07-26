@@ -48,7 +48,7 @@ export const TemplateSidebar = ({
 
   const [orientation, setOrientation] = useState<
     "landscape" | "portrait" | "default"
-  >("default");
+  >("portrait");
 
   const toggleOrientation = (orientation: "landscape" | "portrait") => {
     setOrientation((prev) => (prev === orientation ? "default" : orientation));
@@ -80,17 +80,6 @@ export const TemplateSidebar = ({
       )}
       <div className="flex px-4 gap-0.5 items-center">
         <button
-          onClick={() => toggleOrientation("landscape")}
-          className={cn(
-            "w-full border-basePrimary border-2",
-            orientation === "landscape"
-              ? "text-white bg-basePrimary"
-              : "text-basePrimary bg-white"
-          )}
-        >
-          landscape
-        </button>
-        <button
           onClick={() => toggleOrientation("portrait")}
           className={cn(
             "w-full border-basePrimary border-2",
@@ -100,6 +89,17 @@ export const TemplateSidebar = ({
           )}
         >
           portrait
+        </button>
+        <button
+          onClick={() => toggleOrientation("landscape")}
+          className={cn(
+            "w-full border-basePrimary border-2",
+            orientation === "landscape"
+              ? "text-white bg-basePrimary"
+              : "text-basePrimary bg-white"
+          )}
+        >
+          landscape
         </button>
       </div>
       <ScrollArea>
