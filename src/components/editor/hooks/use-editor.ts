@@ -17,6 +17,7 @@ import {
   FONT_WEIGHT,
   FONT_SIZE,
   JSON_KEYS,
+  BORDER_RADIUS,
 } from "@/components/editor/types";
 import { useHistory } from "@/components/editor/hooks/use-history";
 import {
@@ -60,6 +61,8 @@ const buildEditor = ({
   strokeColor,
   setStrokeColor,
   strokeWidth,
+  borderRadius,
+  setBorderRadius,
   setStrokeWidth,
   selectedObjects,
   strokeDashArray,
@@ -561,12 +564,26 @@ const buildEditor = ({
               canvas.remove(bgImage);
             });
 
-          // Mark the image as a background
-          image.set({ isBackground: true });
+          if (!image) return;
 
-          // Scale image to fit the workspace
-          image.scaleToWidth(workspace.width || 1200);
-          image.scaleToHeight(workspace.height || 900);
+          const containerWidth = workspace.width || 1200;
+          const containerHeight = workspace.height || 900;
+
+          // Scale the image to fit the container
+          if (image.width / image.height > containerWidth / containerHeight) {
+            image.scaleToWidth(containerWidth); // Fit by width
+          } else {
+            image.scaleToHeight(containerHeight); // Fit by height
+          }
+
+          // Center the image in the container
+          image.set({
+            left: (containerWidth - image.getScaledWidth()) / 2,
+            top: (containerHeight - image.getScaledHeight()) / 2,
+            originX: "left",
+            originY: "top",
+            isBackground: true,
+          });
 
           console.log("final", image);
 
@@ -679,6 +696,80 @@ const buildEditor = ({
       canvas.discardActiveObject();
       canvas.renderAll();
     },
+    changeAlignment: (
+      topPosition: "start" | "middle" | "end",
+      leftPosition: "start" | "middle" | "end",
+      object?: fabric.Object
+    ) => {
+      const alignedObject = object || canvas.getActiveObject();
+
+      if (!alignedObject) {
+        console.warn("No object to align");
+        return;
+      }
+
+      const workspace = getWorkspace() as fabric.Rect;
+      if (!workspace) {
+        console.warn("No workspace found");
+        return;
+      }
+
+      const { width: workspaceWidth, height: workspaceHeight } = workspace;
+
+      if (!workspaceWidth || !workspaceHeight) {
+        console.warn("Invalid workspace dimensions");
+        return;
+      }
+
+      // Get object dimensions - use getBoundingRect for accurate sizing
+      const boundingRect = alignedObject.getBoundingRect(true, true);
+
+      // Calculate new positions relative to workspace
+      let newTop: number;
+      let newLeft: number;
+
+      // Calculate vertical alignment
+      switch (topPosition) {
+        case "start":
+          newTop = 0 + boundingRect.height / 2;
+          break;
+        case "middle":
+          newTop = workspaceHeight / 2;
+          break;
+        case "end":
+          newTop = workspaceHeight - boundingRect.height / 2;
+          break;
+        default:
+          return;
+      }
+
+      // Calculate horizontal alignment
+      switch (leftPosition) {
+        case "start":
+          newLeft = 0 + boundingRect.width / 2;
+          break;
+        case "middle":
+          newLeft = workspaceWidth / 2;
+          break;
+        case "end":
+          newLeft = workspaceWidth - boundingRect.width / 2;
+          break;
+        default:
+          return;
+      }
+
+      // Set object position with center origin
+      alignedObject.set({
+        top: newTop,
+        left: newLeft,
+        originX: "center",
+        originY: "center",
+      });
+
+      // Update object coordinates and render
+      alignedObject.setCoords();
+      canvas.requestRenderAll();
+    },
     groupObjects: () => {
       const active = canvas.getActiveObject();
 
@@ -778,7 +869,6 @@ const buildEditor = ({
 
       canvas.requestRenderAll();
     },
-
     unlockSelectedObjects: (object?: fabric.Object) => {
       const applyUnlock = (obj: fabric.Object) => {
         obj.set({
@@ -1141,6 +1231,25 @@ const buildEditor = ({
       canvas.freeDrawingBrush.width = value;
       canvas.requestRenderAll();
     },
+    changeBorderRadius: (value: number) => {
+      setBorderRadius(value);
+
+      canvas.getActiveObjects().forEach((object) => {
+        const applyBorderRadius = (obj: fabric.Object) => {
+          if (obj.type === "image" || obj.type === "rect") {
+            obj.set({ borderRadius: value, rx: value, ry: value });
+          }
+        };
+
+        if (object.type === "group" && object instanceof fabric.Group) {
+          object.getObjects().forEach(applyBorderRadius);
+        } else {
+          applyBorderRadius(object);
+        }
+      });
+
+      canvas.requestRenderAll();
+    },
     changeStrokeDashArray: (value: number[]) => {
       setStrokeDashArray(value);
 
@@ -1351,6 +1460,17 @@ const buildEditor = ({
 
       return value;
     },
+    getActiveBorderRadius: () => {
+      const selectedObject = selectedObjects[0];
+
+      if (!selectedObject) {
+        return borderRadius;
+      }
+
+      const value = selectedObject.get("borderRadius") || borderRadius;
+
+      return value;
+    },
     getActiveStrokeDashArray: () => {
       const selectedObject = selectedObjects[0];
 
@@ -1386,6 +1506,7 @@ export const useEditor = ({
   const [fillColor, setFillColor] = useState(FILL_COLOR);
   const [strokeColor, setStrokeColor] = useState(STROKE_COLOR);
   const [strokeWidth, setStrokeWidth] = useState(STROKE_WIDTH);
+  const [borderRadius, setBorderRadius] = useState(BORDER_RADIUS);
   const [strokeDashArray, setStrokeDashArray] =
     useState<number[]>(STROKE_DASH_ARRAY);
 
@@ -1442,7 +1563,9 @@ export const useEditor = ({
         canvas,
         fillColor,
         strokeWidth,
+        borderRadius,
         strokeColor,
+        setBorderRadius,
         setFillColor,
         setStrokeColor,
         setStrokeWidth,

@@ -15,6 +15,8 @@ fabric.Object.prototype.toObject = (function (toObject) {
       objectName: this.objectName,
       options: this.options,
       locked: this.locked,
+      borderRadius: this.borderRadius,
+      isBackground: this.isBackground,
     };
   };
 })(fabric.Object.prototype.toObject);
@@ -26,6 +28,8 @@ declare module "fabric" {
       objectName?: string;
       options: Record<string, any>;
       locked?: boolean;
+      borderRadius?: number;
+      isBackground?: boolean;
     }
   }
 }

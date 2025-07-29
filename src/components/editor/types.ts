@@ -3,8 +3,6 @@ import { ITextboxOptions } from "fabric/fabric-impl";
 import * as material from "material-colors";
 import { barCodeTypeEnum } from "./components/qrcode-sidebar";
 import { z } from "zod";
-import { CertificateRecipient, TCertificate } from "@/types/certificates";
-import { TOrganization } from "@/types/organization";
 
 export const JSON_KEYS = [
   "name",
@@ -20,6 +18,7 @@ export const JSON_KEYS = [
   "objectId",
   "objectName",
   "locked",
+  "borderRadius",
 ];
 
 export const filters = [
@@ -122,11 +121,14 @@ export type ActiveTool =
   | "background"
   | "verification"
   | "qrCode"
-  | "layers";
+  | "layers"
+  | "border-radius"
+  | "alignment";
 
 export const FILL_COLOR = "rgba(0,0,0,1)";
 export const STROKE_COLOR = "rgba(0,0,0,1)";
 export const STROKE_WIDTH = 2;
+export const BORDER_RADIUS = 50;
 export const STROKE_DASH_ARRAY = [];
 export const FONT_FAMILY = "Arial";
 export const FONT_SIZE = 32;
@@ -210,6 +212,7 @@ export type BuildEditorProps = {
   fillColor: string;
   strokeColor: string;
   strokeWidth: number;
+  borderRadius: number;
   selectedObjects: fabric.Object[];
   strokeDashArray: number[];
   fontFamily: string;
@@ -219,6 +222,7 @@ export type BuildEditorProps = {
   setStrokeWidth: (value: number) => void;
   setFontFamily: (value: string) => void;
   toggleQRCode: (value: boolean) => void;
+  setBorderRadius: (value: number) => void;
 };
 
 export interface Editor {
@@ -272,6 +276,11 @@ export interface Editor {
   ) => Promise<string | undefined>;
   transformBarCodes: () => Promise<void>;
   delete: () => void;
+  changeAlignment: (
+    topPosition: "start" | "middle" | "end",
+    leftPosition: "start" | "middle" | "end",
+    object?: fabric.Object
+  ) => void;
   groupObjects: () => void;
   ungroupObjects: () => void;
   getAllObjects: () => fabric.Object[];
@@ -291,10 +300,12 @@ export interface Editor {
   getActiveFontLinethrough: () => boolean;
   changeFontStyle: (value: string) => void;
   getActiveFontStyle: () => string;
+  getActiveBorderRadius: () => number;
   changeFontWeight: (value: number) => void;
   getActiveFontWeight: () => number;
   getActiveFontFamily: () => string;
   changeFontFamily: (value: string) => void;
+  changeBorderRadius: (value: number) => void;
   addText: (value: string, options?: ITextboxOptions) => void;
   getActiveOpacity: () => number;
   changeOpacity: (value: number) => void;

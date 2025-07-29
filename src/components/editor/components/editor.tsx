@@ -34,6 +34,8 @@ import { TemplateSidebar } from "./template-sidebar";
 import { AlignGuidelines } from "fabric-guideline-plugin";
 import { RemoveBgSidebar } from "./remove-bg-sidebar";
 import { LayersSidebar } from "./layers-sidebar";
+import { BorderRadiusSidebar } from "./border-radius-sidebar";
+import { AlignmentSidebar } from "./alignment-sidebar";
 
 interface EditorProps {
   initialData: ResponseType["data"];
@@ -187,7 +189,7 @@ export const Editor = ({
   }, [init]);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="min-h-[100vh]">
       <Navbar
         alias={alias}
         id={initialData?.id ?? 1}
@@ -237,6 +239,11 @@ export const Editor = ({
           activeTool={activeTool}
           onChangeActiveTool={onChangeActiveTool}
         />
+        <BorderRadiusSidebar
+          editor={editor}
+          activeTool={activeTool}
+          onChangeActiveTool={onChangeActiveTool}
+        />
         <OpacitySidebar
           editor={editor}
           activeTool={activeTool}
@@ -274,6 +281,11 @@ export const Editor = ({
           isSaving={isSaving}
         />
         <FontSidebar
+          editor={editor}
+          activeTool={activeTool}
+          onChangeActiveTool={onChangeActiveTool}
+        />
+        <AlignmentSidebar
           editor={editor}
           activeTool={activeTool}
           onChangeActiveTool={onChangeActiveTool}

@@ -42,8 +42,14 @@ export const TemplateSidebar = ({
     onChangeActiveTool("select");
   };
 
+  console.log(templates.map(({ JSON }) => JSON.json));
+
   const onClick = async (template: CertificateTemplate) => {
-    editor?.loadJson(JSON.stringify(template.JSON));
+    if ("height" in template.JSON) {
+      editor?.loadJson(JSON.stringify(template.JSON.json));
+    } else {
+      editor?.loadJson(JSON.stringify(template.JSON));
+    }
   };
 
   const [orientation, setOrientation] = useState<

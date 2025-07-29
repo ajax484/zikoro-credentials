@@ -69,6 +69,9 @@ import {
 } from "@/components/editor/components/settings-sidebar";
 import { colors } from "@/components/editor/types";
 import { X } from "@phosphor-icons/react";
+import ReactSelect from "react-select";
+
+const categories = ["first", "second", "third", "fourth", "fifth"];
 
 const Designs = () => {
   const { user, setUser } = useUserStore();
@@ -311,6 +314,15 @@ const Designs = () => {
 
     const [newCategory, setNewCategory] = useState("");
 
+    const addCategory = (value: string) => {
+      setTemplate((prev) => ({
+        ...prev,
+        category: [...prev.category, value],
+      }));
+    };
+
+    console.log(template.category);
+
     return (
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent
@@ -379,46 +391,80 @@ const Designs = () => {
               <label htmlFor="category" className="font-medium text-gray-700">
                 Category
               </label>
-              <Input
-                id="category"
-                name="category"
-                type="text"
-                placeholder="Enter category and press enter"
-                className="h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-                onInput={(e) => setNewCategory(e.currentTarget.value)}
-                value={newCategory}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    setTemplate((prev) => ({
-                      ...prev,
-                      category: [...prev.category, newCategory],
-                    }));
-                    setNewCategory("");
-                  }
+              <ReactSelect
+                styles={{
+                  control: (baseStyles, state) => ({
+                    ...baseStyles,
+                    // borderColor: state?.isFocused
+                    //   ?"#818cf8"
+                    //   :  "#818cf8",
+                    // "&:hover": {
+                    //   borderColor: borderColor || "#6b7280",
+                    // },
+                    height: "100%",
+                    minHeight: baseStyles.minHeight,
+                    // backgroundColor: bgColor || "#ffffff",
+                    boxShadow: "0px",
+                    borderRadius: "6px",
+                    backgroundImage:
+                      "linear-gradient(to right, #001FCC19 0%, #9D00FF19 100%)",
+                    border: "0px",
+                  }),
+
+                  option: (baseStyles, state) => ({
+                    ...baseStyles,
+                    textAlign: "start",
+                    color: state?.isSelected ? "black" : "black",
+                    backgroundColor: state?.isFocused ? "#e2e8f0" : "",
+                  }),
+                  singleValue: (baseStyles) => ({
+                    ...baseStyles,
+                    textAlign: "start",
+                    textDecoration: "capitalize",
+                    fontSize: "13px",
+                    padding: "4px",
+                  }),
+                  placeholder: (baseStyles) => ({
+                    ...baseStyles,
+                    textAlign: "start",
+                    color: "#6b7280",
+                    fontSize: "13px",
+                  }),
+                  menu: (baseStyles) => ({
+                    ...baseStyles,
+                    borderRadius: "6px",
+                    zIndex: 100,
+                    fontSize: "13px",
+                  }),
+                  dropdownIndicator: (baseStyle) => ({
+                    ...baseStyle,
+                    borderRight: "0px",
+                  }),
+                  indicatorSeparator: (baseStyle) => ({
+                    ...baseStyle,
+                    width: "0px",
+                  }),
+                  container: (baseStyle) => ({
+                    ...baseStyle,
+                    height: baseStyle.height,
+                  }),
                 }}
+                onChange={(newValue) => {
+                  console.log(newValue);
+                  addCategory(newValue.map((value) => value.value));
+                }}
+                isMulti
+                name="category"
+                options={categories.map((value) => {
+                  return { value, label: value };
+                })}
+                borderColor="#001fcc"
+                bgColor="#001fcc1a"
+                height="2.5rem"
+                placeHolderColor="#64748b"
+                placeHolder="Select Workspace"
+                defaultValue={template.category}
               />
-              <div className="flex flex-wrap gap-2 mt-2">
-                {template.category.map((category, index) => (
-                  <div
-                    key={category}
-                    className="rounded-xl py-1 pl-2 pr-1 text-white font-medium relative bg-basePrimary/70 flex gap-2 items-center"
-                  >
-                    <span className="flex-1 truncate">{category}</span>
-                    <button
-                      aria-label="Remove category"
-                      onClick={() => {
-                        setTemplate((prev) => ({
-                          ...prev,
-                          category: prev.category.filter((_, i) => i !== index),
-                        }));
-                      }}
-                    >
-                      <X size={12} />
-                    </button>
-                  </div>
-                ))}
-              </div>
             </div>
 
             <div className="flex gap-2">

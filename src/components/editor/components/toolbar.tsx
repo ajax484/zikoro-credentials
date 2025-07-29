@@ -16,6 +16,7 @@ import {
   Replace,
   Group,
   Ungroup,
+  AlignCenterIcon,
 } from "lucide-react";
 
 import { isTextType } from "@/components/editor/utils";
@@ -35,7 +36,15 @@ import toast from "react-hot-toast";
 import { uploadFile } from "@/utils/helpers";
 import { useGetData, useMutateData } from "@/hooks/services/request";
 import { TOrganization } from "@/types/organization";
-import { Lock, LockOpen } from "@phosphor-icons/react";
+import { BezierCurve, Lock, LockOpen } from "@phosphor-icons/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ToolbarProps {
   editor: Editor | undefined;
@@ -81,6 +90,7 @@ export const Toolbar = ({
 
   const isText = isTextType(selectedObjectType);
   const isImage = selectedObjectType === "image";
+  const isRect = selectedObjectType === "rect";
 
   const onChangeFontSize = (value: number) => {
     if (!selectedObject) {
@@ -267,6 +277,8 @@ export const Toolbar = ({
 
   const imageInputRef = useRef<HTMLInputElement>(null);
 
+  const [alignmentDropdown, setAlignmentDropdown] = useState<boolean>(false);
+
   if (editor?.selectedObjects.length === 0) {
     return (
       <div className="z-[49] flex h-[56px] w-full shrink-0 items-center gap-x-2 overflow-x-auto border-b bg-white p-2" />
@@ -288,6 +300,33 @@ export const Toolbar = ({
                 className="size-4 rounded-sm border"
                 style={{ backgroundColor: properties.fillColor }}
               />
+            </Button>
+          </Hint>
+        </div>
+      )}
+      {(isRect || isImage) && (
+        <div className="flex h-full items-center justify-center">
+          <Hint label="border Radius" side="bottom" sideOffset={5}>
+            <Button
+              onClick={() => onChangeActiveTool("border-radius")}
+              size="icon"
+              variant="ghost"
+              className={cn(activeTool === "border-radius" && "bg-gray-100")}
+            >
+              <BezierCurve size="16" />
+            </Button>
+          </Hint>
+        </div>
+      )}
+      {editor?.selectedObjects.length === 1 && (
+        <div className="flex h-full items-center justify-center">
+          <Hint label="alignment" side="bottom" sideOffset={5}>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => onChangeActiveTool("alignment")}
+            >
+              <AlignCenterIcon size={16} />
             </Button>
           </Hint>
         </div>

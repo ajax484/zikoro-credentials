@@ -46,6 +46,7 @@ export const useLoadState = ({
               (object.type || "object").toLowerCase() +
                 " " +
                 objectTypeCount[type],
+            borderRadius: object.borderRadius || 50,
           });
 
           console.log(object.objectId);
