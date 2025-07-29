@@ -265,7 +265,7 @@ const Designs = () => {
     const [template, setTemplate] = useState({
       name: certificate.name,
       attributes: certificate.attributes,
-      JSON: certificate.JSON,
+      JSON: certificate.JSON?.json!,
       previewUrl: certificate.previewUrl,
       credentialType: certificate.credentialType,
       sourceId: user?.id || "",
