@@ -24,7 +24,7 @@ export function rgbaToHex(rgba: string): string {
     .toString(16)
     .padStart(2, "0");
 
-  return `${r}${g}${b}${a === "ff" ? "" : a}`;
+  return `#${r}${g}${b}${a === "ff" ? "" : a}`;
 }
 
 export function extractUniqueTypes<T>(

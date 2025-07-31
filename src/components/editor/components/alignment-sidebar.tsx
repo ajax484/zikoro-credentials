@@ -6,12 +6,16 @@ import { ColorPicker } from "@/components/editor/components/color-picker";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+
 import {
+  AlignCenter,
+  AlignStartHorizontal,
+  AlignStartVertical,
+  AlignEndHorizontal,
+  AlignEndVertical,
   AlignCenterHorizontal,
   AlignCenterVertical,
-  Icon,
-} from "@phosphor-icons/react";
-import { AlignCenter } from "lucide-react";
+} from "lucide-react";
 
 interface AlignmentSidebarProps {
   editor: Editor | undefined;
@@ -22,28 +26,63 @@ interface AlignmentSidebarProps {
 interface Alignment {
   name: string;
   icon: Icon;
-  topPosition: "start" | "middle" | "end";
-  leftPosition: "start" | "middle" | "end";
+  position:
+    | "top-left"
+    | "top-center"
+    | "top-right"
+    | "middle-left"
+    | "middle-center"
+    | "middle-right"
+    | "bottom-left"
+    | "bottom-center"
+    | "bottom-right";
 }
 
 const alignments: Alignment[] = [
   {
-    name: "left",
-    icon: AlignCenterHorizontal,
-    topPosition: "start",
-    leftPosition: "start",
+    name: "top left",
+    icon: AlignStartHorizontal,
+    position: "top-left",
   },
   {
-    name: "center",
-    icon: AlignCenter,
-    topPosition: "middle",
-    leftPosition: "middle",
+    name: "top center",
+    icon: AlignStartVertical,
+    position: "top-center",
   },
   {
-    name: "right",
+    name: "top right",
     icon: AlignCenterVertical,
-    topPosition: "end",
-    leftPosition: "end",
+    position: "top-right",
+  },
+  {
+    name: "middle left",
+    icon: AlignCenterHorizontal,
+    position: "middle-left",
+  },
+  {
+    name: "middle center",
+    icon: AlignCenter,
+    position: "middle-center",
+  },
+  {
+    name: "middle right",
+    icon: AlignCenterVertical,
+    position: "middle-right",
+  },
+  {
+    name: "bottom left",
+    icon: AlignCenterHorizontal,
+    position: "bottom-left",
+  },
+  {
+    name: "bottom center",
+    icon: AlignCenter,
+    position: "bottom-center",
+  },
+  {
+    name: "bottom right",
+    icon: AlignCenterVertical,
+    position: "bottom-right",
   },
 ];
 
@@ -71,15 +110,13 @@ export const AlignmentSidebar = ({
             return (
               <button
                 key={alignment.name}
-                onClick={() =>
-                  editor?.changeAlignment(
-                    alignment.topPosition,
-                    alignment.leftPosition
-                  )
-                }
-                className="border-b px-4 py-2 w-full flex items-center gap-4"
+                onClick={() => editor?.changeAlignment(alignment.position)}
+                className="border-b px-4 py-2 w-full flex items-center justify-center gap-4"
               >
-                <Icon size={16} />
+                <Icon size={20} />
+                <span className="text-lg capitalize font-medium">
+                  {alignment.name}
+                </span>
               </button>
             );
           })}

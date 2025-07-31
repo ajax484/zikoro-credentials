@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AlertTriangle, Loader, Upload } from "lucide-react";
 
-import { ActiveTool, colors, Editor } from "@/components/editor/types";
+import { ActiveTool, COLORS, Editor } from "@/components/editor/types";
 import { ToolSidebarClose } from "@/components/editor/components/tool-sidebar-close";
 import { ToolSidebarHeader } from "@/components/editor/components/tool-sidebar-header";
 
@@ -280,7 +280,7 @@ export const BackgroundSidebar = ({
                 </DropdownMenuContent>
               </DropdownMenu>
             </CarouselItem>
-            {colors.map((color, index) => (
+            {COLORS.map((color, index) => (
               <CarouselItem
                 key={color}
                 className="pl-2 md:basis-1/2 lg:basis-1/6"

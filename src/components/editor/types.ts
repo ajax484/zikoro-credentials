@@ -19,6 +19,7 @@ export const JSON_KEYS = [
   "objectName",
   "locked",
   "borderRadius",
+  "isSVG",
 ];
 
 export const filters = [
@@ -78,7 +79,7 @@ export const selectionDependentTools = [
   "stroke-width",
 ];
 
-export const colors = [
+export const COLORS: string[] = [
   material.black,
   material.white,
   material.red["500"],
@@ -273,12 +274,26 @@ export interface Editor {
     bgcolor: string,
     type: z.infer<typeof barCodeTypeEnum>,
     barCodeFunction: string
-  ) => Promise<string | undefined>;
+  ) => Promise<void>;
+  addEditableSVG: (svgString: string, options?: fabric.IObjectOptions) => void;
   transformBarCodes: () => Promise<void>;
   delete: () => void;
   changeAlignment: (
-    topPosition: "start" | "middle" | "end",
-    leftPosition: "start" | "middle" | "end",
+    position:
+      | "top-left"
+      | "top-center"
+      | "top-right"
+      | "middle-left"
+      | "middle-center"
+      | "middle-right"
+      | "bottom-left"
+      | "bottom-center"
+      | "bottom-right",
+    object?: fabric.Object
+  ) => void;
+  flipShape: (
+    flipX: boolean | null,
+    flipY: boolean | null,
     object?: fabric.Object
   ) => void;
   groupObjects: () => void;

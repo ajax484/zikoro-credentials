@@ -1,6 +1,6 @@
 import { ChromePicker, CirclePicker } from "react-color";
 
-import { colors } from "@/components/editor/types";
+import { COLORS } from "@/components/editor/types";
 import { rgbaObjectToString } from "@/components/editor/utils";
 
 interface ColorPickerProps {
@@ -28,8 +28,8 @@ export const ColorPicker = ({
         color={value}
         colors={
           disableTransparent
-            ? colors.filter((color) => color !== "transparent")
-            : colors
+            ? COLORS.filter((color) => color !== "transparent")
+            : COLORS
         }
         onChangeComplete={(color: { rgb: any }) => {
           const formattedValue = rgbaObjectToString(color.rgb);

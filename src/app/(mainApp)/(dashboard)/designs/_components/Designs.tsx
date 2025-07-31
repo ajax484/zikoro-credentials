@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import { useDeleteRequest, useGetData } from "@/hooks/services/request";
-import { TCertificate } from "@/types/certificates";
+import { CredentialType, TCertificate } from "@/types/certificates";
 import Link from "next/link";
 import Email from "@/public/icons/mdi_email-sent.svg";
 import Calendar from "@/public/icons/duo-icons_calendar.svg";
@@ -67,7 +67,7 @@ import {
   paperSeries,
   paperSizes,
 } from "@/components/editor/components/settings-sidebar";
-import { colors } from "@/components/editor/types";
+import { COLORS } from "@/components/editor/types";
 import { X } from "@phosphor-icons/react";
 import ReactSelect from "react-select";
 
@@ -97,7 +97,7 @@ const Designs = () => {
     name: string;
     workspace: TOrganization;
     JSON: Record<string, any> | null;
-    credentialType: "label" | "certificate" | "badge";
+    credentialType: CredentialType;
   }) => {
     if (!organization) return toast.error("Please select an organization");
     console.log(JSON);
@@ -314,13 +314,6 @@ const Designs = () => {
 
     const [newCategory, setNewCategory] = useState("");
 
-    const addCategory = (value: string) => {
-      setTemplate((prev) => ({
-        ...prev,
-        category: [...prev.category, value],
-      }));
-    };
-
     console.log(template.category);
 
     return (
@@ -451,7 +444,9 @@ const Designs = () => {
                 }}
                 onChange={(newValue) => {
                   console.log(newValue);
-                  addCategory(newValue.map((value) => value.value));
+                  setNewCategory(
+                    newValue.map((value) => value.value) as string[]
+                  );
                 }}
                 isMulti
                 name="category"

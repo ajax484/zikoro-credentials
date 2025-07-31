@@ -79,28 +79,20 @@ export const TemplateSidebar = ({
         </div>
       )}
       <div className="flex px-4 gap-0.5 items-center">
-        <button
-          onClick={() => toggleOrientation("portrait")}
-          className={cn(
-            "w-full border-basePrimary border-2",
-            orientation === "portrait"
-              ? "text-white bg-basePrimary"
-              : "text-basePrimary bg-white"
-          )}
-        >
-          portrait
-        </button>
-        <button
-          onClick={() => toggleOrientation("landscape")}
-          className={cn(
-            "w-full border-basePrimary border-2",
-            orientation === "landscape"
-              ? "text-white bg-basePrimary"
-              : "text-basePrimary bg-white"
-          )}
-        >
-          landscape
-        </button>
+        {["portrait", "landscape"].map((label) => (
+          <button
+            key={label}
+            onClick={() => toggleOrientation(label)}
+            className={cn(
+              "w-full border-basePrimary border-2 text-sm py-2",
+              orientation === label
+                ? "text-white bg-basePrimary"
+                : "text-basePrimary bg-white"
+            )}
+          >
+            {label}
+          </button>
+        ))}
       </div>
       <ScrollArea>
         <div className="p-4">

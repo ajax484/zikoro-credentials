@@ -36,7 +36,13 @@ import toast from "react-hot-toast";
 import { uploadFile } from "@/utils/helpers";
 import { useGetData, useMutateData } from "@/hooks/services/request";
 import { TOrganization } from "@/types/organization";
-import { BezierCurve, Lock, LockOpen } from "@phosphor-icons/react";
+import {
+  BezierCurve,
+  FlipHorizontal,
+  FlipVertical,
+  Lock,
+  LockOpen,
+} from "@phosphor-icons/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -537,6 +543,32 @@ export const Toolbar = ({
           />
         </div>
       )}
+      {!selectedObject?.options?.isBarCode && (
+        <>
+          <div className="flex h-full items-center justify-center">
+            <Hint label="Flip Horizontal" side="bottom" sideOffset={5}>
+              <Button
+                onClick={() => editor?.flipShape(!selectedObject.flipX, null)}
+                size="icon"
+                variant="ghost"
+              >
+                <FlipHorizontal size={16} />
+              </Button>
+            </Hint>
+          </div>
+          <div className="flex h-full items-center justify-center">
+            <Hint label="Flip Vertical" side="bottom" sideOffset={5}>
+              <Button
+                onClick={() => editor?.flipShape(null, !selectedObject.flipY)}
+                size="icon"
+                variant="ghost"
+              >
+                <FlipVertical size={16} />
+              </Button>
+            </Hint>
+          </div>
+        </>
+      )}
       <div className="flex h-full items-center justify-center">
         <Hint label="Bring forward" side="bottom" sideOffset={5}>
           <Button
@@ -622,7 +654,7 @@ export const Toolbar = ({
       )}
       {editor && (
         <div className="flex h-full items-center justify-center space-x-2">
-          {selectedObjectType === "group" ? (
+          {selectedObjectType === "group" && !selectedObject?.isSVG ? (
             <Hint label="Ungroup" side="bottom" sideOffset={5}>
               <Button
                 onClick={() => editor.ungroupObjects()}

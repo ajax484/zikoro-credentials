@@ -41,8 +41,81 @@ import {
 } from "@/utils/helpers";
 import { z } from "zod";
 import { barCodeTypeEnum } from "../components/qrcode-sidebar";
-import { AlignGuidelines } from "fabric-guideline-plugin";
 import { nanoid } from "nanoid";
+import JsBarcode from "jsbarcode";
+import QRCode from "qrcode";
+
+const generateBarcodeImage = async (
+  value: string,
+  type: string,
+  foregroundColor: string = "#000000",
+  backgroundColor: string = "#ffffff"
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    try {
+      // Create a temporary canvas element
+      const canvas = document.createElement("canvas");
+
+      // Define barcode options
+      const options = {
+        format: type.toUpperCase(),
+        width: 2,
+        height: 100,
+        displayValue: true,
+        text: value,
+        textAlign: "center" as const,
+        textPosition: "bottom" as const,
+        textMargin: 2,
+        fontSize: 20,
+        background: backgroundColor,
+        lineColor: foregroundColor,
+        margin: 10,
+        marginTop: 10,
+        marginBottom: 10,
+        marginLeft: 10,
+        marginRight: 10,
+      };
+
+      // Generate barcode
+      JsBarcode(canvas, value, options);
+
+      // Convert canvas to data URL
+      const dataUrl = canvas.toDataURL("image/png");
+
+      resolve(dataUrl);
+    } catch (error) {
+      console.error("Error generating barcode:", error);
+      reject(error);
+    }
+  });
+};
+
+const generateQRCodeImage = async (
+  value: string,
+  foregroundColor: string = "000000",
+  backgroundColor: string = "ffffff"
+): Promise<string> => {
+  try {
+    const options = {
+      color: {
+        dark: foregroundColor,
+        light: backgroundColor,
+      },
+      width: 200,
+      margin: 2,
+      errorCorrectionLevel: "M" as const,
+    };
+
+    console.log(foregroundColor, backgroundColor);
+
+    // Generate QR code as data URL
+    const dataUrl = await QRCode.toDataURL(value, options);
+    return dataUrl;
+  } catch (error) {
+    console.error("Error generating QR code:", error);
+    throw error;
+  }
+};
 
 const buildEditor = ({
   save,
@@ -232,7 +305,7 @@ const buildEditor = ({
     console.log(`Processing ${barcodeObjects.length} barcode objects`);
 
     // Process barcodes in parallel with limited concurrency
-    const BATCH_SIZE = 3; // Limit concurrent requests
+    const BATCH_SIZE = 5; // Can increase since we're not making API calls
     const batches = [];
 
     for (let i = 0; i < barcodeObjects.length; i += BATCH_SIZE) {
@@ -243,38 +316,32 @@ const buildEditor = ({
       await Promise.all(
         batch.map(async (object) => {
           try {
-            const { value, barCodeType } = object.options || {};
+            const { value, barCodeType, fg, bg } = object.options || {};
 
             if (!value || !barCodeType) return;
 
-            const apiUrl = `https://barcodeapi.org/api/${barCodeType}/${encodeURIComponent(
-              value
-            )}`;
-            const response = await fetch(apiUrl, { cache: "no-store" });
+            let dataUrl: string;
 
-            if (!response.ok) {
-              console.error("Failed to fetch barcode:", response.statusText);
-              return;
+            // Generate barcode or QR code based on type
+            if (barCodeType.toLowerCase() === "qr") {
+              dataUrl = await generateQRCodeImage(
+                value,
+                fg || "#000000",
+                bg || "#ffffff"
+              );
+            } else {
+              dataUrl = await generateBarcodeImage(
+                value,
+                barCodeType,
+                fg || "#000000",
+                bg || "#ffffff"
+              );
             }
 
-            const blob = await response.blob();
-            const fileName = `${barCodeType}:${value}-${Date.now()}.png`;
-            const file = new File([blob], fileName, {
-              type: blob.type,
-              lastModified: Date.now(),
-            });
-
-            const { url: imageUrl, error } = await uploadFile(file, "image");
-
-            if (error || !imageUrl) {
-              console.error("Failed to upload barcode image:", error);
-              return;
-            }
-
-            // Update the object's source with the new URL
+            // Update the object's source with the new data URL
             await new Promise<void>((resolve) => {
               object.setSrc(
-                imageUrl,
+                dataUrl,
                 function (img) {
                   img.set({
                     left: object.left,
@@ -569,12 +636,19 @@ const buildEditor = ({
           const containerWidth = workspace.width || 1200;
           const containerHeight = workspace.height || 900;
 
-          // Scale the image to fit the container
-          if (image.width / image.height > containerWidth / containerHeight) {
-            image.scaleToWidth(containerWidth); // Fit by width
-          } else {
-            image.scaleToHeight(containerHeight); // Fit by height
-          }
+          // // Scale the image to fit the container
+          // if (image.width / image.height > containerWidth / containerHeight) {
+          //   image.height = containerHeight;
+          //   image.scaleToWidth(containerWidth); // Fit by width
+          // } else {
+          //   image.width = containerWidth;
+          //   image.scaleToHeight(containerHeight); // Fit by height
+          // }
+
+          workspace.set({
+            width: image.width,
+            height: image.height,
+          });
 
           // Center the image in the container
           image.set({
@@ -584,9 +658,6 @@ const buildEditor = ({
             originY: "top",
             isBackground: true,
           });
-
-          console.log("final", image);
-
           // Add the image to canvas and send it to the back
           addToCanvas(image, false);
           canvas.sendToBack(image);
@@ -606,41 +677,28 @@ const buildEditor = ({
       type: z.infer<typeof barCodeTypeEnum>,
       barCodeFunction: string
     ) => {
+      console.log(color, bgcolor);
       try {
-        const url = `https://barcodeapi.org/api/${type}/${encodeURIComponent(
-          value
-        )}?bg=${rgbaToHex(bgcolor || "ffffff")}&fg=${rgbaToHex(
-          color || "000000"
-        )}`;
+        let dataUrl: string;
 
-        console.log(url);
-        const response = await fetch(url, { cache: "no-store" });
-
-        const tokens = response.headers.get("X-RateLimit-Tokens");
-        console.log("Tokens remaining: " + tokens);
-
-        const blob = await response.blob();
-
-        const blobUrl = new File(
-          [blob],
-          type + ":" + value + new Date().getUTCMilliseconds() + ".png",
-          {
-            type: blob.type,
-            lastModified: Date.now(),
-          }
-        );
-
-        console.log(blobUrl);
-
-        const { url: imageUrl, error } = await uploadFile(blobUrl, "image");
-
-        console.log(imageUrl);
-
-        if (error) return;
-        if (!imageUrl) return;
+        // Generate barcode or QR code based on type
+        if (type.toLowerCase() === "qr") {
+          dataUrl = await generateQRCodeImage(
+            value,
+            color || "#000000",
+            bgcolor || "#ffffff"
+          );
+        } else {
+          dataUrl = await generateBarcodeImage(
+            value,
+            type,
+            color || "#000000",
+            bgcolor || "#ffffff"
+          );
+        }
 
         fabric.Image.fromURL(
-          imageUrl,
+          dataUrl,
           (image) => {
             console.log(image);
             const workspace = getWorkspace();
@@ -649,8 +707,8 @@ const buildEditor = ({
 
             image.set({
               options: {
-                bg: rgbaToHex(bgcolor || "ffffff"),
-                fg: rgbaToHex(color || "000000"),
+                bg: bgcolor || "ffffff",
+                fg: color || "000000",
                 barCodeType: type,
                 isBarCode: true,
                 value,
@@ -668,11 +726,24 @@ const buildEditor = ({
           }
         );
       } catch (error) {
-        console.log(error);
+        console.error("Error generating barcode:", error);
       }
     },
     transformBarCodes: async () => {
       await processBarcodeObjects();
+    },
+    addEditableSVG: (svgString, options = {}) => {
+      fabric.loadSVGFromString(svgString, (objects, svgOptions) => {
+        const group = fabric.util.groupSVGElements(objects, svgOptions);
+        group.set({
+          scaleX: 10,
+          scaleY: 10,
+          isSVG: true,
+          ...options,
+        });
+        addToCanvas(group);
+        canvas.requestRenderAll();
+      });
     },
     clear: () => {
       canvas.clear();
@@ -696,78 +767,135 @@ const buildEditor = ({
       canvas.discardActiveObject();
       canvas.renderAll();
     },
-    changeAlignment: (
-      topPosition: "start" | "middle" | "end",
-      leftPosition: "start" | "middle" | "end",
-      object?: fabric.Object
-    ) => {
-      const alignedObject = object || canvas.getActiveObject();
-
-      if (!alignedObject) {
-        console.warn("No object to align");
-        return;
-      }
-
+    changeAlignment: (position, object) => {
       const workspace = getWorkspace() as fabric.Rect;
       if (!workspace) {
-        console.warn("No workspace found");
+        console.log("No workspace found");
         return;
       }
 
-      const { width: workspaceWidth, height: workspaceHeight } = workspace;
-
-      if (!workspaceWidth || !workspaceHeight) {
-        console.warn("Invalid workspace dimensions");
+      const centerPoint = workspace.getCenterPoint();
+      const { width, height } = workspace;
+      if (!width || !height) {
+        console.log("Invalid workspace dimensions");
         return;
       }
 
-      // Get object dimensions - use getBoundingRect for accurate sizing
-      const boundingRect = alignedObject.getBoundingRect(true, true);
+      const getNewPosition = (object: fabric.Object) => {
+        switch (position) {
+          case "top-left":
+            return {
+              top: centerPoint.y - height / 2,
+              left: centerPoint.x - width / 2,
+            };
+            break;
+          case "top-center":
+            return {
+              top: centerPoint.y - height / 2,
+              left: centerPoint.x - object.getScaledWidth() / 2,
+            };
+            break;
+          case "top-right":
+            return {
+              top: centerPoint.y - height / 2,
+              left: centerPoint.x + width / 2 - object.getScaledWidth(),
+            };
+            break;
+          case "middle-left":
+            return {
+              top: centerPoint.y - object.getScaledHeight() / 2,
+              left: centerPoint.x - width / 2,
+            };
+            break;
+          case "middle-center":
+            return {
+              top: centerPoint.y - object.getScaledHeight() / 2,
+              left: centerPoint.x - object.getScaledWidth() / 2,
+            };
+            break;
+          case "middle-right":
+            return {
+              top: centerPoint.y - object.getScaledHeight() / 2,
+              left: centerPoint.x + width / 2 - object.getScaledWidth(),
+            };
+            break;
+          case "bottom-left":
+            return {
+              top: centerPoint.y + height / 2 - object.getScaledHeight(),
+              left: centerPoint.x - width / 2,
+            };
+            break;
+          case "bottom-center":
+            return {
+              top: centerPoint.y + height / 2 - object.getScaledHeight(),
+              left: centerPoint.x - object.getScaledWidth() / 2,
+            };
+            break;
+          case "bottom-right":
+            return {
+              top: centerPoint.y + height / 2 - object.getScaledHeight(),
+              left: centerPoint.x + width / 2 - object.getScaledWidth(),
+            };
+            break;
+          default:
+            return {
+              top: centerPoint.y - object.getScaledHeight() / 2,
+              left: centerPoint.x - object.getScaledWidth() / 2,
+            };
+        }
+      };
 
-      // Calculate new positions relative to workspace
-      let newTop: number;
-      let newLeft: number;
-
-      // Calculate vertical alignment
-      switch (topPosition) {
-        case "start":
-          newTop = 0 + boundingRect.height / 2;
-          break;
-        case "middle":
-          newTop = workspaceHeight / 2;
-          break;
-        case "end":
-          newTop = workspaceHeight - boundingRect.height / 2;
-          break;
-        default:
+      if (object) {
+        const newPosition = getNewPosition(object);
+        object.set({
+          left: newPosition.left,
+          top: newPosition.top,
+        });
+      } else {
+        const activeObjects = canvas.getActiveObjects();
+        if (!activeObjects.length) {
           return;
+        }
+
+        activeObjects.forEach((object) => {
+          const newPosition = getNewPosition(object);
+          object.set({
+            left: newPosition.left,
+            top: newPosition.top,
+          });
+        });
       }
 
-      // Calculate horizontal alignment
-      switch (leftPosition) {
-        case "start":
-          newLeft = 0 + boundingRect.width / 2;
-          break;
-        case "middle":
-          newLeft = workspaceWidth / 2;
-          break;
-        case "end":
-          newLeft = workspaceWidth - boundingRect.width / 2;
-          break;
-        default:
+      canvas.requestRenderAll();
+    },
+    flipShape: (flipX, flipY, object) => {
+      if (object) {
+        const updates: Partial<fabric.Object> = {};
+        if (flipX !== null) {
+          updates.flipX = flipX;
+        }
+        if (flipY !== null) {
+          updates.flipY = flipY;
+        }
+        object.set(updates);
+      } else {
+        const activeObjects = canvas.getActiveObjects();
+        if (!activeObjects.length) {
           return;
+        }
+
+        activeObjects.forEach((object) => {
+          const updates: Partial<fabric.Object> = {};
+          if (flipX !== undefined) {
+            updates.flipX = flipX;
+          }
+          if (flipY !== undefined) {
+            updates.flipY = flipY;
+          }
+          object.set(updates);
+        });
       }
 
-      // Set object position with center origin
-      alignedObject.set({
-        top: newTop,
-        left: newLeft,
-        originX: "center",
-        originY: "center",
-      });
-
-      // Update object coordinates and render
-      alignedObject.setCoords();
       canvas.requestRenderAll();
     },
     groupObjects: () => {

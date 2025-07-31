@@ -17,6 +17,7 @@ fabric.Object.prototype.toObject = (function (toObject) {
       locked: this.locked,
       borderRadius: this.borderRadius,
       isBackground: this.isBackground,
+      isSVG: this.isSVG
     };
   };
 })(fabric.Object.prototype.toObject);
@@ -30,6 +31,7 @@ declare module "fabric" {
       locked?: boolean;
       borderRadius?: number;
       isBackground?: boolean;
+      isSVG: boolean;
     }
   }
 }

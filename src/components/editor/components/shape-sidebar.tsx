@@ -15,6 +15,8 @@ import { ToolSidebarHeader } from "@/components/editor/components/tool-sidebar-h
 
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface ShapeSidebarProps {
   editor: Editor | undefined;
@@ -31,6 +33,15 @@ export const ShapeSidebar = ({
     onChangeActiveTool("select");
   };
 
+  const addEditableSVG = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      const svgString = event.currentTarget.result;
+      editor && editor.addEditableSVG(svgString);
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <aside
       className={cn(
@@ -42,6 +53,36 @@ export const ShapeSidebar = ({
         title="Elements"
         description="Add elements to your credential"
       />
+      <Button
+        onClick={() => document.getElementById("background-input")?.click()}
+        className="border-basePrimary border-2 text-basePrimary bg-transparent flex gap-4 justify-center items-center rounded-lg py-2 px-3 hover:bg-basePrimary/20"
+      >
+        <svg
+          stroke="currentColor"
+          fill="none"
+          strokeWidth={2}
+          viewBox="0 0 24 24"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          height="1em"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1={12} y1={3} x2={12} y2={15} />
+        </svg>
+        <span>Import Element</span>
+      </Button>
+      <div className="hidden">
+        <Input
+          id="background-input"
+          name="background"
+          type="file"
+          onChange={(e) => e.target.files && addEditableSVG(e.target.files[0])}
+          accept="image/svg+xml"
+        />
+      </div>
       <ScrollArea>
         <div className="grid grid-cols-3 gap-4 p-4">
           <ShapeTool
@@ -56,7 +97,7 @@ export const ShapeSidebar = ({
             onClick={() => editor?.addVerticalLine()}
             icon={() => (
               <div className="h-full flex justify-center">
-              <div className="h-full w-2 bg-black" />
+                <div className="h-full w-2 bg-black" />
               </div>
             )}
           />

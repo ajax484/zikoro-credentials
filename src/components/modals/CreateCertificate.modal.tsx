@@ -31,7 +31,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { CertificateTemplate } from "@/types/certificates";
+import { CertificateTemplate, CredentialType } from "@/types/certificates";
 import { cn } from "@/lib/utils";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { convertFromPixels, convertToPixels } from "@/utils/helpers";
@@ -49,7 +49,7 @@ export interface CreateCertificateDialogProps {
     name: string;
     workspace: TOrganization;
     JSON: Record<string, any> | null;
-    type: "label" | "certificate" | "badge";
+    credentialType: CredentialType;
   }) => void;
   certificateIsCreating: boolean;
   setDialogIsOpen: (open: boolean) => void;
@@ -105,15 +105,18 @@ const CreateCertificateDialog = ({
   const [selectedTemplate, setSelectedTemplate] =
     useState<CertificateTemplate | null>(null);
   const [type, setType] = useState<string>("template");
-  const [credentialType, setCredentialType] = useState<
-    "product label" | "certificate" | "event badge" | "shipping label"
-  >("certificate");
+  const [credentialType, setCredentialType] =
+    useState<CredentialType>("certificate");
 
   console.log(templates[0]?.JSON);
 
   const [sizing, setSizing] = useState("custom");
   const [width, setWidth] = useState(900);
   const [height, setHeight] = useState(1200);
+
+  const [orientation, setOrientation] = useState<"portrait" | "landscape">(
+    "portrait"
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -207,6 +210,30 @@ const CreateCertificateDialog = ({
                       </SelectGroup>
                     );
                   })}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-2 w-full">
+              <label className="font-medium text-gray-700">Orientation</label>
+              <Select
+                value={orientation}
+                onValueChange={(value) =>
+                  setOrientation(value as "portrait" | "landscape")
+                }
+              >
+                <SelectTrigger className="w-full rounded-lg bg-white font-medium">
+                  <SelectValue placeholder={"Select orientation"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {[
+                    { label: "Portrait", value: "portrait" },
+                    { label: "Landscape", value: "landscape" },
+                  ].map((type, index) => (
+                    <SelectItem value={type.value} key={index}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -346,14 +373,23 @@ const CreateCertificateDialog = ({
             <DialogFooter>
               <Button
                 onClick={() => {
+                  let certificateHeight = height;
+                  let certificateWidth = width;
+
+                  if (orientation === "landscape") {
+                    [certificateHeight, certificateWidth] = [width, height];
+                  }
+
+                  
+
                   workspace &&
                     createCertificateFn({
                       name,
                       workspace,
                       JSON: {
                         json: JSON.stringify(selectedTemplate?.JSON) || null,
-                        width: 900,
-                        height: 1200,
+                        width: certificateWidth,
+                        height: certificateHeight,
                       },
                       credentialType,
                     });

@@ -61,13 +61,13 @@ export const StrokeWidthSidebar = ({
               }
               value={widthValue}
               type="number"
-              min={10}
+              min={1}
             />
           </div>
           <Slider
             value={[widthValue]}
             onValueChange={(values) => onChangeStrokeWidth(values[0])}
-            min={10}
+            min={1}
           />
         </div>
         <div className="space-y-4 border-b p-4">
