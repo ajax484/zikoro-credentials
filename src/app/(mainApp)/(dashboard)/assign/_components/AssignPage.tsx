@@ -70,7 +70,7 @@ const AssignPage = () => {
         </p>
       </div>
       <div className="grid grid-cols-4 gap-6 mb-4">
-        {data.data?.map((certificate) => (
+        {certificates?.map((certificate) => (
           <Link
             href={`/assign/${certificate.certificateAlias}`}
             key={certificate.id}
