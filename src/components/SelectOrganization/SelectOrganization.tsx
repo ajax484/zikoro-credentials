@@ -43,8 +43,6 @@ const SelectOrganization = () => {
 
   console.log(workspaces);
 
-  console.log(workspaces);
-
   useEffect(() => {
     if (workspaceAlias) {
       const workspace = workspaces?.find(
@@ -139,19 +137,21 @@ const SelectOrganization = () => {
                 </CommandGroup>
               </CommandList>
             </Command>
-            <div className="w-full px-1 pb-1 pt-4">
-              <Button
-                onClick={() => {
-                  setOpen(false);
-                  setDialogIsOpen(true);
-                }}
-                size="sm"
-                className="gap-x-2 font-semibold flex items-center justify-center rounded-lg w-full"
-              >
-                <PlusCircle className="size-6" />
-                <span>New Workspace</span>
-              </Button>
-            </div>
+            {user?.allowNewWorkspace && (
+              <div className="w-full px-1 pb-1 pt-4">
+                <Button
+                  onClick={() => {
+                    setOpen(false);
+                    setDialogIsOpen(true);
+                  }}
+                  size="sm"
+                  className="gap-x-2 font-semibold flex items-center justify-center rounded-lg w-full"
+                >
+                  <PlusCircle className="size-6" />
+                  <span>New Workspace</span>
+                </Button>
+              </div>
+            )}
           </PopoverContent>
         </Popover>
 

@@ -347,6 +347,31 @@ export const QRCodeSidebar = ({
               )}
             />
 
+            <div>
+              <Label>Bar code function</Label>
+              <div className="relative w-full">
+                <Select
+                  onValueChange={(value) =>
+                    setBarCodeFunction(
+                      value as "verify" | "attribute" | "custom"
+                    )
+                  }
+                  value={barCodeFunction}
+                >
+                  <SelectTrigger className="w-full rounded-lg text-sm font-medium bg-transparent">
+                    <SelectValue placeholder={"Select function"} />
+                  </SelectTrigger>
+                  <SelectContent className="z-[1001]">
+                    <SelectItem value={"verify"}>Verify Credentials</SelectItem>
+                    {attributes.length > 0 && (
+                      <SelectItem value={"attribute"}>Attribute</SelectItem>
+                    )}
+                    <SelectItem value={"custom"}>Custom</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             <FormField
               control={form.control}
               name="barCodeType"
@@ -380,30 +405,6 @@ export const QRCodeSidebar = ({
                 </FormItem>
               )}
             />
-            <div>
-              <Label>Bar code function</Label>
-              <div className="relative w-full">
-                <Select
-                  onValueChange={(value) =>
-                    setBarCodeFunction(
-                      value as "verify" | "attribute" | "custom"
-                    )
-                  }
-                  value={barCodeFunction}
-                >
-                  <SelectTrigger className="w-full rounded-lg text-sm font-medium bg-transparent">
-                    <SelectValue placeholder={"Select function"} />
-                  </SelectTrigger>
-                  <SelectContent className="z-[1001]">
-                    <SelectItem value={"verify"}>Verify Credentials</SelectItem>
-                    {attributes.length > 0 && (
-                      <SelectItem value={"attribute"}>Attribute</SelectItem>
-                    )}
-                    <SelectItem value={"custom"}>Custom</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
             {barCodeFunction === "attribute" && (
               <FormField
                 name={"text" as const}

@@ -10,6 +10,7 @@ export type TUser = z.infer<typeof UserSchema> & {
   completedCredentialWorkthrough: {
     dashboardTour: boolean;
   };
+  allowNewWorkspace: boolean;
 };
 
 type User = {

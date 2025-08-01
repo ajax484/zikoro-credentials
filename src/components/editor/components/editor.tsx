@@ -170,10 +170,9 @@ export const Editor = ({
     const guideline = new AlignGuidelines({
       canvas: canvas,
       // pickObjTypes: [{ key: "myType", value: "box" }],
-      // aligningOptions: {
-      //   lineColor: "#32D10A",
-      //   lineMargin: 8,
-      // },
+      aligningOptions: {
+        lineColor: "#001FCC",
+      },
     });
 
     guideline.init();
