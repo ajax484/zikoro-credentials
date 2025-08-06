@@ -114,9 +114,9 @@ const CreateCertificateDialog = ({
   const [width, setWidth] = useState(900);
   const [height, setHeight] = useState(1200);
 
-  const [orientation, setOrientation] = useState<"portrait" | "landscape">(
-    "portrait"
-  );
+  const [orientation, setOrientation] = useState<
+    "portrait" | "landscape" | "default"
+  >("portrait");
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -134,13 +134,7 @@ const CreateCertificateDialog = ({
               <Select
                 value={credentialType}
                 onValueChange={(value) =>
-                  setCredentialType(
-                    value as
-                      | "product label"
-                      | "certificate"
-                      | "event badge"
-                      | "shipping label"
-                  )
+                  setCredentialType(value as CredentialType)
                 }
               >
                 <SelectTrigger className="w-full rounded-lg bg-white font-medium">
@@ -219,7 +213,7 @@ const CreateCertificateDialog = ({
               <Select
                 value={orientation}
                 onValueChange={(value) =>
-                  setOrientation(value as "portrait" | "landscape")
+                  setOrientation(value as "portrait" | "landscape" | "default")
                 }
               >
                 <SelectTrigger className="w-full rounded-lg bg-white font-medium">
@@ -227,6 +221,7 @@ const CreateCertificateDialog = ({
                 </SelectTrigger>
                 <SelectContent>
                   {[
+                    { label: "Default", value: "default" },
                     { label: "Portrait", value: "portrait" },
                     { label: "Landscape", value: "landscape" },
                   ].map((type, index) => (
@@ -379,8 +374,6 @@ const CreateCertificateDialog = ({
                   if (orientation === "landscape") {
                     [certificateHeight, certificateWidth] = [width, height];
                   }
-
-                  
 
                   workspace &&
                     createCertificateFn({

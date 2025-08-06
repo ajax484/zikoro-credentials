@@ -36,6 +36,7 @@ import { RemoveBgSidebar } from "./remove-bg-sidebar";
 import { LayersSidebar } from "./layers-sidebar";
 import { BorderRadiusSidebar } from "./border-radius-sidebar";
 import { AlignmentSidebar } from "./alignment-sidebar";
+import { SVGFillColorSidebar } from "./svg-fill-color-sidebar";
 
 interface EditorProps {
   initialData: ResponseType["data"];
@@ -224,6 +225,11 @@ export const Editor = ({
           onChangeActiveTool={onChangeActiveTool}
         />
         <FillColorSidebar
+          editor={editor}
+          activeTool={activeTool}
+          onChangeActiveTool={onChangeActiveTool}
+        />
+        <SVGFillColorSidebar
           editor={editor}
           activeTool={activeTool}
           onChangeActiveTool={onChangeActiveTool}

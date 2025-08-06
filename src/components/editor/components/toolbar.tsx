@@ -42,6 +42,7 @@ import {
   FlipVertical,
   Lock,
   LockOpen,
+  Palette,
 } from "@phosphor-icons/react";
 import {
   DropdownMenu,
@@ -97,6 +98,9 @@ export const Toolbar = ({
   const isText = isTextType(selectedObjectType);
   const isImage = selectedObjectType === "image";
   const isRect = selectedObjectType === "rect";
+  const isSVG = selectedObject?.isSVG;
+
+  console.log(isSVG);
 
   const onChangeFontSize = (value: number) => {
     if (!selectedObject) {
@@ -291,9 +295,28 @@ export const Toolbar = ({
     );
   }
 
+  const SVGColors = () => {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Hint label="SVG Colors" side="bottom" sideOffset={5}>
+          <Button
+            onClick={() => onChangeActiveTool("svg-fill")}
+            size="icon"
+            variant="ghost"
+            className={cn(activeTool === "fill" && "bg-gray-100")}
+          >
+            <div className="size-8 bg-white rounded-full flex items-center justify-center border">
+              <Palette size={28} />
+            </div>
+          </Button>
+        </Hint>
+      </div>
+    );
+  };
+
   return (
-    <div className="z-[49] flex h-[56px] w-full shrink-0 items-center gap-x-2 overflow-x-auto border-b bg-white p-2">
-      {!isImage && (
+    <div className="z-[50] flex h-[56px] w-full shrink-0 items-center gap-x-2 overflow-x-auto border-b bg-white p-2">
+      {(!isImage && !isSVG) && (
         <div className="flex h-full items-center justify-center">
           <Hint label="Color" side="bottom" sideOffset={5}>
             <Button
@@ -310,6 +333,7 @@ export const Toolbar = ({
           </Hint>
         </div>
       )}
+      {isSVG && <SVGColors />}
       {(isRect || isImage) && (
         <div className="flex h-full items-center justify-center">
           <Hint label="border Radius" side="bottom" sideOffset={5}>

@@ -18,6 +18,7 @@ import { CertificateTemplate } from "@/types/certificates";
 import { useGetData } from "@/hooks/services/request";
 import { useFetchCertificateTemplates } from "@/queries/certificates.queries";
 import { useState } from "react";
+import GradientBorderSelect from "@/components/GradientBorderSelect";
 
 interface TemplateSidebarProps {
   editor: Editor | undefined;
@@ -48,11 +49,17 @@ export const TemplateSidebar = ({
 
   const [orientation, setOrientation] = useState<
     "landscape" | "portrait" | "default"
-  >("portrait");
+  >("default");
 
   const toggleOrientation = (orientation: "landscape" | "portrait") => {
     setOrientation((prev) => (prev === orientation ? "default" : orientation));
   };
+
+  const [selectedCategories, setCategories] = useState<string[]>([]);
+
+  const categories = ["first", "second", "third", "fourth", "fifth"];
+
+  console.log(templates.map((template) => template.category));
 
   return (
     <aside
@@ -94,12 +101,33 @@ export const TemplateSidebar = ({
           </button>
         ))}
       </div>
+
+      <div className="p-4">
+        <GradientBorderSelect
+          isMulti
+          onChange={(value) => setCategories(value as string[])}
+          options={categories.map((category) => ({
+            label: category,
+            value: category,
+          }))}
+          defaultValue={[]}
+          placeholder="Select categories"
+        />
+      </div>
+
       <ScrollArea>
         <div className="p-4">
           <div className="grid grid-cols-2 gap-4">
             {templates &&
               templates
                 .filter((template) => template.credentialType === type)
+                .filter((template) =>
+                  selectedCategories.length
+                    ? template?.category?.some((category) =>
+                        selectedCategories.includes(category)
+                      )
+                    : true
+                )
                 .filter(
                   (template) =>
                     orientation === "default" ||

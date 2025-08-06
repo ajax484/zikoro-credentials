@@ -734,6 +734,9 @@ const buildEditor = ({
     },
     addEditableSVG: (svgString, options = {}) => {
       fabric.loadSVGFromString(svgString, (objects, svgOptions) => {
+        objects.forEach((object) => {
+          object.objectId = nanoid();
+        });
         const group = fabric.util.groupSVGElements(objects, svgOptions);
         group.set({
           scaleX: 10,
@@ -1305,17 +1308,22 @@ const buildEditor = ({
       canvas.requestRenderAll();
     },
 
-    changeFillColor: (value: string) => {
+    changeFillColor: (value, object) => {
       setFillColor(value);
-      canvas.getActiveObjects().forEach((object) => {
-        if (object.type === "group" && object instanceof fabric.Group) {
-          object.getObjects().forEach((child) => {
-            child.set({ fill: value });
-          });
-        } else {
-          object.set({ fill: value });
-        }
-      });
+
+      if (object) {
+        object.set({ fill: value });
+      } else {
+        canvas.getActiveObjects().forEach((object) => {
+          if (object.type === "group" && object instanceof fabric.Group) {
+            object.getObjects().forEach((child) => {
+              child.set({ fill: value });
+            });
+          } else {
+            object.set({ fill: value });
+          }
+        });
+      }
       canvas.requestRenderAll();
     },
     changeStrokeColor: (value: string) => {

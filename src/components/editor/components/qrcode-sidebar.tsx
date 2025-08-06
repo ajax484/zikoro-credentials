@@ -311,6 +311,62 @@ export const QRCodeSidebar = ({
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-6 p-4"
           >
+            <div>
+              <Label>Bar code function</Label>
+              <div className="relative w-full">
+                <Select
+                  onValueChange={(value) =>
+                    setBarCodeFunction(
+                      value as "verify" | "attribute" | "custom"
+                    )
+                  }
+                  value={barCodeFunction}
+                >
+                  <SelectTrigger className="w-full rounded-lg text-sm font-medium bg-transparent">
+                    <SelectValue placeholder={"Select function"} />
+                  </SelectTrigger>
+                  <SelectContent className="z-[1001]">
+                    <SelectItem value={"verify"}>Verify Credentials</SelectItem>
+                    {attributes.length > 0 && (
+                      <SelectItem value={"attribute"}>Attribute</SelectItem>
+                    )}
+                    <SelectItem value={"custom"}>Custom</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {barCodeFunction === "attribute" && (
+              <FormField
+                name={"text" as const}
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-gray-700">Attribute</FormLabel>
+                    <FormControl className="relative w-full">
+                      <Select
+                        onValueChange={(value) => field.onChange(value)}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="w-full rounded-lg text-sm font-medium bg-transparent">
+                          <SelectValue placeholder={"Select attribute"} />
+                        </SelectTrigger>
+                        <SelectContent className="z-[1001]">
+                          {attributes.map((attribute) => (
+                            <SelectItem
+                              value={`#{${attribute}#}`}
+                              key={attribute}
+                            >
+                              {attribute}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            )}
+
             <div className="flex justify-center items-center">
               {["text", "number"].map((type, index) => (
                 <button
@@ -347,31 +403,6 @@ export const QRCodeSidebar = ({
               )}
             />
 
-            <div>
-              <Label>Bar code function</Label>
-              <div className="relative w-full">
-                <Select
-                  onValueChange={(value) =>
-                    setBarCodeFunction(
-                      value as "verify" | "attribute" | "custom"
-                    )
-                  }
-                  value={barCodeFunction}
-                >
-                  <SelectTrigger className="w-full rounded-lg text-sm font-medium bg-transparent">
-                    <SelectValue placeholder={"Select function"} />
-                  </SelectTrigger>
-                  <SelectContent className="z-[1001]">
-                    <SelectItem value={"verify"}>Verify Credentials</SelectItem>
-                    {attributes.length > 0 && (
-                      <SelectItem value={"attribute"}>Attribute</SelectItem>
-                    )}
-                    <SelectItem value={"custom"}>Custom</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
             <FormField
               control={form.control}
               name="barCodeType"
@@ -405,36 +436,7 @@ export const QRCodeSidebar = ({
                 </FormItem>
               )}
             />
-            {barCodeFunction === "attribute" && (
-              <FormField
-                name={"text" as const}
-                render={({ field }) => (
-                  <FormItem className="space-y-1">
-                    <FormLabel className="text-gray-700">Attribute</FormLabel>
-                    <FormControl className="relative w-full">
-                      <Select
-                        onValueChange={(value) => field.onChange(value)}
-                        value={field.value}
-                      >
-                        <SelectTrigger className="w-full rounded-lg text-sm font-medium bg-transparent">
-                          <SelectValue placeholder={"Select attribute"} />
-                        </SelectTrigger>
-                        <SelectContent className="z-[1001]">
-                          {attributes.map((attribute) => (
-                            <SelectItem
-                              value={`#{${attribute}#}`}
-                              key={attribute}
-                            >
-                              {attribute}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            )}
+
             <Accordion type="multiple">
               <AccordionItem value="bg-color">
                 <AccordionTrigger>Background color</AccordionTrigger>

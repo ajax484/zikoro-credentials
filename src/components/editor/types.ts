@@ -110,6 +110,7 @@ export type ActiveTool =
   | "images"
   | "draw"
   | "fill"
+  | "svg-fill"
   | "stroke-color"
   | "stroke-width"
   | "font"
@@ -329,7 +330,7 @@ export interface Editor {
   moveObjectToIndex: (obj: fabric.Object, targetIndex: number) => void;
   clear: () => void;
   changeStrokeWidth: (value: number) => void;
-  changeFillColor: (value: string) => void;
+  changeFillColor: (value: string, object?: fabric.Object) => void;
   changeStrokeColor: (value: string) => void;
   changeStrokeDashArray: (value: number[]) => void;
   addHorizontalLine: () => void;
