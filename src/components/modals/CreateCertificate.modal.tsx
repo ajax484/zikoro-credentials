@@ -110,9 +110,10 @@ const CreateCertificateDialog = ({
 
   console.log(templates[0]?.JSON);
 
-  const [sizing, setSizing] = useState("custom");
-  const [width, setWidth] = useState(900);
-  const [height, setHeight] = useState(1200);
+  const defaultSize = paperSizes.find((size) => size.sizing === "a4");
+  const [width, setWidth] = useState(defaultSize?.width ?? 900);
+  const [height, setHeight] = useState(defaultSize?.height ?? 1200);
+  const [sizing, setSizing] = useState("a4");
 
   const [orientation, setOrientation] = useState<
     "portrait" | "landscape" | "default"

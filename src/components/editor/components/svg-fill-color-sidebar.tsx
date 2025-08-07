@@ -58,7 +58,7 @@ export const SVGFillColorSidebar = ({
       />
       <ScrollArea>
         <div className="space-y-8 p-4">
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-4 items-center flex-wrap">
             {selectedSVG.getObjects().map((child) => {
               const fill = child.get("fill") as string;
 

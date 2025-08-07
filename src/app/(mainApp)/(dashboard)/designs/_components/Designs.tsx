@@ -3,7 +3,11 @@ import React, { useRef, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import { useDeleteRequest, useGetData } from "@/hooks/services/request";
-import { CertificateTemplate, CredentialType, TCertificate } from "@/types/certificates";
+import {
+  CertificateTemplate,
+  CredentialType,
+  TCertificate,
+} from "@/types/certificates";
 import Link from "next/link";
 import Email from "@/public/icons/mdi_email-sent.svg";
 import Calendar from "@/public/icons/duo-icons_calendar.svg";
@@ -391,7 +395,7 @@ const Designs = () => {
                   setTemplate((prev) => ({
                     ...prev,
                     category: Array.isArray(value)
-                      ? value as string[]
+                      ? (value as string[])
                       : typeof value === "string"
                       ? [value]
                       : [],
