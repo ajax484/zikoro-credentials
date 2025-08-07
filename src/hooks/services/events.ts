@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import * as z from "zod";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { eventBookingValidationSchema, organizationSchema } from "@/schemas";
+import {  organizationSchema } from "@/schemas";
 import {
   Event,
   Organization,
@@ -817,78 +817,6 @@ export function useFetchSingleEvent(eventId: string) {
   };
 }
 
-export function useBookingEvent() {
-  const { user: userData } = useUserStore();
-  const [loading, setLoading] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(false);
-
-  async function registerAttendees(
-    eventTransactionRef: string,
-    values: z.infer<typeof eventBookingValidationSchema>,
-    eventId?: number,
-    eventAlias?: string,
-    attendants?: string | null,
-    paymentLink?: string
-  ) {
-    const { attendeeApplication } = values;
-
-    try {
-      const attendees = attendeeApplication.map((attendee) => {
-        return {
-          ...attendee,
-          eventId,
-          eventAlias,
-          attendeeType: [attendants],
-          registrationDate: new Date(),
-          paymentLink,
-          registrationCompleted: false,
-          eventRegistrationRef: eventTransactionRef,
-          userEmail: userData?.userEmail,
-        };
-      });
-
-      setLoading(true);
-      const { error, status } = await supabase
-        .from("attendees")
-        .upsert([...attendees]);
-      if (error) {
-        if (
-          error.message ===
-          `duplicate key value violates unique constraint "attendees_email_key"`
-        ) {
-          toast.error(
-            "You have already registered for this event. Kindly check your mail to continue."
-          );
-          // shadcnToast({variant:"destructive",description:"User has already registered for this event")
-        } else {
-          toast.error(error.message);
-        }
-        setIsRegistered(true);
-        return;
-      }
-
-      if (status === 201 || status === 200) {
-        setLoading(false);
-        setIsRegistered(false);
-        //  allowPayment(true);
-        toast.success(
-          "Attendees Information has been Captured. Proceed to Payment..."
-        );
-      }
-    } catch (error) {
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return {
-    registerAttendees,
-    loading,
-    isRegistered,
-  };
-}
-
 export function useTransactionDetail() {
   const [loading, setLoading] = useState(false);
   const { user: userData } = useUserStore();
@@ -1341,6 +1269,7 @@ export function useAttenedeeEvents() {
         String(attendee?.eventAlias)
       );
       const filtered = events?.filter((event) => {
+        
         // check if event ID in the attendees data and event ID in the events data correlate
         const isRegistered = mappedEventId?.includes(event?.eventAlias);
 
