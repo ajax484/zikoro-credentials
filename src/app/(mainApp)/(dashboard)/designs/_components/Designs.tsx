@@ -159,7 +159,15 @@ const Designs = () => {
       .reduce((acc, curr) => acc + curr.creditRemaining, 0),
   };
 
-  const Delete = ({ certificateAlias }: { certificateAlias: string }) => {
+  const Delete = ({
+    certificateAlias,
+    setDeleteDialog,
+    deleteDialog,
+  }: {
+    certificateAlias: string;
+    setDeleteDialog: React.Dispatch<React.SetStateAction<boolean>>;
+    deleteDialog: boolean;
+  }) => {
     const { mutateAsync: deleteCertificate, isPending: isDeleting } =
       useDeleteCertificate(certificateAlias);
 
@@ -170,16 +178,11 @@ const Designs = () => {
     const clsBtnRef = useRef<HTMLButtonElement>(null);
 
     return (
-      <Dialog>
-        <DialogTrigger asChild>
-          <button
-            className="w-full hover:bg-gray-100 text-red-700"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <span className="p-2">Delete</span>
-          </button>
-        </DialogTrigger>
-        <DialogContent className="px-4 py-6 z-[1000]">
+      <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
+        <DialogContent
+          className="px-4 py-6 z-[1000]"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
           <DialogHeader className="px-3">
             <DialogTitle></DialogTitle>
           </DialogHeader>
@@ -218,8 +221,8 @@ const Designs = () => {
               <Button
                 disabled={isDeleting}
                 onClick={async (e) => {
-                  clsBtnRef.current?.click();
                   await deleteCertificate();
+                  clsBtnRef.current?.click();
                 }}
                 className="bg-basePrimary w-full"
               >
@@ -443,6 +446,7 @@ const Designs = () => {
   const CertificateCard = ({ certificate }: { certificate: TCertificate }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [deleteDialog, setDeleteDialog] = useState(false);
     return (
       <div
         key={certificate.id}
@@ -588,13 +592,21 @@ const Designs = () => {
                 className="text-center p-2 hover:bg-gray-100 text-red-700"
                 onClick={(e) => {
                   e.stopPropagation();
+                  setDeleteDialog(true);
                   setDropdownOpen(false);
                 }}
               >
-                <Delete certificateAlias={certificate.certificateAlias} />
+                <button className="w-full hover:bg-gray-100 text-red-700">
+                  <span className="p-2">Delete</span>
+                </button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <Delete
+            certificateAlias={certificate.certificateAlias}
+            setDeleteDialog={setDeleteDialog}
+            deleteDialog={deleteDialog}
+          />
           <ConvertToTemplate
             certificateAlias={certificate.certificateAlias}
             setOpenDialog={setOpenDialog}

@@ -371,7 +371,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                       width={200}
                     />
                     {recentCertificate?.JSON && (
-                      <div className="absolute inset-0 p-2 bg-zikoroBlack/80 group-hover:flex hidden z-10 group-hover:gap-8 group-hover:justify-center group-hover:items-center rounded-lg">
+                      <div className="absolute inset-0 p-2 bg-black/80 group-hover:flex hidden z-10 group-hover:gap-8 group-hover:justify-center group-hover:items-center rounded-lg">
                         <div className="flex flex-col gap-2 items-center">
                           <div className="text-white font-medium text-center flex flex-col items-center gap-2">
                             <span className="text-sm">Continue editing</span>

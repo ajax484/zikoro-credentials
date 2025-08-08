@@ -159,18 +159,21 @@ const CreateCertificateDialog = ({
             <div className="flex flex-col gap-2 w-full">
               <label className="font-medium text-gray-700">Sizing</label>
               <Select
-                value={`${convertFromPixels(height, "cm")},${convertFromPixels(
-                  width,
-                  "cm"
-                )},${sizing}`}
+                value={sizing}
                 onValueChange={(value) => {
-                  const [height, width, sizing] = value.split(",");
+                  const paperSize = paperSizes.find(
+                    (size) => size.sizing === value
+                  );
+                  if (!paperSize) return;
+                  
+                  const { height, width, sizing } = paperSize;
                   const heightInPixels = convertToPixels(Number(height), "cm");
                   const widthInPixels = convertToPixels(Number(width), "cm");
                   setHeight(heightInPixels);
                   setWidth(widthInPixels);
                   setSizing(sizing);
                 }}
+                defaultValue={sizing}
               >
                 <SelectTrigger className="w-full rounded-lg text-sm font-medium bg-transparent">
                   <SelectValue placeholder="Select paper size" />
@@ -194,7 +197,7 @@ const CreateCertificateDialog = ({
                           return (
                             <SelectItem
                               key={sizing}
-                              value={`${height},${width},${sizing}`}
+                              value={sizing}
                               data-height={height}
                               data-width={width}
                             >
