@@ -162,7 +162,7 @@ const CreateCertificateDialog = ({
               </Select>
             </div>
 
-            <div className="flex flex-col gap-2 w-full">
+          <div className="flex flex-col gap-2 w-full">
               <label className="font-medium text-gray-700">Sizing</label>
               <Select
                 value={sizing}

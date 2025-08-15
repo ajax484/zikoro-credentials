@@ -13,4 +13,5 @@ export interface Directory {
 export type DirectoryRecipient = z.infer<typeof directoryRecipientSchema> & {
   directory_id: string;
   created_at: string;
+  id: number;
 };

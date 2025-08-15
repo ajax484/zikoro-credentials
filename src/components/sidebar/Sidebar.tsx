@@ -6,6 +6,7 @@ import Home from "@/public/icons/HouseLine.svg";
 import Design from "@/public/icons/Certificate.svg";
 import Analytics from "@/public/icons/ChartBar.svg";
 import Workspace from "@/public/icons/BuildingOffice.svg";
+import Directory from "@/public/icons/directory.svg";
 import Gift from "@/public/icons/ph_gift-duotone.svg";
 import Support from "@/public/icons/ic_twotone-contact-support.svg";
 import Star from "@/public/icons/ph_star-duotone.svg";
@@ -102,6 +103,12 @@ const navlinks: Navlinks[] = [
     restricted: ["create"],
   },
   {
+    name: "Directory",
+    href: "/directory",
+    Icon: Directory,
+    restricted: ["create", "assign"],
+  },
+  {
     name: "Analytics",
     href: "/analytics",
     Icon: Analytics,
@@ -138,11 +145,11 @@ const navlinks2: Navlinks[] = [
     Icon: Support,
     disabled: true,
   },
-  {
-    name: "Feedback",
-    href: "/feedback",
-    Icon: Star,
-  },
+  // {
+  //   name: "Feedback",
+  //   href: "/feedback",
+  //   Icon: Star,
+  // },
 ];
 
 const Sidebar = () => {
