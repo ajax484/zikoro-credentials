@@ -257,7 +257,7 @@ Event Team.`,
           recipientEmail: recipientEmail.trim(),
           recipientFirstName: recipientFirstName.trim(),
           recipientLastName: recipientLastName.trim(),
-          recipientAlias: recipientAlias.trim(),
+          recipientAlias: recipientAlias ? recipientAlias.trim() : null,
           profilePicture,
           logoUrl,
         })
