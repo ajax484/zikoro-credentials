@@ -138,7 +138,7 @@ const RecipientsPage = ({
     console.log(data);
     updateRecipients(
       data.recipients.map((recipient) => ({
-        recipientAlias: generateAlias(),
+        recipientAlias: null,
         ...recipient,
       }))
     );
