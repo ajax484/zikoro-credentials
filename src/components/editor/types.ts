@@ -241,9 +241,9 @@ export interface Editor {
     { width, height }: { width: number; height: number },
     name?: string
   ) => void;
-  savePng: () => void;
-  saveJpg: () => void;
-  saveSvg: () => void;
+  savePng: (name?: string) => void;
+  saveJpg: (name?: string) => void;
+  saveSvg: (name?: string) => void;
   saveJson: () => void;
   loadJson: (json: string) => void;
   loadJsonAsync: (json: string) => Promise<string>;

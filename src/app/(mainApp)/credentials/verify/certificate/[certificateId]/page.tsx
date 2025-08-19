@@ -444,7 +444,15 @@ const CertificateView = ({
                 </button>
                 <button
                   aria-label="Download png"
-                  onClick={() => editor?.savePng()}
+                  onClick={() =>
+                    editor?.savePng(
+                      `${
+                        certificate?.recipientFirstName +
+                        "_" +
+                        certificate?.recipientLastName
+                      }_${certificate?.originalCertificate.name}`
+                    )
+                  }
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -469,7 +477,15 @@ const CertificateView = ({
                 </button>
                 <button
                   aria-label="Download jpg"
-                  onClick={() => editor?.saveSvg()}
+                  onClick={() =>
+                    editor?.saveSvg(
+                      `${
+                        certificate?.recipientFirstName +
+                        "_" +
+                        certificate?.recipientLastName
+                      }_${certificate?.originalCertificate.name}`
+                    )
+                  }
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

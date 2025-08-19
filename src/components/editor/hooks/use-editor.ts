@@ -213,23 +213,23 @@ const buildEditor = ({
     autoZoom();
   };
 
-  const savePng = () => {
+  const savePng = (name?: string) => {
     const options = generateSaveOptions();
 
     canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
     const dataUrl = canvas.toDataURL(options);
 
-    downloadFile(dataUrl, "png");
+    downloadFile(dataUrl, "png", name);
     autoZoom();
   };
 
-  const saveSvg = () => {
+  const saveSvg = (name?: string) => {
     const options = generateSaveOptions();
 
     canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
     const dataUrl = canvas.toDataURL(options);
 
-    downloadFile(dataUrl, "svg");
+    downloadFile(dataUrl, "svg", name);
     autoZoom();
   };
 
