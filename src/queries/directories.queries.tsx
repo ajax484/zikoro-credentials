@@ -40,7 +40,7 @@ export function useFetchDirectoryRecipients(
   directoryAlias: string
 ) {
   const { data, isFetching, status, error, refetch } = useQuery({
-    queryKey: ["directory", directoryAlias],
+    queryKey: ["directory recipients", directoryAlias],
     queryFn: async () => {
       const { data, status } = await getRequest<DirectoryRecipient[]>({
         endpoint:

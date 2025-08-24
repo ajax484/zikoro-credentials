@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import InputOffsetLabel from "@/components/InputOffsetLabel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DirectoryRecipient } from "@/types/directories";
 import { directoryRecipientSchema } from "@/schemas/directory";
 import {
@@ -31,9 +31,11 @@ import { useRouter } from "next/navigation";
 export default function AddRecipientForm({
   onClose,
   directoryAlias,
+  recipient,
 }: {
   directoryAlias: string;
   onClose: () => void;
+  recipient?: DirectoryRecipient;
 }) {
   const router = useRouter();
   const { organization } = useOrganizationStore();
@@ -63,14 +65,31 @@ export default function AddRecipientForm({
 
   console.log(errors);
 
+  useEffect(() => {
+    if (recipient) {
+      form.setValue("first_name", recipient.first_name);
+      form.setValue("last_name", recipient.last_name);
+      form.setValue("email", recipient.email);
+      form.setValue("phone", recipient.phone);
+      form.setValue("twitter", recipient.twitter);
+      form.setValue("linkedIn", recipient.linkedIn);
+      form.setValue("instagram", recipient.instagram);
+      form.setValue("facebook", recipient.facebook);
+    }
+  }, [recipient]);
+
   async function onSubmit(data: z.infer<typeof directoryRecipientSchema>) {
     console.log(data);
 
-    const directoryRecipient = await createDirectoryRecipient(data);
+    const directoryRecipient = await createDirectoryRecipient(
+      recipient ? { ...recipient, ...data } : data
+    );
 
-    if (directoryRecipient) {
-      router.push(`/workspaces/directory/${directoryRecipient.directoryAlias}`);
-    }
+    // if (directoryRecipient) {
+    //   router.push(
+    //     `directory/${directoryAlias}/recipients/${directoryRecipient.recipientAlias}`
+    //   );
+    // }
 
     console.log(directoryRecipient);
     onClose();
@@ -167,7 +186,7 @@ export default function AddRecipientForm({
             />
             <FormField
               control={form.control}
-              name="linkedin"
+              name="linkedIn"
               render={({ field }) => (
                 <InputOffsetLabel
                   label="LinkedIn"

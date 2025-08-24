@@ -41,8 +41,9 @@ export function useCreateDirectoryRecipient(
       >(
         {
           predicate: (query) =>
-            query.queryKey.includes("directory recipients") &&
-            query.queryKey.includes(organizationAlias),
+            (query.queryKey.includes("directory recipients") &&
+              query.queryKey.includes(directoryAlias)) ||
+            query.queryKey.includes(DirectoryRecipient.recipientAlias),
         },
         (oldData) => {
           if (!oldData) return oldData;

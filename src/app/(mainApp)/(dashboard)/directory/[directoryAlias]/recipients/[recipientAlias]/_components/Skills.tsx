@@ -1,17 +1,32 @@
-import React from "react";
+import { DirectoryRecipient } from "@/types/directories";
+import { set } from "date-fns";
+import React, { use, useEffect, useState } from "react";
 
-const skills = [
-  "Communication",
-  "Leadership",
-  "Teamwork",
-  "Problem Solving",
-  "Time Management",
-  "Decision Making",
-  "Creativity",
-  "Adaptability",
-];
+const Skills = ({ recipient }: { recipient: DirectoryRecipient }) => {
+  // extract skills into {label, count}
+  const [skills, setSkills] = useState<{ label: string; count: number }[]>([]);
 
-const Skills = () => {
+  useEffect(() => {
+    const extractSkills = () => {
+      if (!recipient?.assignedCertificates?.length) {
+        return [];
+      }
+
+      const skillCounts = recipient.assignedCertificates.reduce((acc, curr) => {
+        curr.certificate?.certificateSettings.skills.forEach((skill) => {
+          const value = skill.value;
+          acc.set(value, (acc.get(value) || 0) + 1);
+        });
+        console.log(acc);
+        return acc;
+      }, new Map());
+
+      return Array.from(skillCounts, ([label, count]) => ({ label, count }));
+    };
+
+    setSkills(extractSkills());
+  }, [recipient]);
+
   return (
     <div className="flex justify-center">
       <div className="flex justify-center gap-2 flex-wrap w-1/2">
@@ -20,7 +35,7 @@ const Skills = () => {
             key={index}
             className="rounded-xl text-zikoroBlack px-2 py-1 border"
           >
-            {skill}
+            {skill.label}
           </div>
         ))}
       </div>

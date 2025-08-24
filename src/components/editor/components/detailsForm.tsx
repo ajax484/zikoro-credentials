@@ -26,6 +26,9 @@ import { paperSeries, paperSizes } from "./settings-sidebar";
 import { convertFromPixels, convertToPixels } from "@/utils/helpers";
 import { Editor } from "../types";
 import { ArrowUpDownIcon } from "lucide-react";
+import CustomInput from "@/components/CustomInput";
+import { Calendar } from "@phosphor-icons/react";
+import { format } from "date-fns";
 
 interface DetailsFormProps {
   onChangeSettings: (settings: any) => void;
@@ -46,6 +49,13 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
   const [skills, setSkills] = useState<{ value: string; color: string }[]>(
     settings.skills
   );
+  const [issueDate, setIssueDate] = useState<Date | null>(settings.issueDate);
+  const [expiryDate, setExpiryDate] = useState<Date | null>(
+    settings.expiryDate
+  );
+  console.log(settings.expiryDate, settings.issueDate);
+  const [cpdPoints, setCpdPoints] = useState<number>(settings.cpdPoints);
+  const [cpdHours, setCpdHours] = useState<number>(settings.cpdHours);
 
   const [newSkill, setNewSkill] = useState<string>("");
   const [color, setColor] = useState<string>("");
@@ -172,42 +182,116 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
           </Select>
         </div>
 
+        {/* issue date */}
+        <div>
+          <CustomInput
+            label="Issue Date"
+            append={<Calendar size={16} weight="bold" />}
+          >
+            <Input
+              type="date"
+              value={issueDate ? format(issueDate, "yyyy-MM-dd") : ""}
+              onChange={(e) => {
+                setIssueDate(new Date(e.target.value));
+                onChangeSettings({
+                  issueDate: new Date(e.target.value),
+                });
+              }}
+              className="!border-none !shadow-none placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+            />
+          </CustomInput>
+        </div>
+
+        {/* expiry date */}
+        <div>
+          <CustomInput
+            label="Expiry Date"
+            append={<Calendar size={16} weight="bold" />}
+          >
+            <Input
+              type="date"
+              value={expiryDate ? format(expiryDate, "yyyy-MM-dd") : ""}
+              onChange={(e) => {
+                setExpiryDate(new Date(e.target.value));
+                onChangeSettings({
+                  expiryDate: new Date(e.target.value),
+                });
+              }}
+              className="!border-none !shadow-none placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+            />
+          </CustomInput>
+        </div>
+
+        {/* cpd points */}
+        <div>
+          <CustomInput label="CPD Points">
+            <Input
+              type="number"
+              value={cpdPoints}
+              onChange={(e) => {
+                setCpdPoints(parseInt(e.target.value));
+                onChangeSettings({
+                  cpdPoints: parseInt(e.target.value),
+                });
+              }}
+              className="!border-none !shadow-none placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+            />
+          </CustomInput>
+        </div>
+
+        {/* cpd hours */}
+        <div>
+          <CustomInput label="CPD Hours">
+            <Input
+              type="number"
+              value={cpdHours}
+              onChange={(e) => {
+                setCpdHours(parseInt(e.target.value));
+                onChangeSettings({
+                  cpdHours: parseInt(e.target.value),
+                });
+              }}
+              className="!border-none !shadow-none placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+            />
+          </CustomInput>
+        </div>
+
         <UnitSwitcher />
 
         {/* Height Input */}
-        <div className="flex flex-col gap-2 w-full">
-          <label className="font-medium text-gray-700">Height</label>
+        <CustomInput label="Height">
           <Input
             value={convertFromPixels(height, unit)}
             onChange={(e) => handleDimensionChange("height", e.target.value)}
             type="number"
+            className="!border-none !shadow-none placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
           />
-        </div>
+        </CustomInput>
 
         {/* Swap Button */}
-        <button
-          aria-label="Swap width and height"
-          onClick={() => {
-            const newWidth = height;
-            const newHeight = width;
-            setWidth(newWidth);
-            setHeight(newHeight);
-            editor?.changeSize({ width: newWidth, height: newHeight });
-          }}
-        >
-          <ArrowUpDownIcon className="w-6 h-6" />
-        </button>
+        <div className="flex items-center justify-center">
+          <button
+            aria-label="Swap width and height"
+            onClick={() => {
+              const newWidth = height;
+              const newHeight = width;
+              setWidth(newWidth);
+              setHeight(newHeight);
+              editor?.changeSize({ width: newWidth, height: newHeight });
+            }}
+          >
+            <ArrowUpDownIcon className="w-6 h-6" />
+          </button>
+        </div>
 
-           <div className="flex flex-col gap-2 w-full">
-          <label className="font-medium text-gray-700">
-            Width
-          </label>
+        <CustomInput label="Width">
           <Input
             value={convertFromPixels(width, unit)}
             onChange={(e) => handleDimensionChange("width", e.target.value)}
             type="number"
+            className="!border-none !shadow-none placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
           />
-        </div>
+        </CustomInput>
       </div>
       <div className="flex flex-col gap-2 w-full">
         <label className="font-medium text-gray-700">Skills:</label>

@@ -68,6 +68,9 @@ export interface TCertificateSettings {
   description: string;
   sizing: string;
   unit: string;
+  cpdPoints: number;
+  cpdHours: number;
+  issueDate: Date;
 }
 
 export type TFullCertificate = TAttendeeCertificate & {

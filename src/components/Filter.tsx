@@ -6,6 +6,14 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
@@ -13,6 +21,8 @@ import { FilterOptionsProps, FilterProps } from "@/types/filter";
 import React, { useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import { Button } from "./ui/button";
+import { Funnel } from "@phosphor-icons/react";
 
 function MultipleFilter<T>({
   filter,
@@ -317,37 +327,56 @@ function Filter<T>({
   filters,
   applyFilter,
   selectedFilters,
+  type = "menu",
 }: FilterProps<T>) {
   console.log(selectedFilters);
   return (
     <div className={className}>
-      <Menubar className="flex justify-between px-1 border-0 !bg-transparent">
-        {filters.map((filter, index) => {
-          const { label, accessor, options, icon } = filter;
-          return (
-            <MenubarMenu key={accessor as unknown as string}>
-              <MenubarTrigger
-                className={cn(
-                  "flex gap-0.5 items-center w-full min-w-fit justify-center px-0.5 !bg-transparent",
-                  index > 0 && "border-l-[1px]"
-                )}
-              >
-                {icon}
-                <span className="text-xs font-medium text-gray-700 capitalize">
-                  {label}
-                </span>
-              </MenubarTrigger>
-              <MenubarContent className="space-y-2 w-fit max-h-[250px] overflow-auto">
-                <FilterOptions<T>
-                  filter={filter}
-                  selectedFilters={selectedFilters}
-                  applyFilter={applyFilter}
-                />
-              </MenubarContent>
-            </MenubarMenu>
-          );
-        })}
-      </Menubar>
+      {type === "menu" ? (
+        <Menubar className="flex justify-between px-1 border-0 !bg-transparent">
+          {filters.map((filter, index) => {
+            const { label, accessor, options, icon } = filter;
+            return (
+              <MenubarMenu key={accessor as unknown as string}>
+                <MenubarTrigger
+                  className={cn(
+                    "flex gap-0.5 items-center w-full min-w-fit justify-center px-0.5 !bg-transparent",
+                    index > 0 && "border-l-[1px]"
+                  )}
+                >
+                  {icon}
+                  <span className="text-xs font-medium text-gray-700 capitalize">
+                    {label}
+                  </span>
+                </MenubarTrigger>
+                <MenubarContent className="space-y-2 w-fit max-h-[250px] overflow-auto">
+                  <FilterOptions<T>
+                    filter={filter}
+                    selectedFilters={selectedFilters}
+                    applyFilter={applyFilter}
+                  />
+                </MenubarContent>
+              </MenubarMenu>
+            );
+          })}
+        </Menubar>
+      ) : (
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Button>
+              <Funnel size={16} className="text-zikoroGray" weight="bold" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Billing</DropdownMenuItem>
+            <DropdownMenuItem>Team</DropdownMenuItem>
+            <DropdownMenuItem>Subscription</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
       {selectedFilters.length > 0 && (
         <div className="flex gap-2 flex-wrap px-2 justify-center">
           {selectedFilters.map(({ label, key }) => (

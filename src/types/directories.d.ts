@@ -1,5 +1,6 @@
 import { directoryRecipientSchema } from "@/schemas/directory";
 import { z } from "zod";
+import { CertificateRecipient, TCertificate } from "./certificates";
 
 export interface Directory {
   organizationAlias: string;
@@ -14,4 +15,7 @@ export type DirectoryRecipient = z.infer<typeof directoryRecipientSchema> & {
   directory_id: string;
   created_at: string;
   id: number;
+  assignedCertificates: (CertificateRecipient & {
+    certificate: TCertificate;
+  })[];
 };

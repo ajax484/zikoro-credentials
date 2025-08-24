@@ -11,7 +11,9 @@ export async function GET(
     try {
       const { data, error, status } = await supabase
         .from("directoryrecipient")
-        .select("*")
+        .select(
+          "*, assignedCertificates:certificateRecipients!inner(*, certificate!inner(*))"
+        )
         .eq("directoryAlias", directoryAlias);
 
       console.log(data, directoryAlias);
@@ -40,7 +42,10 @@ export async function GET(
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request,
+  { params: { workspaceId } }: { params: { workspaceId: number } }
+) {
   const supabase = createRouteHandlerClient({ cookies });
   const payload = await request.json();
   console.log(payload);
@@ -49,15 +54,76 @@ export async function POST(request: Request) {
     const { data, error } = await supabase
       .from("directoryrecipient")
       .upsert(payload)
-      .select("*")
+      .select(
+        "*"
+      )
       .maybeSingle();
 
+    console.log(data);
+
     if (error) throw error;
+
+    if (!payload.id) {
+      //fetch all certificate id from certificate table with workspaceId
+      const { data: certificateIds, error: certificateError } = await supabase
+        .from("certificate")
+        .select("id")
+        .eq("workspaceAlias", workspaceId);
+
+      if (certificateError) throw certificateError;
+
+      const IDs = certificateIds.map((certificate) => parseInt(certificate.id));
+      console.log(IDs);
+      // update recipientAlias to certificates with same email
+      const { data: recipients, error: recipientError } = await supabase
+        .from("certificateRecipients")
+        .update({ recipientAlias: data.recipientAlias })
+        .eq("recipientEmail", data.email)
+        .in("certificateGroupId", IDs);
+
+      if (recipientError) throw recipientError;
+    }
 
     return NextResponse.json(
       { data },
       {
         status: 201,
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      {
+        error: "An error occurred while making the request.",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+
+// delete all
+export async function DELETE(
+  request: Request,
+  { params: { directoryAlias } }: { params: { directoryAlias: number } }
+) {
+  const supabase = createRouteHandlerClient({ cookies });
+
+  try {
+    const { data, error } = await supabase
+      .from("directoryrecipient")
+      .delete()
+      .eq("directoryAlias", directoryAlias);
+
+    if (error) throw error;
+
+    return NextResponse.json(
+      {
+        data,
+      },
+      {
+        status: 200,
       }
     );
   } catch (error) {

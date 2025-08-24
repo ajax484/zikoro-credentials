@@ -59,6 +59,7 @@ const RecipientsPage = ({
   recipients: RecipientType;
   updateRecipients: (recipients: RecipientType) => void;
 }) => {
+  console.log(mainRecipients);
   const form = useForm<z.infer<typeof recipientSchema>>({
     resolver: zodResolver(recipientSchema),
     defaultValues: {

@@ -6,6 +6,7 @@ export interface FilterProps<T> {
   applyFilter: applyFilterProps<T>;
   filters: TFilter<T>[];
   selectedFilters: TSelectedFilter<T>[];
+  type?: "dropdown" | "menu";
 }
 
 export type TSelectedFilter<T> = {

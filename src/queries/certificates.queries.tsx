@@ -54,16 +54,9 @@ export function useFetchWorkspaceCertificates(
   searchTerm: string
 ) {
   const { data, isFetching, status, error, refetch } = useQuery({
-    queryKey: [
-      "certificates",
-      workspaceAlias,
-      pagination,
-      searchTerm,
-    ],
+    queryKey: ["certificates", workspaceAlias, pagination, searchTerm],
     queryFn: async () => {
-      const { data, status } = await getRequest<
-        PaginatedData<TCertificate>
-      >({
+      const { data, status } = await getRequest<PaginatedData<TCertificate>>({
         endpoint: `/workspaces/${workspaceAlias}/certificates?limit=${pagination.limit}&page=${pagination.page}&searchTerm=${searchTerm}`,
       });
 
@@ -128,12 +121,7 @@ export function useFetchWorkspaceCertificatesRecipients(
   searchTerm: string
 ) {
   const { data, isFetching, status, error, refetch } = useQuery({
-    queryKey: [
-      "workspace recipients",
-      workspaceAlias,
-      pagination,
-      searchTerm,
-    ],
+    queryKey: ["workspace recipients", workspaceAlias, pagination, searchTerm],
     queryFn: async () => {
       const { data, status } = await getRequest<
         PaginatedData<CertificateRecipient>
@@ -330,6 +318,54 @@ export function useFetchCertificateTemplates() {
 
   return {
     data: data || [],
+    isFetching,
+    status,
+    error,
+    refetch,
+  };
+}
+
+export function useFetchRecipientCertificates(
+  organizationAlias: string,
+  directoryAlias: string,
+  recipientAlias: string,
+  pagination: { page: number; limit: number },
+  searchTerm: string
+) {
+  const { data, isFetching, status, error, refetch } = useQuery({
+    queryKey: [
+      "certificates recipients",
+      recipientAlias,
+      pagination,
+      searchTerm,
+    ],
+    queryFn: async () => {
+      const { data, status } = await getRequest<
+        PaginatedData<CertificateRecipient & { certificate: TCertificate }>
+      >({
+        endpoint: `/workspaces/${organizationAlias}/directories/${directoryAlias}/recipients/${recipientAlias}/credentials?limit=${pagination.limit}&page=${pagination.page}&searchTerm=${searchTerm}`,
+      });
+
+      if (status !== 200) {
+        toast.error(data.error);
+        throw new Error(data.error);
+      }
+
+      console.log(data.data);
+
+      return data.data;
+    },
+    placeholderData: keepPreviousData,
+  });
+
+  return {
+    data: data || {
+      data: [],
+      limit: pagination.limit,
+      total: 0,
+      totalPages: 0,
+      page: pagination.page,
+    },
     isFetching,
     status,
     error,
