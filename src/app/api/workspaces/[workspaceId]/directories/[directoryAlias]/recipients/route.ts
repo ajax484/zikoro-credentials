@@ -62,14 +62,7 @@ export async function POST(
 
     console.log(data);
 
-    if (error) {
-      return NextResponse.json(
-        { error: error.details },
-        {
-          status: 500,
-        }
-      );
-    }
+    if (error) throw new Error(error.details);
 
     returnedData = data;
 
@@ -120,7 +113,10 @@ export async function POST(
     console.error(error);
     return NextResponse.json(
       {
-        error: "An error occurred while making the request.",
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? (error as { message: string }).message
+            : "An error occurred while making the request.",
       },
       {
         status: 500,
