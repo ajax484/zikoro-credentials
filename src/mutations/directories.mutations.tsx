@@ -41,9 +41,9 @@ export function useCreateDirectoryRecipient(
       >(
         {
           predicate: (query) =>
-            (query.queryKey.includes("directory recipients") &&
-              query.queryKey.includes(directoryAlias)) ||
-            query.queryKey.includes(DirectoryRecipient.recipientAlias),
+            query.queryKey.includes("directory recipients") &&
+            (query.queryKey.includes(directoryAlias) ||
+              query.queryKey.includes(DirectoryRecipient.recipientAlias)),
         },
         (oldData) => {
           if (!oldData) return oldData;
@@ -79,7 +79,7 @@ export function useCreateDirectoryRecipient(
       // Update toast to error
       toastId &&
         toast.update(toastId, {
-          render: "Failed to add recipient. Please try again.",
+          render: error.message,
           type: "error",
           isLoading: false,
           autoClose: 3000,

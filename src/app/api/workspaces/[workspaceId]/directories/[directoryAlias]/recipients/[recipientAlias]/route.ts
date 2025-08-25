@@ -14,7 +14,7 @@ export async function GET(
       const { data, error, status } = await supabase
         .from("directoryrecipient")
         .select(
-          "*, assignedCertificates:certificateRecipients!inner(*, certificates:certificate!inner(*))"
+          "*, assignedCertificates:certificateRecipients(*, certificate(*))"
         )
         .eq("recipientAlias", recipientAlias)
         .maybeSingle();

@@ -11,6 +11,7 @@ import { TFilter } from "@/types/filter";
 import { extractUniqueTypes } from "@/utils/helpers";
 import { Calendar } from "@phosphor-icons/react";
 import { format } from "date-fns";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -74,9 +75,11 @@ const Credentials = ({ recipient }: { recipient: DirectoryRecipient }) => {
       <div className="rounded-md border bg-white">
         <div className="p-2 border-b">
           <div className="flex justify-between mb-1">
-            <h2 className="font-semibold capitalize">
-              {credential.certificate.name}
-            </h2>
+            <Link href={`/assign/admin/view/${credential.certificateId}`}>
+              <h2 className="font-semibold capitalize hover:underline">
+                {credential.certificate.name}
+              </h2>
+            </Link>
             <div className="rounded-xl text-white bg-gray-700 px-2 py-1 text-xs h-fit">
               {credential.certificate.certificateSettings.cpdPoints || 0} Points
             </div>

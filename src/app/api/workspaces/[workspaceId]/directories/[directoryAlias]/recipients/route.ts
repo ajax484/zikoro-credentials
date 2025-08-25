@@ -54,7 +54,7 @@ export async function POST(
     let returnedData = {};
     const { data, error } = await supabase
       .from("directoryrecipient")
-      .upsert(payload)
+      .upsert(payload, { onConflict: "email" })
       .select(
         "*, assignedCertificates:certificateRecipients(*, certificate(*))"
       )
@@ -62,7 +62,16 @@ export async function POST(
 
     console.log(data);
 
-    if (error) throw error;
+    if (error) {
+      return NextResponse.json(
+        { error: error.details },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    returnedData = data;
 
     if (!payload.id) {
       //fetch all certificate id from certificate table with workspaceId

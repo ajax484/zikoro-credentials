@@ -75,26 +75,33 @@ export default function AddRecipientForm({
       form.setValue("linkedIn", recipient.linkedIn);
       form.setValue("instagram", recipient.instagram);
       form.setValue("facebook", recipient.facebook);
+      form.setValue("recipientAlias", recipient.recipientAlias);
     }
   }, [recipient]);
 
   async function onSubmit(data: z.infer<typeof directoryRecipientSchema>) {
     console.log(data);
 
-    const directoryRecipient = await createDirectoryRecipient(
-      recipient ? { ...recipient, ...data } : data
-    );
+    let payload;
+    if (recipient) {
+      const { assignedCertificates, ...existingRecipient } = recipient;
+      payload = { ...existingRecipient, ...data };
+    } else {
+      payload = data;
+    }
 
-    // if (directoryRecipient) {
+    const updatedRecipient = await createDirectoryRecipient(payload);
+
+    console.log(updatedRecipient);
+
+    // if (updatedRecipient) {
     //   router.push(
-    //     `directory/${directoryAlias}/recipients/${directoryRecipient.recipientAlias}`
+    //     `directory/${directoryAlias}/recipients/${updatedRecipient.recipientAlias}`
     //   );
     // }
 
-    console.log(directoryRecipient);
     onClose();
   }
-
   const [profilePictureIsUploading, setProfilePictureUploading] =
     useState(false);
 
