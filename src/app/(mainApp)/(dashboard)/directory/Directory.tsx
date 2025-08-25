@@ -106,10 +106,12 @@ const Directory = () => {
             <span className="text-zikoroGray">Last certified:</span>
             <span>
               {/* most recent certificate */}
-              {format(
-                new Date(recipient.assignedCertificates[0]?.created_at),
-                "dd MMM, yyyy"
-              ) || "N/A"}
+              {recipient?.assignedCertificates.length > 0
+                ? format(
+                    new Date(recipient.assignedCertificates[0]?.created_at),
+                    "dd MMM, yyyy"
+                  )
+                : "N/A"}
             </span>
           </div>
           <div className="flex gap-2 flex-wrap mb-2">
@@ -404,7 +406,7 @@ const Directory = () => {
             <span className="font-semibold text-[40px]">
               {/* count of all recipients certificates */}
               {recipients?.reduce(
-                (acc, curr) => acc + curr.assignedCertificates.length,
+                (acc, curr) => acc + (curr?.assignedCertificates.length || 0),
                 0
               ) || 0}
             </span>

@@ -12,7 +12,7 @@ export async function GET(
       const { data, error, status } = await supabase
         .from("directoryrecipient")
         .select(
-          "*, assignedCertificates:certificateRecipients!inner(*, certificate!inner(*))"
+          "*, assignedCertificates:certificateRecipients(*, certificate(*))"
         )
         .eq("directoryAlias", directoryAlias);
 
@@ -51,11 +51,12 @@ export async function POST(
   console.log(payload);
 
   try {
+    let returnedData = {};
     const { data, error } = await supabase
       .from("directoryrecipient")
       .upsert(payload)
       .select(
-        "*"
+        "*, assignedCertificates:certificateRecipients(*, certificate(*))"
       )
       .maybeSingle();
 
@@ -74,6 +75,7 @@ export async function POST(
 
       const IDs = certificateIds.map((certificate) => parseInt(certificate.id));
       console.log(IDs);
+
       // update recipientAlias to certificates with same email
       const { data: recipients, error: recipientError } = await supabase
         .from("certificateRecipients")
@@ -82,10 +84,25 @@ export async function POST(
         .in("certificateGroupId", IDs);
 
       if (recipientError) throw recipientError;
+
+      console.log(data.recipientAlias);
+      const { data: updatedRecipient, error: updatedError } = await supabase
+        .from("directoryrecipient")
+        .select(
+          "*, assignedCertificates:certificateRecipients(*, certificate(*))"
+        )
+        .eq("recipientAlias", data.recipientAlias)
+        .maybeSingle();
+
+      console.log(updatedRecipient);
+
+      if (updatedError) throw updatedError;
+
+      returnedData = updatedRecipient;
     }
 
     return NextResponse.json(
-      { data },
+      { data: returnedData },
       {
         status: 201,
       }
