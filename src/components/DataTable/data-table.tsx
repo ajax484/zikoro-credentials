@@ -22,6 +22,7 @@ import {
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import Pagination from "../Pagination";
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
