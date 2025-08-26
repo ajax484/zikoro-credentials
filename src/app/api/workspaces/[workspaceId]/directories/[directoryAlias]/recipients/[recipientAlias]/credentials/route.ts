@@ -32,9 +32,11 @@ export async function GET(
     query.eq("recipientAlias", recipientAlias);
 
     if (searchTerm) {
-      query = query.or(
-        `recipientFirstName.ilike.%${searchTerm}%,recipientLastName.ilike.%${searchTerm}%,recipientEmail.ilike.%${searchTerm}%,status.ilike.%${searchTerm}%`
-      );
+      query
+        .or(
+          `recipientFirstName.ilike.%${searchTerm}%,recipientLastName.ilike.%${searchTerm}%,recipientEmail.ilike.%${searchTerm}%,status.ilike.%${searchTerm}%,recipientAlias.ilike.%${searchTerm}%`
+        )
+        .or(`certificate(name).ilike.%${searchTerm}%`);
     }
 
     if (limit) {

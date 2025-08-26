@@ -2,8 +2,14 @@
 import useUserStore from "@/store/globalUserStore";
 import { Directory, DirectoryRecipient } from "@/types/directories";
 import { TOrganization } from "@/types/organization";
+import { PaginatedData } from "@/types/request";
 import { getRequest } from "@/utils/api";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 export function useFetchDirectory(organizationAlias: string) {
@@ -37,12 +43,16 @@ export function useFetchDirectory(organizationAlias: string) {
 
 export function useFetchDirectoryRecipients(
   organizationAlias: string,
-  directoryAlias: string
+  directoryAlias: string,
+  pagination: { page: number; limit: number },
+  searchTerm: string
 ) {
   const { data, isFetching, status, error, refetch } = useQuery({
-    queryKey: ["directory recipients", directoryAlias],
+    queryKey: ["directory recipients", directoryAlias, pagination, searchTerm],
     queryFn: async () => {
-      const { data, status } = await getRequest<DirectoryRecipient[]>({
+      const { data, status } = await getRequest<
+        PaginatedData<DirectoryRecipient>
+      >({
         endpoint:
           "/workspaces/" +
           organizationAlias +
@@ -60,10 +70,17 @@ export function useFetchDirectoryRecipients(
 
       return data.data;
     },
+    placeholderData: keepPreviousData,
   });
 
   return {
-    data: data || [],
+    data: data || {
+      data: [],
+      limit: pagination.limit,
+      total: 0,
+      totalPages: 0,
+      page: pagination.page,
+    },
     isFetching,
     status,
     error,

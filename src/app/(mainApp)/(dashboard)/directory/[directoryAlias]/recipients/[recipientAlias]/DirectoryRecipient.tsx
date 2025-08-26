@@ -246,7 +246,7 @@ const DirectoryRecipient = ({
 
   const [isShareDialog, toggleShareDialog] = useState(false);
 
-  console.log(recipient);
+  console.log(recipient?.assignedCertificates.map((c) => c.certificateGroupId));
   return (
     <section className="space-y-8">
       <section className="border-b py-4 flex items-center justify-between">

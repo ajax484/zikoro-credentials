@@ -91,7 +91,9 @@ export default function RootLayout({
       </head>
 
       <body className={`${montserrat.className} antialiased`}>
-        <ToastContainer />
+        <ToastContainer 
+          
+        />
         <Toaster />
         <MainLayout>{children}</MainLayout>
       </body>

@@ -9,19 +9,53 @@ export async function GET(
   const supabase = createRouteHandlerClient({ cookies });
   if (req.method === "GET") {
     try {
-      const { data, error, status } = await supabase
+      const supabase = createRouteHandlerClient({ cookies });
+      const { searchParams } = new URL(req.url || "");
+      const searchTerm = searchParams.get("searchTerm");
+      const page = parseInt(searchParams.get("page") || "1", 10);
+      const limitQuery = searchParams.get("limit");
+
+      const limit = limitQuery
+        ? parseInt(searchParams.get("limit") || "10", 10)
+        : null;
+
+      let query = supabase
         .from("directoryrecipient")
         .select(
           "*, assignedCertificates:certificateRecipients(*, certificate(*))"
         )
         .eq("directoryAlias", directoryAlias);
 
+      if (searchTerm) {
+        query.or(
+          `first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%,recipientAlias.ilike.%${searchTerm}%`
+        );
+      }
+
+      if (limit) {
+        const from = (page - 1) * limit;
+        const to = from + limit - 1;
+        query.range(from, to);
+      }
+
+      const { data, error, count } = await query.order("created_at", {
+        ascending: false,
+      });
+
       console.log(data, directoryAlias);
 
       if (error) throw error;
 
       return NextResponse.json(
-        { data },
+        {
+          data: {
+            data,
+            page,
+            limit,
+            total: count || 0,
+            totalPages: Math.ceil((count || 0) / limit),
+          },
+        },
         {
           status: 200,
         }
@@ -54,7 +88,7 @@ export async function POST(
     let returnedData = {};
     const { data, error } = await supabase
       .from("directoryrecipient")
-      .upsert(payload, { onConflict: "email" })
+      .upsert(payload)
       .select(
         "*, assignedCertificates:certificateRecipients(*, certificate(*))"
       )
@@ -62,7 +96,11 @@ export async function POST(
 
     console.log(data);
 
-    if (error) throw new Error(error.details);
+    console.log(error);
+
+    if (error) {
+      return NextResponse.json({ error: error.details }, { status: 400 });
+    }
 
     returnedData = data;
 
@@ -113,10 +151,7 @@ export async function POST(
     console.error(error);
     return NextResponse.json(
       {
-        error:
-          typeof error === "object" && error !== null && "message" in error
-            ? (error as { message: string }).message
-            : "An error occurred while making the request.",
+        error: "An error occurred while making the request.",
       },
       {
         status: 500,

@@ -1,4 +1,5 @@
 import Filter from "@/components/Filter";
+import Pagination from "@/components/Pagination";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFilter } from "@/hooks";
@@ -33,6 +34,14 @@ const Credentials = ({ recipient }: { recipient: DirectoryRecipient }) => {
   const [pagination, setPagination] = useState<{ page: number; limit: number }>(
     { page: 1, limit: 10 }
   );
+
+  const updatePage = (page: number) => {
+    setPagination({ page, limit: 10 });
+  };
+
+  const updateLimit = (limit: number) => {
+    setPagination({ page: 1, limit });
+  };
 
   // Ensure directoryAlias is a string
   const safeDirectoryAlias =
@@ -186,6 +195,7 @@ const Credentials = ({ recipient }: { recipient: DirectoryRecipient }) => {
         <Input
           placeholder="Search credential"
           onInput={(e) => setSearchTerm(e.currentTarget.value)}
+          value={searchTerm}
           className="border-none !border-b"
         />
         {/* <Filter
@@ -211,6 +221,12 @@ const Credentials = ({ recipient }: { recipient: DirectoryRecipient }) => {
           ))
         )}
       </div>
+      <Pagination
+        totalDocs={credentials.total}
+        currentPage={credentials.page}
+        setCurrentPage={updatePage}
+        limit={credentials.limit}
+      />
     </section>
   );
 };

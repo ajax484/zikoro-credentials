@@ -41,6 +41,7 @@ import { Button } from "@/components/ui/button";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { convertCamelToNormal } from "@/utils/helpers";
 import * as XLSX from "xlsx";
+import Pagination from "@/components/Pagination";
 
 const Directory = () => {
   const { organization } = useOrganizationStore();
@@ -50,13 +51,28 @@ const Directory = () => {
     organization?.organizationAlias!
   );
 
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [pagination, setPagination] = useState<{ page: number; limit: number }>(
+    { page: 1, limit: 10 }
+  );
+
+  const updatePage = (page: number) => {
+    setPagination({ page, limit: 10 });
+  };
+
+  const updateLimit = (limit: number) => {
+    setPagination({ page: 1, limit });
+  };
+
   const {
     data: recipients,
     isFetching: recipientsIsFetching,
     refetch,
   } = useFetchDirectoryRecipients(
     organization?.organizationAlias!,
-    directory?.directoryAlias!
+    directory?.directoryAlias!,
+    pagination,
+    searchTerm
   );
   console.log(recipients);
 
@@ -295,6 +311,7 @@ const Directory = () => {
   const [isRecipientDialog, toggleRecipientDialog] = useState(false);
   const [isExportDialog, toggleExportDialog] = useState(false);
   const [isShareDialog, toggleShareDialog] = useState(false);
+
   return (
     <section className="space-y-8">
       <section className="border-b py-4 flex justify-end items-center">
@@ -396,7 +413,7 @@ const Directory = () => {
         <div className="border rounded-md flex">
           <div className="flex flex-col gap-1 px-2 py-2 border-r flex-1">
             <span className="font-semibold text-[40px]">
-              {recipients?.length || 0}
+              {recipients.total || 0}
             </span>
             <span className="text-sm text-zikoroGray">
               Total members listed
@@ -405,7 +422,7 @@ const Directory = () => {
           <div className="flex flex-col gap-1 px-2 py-2 border-r flex-1">
             <span className="font-semibold text-[40px]">
               {/* count of all recipients certificates */}
-              {recipients?.reduce(
+              {recipients.data?.reduce(
                 (acc, curr) => acc + (curr?.assignedCertificates.length || 0),
                 0
               ) || 0}
@@ -428,6 +445,8 @@ const Directory = () => {
         <div className="w-3/4">
           <Input
             placeholder="Search member name"
+            onInput={(e) => setSearchTerm(e.currentTarget.value)}
+            value={searchTerm}
             className="border-none !border-b"
           />
         </div>
@@ -435,14 +454,22 @@ const Directory = () => {
           <div>Loading...</div>
         ) : (
           <>
-            {recipients.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-                {recipients.map((recipient) => (
-                  <DirectoryRecipient
-                    key={recipient.id}
-                    recipient={recipient}
-                  />
-                ))}
+            {recipients.data.length > 0 ? (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                  {recipients.data.map((recipient) => (
+                    <DirectoryRecipient
+                      key={recipient.id}
+                      recipient={recipient}
+                    />
+                  ))}
+                </div>
+                <Pagination
+                  totalDocs={recipients.total}
+                  currentPage={recipients.page}
+                  setCurrentPage={updatePage}
+                  limit={recipients.limit}
+                />
               </div>
             ) : (
               <div className="flex flex-col justify-center items-center gap-4 p-4">
@@ -450,7 +477,8 @@ const Directory = () => {
                   No members found
                 </p>
                 <p className="text-zikoroBlack text-sm">
-                  Add members to your directory to start issuing credentials
+                  Add members to your directory to see how many credentials they
+                  have received from your organization.
                 </p>
                 <Dialog
                   open={isRecipientDialog}
