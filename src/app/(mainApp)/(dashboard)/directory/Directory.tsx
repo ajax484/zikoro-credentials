@@ -172,7 +172,13 @@ const Directory = () => {
     ) => {
       const omittedFields: (keyof (CertificateRecipient & {
         certificate: TCertificate;
-      }))[] = ["certificateId", "certificateGroupId", "id", "statusDetails"];
+      }))[] = [
+        "certificateId",
+        "certificateGroupId",
+        "id",
+        "statusDetails",
+        "recipientAlias",
+      ];
 
       const normalizedData = convertCamelToNormal<
         CertificateRecipient & {
