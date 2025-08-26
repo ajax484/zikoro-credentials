@@ -58,7 +58,8 @@ export function useFetchDirectoryRecipients(
           organizationAlias +
           "/directories/" +
           directoryAlias +
-          "/recipients",
+          "/recipients" +
+          `?limit=${pagination.limit}&page=${pagination.page}&searchTerm=${searchTerm}`,
       });
 
       if (status !== 200) {
