@@ -1,5 +1,5 @@
 import React from "react";
-import CreateCredentialsPage from "./CreateCredentialsPage";
+import EditCredentialsPage from "./EditCredentialsPage";
 
 export const metadata = {
   title: "Credentials - Create",
@@ -20,7 +20,7 @@ const page = ({
 }) => {
   console.log(params);
   return (
-    <CreateCredentialsPage
+    <EditCredentialsPage
       alias={params.alias}
       workspaceId={searchParams.workspaceId}
       eventAlias={searchParams.eventAlias}

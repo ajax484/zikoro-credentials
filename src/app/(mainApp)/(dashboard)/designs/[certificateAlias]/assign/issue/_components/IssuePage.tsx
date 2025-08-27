@@ -6,11 +6,17 @@ import { TCertificate } from "@/types/certificates";
 import SendEmail from "./SendEmail";
 import { useRecipientsStore } from "@/store/globalRecipientsStore";
 
-const IssuePage = ({ alias, from }: { alias: string; from: string }) => {
+const IssuePage = ({
+  certificateAlias,
+  from,
+}: {
+  certificateAlias: string;
+  from: string;
+}) => {
   const [page, setPage] = useState<number>(0);
   const [recipients, setRecipients] = useState<RecipientType>([]);
   const { data: certificate, isLoading } = useGetData<TCertificate>(
-    `/certificates/${alias}`,
+    `/certificates/${certificateAlias}`,
     true
   );
 

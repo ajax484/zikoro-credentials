@@ -58,7 +58,7 @@ const SelectAttendee = ({
       }))
     );
     router.push(
-      `/designs/certificate/${certificateAlias}/issue?from=fromEvent`
+      `/designs/certificate/${certificateAlias}/assign/issue?from=fromEvent`
     );
   };
 

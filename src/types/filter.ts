@@ -1,5 +1,19 @@
+// Improved useFilter types/interfaces (renamed for clarity to filter.types.ts or similar)
 import React from "react";
-import { DateRange } from "react-day-picker";
+
+export type DotPrefix<T extends string> = T extends "" ? "" : `.${T}`;
+
+export type DotNestedKeys<T> = (
+  T extends object
+    ? {
+        [K in Exclude<keyof T, symbol>]: `${K}${DotPrefix<
+          DotNestedKeys<T[K]>
+        >}`;
+      }[Exclude<keyof T, symbol>]
+    : ""
+) extends infer D
+  ? Extract<D, string>
+  : never;
 
 export interface FilterProps<T> {
   className?: string;
@@ -7,19 +21,20 @@ export interface FilterProps<T> {
   filters: TFilter<T>[];
   selectedFilters: TSelectedFilter<T>[];
   type?: "dropdown" | "menu";
+  showLabels: boolean;
 }
 
 export type TSelectedFilter<T> = {
-  key: keyof T;
+  key: DotNestedKeys<T>;
   label: string;
-  value: DateRange | any[] | any;
+  value: Date | [Date, Date] | number[] | string[] | string | boolean;
   type?: TFilterType;
   onFilter: onFilterProps<T> | null;
 };
 
 export interface TFilter<T> {
   options?: TOption[];
-  accessor: keyof T;
+  accessor: DotNestedKeys<T>;
   label: string;
   onFilter?: onFilterProps<T>;
   type?: TFilterType;
@@ -28,7 +43,7 @@ export interface TFilter<T> {
   optionsFromData?: boolean;
   icon?: React.ReactNode;
   order?: number;
-  defaultValue?: T[keyof T];
+  defaultValue?: TSelectedFilter<T>["value"];
 }
 
 export type TFilterType =
@@ -48,9 +63,9 @@ export type TOption = {
 export type onFilterProps<T> = (data: T, value: any[] | any) => boolean;
 
 export type applyFilterProps<T> = (
-  key: keyof T,
+  key: DotNestedKeys<T>,
   label: string,
-  value: unknown,
+  value: TSelectedFilter<T>["value"],
   onFilter?: onFilterProps<T>,
   type?: TFilterType
 ) => void;

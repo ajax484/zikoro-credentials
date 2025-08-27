@@ -16,7 +16,7 @@ import {
 } from "@/utils/helpers";
 import { TCertificateSettings } from "@/types/certificates";
 
-const CreateCredentialsPage = ({
+const EditCredentialsPage = ({
   alias,
   workspaceId,
   eventAlias,
@@ -204,4 +204,4 @@ const CreateCredentialsPage = ({
   );
 };
 
-export default CreateCredentialsPage;
+export default EditCredentialsPage;

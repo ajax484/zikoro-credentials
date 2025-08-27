@@ -3,6 +3,7 @@ interface PaginationProps {
   currentPage: number;
   setCurrentPage: (page: number) => void;
   limit: number;
+  isLoading: boolean;
 }
 
 const Pagination = ({
@@ -10,6 +11,7 @@ const Pagination = ({
   currentPage,
   setCurrentPage,
   limit,
+  isLoading = false,
 }: PaginationProps) => {
   const totalPages = Math.ceil(totalDocs / limit);
 
@@ -74,7 +76,7 @@ const Pagination = ({
       <div className="flex justify-center items-center rounded-lg w-fit gap-2 max-w-[50vw] mx-auto">
         {/* Previous Button */}
         <button
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || isLoading}
           onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
           className={`w-10 h-10 flex justify-center items-center font-medium transition-all text-gray-600 disabled:text-gray-400 bg-white hover:bg-gray-50 rounded-l-md text-xs border`}
         >
@@ -92,6 +94,7 @@ const Pagination = ({
             </span>
           ) : (
             <button
+              disabled={isLoading}
               key={index}
               onClick={() => setCurrentPage(page)}
               className={`w-10 h-10 flex justify-center items-center text-xs font-medium transition-all border rounded-lg ${
@@ -107,7 +110,7 @@ const Pagination = ({
 
         {/* Next Button */}
         <button
-          disabled={currentPage === totalPages}
+          disabled={currentPage === totalPages || isLoading}
           onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
           className={`w-10 h-10 flex justify-center items-center font-medium transition-all text-gray-600 disabled:text-gray-400 bg-white hover:bg-gray-50 rounded-r-md text-xs border`}
         >

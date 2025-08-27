@@ -101,7 +101,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
     if (!data) return;
 
     router.push(
-      `/credentials/create/${data.certificateAlias}?type=certificate&workspaceId=${workspace.id}`
+      `/credentials/edit/${data.certificateAlias}?type=certificate&workspaceId=${workspace.id}`
     );
   };
 
@@ -401,7 +401,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                   className="size-[250px] justify-center items-center p-8 border-basePrimary/10 border relative group bg-[#f7f8f9] rounded-lg"
                   href={
                     recentCertificate?.JSON
-                      ? "/credentials/create/" +
+                      ? "/credentials/edit/" +
                         recentCertificate.certificateAlias +
                         "?type=certificate&workspaceId=" +
                         organization?.id +
@@ -453,7 +453,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                           <Link
                             href={
                               recentCertificate?.JSON
-                                ? "/credentials/create/" +
+                                ? "/credentials/edit/" +
                                   recentCertificate.certificateAlias +
                                   "?type=certificate&workspaceId=" +
                                   organization?.id +

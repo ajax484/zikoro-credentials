@@ -44,6 +44,7 @@ import { useFetchWorkspaces } from "@/queries/Workspaces.queries";
 import {
   useFetchCertificates,
   useFetchCertificateTemplates,
+  useFetchWorkspaceCertificates,
 } from "@/queries/certificates.queries";
 import CreateCertificateDialog from "@/components/modals/CreateCertificate.modal";
 import {
@@ -72,11 +73,42 @@ import {
   paperSizes,
 } from "@/components/editor/components/settings-sidebar";
 import { COLORS } from "@/components/editor/types";
-import { X } from "@phosphor-icons/react";
+import {
+  DotsThreeOutlineVertical,
+  PaperPlane,
+  Pencil,
+  Plus,
+  PlusCircle,
+  X,
+} from "@phosphor-icons/react";
 import ReactSelect from "react-select";
 import GradientBorderSelect from "@/components/GradientBorderSelect";
+import PaperPlaneIcon from "@/public/icons/PaperPlaneTilt_assign.svg";
+import CertificateIcon from "@/public/icons/Certificate_assign.svg";
+import IDBadgeIcon from "@/public/icons/idBadge_assign.svg";
+import TagIcon from "@/public/icons/Tag_assign.svg";
+import PackageIcon from "@/public/icons/Package_assign.svg";
+import CancelIcon from "@/public/icons/ProhibitInset_assign.svg";
+import { cn } from "@/lib/utils";
+import { da } from "date-fns/locale";
+import Pagination from "@/components/Pagination";
 
 const categories = ["first", "second", "third", "fourth", "fifth"];
+
+const CredentialTypeIcon: Record<CredentialType, string> = {
+  certificate: CertificateIcon,
+  badge: IDBadgeIcon,
+  "product label": TagIcon,
+  "shipping label": PackageIcon,
+};
+
+const creditTypeClassName = {
+  silver:
+    "[background:_linear-gradient(121.67deg,_#B6C0D6_22.73%,_rgba(107,_106,_123,_0.84)_79.34%),_linear-gradient(0deg,_rgba(0,_0,_0,_0.1),_rgba(0,_0,_0,_0.1));]",
+  gold: "[background:_linear-gradient(147.61deg,_#FFE092_12.55%,_#E3A302_86.73%);]",
+  bronze:
+    "[background:_linear-gradient(340.48deg,_#87704F_13.94%,_#CBC6C5_83.24%);]",
+};
 
 const Designs = () => {
   const { user, setUser } = useUserStore();
@@ -119,29 +151,38 @@ const Designs = () => {
     if (!data) return;
 
     router.push(
-      `/credentials/create/${data.certificateAlias}?type=${data.credentialType}&workspaceId=${workspace.id}`
+      `/credentials/edit/${data.certificateAlias}?type=${data.credentialType}&workspaceId=${workspace.id}`
     );
   };
 
-  console.log(organization);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const [pagination, setPagination] = useState<{ page: number; limit: number }>(
+    { page: 1, limit: 10 }
+  );
+
+  const updatePage = (page: number) => {
+    setPagination({ page, limit: 10 });
+  };
+
+  const updateLimit = (limit: number) => {
+    setPagination({ page: 1, limit });
+  };
 
   const { data: certificates, isFetching: certificatesIsLoading } =
-    useFetchCertificates(organization?.organizationAlias!);
+    useFetchWorkspaceCertificates(
+      organization?.organizationAlias!,
+      pagination,
+      searchTerm
+    );
+
+  console.log(certificates);
 
   const { data: credits, isLoading: creditsIsLoading } = useGetData<
     CredentialsWorkspaceToken[]
   >(`/workspaces/${organization?.id}/credits`, []);
 
   console.log(credits);
-
-  const {
-    searchTerm,
-    searchedData: filteredCertificates,
-    setSearchTerm,
-  } = useSearch<TCertificate>({
-    data: certificates || [],
-    accessorKey: ["name"],
-  });
 
   const [open, setOpen] = useState(false);
 
@@ -171,7 +212,7 @@ const Designs = () => {
     const { mutateAsync: deleteCertificate, isPending: isDeleting } =
       useDeleteCertificate(certificateAlias);
 
-    const certificate = filteredCertificates.find(
+    const certificate = certificates?.data?.find(
       (certificate) => certificate.certificateAlias === certificateAlias
     );
 
@@ -201,7 +242,7 @@ const Designs = () => {
                   fill="#001FCC"
                 />
               </svg>
-              <div className="text-gray-800 font-medium flex flex-col gap-2 text-center">
+              <div className="text-zikoroBlack font-medium flex flex-col gap-2 text-center">
                 <span>
                   Are you sure you want to delete {certificate?.name}? This will
                   delete all related issued certificates.
@@ -260,7 +301,7 @@ const Designs = () => {
   }) => {
     const { mutateAsync: createTemplate, isPending: isCreating } =
       useCreateTemplate();
-    const certificate = filteredCertificates.find(
+    const certificate = certificates?.data?.find(
       (certificate) => certificate.certificateAlias === certificateAlias
     );
 
@@ -450,7 +491,7 @@ const Designs = () => {
     return (
       <div
         key={certificate.id}
-        className="rounded-lg border border-gray-200 bg-white group"
+        className="rounded-lg border border-gray-200 bg-white group relative"
       >
         <div className="h-[250px] w-full bg-gray-200 relative">
           {certificate?.previewUrl && (
@@ -461,11 +502,11 @@ const Designs = () => {
               layout="fill"
             />
           )}
-          <div className="absolute inset-0 p-2 bg-black/50 group-hover:flex hidden z-10 group-hover:gap-8 group-hover:justify-center group-hover:items-center">
+          {/* <div className="absolute inset-0 p-2 bg-black/50 group-hover:flex hidden z-10 group-hover:gap-8 group-hover:justify-center group-hover:items-center">
             <Link
               className="text-gray-50 hover:text-basePrimary"
               href={
-                "/credentials/create/" +
+                "/credentials/edit/" +
                 certificate.certificateAlias +
                 "?type=certificate&workspaceId=" +
                 organization?.id +
@@ -501,37 +542,72 @@ const Designs = () => {
                 />
               </svg>
             </Link>
-          </div>
+          </div> */}
         </div>
-        <div className="flex items-center gap-2 p-2">
-          <div className="flex-1 space-y-2">
-            <p className="font-medium text-gray-700 text-sm capitalize">
+        <div className="relative pr-8">
+          <div key={certificate.id} className="group p-2">
+            <h2 className="font-semibold text-zikoroBlack text-sm capitalize mb-2">
               {certificate.name}
-            </p>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1">
+            </h2>
+            <div className="flex items-center justify-between text-sm mb-4">
+              <div className="flex items-center gap-1 flex-1">
                 <Image
-                  src={Email}
-                  alt={"email"}
-                  width={20}
-                  height={20}
+                  src={
+                    CredentialTypeIcon[
+                      certificate.credentialType ?? "certificate"
+                    ]
+                  }
+                  alt={"credential type"}
+                  width={16}
+                  height={16}
                   className="rounded-full"
                 />
-                <p className="text-xs text-gray-600">
-                  {certificate?.recipientCount}
+                <p className="text-zikoroGray flex-1">
+                  {certificate.credentialType ?? "certificate"}
                 </p>
               </div>
-              <div className="flex items-center gap-1">
-                <Image
-                  src={Calendar}
-                  alt={"calendar"}
-                  width={20}
-                  height={20}
-                  className="rounded-full"
+              <div className="flex items-center gap-1 flex-1">
+                <div
+                  className={cn(
+                    "rounded-full size-4 [box-shadow:_0px_8px_12px_0px_#C2AF9B66;]",
+                    creditTypeClassName[
+                      certificate?.attributes &&
+                      certificate?.attributes.length > 0
+                        ? "gold"
+                        : certificate?.hasQRCode
+                        ? "silver"
+                        : "bronze"
+                    ]
+                  )}
                 />
-                <p className="text-xs text-gray-600">
-                  {format(certificate.created_at, "dd/MM/yyyy")}
+                <p className="text-zikoroGray capitalize flex-1">
+                  {certificate?.attributes && certificate?.attributes.length > 0
+                    ? "gold"
+                    : certificate?.hasQRCode
+                    ? "silver"
+                    : "bronze"}
                 </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between divide-x-2">
+              <div className="flex items-center gap-1 flex-1">
+                <Image
+                  src={PaperPlaneIcon}
+                  alt={"email"}
+                  width={16}
+                  height={16}
+                />
+                <span className="text-sm text-zikoroBlack">
+                  {certificate?.recipientCount}
+                </span>
+                <span className="text-sm text-zikoroGray">Issued</span>
+              </div>
+              <div className="flex items-center gap-1 pl-2 flex-1">
+                <Image src={CancelIcon} alt={"cancel"} width={16} height={16} />
+                <span className="text-sm text-zikoroBlack">
+                  {certificate?.failedRecipientCount}
+                </span>
+                <span className="text-sm text-zikoroGray">Cancelled</span>
               </div>
             </div>
           </div>
@@ -539,23 +615,13 @@ const Designs = () => {
             <DropdownMenuTrigger asChild>
               <button
                 aria-label="More options"
-                className="p-2 z-[10] rotate-90"
+                className="p-2 z-[10] absolute top-0 right-0"
               >
-                <svg
-                  stroke="currentColor"
-                  fill="currentColor"
-                  strokeWidth={0}
-                  viewBox="0 0 16 16"
-                  height="1.5em"
-                  width="1.5em"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M3 9.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <DotsThreeOutlineVertical
+                  size={16}
+                  className="text-zikoroBlack"
+                  weight="regular"
+                />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -613,13 +679,37 @@ const Designs = () => {
             openDialog={openDialog}
           />
         </div>
+        <div className="flex justify-center items-center p-2 gap-1">
+          <Link
+            href={`/credentials/edit/${certificate.certificateAlias}?type=${certificate.credentialType}&workspaceId=${organization?.id}`}
+            className="border rounded-md flex justify-center items-center gap-2 bg-white px-4 py-2 text-sm text-zikoroGray w-full"
+          >
+            <Pencil size={16} className="text-zikoroGray" weight="bold" />
+            Edit
+          </Link>
+          <Link
+            href={`/designs/${certificate.certificateAlias}/assign`}
+            className="border rounded-md flex justify-center items-center gap-2 bg-white px-4 py-2 text-sm text-zikoroGray w-full"
+          >
+            <PaperPlane size={16} className="text-zikoroGray" weight="bold" />
+            Issue
+          </Link>
+        </div>
       </div>
     );
   };
 
   return (
     <div className="w-full">
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center mb-12">
+        <div>
+          <h1 className="text-xl text-zikoroBlack font-semibold">
+            All Credentials
+          </h1>
+          <p className="text-zikoroGray text-sm">
+            Easily view, issue and update all your credentials
+          </p>
+        </div>
         <SelectOrganization />
       </div>
       {/* <div className="bg-basePrimary/10 text-[#1F1F1F] px-1 py-4 rounded-xl space-y-2 border w-1/2 mx-auto my-6">
@@ -657,7 +747,7 @@ const Designs = () => {
             </div>
           </div>
         </div>
-        <p className="text-center font-medium text-gray-800 text-sm">
+        <p className="text-center font-medium text-zikoroBlack text-sm">
           You need credits to issue credentials.
         </p>
         <Link
@@ -667,127 +757,101 @@ const Designs = () => {
           Buy more credits
         </Link>
       </div> */}
-      <Tabs defaultValue="certificates" className="w-full">
-        <TabsList className="flex mx-auto w-2/5 border my-6">
-          <TabsTrigger
-            className="w-full data-[state=active]:bg-blue-700 group data-[state=active]:text-white flex gap-2"
-            value="certificates"
-          >
-            <span>Certificates</span>
-            <span className="rounded-full text-sm items-center justify-center group-data-[state=active]:bg-white group-data-[state=active]:text-blue-700 px-3 py-1 bg-gray-300 text-gray-600">
-              {certificates?.length}
-            </span>
-          </TabsTrigger>
-          <TabsTrigger
-            className="w-full data-[state=active]:bg-blue-700 data-[state=active]:text-white"
-            value="badges"
-            disabled
-          >
-            Badges (coming soon)
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="certificates">
-          {!certificatesIsLoading && certificates?.length === 0 ? (
-            <>
-              <div className="flex flex-col justify-center items-center h-[250px] gap-4">
-                <div className="bg-basePrimary rounded-full p-6">
-                  <Image
-                    src={Nib}
-                    alt="nib"
-                    width={30}
-                    height={30}
-                    className="rounded-full"
-                  />
-                </div>
-                <GradientText className="font-bold text-2xl" Tag={"h1"}>
-                  No certificates found
-                </GradientText>
-                <p className="text-gray-800 text-sm font-medium">
-                  Get started by creating your first certificate
-                </p>
-                <CreateCertificateDialog
-                  open={open}
-                  setOpen={setOpen}
-                  createCertificateFn={createCertificateFn}
-                  certificateIsCreating={certificateIsCreating}
-                  setDialogIsOpen={() => {
-                    setOpen(false);
-                    setDialogIsOpen(true);
-                  }}
-                  workspaces={workspaces}
-                  workspacesIsLoading={workspacesIsLoading}
-                  triggerButton={
-                    <Button
-                      type="button"
-                      className="bg-basePrimary text-white"
-                      disabled={certificateIsCreating}
-                    >
-                      Start Creating
-                    </Button>
-                  }
-                />
-              </div>
-            </>
+      <div className="flex justify-between items-center gap-4 mb-8">
+        <input
+          type="text"
+          placeholder="Search"
+          value={searchTerm}
+          onInput={(event) => setSearchTerm(event.currentTarget.value)}
+          className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 w-1/3 border-b focus-visible:outline-none mx-auto"
+        />
+        <CreateCertificateDialog
+          open={open}
+          setOpen={setOpen}
+          createCertificateFn={createCertificateFn}
+          certificateIsCreating={certificateIsCreating}
+          setDialogIsOpen={() => {
+            setOpen(false);
+            setDialogIsOpen(true);
+          }}
+          workspaces={workspaces}
+          workspacesIsLoading={workspacesIsLoading}
+          triggerButton={
+            <Button
+              type="button"
+              className="bg-basePrimary text-white flex items-center gap-2 justify-center"
+              disabled={certificateIsCreating}
+            >
+              <PlusCircle size={24} className="text-white" weight="bold" />
+              New Credential
+            </Button>
+          }
+        />
+      </div>
+      {!certificatesIsLoading && certificates?.data?.length === 0 ? (
+        <>
+          <div className="flex flex-col justify-center items-center h-[250px] gap-4">
+            <div className="bg-basePrimary rounded-full p-6">
+              <Image
+                src={Nib}
+                alt="nib"
+                width={30}
+                height={30}
+                className="rounded-full"
+              />
+            </div>
+            <GradientText className="font-bold text-2xl" Tag={"h1"}>
+              No certificates found
+            </GradientText>
+            <p className="text-zikoroBlack text-sm font-medium">
+              Get started by creating your first certificate
+            </p>
+            <CreateCertificateDialog
+              open={open}
+              setOpen={setOpen}
+              createCertificateFn={createCertificateFn}
+              certificateIsCreating={certificateIsCreating}
+              setDialogIsOpen={() => {
+                setOpen(false);
+                setDialogIsOpen(true);
+              }}
+              workspaces={workspaces}
+              workspacesIsLoading={workspacesIsLoading}
+              triggerButton={
+                <Button
+                  type="button"
+                  className="bg-basePrimary text-white"
+                  disabled={certificateIsCreating}
+                >
+                  Start Creating
+                </Button>
+              }
+            />
+          </div>
+        </>
+      ) : (
+        <div className="grid grid-cols-4 gap-8 mb-4">
+          {certificatesIsLoading ? (
+            <div>Loading...</div>
           ) : (
             <>
-              <div className="flex justify-between items-center">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  value={searchTerm}
-                  disabled={certificatesIsLoading}
-                  onInput={(event) => setSearchTerm(event.currentTarget.value)}
-                  className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 mb-6 w-1/3 mx-auto border-b focus-visible:outline-none"
+              {certificates?.data?.map((certificate) => (
+                <CertificateCard
+                  key={certificate.id}
+                  certificate={certificate}
                 />
-              </div>
-              <div className="grid grid-cols-4 gap-8 mb-4">
-                {certificatesIsLoading ? (
-                  <div>Loading...</div>
-                ) : (
-                  <>
-                    <CreateCertificateDialog
-                      open={open}
-                      setOpen={setOpen}
-                      createCertificateFn={createCertificateFn}
-                      certificateIsCreating={certificateIsCreating}
-                      setDialogIsOpen={() => {
-                        setOpen(false);
-                        setDialogIsOpen(true);
-                      }}
-                      workspaces={workspaces}
-                      workspacesIsLoading={workspacesIsLoading}
-                      triggerButton={
-                        <button
-                          disabled={certificateIsCreating}
-                          className="rounded-lg border bg-white flex flex-col items-center justify-center gap-2 min-h-[250px]"
-                        >
-                          <Image
-                            src={Solar}
-                            alt={"solar"}
-                            width={30}
-                            height={30}
-                            className="rounded-full"
-                          />
-                          <span className="text-sm text-basePrimary">
-                            Create New
-                          </span>
-                        </button>
-                      }
-                    />
-                    {filteredCertificates?.map((certificate) => (
-                      <CertificateCard
-                        key={certificate.id}
-                        certificate={certificate}
-                      />
-                    ))}
-                  </>
-                )}
-              </div>
+              ))}
             </>
           )}
-        </TabsContent>
-        <TabsContent value="badges">Change your password here.</TabsContent>
-      </Tabs>
+        </div>
+      )}
+      <Pagination
+        totalDocs={certificates.total}
+        currentPage={certificates.page}
+        setCurrentPage={updatePage}
+        limit={certificates.limit!}
+        isLoading={certificatesIsLoading}
+      />
       {dialogIsOpen && (
         <CreateOrganization
           refetch={refetchWorkspaces}

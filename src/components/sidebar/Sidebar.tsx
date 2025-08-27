@@ -96,12 +96,12 @@ const navlinks: Navlinks[] = [
     Icon: Design,
     restricted: ["assign"],
   },
-  {
-    name: "Assign",
-    href: "/assign",
-    Icon: Assign,
-    restricted: ["create"],
-  },
+  // {
+  //   name: "Assign",
+  //   href: "/assign",
+  //   Icon: Assign,
+  //   restricted: ["create"],
+  // },
   {
     name: "Directory",
     href: "/directory",

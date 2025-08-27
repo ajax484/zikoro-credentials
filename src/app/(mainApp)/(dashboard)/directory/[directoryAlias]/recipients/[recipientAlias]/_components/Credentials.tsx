@@ -3,26 +3,46 @@ import Pagination from "@/components/Pagination";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFilter } from "@/hooks";
-import useSearch from "@/hooks/common/useSearch";
 import { useFetchRecipientCertificates } from "@/queries/certificates.queries";
 import useOrganizationStore from "@/store/globalOrganizationStore";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { DirectoryRecipient } from "@/types/directories";
 import { TFilter } from "@/types/filter";
 import { extractUniqueTypes } from "@/utils/helpers";
-import { Calendar } from "@phosphor-icons/react";
+import { Calendar, Certificate, Clock, Star } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 const credentialsFilter: TFilter<CertificateRecipient>[] = [
   {
     label: "Issue Date",
     accessor: "created_at",
-    // icon: <Calendar />,
+    icon: <Calendar size={16} className="text-zikoroGray" weight="bold" />,
     type: "dateSingle",
     order: 1,
+  },
+  {
+    label: "CPD Points",
+    accessor: "certificate.certificateSettings.cpdPoints",
+    icon: <Star size={16} className="text-zikoroGray" weight="bold" />,
+    type: "slider",
+    order: 2,
+  },
+  {
+    label: "CPD Hours",
+    accessor: "certificate.certificateSettings.cpdHours",
+    icon: <Clock size={16} className="text-zikoroGray" weight="bold" />,
+    type: "slider",
+    order: 3,
+  },
+  {
+    label: "Expiration Date",
+    accessor: "certificate.certificateSettings.expirationDate",
+    icon: <Calendar size={16} className="text-zikoroGray" weight="bold" />,
+    type: "dateSingle",
+    order: 4,
   },
 ];
 
@@ -32,7 +52,10 @@ const Credentials = ({ recipient }: { recipient: DirectoryRecipient }) => {
   const { directoryAlias } = params;
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [pagination, setPagination] = useState<{ page: number; limit: number }>(
-    { page: 1, limit: 10 }
+    {
+      page: 1,
+      limit: 10,
+    }
   );
 
   const updatePage = (page: number) => {
@@ -49,31 +72,47 @@ const Credentials = ({ recipient }: { recipient: DirectoryRecipient }) => {
       ? directoryAlias
       : directoryAlias?.[0] ?? "";
 
-  const {
-    data: credentials,
-    isFetching: credentialsIsLoading,
-    refetch,
-  } = useFetchRecipientCertificates(
-    organization?.organizationAlias!,
-    safeDirectoryAlias,
-    recipient?.recipientAlias!,
-    pagination,
-    searchTerm
+  const [searchParams, setSearchParams] = useState<
+    {
+      key: string;
+      value: any;
+    }[]
+  >();
+
+  const { data: credentials, isFetching: credentialsIsLoading } =
+    useFetchRecipientCertificates(
+      organization?.organizationAlias!,
+      safeDirectoryAlias,
+      recipient?.recipientAlias!,
+      pagination,
+      searchTerm,
+      searchParams
+    );
+
+  const { filters, applyFilter, selectedFilters } = useFilter({
+    data: credentials?.data ?? [],
+    dataFilters: credentialsFilter,
+  });
+
+  console.log(selectedFilters);
+
+  useEffect(() => {
+    setSearchParams(
+      selectedFilters.map((f) => ({
+        key: f.key,
+        value: f.value,
+      }))
+    );
+  }, [selectedFilters]);
+
+  // Memoize sorted filters to avoid re-sorting on every render
+  const sortedFilters = useMemo(
+    () =>
+      [...filters].sort(
+        (a, b) => (a.order ?? Infinity) - (b.order ?? Infinity)
+      ),
+    [filters]
   );
-
-  console.log(credentials.data);
-
-  // useEffect(() => {
-  //   if (credentialsIsLoading) return;
-  //   filters
-  //     .filter((filter) => filter.optionsFromData)
-  //     .forEach(({ accessor }) => {
-  //       setOptions(
-  //         accessor,
-  //         extractUniqueTypes<CertificateRecipient>(credentials.data, accessor)
-  //       );
-  //     });
-  // }, [credentialsIsLoading]);
 
   type CredentialProps = {
     credential: CertificateRecipient & { certificate: TCertificate };
@@ -84,7 +123,9 @@ const Credentials = ({ recipient }: { recipient: DirectoryRecipient }) => {
       <div className="rounded-md border bg-white">
         <div className="p-2 border-b">
           <div className="flex justify-between mb-1">
-            <Link href={`/assign/admin/view/${credential.certificateId}`}>
+            <Link
+              href={`/designs/${credential.certificate.certificateAlias}/recipients/${credential.certificateId}`}
+            >
               <h2 className="font-semibold capitalize hover:underline">
                 {credential.certificate.name}
               </h2>
@@ -107,24 +148,22 @@ const Credentials = ({ recipient }: { recipient: DirectoryRecipient }) => {
             <h3 className="font-semibold text-zikoroBlack text-xs">SKILLS</h3>
             <div className="flex gap-2 flex-wrap">
               {credential.certificate.certificateSettings.skills.length > 0 ? (
-                <>
-                  {credential.certificate.certificateSettings.skills.map(
-                    (skill, index) => (
-                      <div
-                        key={index}
-                        className="rounded-xl text-zikoroBlack px-2 py-1 text-xs"
-                        style={{
-                          backgroundColor: skill.color + "22",
-                          color: skill.color,
-                          borderWidth: "2px",
-                          borderColor: skill.color + "22",
-                        }}
-                      >
-                        {skill.value}
-                      </div>
-                    )
-                  )}
-                </>
+                credential.certificate.certificateSettings.skills.map(
+                  (skill, index) => (
+                    <div
+                      key={index}
+                      className="rounded-xl text-zikoroBlack px-2 py-1 text-xs"
+                      style={{
+                        backgroundColor: skill.color + "22",
+                        color: skill.color,
+                        borderWidth: "2px",
+                        borderColor: skill.color + "22",
+                      }}
+                    >
+                      {skill.value}
+                    </div>
+                  )
+                )
               ) : (
                 <div className="text-sm text-zikoroGray">
                   <span>No skills added</span>
@@ -191,22 +230,20 @@ const Credentials = ({ recipient }: { recipient: DirectoryRecipient }) => {
 
   return (
     <section className="space-y-4 flex-1">
-      <div className="w-1/2 mx-auto">
+      <div className="w-1/2 mx-auto flex justify-center gap-1 items-center">
         <Input
           placeholder="Search credential"
           onInput={(e) => setSearchTerm(e.currentTarget.value)}
           value={searchTerm}
           className="border-none !border-b"
         />
-        {/* <Filter
-          className={`space-y-4 w-1/2 mx-auto hide-scrollbar`}
-          filters={filters.sort(
-            (a, b) => (a.order || Infinity) - (b.order || Infinity)
-          )}
+        <Filter<CertificateRecipient>
+          filters={sortedFilters}
           applyFilter={applyFilter}
           selectedFilters={selectedFilters}
           type="dropdown"
-        /> */}
+          showLabels={false}
+        />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {credentialsIsLoading ? (
@@ -215,17 +252,22 @@ const Credentials = ({ recipient }: { recipient: DirectoryRecipient }) => {
             <CredentialLoading />
             <CredentialLoading />
           </>
-        ) : (
+        ) : credentials?.data?.length > 0 ? (
           credentials.data.map((credential, index) => (
             <Credential key={index} credential={credential} />
           ))
+        ) : (
+          <div className="text-center text-zikoroGray col-span-2">
+            No credentials found.
+          </div>
         )}
       </div>
       <Pagination
-        totalDocs={credentials.total}
-        currentPage={credentials.page}
+        totalDocs={credentials?.total ?? 0}
+        currentPage={credentials?.page ?? 1}
         setCurrentPage={updatePage}
-        limit={credentials.limit}
+        limit={credentials?.limit ?? 10}
+        isLoading={credentialsIsLoading}
       />
     </section>
   );

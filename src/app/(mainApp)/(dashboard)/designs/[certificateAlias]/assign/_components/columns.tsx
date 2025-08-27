@@ -406,7 +406,7 @@ export const issueesColumns: ColumnDef<
             <Tooltip>
               <TooltipTrigger>
                 <Link
-                  href={`/assign/admin/view/${certificateId}`}
+                  href={`/designs/${certificate.certificateAlias}/recipients/${certificateId}`}
                   className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center hover:bg-basePrimary/20 hover:text-basePrimary"
                 >
                   <Eye className="size-5" />
@@ -422,7 +422,13 @@ export const issueesColumns: ColumnDef<
               <TooltipTrigger>
                 <button
                   aria-label="Download"
-                  onClick={() => editor?.savePng()}
+                  onClick={() => editor?.savePng(
+                    `${
+                  recipient.recipientFirstName +
+                  "_" +
+                  recipient.recipientLastName
+                }_${certificate.name}.pdf`
+                  )}
                   className="bg-gray-200 text-gray-700 rounded-full p-2 flex items-center justify-center hover:bg-basePrimary/20 hover:text-basePrimary"
                 >
                   <Download className="size-5" />

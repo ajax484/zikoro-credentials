@@ -3,7 +3,11 @@ import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(
+  req: NextApiRequest,
+  { params: { workspaceId } }: { params: { workspaceId: string } }
+) {
+  console.log(workspaceId);
   if (req.method !== "GET") {
     return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
   }
@@ -12,7 +16,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     const supabase = createRouteHandlerClient({ cookies });
     const { searchParams } = new URL(req.url || "");
     const searchTerm = searchParams.get("searchTerm");
-    const workspaceAlias = searchParams.get("workspaceAlias");
+    // const workspaceAlias = searchParams.get("workspaceAlias");
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limitQuery = searchParams.get("limit");
 
@@ -20,17 +24,19 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
       ? parseInt(searchParams.get("limit") || "10", 10)
       : null;
 
-    if (!workspaceAlias || isNaN(page)) {
+    if (!workspaceId || isNaN(page)) {
       return NextResponse.json(
         { error: "Invalid query parameters" },
         { status: 400 }
       );
     }
 
+    console.log(workspaceId);
+
     // Fetch certificate recipients with the workspace alias filter
     let query = supabase.from("certificate").select("*", { count: "exact" });
 
-    if (workspaceAlias) query.eq("certificate.workspaceAlias", workspaceAlias);
+    if (workspaceId) query.eq("workspaceAlias", workspaceId);
 
     // if (searchTerm) {
     //   query = query.or(
@@ -42,6 +48,13 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
       const from = (page - 1) * limit;
       const to = from + limit - 1;
       query.range(from, to);
+    }
+
+    if (searchTerm) {
+      console.log(searchTerm);
+      query.or(`name.ilike.%${searchTerm}%`, {
+        referencedTable: "certificate",
+      });
     }
 
     const { data, error, count } = await query.order("created_at", {

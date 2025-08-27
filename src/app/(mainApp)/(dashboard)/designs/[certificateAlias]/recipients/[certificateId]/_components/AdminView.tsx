@@ -335,7 +335,18 @@ const CertificateView = ({
               />
             </svg>
           </button>
-          <button aria-label="Download png" onClick={() => editor?.savePng()}>
+          <button
+            aria-label="Download png"
+            onClick={() =>
+              editor?.savePng(
+                `${
+                  certificate.recipientFirstName +
+                  "_" +
+                  certificate.recipientLastName
+                }_${certificate.originalCertificate.name}.pdf`
+              )
+            }
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -357,7 +368,18 @@ const CertificateView = ({
               />
             </svg>
           </button>
-          <button aria-label="Download jpg" onClick={() => editor?.saveSvg()}>
+          <button
+            aria-label="Download jpg"
+            onClick={() =>
+              editor?.saveSvg(
+                `${
+                  certificate.recipientFirstName +
+                  "_" +
+                  certificate.recipientLastName
+                }_${certificate.originalCertificate.name}.pdf`
+              )
+            }
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -680,7 +702,18 @@ const CertificateView = ({
                 />
               </svg>
             </button>
-            <button aria-label="Download png" onClick={() => editor?.savePng()}>
+            <button
+              aria-label="Download png"
+              onClick={() =>
+                editor?.savePng(
+                  `${
+                    certificate.recipientFirstName +
+                    "_" +
+                    certificate.recipientLastName
+                  }_${certificate.originalCertificate.name}.pdf`
+                )
+              }
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -702,7 +735,18 @@ const CertificateView = ({
                 />
               </svg>
             </button>
-            <button aria-label="Download jpg" onClick={() => editor?.saveSvg()}>
+            <button
+              aria-label="Download jpg"
+              onClick={() =>
+                editor?.saveSvg(
+                  `${
+                    certificate.recipientFirstName +
+                    "_" +
+                    certificate.recipientLastName
+                  }_${certificate.originalCertificate.name}.pdf`
+                )
+              }
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 xmlnsXlink="http://www.w3.org/1999/xlink"

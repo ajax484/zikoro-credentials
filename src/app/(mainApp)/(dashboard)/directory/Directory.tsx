@@ -34,7 +34,7 @@ import { cn } from "@/lib/utils";
 import { Hint } from "@/components/hint";
 import AddRecipientForm from "./_components/CreateRecipient";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { format } from "date-fns";
+import { format, isPast } from "date-fns";
 import { DirectoryRecipient } from "@/types/directories";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -91,13 +91,25 @@ const Directory = () => {
   }: {
     recipient: DirectoryRecipient;
   }) => {
+    console.log(
+      recipient.assignedCertificates.map(
+        (c) => c?.certificate?.certificateSettings?.cpdHours
+      )
+    );
+    console.log(
+      recipient.assignedCertificates.map(
+        (c) => c?.certificate?.certificateSettings?.cpdPoints
+      )
+    );
     const cpdPoints = recipient?.assignedCertificates.reduce(
-      (acc, curr) => acc + curr.certificate.certificateSettings?.cpdPoints,
+      (acc, curr) =>
+        acc + (curr.certificate.certificateSettings?.cpdPoints || 0),
       0
     );
 
     const cpdHours = recipient?.assignedCertificates.reduce(
-      (acc, curr) => acc + curr.certificate.certificateSettings?.cpdHours,
+      (acc, curr) =>
+        acc + (curr.certificate.certificateSettings?.cpdHours || 0),
       0
     );
 
@@ -185,7 +197,7 @@ const Directory = () => {
           certificate: TCertificate;
         }
       >(
-        recipients.map((obj) =>
+        recipients.data.map((obj) =>
           Object.keys(obj).reduce(
             (newObj, key) => {
               if (
@@ -438,7 +450,23 @@ const Directory = () => {
             </span>
           </div>
           <div className="flex flex-col gap-1 px-2 py-2 flex-1">
-            <span className="font-semibold text-[40px]">0</span>
+            <span className="font-semibold text-[40px]">
+              {recipients.data.reduce(
+                (acc, curr) =>
+                  acc +
+                  curr.assignedCertificates.reduce(
+                    (innerAcc, innerCurr) =>
+                      innerCurr.certificate.certificateSettings.expiryDate &&
+                      isPast(
+                        innerCurr.certificate.certificateSettings.expiryDate
+                      )
+                        ? innerAcc + 1
+                        : innerAcc,
+                    0
+                  ),
+                0
+              )}
+            </span>
             <span className="text-sm text-red-500">
               Total expired certificates
             </span>

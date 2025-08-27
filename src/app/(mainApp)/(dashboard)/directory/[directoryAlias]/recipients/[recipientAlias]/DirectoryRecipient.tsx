@@ -165,7 +165,7 @@ const DirectoryRecipient = ({
                   ]);
                   setOpenDialog(false);
                   router.push(
-                    `/designs/certificate/${certificateAlias}/issue?from=directory`
+                    `/designs/certificate/${certificateAlias}/assign/issue?from=directory`
                   );
                 }}
                 className={cn("px-4 mx-auto", "bg-basePrimary")}
@@ -258,12 +258,6 @@ const DirectoryRecipient = ({
           >
             <ArrowLeft size={24} className="text-zikoroBlack" weight="bold" />
           </Link>
-          <Image
-            src={DirectoryLogo}
-            alt="Directory Logo"
-            width={174}
-            height={39}
-          />
         </div>
         <div className="flex gap-2 items-center">
           <Dialog open={isRecipientDialog} onOpenChange={toggleRecipientDialog}>
@@ -324,7 +318,7 @@ const DirectoryRecipient = ({
             {isFetching ? (
               <Skeleton className="rounded-full size-[50px]" />
             ) : (
-              <Avatar className="size-12">
+              <Avatar className="size-[52px]">
                 <AvatarImage src={recipient?.profile_picture} />
                 <AvatarFallback>
                   {(recipient?.first_name[0] || "#") +

@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { startOfDay } from "date-fns";
 
 export async function GET(
   req: NextApiRequest,
@@ -17,6 +18,24 @@ export async function GET(
     const searchTerm = searchParams.get("searchTerm");
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limitQuery = searchParams.get("limit");
+    // get other search params
+    const created_at = searchParams.get("created_at");
+    const cpdPoints = searchParams.get("cpdPoints");
+    const cpdHours = searchParams.get("cpdHours");
+    const expirationDate = searchParams.get("expirationDate");
+    const label = searchParams.get("label");
+    const skills = searchParams.get("skills");
+    const isValid = searchParams.get("isValid");
+
+    console.log(
+      created_at,
+      cpdPoints,
+      cpdHours,
+      expirationDate,
+      label,
+      skills,
+      isValid
+    );
 
     const limit = limitQuery
       ? parseInt(searchParams.get("limit") || "10", 10)
@@ -32,11 +51,25 @@ export async function GET(
     query.eq("recipientAlias", recipientAlias);
 
     if (searchTerm) {
+      console.log(searchTerm);
       query
-        .or(
-          `recipientFirstName.ilike.%${searchTerm}%,recipientLastName.ilike.%${searchTerm}%,recipientEmail.ilike.%${searchTerm}%,status.ilike.%${searchTerm}%,recipientAlias.ilike.%${searchTerm}%`
-        )
-        .or(`certificate(name).ilike.%${searchTerm}%`);
+        // .or(
+        //   `recipientFirstName.ilike.%${searchTerm}%,recipientLastName.ilike.%${searchTerm}%,recipientEmail.ilike.%${searchTerm}%,status.ilike.%${searchTerm}%,recipientAlias.ilike.%${searchTerm}%`
+        // )
+        .or(`name.ilike.%${searchTerm}%`, {
+          referencedTable: "certificate",
+        });
+    }
+
+    if (created_at) {
+      const date = new Date(created_at);
+      console.log(date);
+      const startDate = startOfDay(date).toDateString;
+      const endDate = startOfDay(date).toDateString();
+
+      console.log(startDate, endDate);
+      query.gte("created_at", startDate);
+      query.lte("created_at", endDate);
     }
 
     if (limit) {

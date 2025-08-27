@@ -53,7 +53,7 @@ const Preview = ({
           "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
       }))
     );
-    router.push(`/designs/certificate/${certificateAlias}/issue?from=excel`);
+    router.push(`/designs/certificate/${certificateAlias}/assign/issue?from=excel`);
   };
 
   const showRow = (value: any, row: any[]) => {

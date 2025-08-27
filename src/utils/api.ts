@@ -64,10 +64,6 @@ export async function PostRequest<T = any, R = any>({
     body: JSON.stringify(body),
   });
 
-  if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
-  }
-
   switch (responseType) {
     case "json":
       return response.json() as Promise<R>;

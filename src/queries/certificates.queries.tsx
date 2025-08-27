@@ -56,9 +56,12 @@ export function useFetchWorkspaceCertificates(
   const { data, isFetching, status, error, refetch } = useQuery({
     queryKey: ["certificates", workspaceAlias, pagination, searchTerm],
     queryFn: async () => {
+      console.log(workspaceAlias);
       const { data, status } = await getRequest<PaginatedData<TCertificate>>({
         endpoint: `/workspaces/${workspaceAlias}/certificates?limit=${pagination.limit}&page=${pagination.page}&searchTerm=${searchTerm}`,
       });
+
+      console.log(data.data);
 
       if (status !== 200) {
         toast.error(data.error);
@@ -330,7 +333,8 @@ export function useFetchRecipientCertificates(
   directoryAlias: string,
   recipientAlias: string,
   pagination: { page: number; limit: number },
-  searchTerm: string
+  searchTerm: string,
+  searchParams: { key: string; value: any }[]
 ) {
   const { data, isFetching, status, error, refetch } = useQuery({
     queryKey: [
@@ -338,12 +342,18 @@ export function useFetchRecipientCertificates(
       recipientAlias,
       pagination,
       searchTerm,
+      searchParams,
     ],
     queryFn: async () => {
+      const searchParamsString = searchParams
+        .map((param) => `${param.key}=${param.value}`)
+        .join("&");
+
+      console.log(searchParamsString);
       const { data, status } = await getRequest<
         PaginatedData<CertificateRecipient & { certificate: TCertificate }>
       >({
-        endpoint: `/workspaces/${organizationAlias}/directories/${directoryAlias}/recipients/${recipientAlias}/credentials?limit=${pagination.limit}&page=${pagination.page}&searchTerm=${searchTerm}`,
+        endpoint: `/workspaces/${organizationAlias}/directories/${directoryAlias}/recipients/${recipientAlias}/credentials?limit=${pagination.limit}&page=${pagination.page}&searchTerm=${searchTerm}&${searchParamsString}`,
       });
 
       if (status !== 200) {

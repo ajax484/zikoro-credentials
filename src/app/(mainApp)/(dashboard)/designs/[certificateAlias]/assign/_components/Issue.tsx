@@ -178,11 +178,11 @@ const Issue = ({
 
   const selectType = () => {
     if (selectedOption === "manual") {
-      router.push(`/designs/certificate/${selectedCertificate}/issue/`);
+      router.push(`/designs/${selectedCertificate}/assign/issue/`);
     } else if (selectedOption === "spreadsheet") {
-      router.push(`/assign/certificate/${selectedCertificate}/excel/`);
+      router.push(`/designs/${selectedCertificate}/assign/excel/`);
     } else if (selectedOption === "event") {
-      router.push(`/assign/certificate/${selectedCertificate}/fromEvent/`);
+      router.push(`/designs/${selectedCertificate}/assign/fromEvent/`);
     }
   };
 

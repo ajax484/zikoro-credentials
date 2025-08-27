@@ -22,7 +22,8 @@ export async function GET(
       let query = supabase
         .from("directoryrecipient")
         .select(
-          "*, assignedCertificates:certificateRecipients(*, certificate(*))"
+          "*, assignedCertificates:certificateRecipients(*, certificate(*))",
+          { count: "exact" }
         )
         .eq("directoryAlias", directoryAlias);
 
@@ -43,6 +44,8 @@ export async function GET(
       });
 
       console.log(data, directoryAlias);
+
+      console.log(count);
 
       if (error) throw error;
 
@@ -99,7 +102,15 @@ export async function POST(
     console.log(error);
 
     if (error) {
-      return NextResponse.json({ error: error.details }, { status: 400 });
+      return NextResponse.json(
+        {
+          error:
+            error.code === "23505"
+              ? "Duplicate recipient alias"
+              : error.details,
+        },
+        { status: 400 }
+      );
     }
 
     returnedData = data;
