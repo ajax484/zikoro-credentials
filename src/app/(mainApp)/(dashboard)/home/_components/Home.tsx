@@ -360,7 +360,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                 directory. Browse profiles, build trust and boost visibility
                 across your community.
               </p>
-              <Link href={"#"} className="flex gap-2 items-center">
+              <Link href={"/directory"} className="flex gap-2 items-center">
                 <span className="text-basePrimary underline underline-offset-2 font-medium">
                   Proceed
                 </span>
