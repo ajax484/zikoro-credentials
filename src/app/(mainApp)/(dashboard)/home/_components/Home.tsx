@@ -294,7 +294,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                 className="rounded-full mb-2"
               />
               <p className="font-semibold text-zikoroBlack text-sm text-center">
-                Explore quick tutorials to become a pro in no time
+                Explore quick tutorials
               </p>
             </Link>
             <div className="bg-white text-zikoroBlack px-1 py-4 rounded-xl flex flex-col justify-center items-center gap-y-2 border">
