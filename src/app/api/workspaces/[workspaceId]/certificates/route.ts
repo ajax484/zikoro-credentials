@@ -34,7 +34,12 @@ export async function GET(
     console.log(workspaceId);
 
     // Fetch certificate recipients with the workspace alias filter
-    let query = supabase.from("certificate").select("*", { count: "exact" });
+    let query = supabase
+      .from("certificate")
+      .select(
+        "*, recipientCount:certificateRecipients!inner(count), failedRecipientCount:certificateRecipientsFailed!inner(count)",
+        { count: "exact" }
+      );
 
     if (workspaceId) query.eq("workspaceAlias", workspaceId);
 
@@ -70,7 +75,11 @@ export async function GET(
     return NextResponse.json(
       {
         data: {
-          data,
+          data: data.map((certificate) => ({
+            ...certificate,
+            recipientCount: certificate.recipientCount[0].count,
+            failedRecipientCount: certificate.failedRecipientCount[0].count,
+          })),
           page,
           limit,
           total: count || 0,
