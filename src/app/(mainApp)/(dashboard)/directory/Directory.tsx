@@ -503,6 +503,7 @@ const Directory = () => {
                   currentPage={recipients.page}
                   setCurrentPage={updatePage}
                   limit={recipients.limit}
+                  isLoading={recipientsIsLoading}
                 />
               </div>
             ) : (

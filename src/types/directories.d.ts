@@ -9,6 +9,9 @@ export interface Directory {
   id: string;
   createdAt: string;
   updatedAt: string;
+  recipientCount: number;
+  certificatesCount: number;
+  expiredCount: number;
 }
 
 export type DirectoryRecipient = z.infer<typeof directoryRecipientSchema> & {

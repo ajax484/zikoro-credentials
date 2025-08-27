@@ -36,6 +36,7 @@ import CreateCertificateDialog from "@/components/modals/CreateCertificate.modal
 import { useCreateCertificate } from "@/mutations/certificates.mutations";
 import { BsInfoCircle } from "react-icons/bs";
 import { CredentialType } from "@/types/certificates";
+import { useFetchDirectory } from "@/queries/directories.queries";
 
 const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
   const { user, setUser } = useUserStore();
@@ -194,6 +195,12 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
       },
     },
   };
+
+  const { data: directory, isFetching } = useFetchDirectory(
+    organization?.organizationAlias!
+  );
+
+  console.log(directory);
 
   return (
     <section className="space-y-4">
@@ -373,17 +380,23 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
             </div>
             <div className="col-span-3 border rounded-lg bg-[#FAFBFF]">
               <div className="border-b p-2">
-                <div className="text-zikoroBlack font-semibold">8</div>
+                <div className="text-zikoroBlack font-semibold">
+                  {directory?.recipientCount}
+                </div>
                 <p className="text-zikoroGray text-sm">Total members listed</p>
               </div>
               <div className="border-b p-2">
-                <div className="text-zikoroBlack font-semibold">6</div>
+                <div className="text-zikoroBlack font-semibold">
+                  {directory?.certificatesCount}
+                </div>
                 <p className="text-zikoroGray text-sm">
                   Total certificates earned
                 </p>
               </div>
               <div className="p-2">
-                <div className="text-zikoroBlack font-semibold">2</div>
+                <div className="text-zikoroBlack font-semibold">
+                  {directory?.expiredCount}
+                </div>
                 <p className="text-red-500 text-sm">
                   Total expired certificates
                 </p>
