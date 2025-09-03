@@ -35,20 +35,23 @@ import { Hint } from "@/components/hint";
 import AddRecipientForm from "./_components/CreateRecipient";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format, isPast } from "date-fns";
-import { DirectoryRecipient } from "@/types/directories";
+import {
+  Directory as DirectoryType,
+  DirectoryRecipient,
+} from "@/types/directories";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
 import { convertCamelToNormal } from "@/utils/helpers";
 import * as XLSX from "xlsx";
 import Pagination from "@/components/Pagination";
+import { useGetData } from "@/hooks/services/request";
+import { PaginatedData } from "@/types/request";
 
-const Directory = () => {
-  const { organization } = useOrganizationStore();
-  console.log(organization?.organizationAlias);
-
-  const { data: directory, isFetching } = useFetchDirectory(
-    organization?.organizationAlias!
+const Directory = ({ directoryAlias }: { directoryAlias: string }) => {
+  const { data: directory, isLoading: isFetching } = useGetData<DirectoryType>(
+    `/directories/${directoryAlias}`,
+    null
   );
 
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -64,16 +67,39 @@ const Directory = () => {
     setPagination({ page: 1, limit });
   };
 
+  // const {
+  //   data: recipients,
+  //   isFetching: recipientsIsFetching,
+  //   refetch,
+  // } = useFetchDirectoryRecipients(
+  //   organization?.organizationAlias!,
+  //   directory?.directoryAlias!,
+  //   pagination,
+  //   searchTerm
+  // );
+
+  const searchParams = new URLSearchParams();
+  searchParams.set("limit", pagination.limit.toString());
+  searchParams.set("page", pagination.page.toString());
+  searchParams.set("searchTerm", searchTerm);
+
   const {
     data: recipients,
-    isFetching: recipientsIsFetching,
-    refetch,
-  } = useFetchDirectoryRecipients(
-    organization?.organizationAlias!,
-    directory?.directoryAlias!,
-    pagination,
-    searchTerm
+    isLoading: recipientsIsFetching,
+    getData: refetch,
+  } = useGetData<PaginatedData<DirectoryRecipient>>(
+    `/directories/${
+      directory?.directoryAlias
+    }/recipients?${searchParams.toString()}`,
+    {
+      data: [],
+      limit: pagination.limit,
+      total: 0,
+      totalPages: 0,
+      page: pagination.page,
+    }
   );
+
   console.log(recipients);
 
   useEffect(() => {
@@ -126,7 +152,7 @@ const Directory = () => {
 
           <Link
             className="font-semibold hover:underline hover:underline-offset-1"
-            href={`/directory/${directory?.directoryAlias}/recipients/${recipient.recipientAlias}`}
+            href={`/guest/directory/${directory?.directoryAlias}/recipients/${recipient.recipientAlias}`}
           >
             {recipient.first_name + " " + recipient.last_name}
           </Link>
@@ -168,97 +194,6 @@ const Directory = () => {
           <span className="text-zikoroGray">Added on:</span>
           <span>{format(new Date(recipient.created_at), "dd MMM, yyyy")}</span>
         </div>
-      </div>
-    );
-  };
-
-  const ExportData = ({
-    onOpenChange,
-  }: {
-    onOpenChange: (open: boolean) => void;
-  }) => {
-    const exportRecipientsFn = (
-      name = `directory_recipients_${
-        organization?.organizationName
-      }_${new Date().toISOString()}`
-    ) => {
-      const omittedFields: (keyof (CertificateRecipient & {
-        certificate: TCertificate;
-      }))[] = [
-        "certificateId",
-        "certificateGroupId",
-        "id",
-        "statusDetails",
-        "recipientAlias",
-      ];
-
-      const normalizedData = convertCamelToNormal<
-        CertificateRecipient & {
-          certificate: TCertificate;
-        }
-      >(
-        recipients.data.map((obj) =>
-          Object.keys(obj).reduce(
-            (newObj, key) => {
-              if (
-                !omittedFields.includes(
-                  key as keyof (CertificateRecipient & {
-                    certificate: TCertificate;
-                  })
-                )
-              ) {
-                (newObj as any)[key] =
-                  key === "created_at"
-                    ? obj[key]
-                      ? format(new Date(obj[key]), "MM/dd/yyyy")
-                      : "N/A"
-                    : key === "certificate"
-                    ? obj[key].name
-                    : (obj as any)[key];
-              }
-              return newObj;
-            },
-            {} as Partial<
-              CertificateRecipient & {
-                certificate: TCertificate;
-              }
-            >
-          )
-        ) as (CertificateRecipient & {
-          certificate: TCertificate;
-        })[],
-        " "
-      );
-
-      const worksheet = XLSX.utils.json_to_sheet(normalizedData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-      XLSX.writeFile(workbook, `${name}.xlsx`);
-      onOpenChange(false);
-    };
-
-    return (
-      <div className="flex flex-col gap-4 items-center py-4">
-        <div className="rounded-md border bg-white p-2">
-          <UploadSimple size={32} className="text-zikoroBlack" weight="bold" />
-        </div>
-
-        <h5 className="text-2xl font-semibold text-center">
-          Export Member's Data
-        </h5>
-        <div className="text-gray-600 font-medium flex flex-col gap-2 text-center">
-          <span>
-            Export {recipients.data.length} members data in view as CSV
-          </span>
-        </div>
-        <Button
-          onClick={() => exportRecipientsFn()}
-          disabled={recipients.data.length === 0}
-          className="flex items-center gap-2"
-        >
-          <UploadSimple size={32} className="text-white" weight="bold" />
-          <span>Export</span>
-        </Button>
       </div>
     );
   };
@@ -311,7 +246,7 @@ const Directory = () => {
 
         <div className="border rounded-xl flex items-center gap-2 p-2 w-full">
           <span className="text-zikoroGray text-sm truncate max-w-full">
-            {`${window.location.origin}/guest/directory/${directory?.directoryAlias}/`}
+            {`${window.location.origin}/guest/directory/${directory?.directoryAlias}`}
           </span>
           <button
             onClick={() =>
@@ -340,52 +275,6 @@ const Directory = () => {
         </button> */}
 
         <div className="flex gap-2">
-          <Dialog open={isRecipientDialog} onOpenChange={toggleRecipientDialog}>
-            <DialogTrigger asChild>
-              <button
-                className={cn(
-                  "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm"
-                )}
-              >
-                <Pencil size={16} className="text-zikoroBlack" weight="bold" />
-                <span>Add Recipient</span>
-              </button>
-            </DialogTrigger>
-            <DialogContent className="px-4 py-6 max-h-[90vh] overflow-auto">
-              <AddRecipientForm
-                directoryAlias={directory?.directoryAlias}
-                onClose={() => {
-                  toggleRecipientDialog(false);
-                }}
-              />
-            </DialogContent>
-          </Dialog>
-          <Dialog open={isExportDialog} onOpenChange={toggleExportDialog}>
-            <DialogTrigger asChild>
-              <button
-                className={cn(
-                  "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm"
-                )}
-              >
-                <UploadSimple
-                  size={16}
-                  className="text-zikoroBlack"
-                  weight="bold"
-                />
-                <span>Export Data</span>
-              </button>
-            </DialogTrigger>
-            <DialogContent className="px-4 py-6 max-h-[90vh] overflow-auto">
-              <DialogHeader>
-                <DialogTitle>Export Data</DialogTitle>
-              </DialogHeader>
-              <ExportData
-                onOpenChange={() => {
-                  toggleExportDialog(false);
-                }}
-              />
-            </DialogContent>
-          </Dialog>
           <Dialog open={isShareDialog} onOpenChange={toggleShareDialog}>
             <DialogTrigger asChild>
               <button
@@ -513,37 +402,6 @@ const Directory = () => {
                 <p className="text-zikoroBlack text-xl font-semibold">
                   No members found
                 </p>
-                <p className="text-zikoroBlack text-sm">
-                  Add members to your directory to see how many credentials they
-                  have received from your organization
-                </p>
-                <Dialog
-                  open={isRecipientDialog}
-                  onOpenChange={toggleRecipientDialog}
-                >
-                  <DialogTrigger asChild>
-                    <button
-                      className={cn(
-                        "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm"
-                      )}
-                    >
-                      <Pencil
-                        size={16}
-                        className="text-zikoroBlack"
-                        weight="bold"
-                      />
-                      <span>Add Recipient</span>
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent className="px-4 py-6 max-h-[90vh] overflow-auto">
-                    <AddRecipientForm
-                      directoryAlias={directory?.directoryAlias}
-                      onClose={() => {
-                        toggleRecipientDialog(false);
-                      }}
-                    />
-                  </DialogContent>
-                </Dialog>
               </div>
             )}
           </>

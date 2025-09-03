@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { fail } from "assert";
 
 export async function GET(
   req: NextApiRequest,
@@ -34,12 +35,7 @@ export async function GET(
     console.log(workspaceId);
 
     // Fetch certificate recipients with the workspace alias filter
-    let query = supabase
-      .from("certificate")
-      .select(
-        "*, recipientCount:certificateRecipients!inner(count), failedRecipientCount:certificateRecipientsFailed!inner(count)",
-        { count: "exact" }
-      );
+    let query = supabase.from("certificate").select("*", { count: "exact" });
 
     if (workspaceId) query.eq("workspaceAlias", workspaceId);
 
@@ -57,9 +53,7 @@ export async function GET(
 
     if (searchTerm) {
       console.log(searchTerm);
-      query.or(`name.ilike.%${searchTerm}%`, {
-        referencedTable: "certificate",
-      });
+      query.or(`name.ilike.%${searchTerm}%`);
     }
 
     const { data, error, count } = await query.order("created_at", {
@@ -72,13 +66,33 @@ export async function GET(
       throw error;
     }
 
+    const { data: counts, error: countError } = await supabase
+      .from("certificate")
+      .select(
+        "id, recipientCount:certificateRecipients(count), failedRecipientCount:certificateRecipientsFailed(count)"
+      )
+      .in(
+        "id",
+        data.map((certificate) => certificate.id)
+      );
+
+    if (countError) {
+      throw countError;
+    }
+
     return NextResponse.json(
       {
         data: {
           data: data.map((certificate) => ({
             ...certificate,
-            recipientCount: certificate.recipientCount[0].count,
-            failedRecipientCount: certificate.failedRecipientCount[0].count,
+            // recipientCount: certificate.recipientCount[0].count,
+            // failedRecipientCount: certificate.failedRecipientCount[0].count,
+            recipientCount:
+              counts.find((count) => count.id === certificate.id)
+                ?.recipientCount[0].count || 0,
+            failedRecipientCount:
+              counts.find((count) => count.id === certificate.id)
+                ?.failedRecipientCount[0].count || 0,
           })),
           page,
           limit,

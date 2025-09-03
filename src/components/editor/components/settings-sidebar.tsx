@@ -270,8 +270,16 @@ export const paperSizes = [
   {
     height: 10,
     width: 10,
-    label: "Label",
+    label: "10cm x 10cm",
     sizing: "10_cm_x_10_cm",
+    series: "label",
+  },
+
+  {
+    height: 2.6,
+    width: 9,
+    label: "2.6 x 9cm",
+    sizing: "2.6_x_9_cm",
     series: "label",
   },
 

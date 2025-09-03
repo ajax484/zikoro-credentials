@@ -17,7 +17,7 @@ fabric.Object.prototype.toObject = (function (toObject) {
       locked: this.locked,
       borderRadius: this.borderRadius,
       isBackground: this.isBackground,
-      isSVG: this.isSVG
+      isSVG: this.isSVG,
     };
   };
 })(fabric.Object.prototype.toObject);
@@ -91,9 +91,7 @@ export default function RootLayout({
       </head>
 
       <body className={`${montserrat.className} antialiased`}>
-        <ToastContainer 
-          
-        />
+        <ToastContainer />
         <Toaster />
         <MainLayout>{children}</MainLayout>
       </body>

@@ -91,7 +91,7 @@ const navlinks: Navlinks[] = [
     Icon: Home,
   },
   {
-    name: "Designs",
+    name: "Credentials",
     href: "/designs",
     Icon: Design,
     restricted: ["assign"],

@@ -118,6 +118,37 @@ export function useFetchRecentCertificate(workspaceAlias: string) {
   };
 }
 
+export function useFetchCertificate(
+  workspaceAlias: string,
+  certificateAlias: string
+) {
+  const { data, isFetching, status, error, refetch } = useQuery({
+    queryKey: ["certificates", workspaceAlias, certificateAlias],
+    queryFn: async () => {
+      const { data, status } = await getRequest<TCertificate>({
+        endpoint: `/certificates/${certificateAlias}`,
+      });
+
+      if (status !== 200) {
+        toast.error(data.error);
+        throw new Error(data.error);
+      }
+
+      console.log(data.data);
+
+      return data.data;
+    },
+  });
+
+  return {
+    data,
+    isFetching,
+    status,
+    error,
+    refetch,
+  };
+}
+
 export function useFetchWorkspaceCertificatesRecipients(
   workspaceAlias: string,
   pagination: { page: number; limit: number | null },

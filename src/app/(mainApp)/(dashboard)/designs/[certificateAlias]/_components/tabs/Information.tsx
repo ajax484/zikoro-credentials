@@ -192,7 +192,7 @@ const Information = ({
             </FormItem>
           )}
         />
-        {Object.keys(rest).map((key) => {
+        {/* {Object.keys(rest).map((key) => {
           return (
             <FormField
               disabled={key === "recipientEmail" || key === "recipientAlias"}
@@ -205,14 +205,14 @@ const Information = ({
                     placeholder={key}
                     type="text"
                     {...field}
-                    className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+                    className="!border-none !shadow-none placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
                   />
                 </InputOffsetLabel>
               )}
             />
           );
-        })}
-        {metadata &&
+        })} */}
+        {/* {metadata &&
           Object.keys(metadata).map((key) => {
             return (
               <FormField
@@ -225,13 +225,13 @@ const Information = ({
                       placeholder={key}
                       type="text"
                       {...field}
-                      className="placeholder:text-sm focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+                      className="!border-none !shadow-none placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
                     />
                   </InputOffsetLabel>
                 )}
               />
             );
-          })}
+          })} */}
         <Button
           className="bg-basePrimary text-white"
           type="submit"

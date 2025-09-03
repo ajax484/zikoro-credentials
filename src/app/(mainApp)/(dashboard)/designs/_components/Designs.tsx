@@ -176,7 +176,7 @@ const Designs = () => {
       searchTerm
     );
 
-  console.log(certificates);
+  console.log(certificates.limit, certificates.total);
 
   const { data: credits, isLoading: creditsIsLoading } = useGetData<
     CredentialsWorkspaceToken[]
@@ -544,7 +544,7 @@ const Designs = () => {
             </Link>
           </div> */}
         </div>
-        <div className="relative pr-8">
+        <div className="relative">
           <div key={certificate.id} className="group p-2">
             <h2 className="font-semibold text-zikoroBlack text-sm capitalize mb-2">
               {certificate.name}
@@ -589,8 +589,8 @@ const Designs = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center justify-between divide-x-2">
-              <div className="flex items-center gap-1 flex-1">
+            <div className="flex items-center divide-x-2">
+              <div className="flex items-center gap-1 pr-2">
                 <Image
                   src={PaperPlaneIcon}
                   alt={"email"}
@@ -600,7 +600,7 @@ const Designs = () => {
                 <span className="text-sm text-zikoroBlack">
                   {certificate?.recipientCount}
                 </span>
-                <span className="text-sm text-zikoroGray">Issued</span>
+                <span className="text-sm text-zikoroGray">Assigned</span>
               </div>
               <div className="flex items-center gap-1 pl-2 flex-1">
                 <Image src={CancelIcon} alt={"cancel"} width={16} height={16} />
@@ -692,7 +692,7 @@ const Designs = () => {
             className="border rounded-md flex justify-center items-center gap-2 bg-white px-4 py-2 text-sm text-zikoroGray w-full"
           >
             <PaperPlane size={16} className="text-zikoroGray" weight="bold" />
-            Issue
+            Assign
           </Link>
         </div>
       </div>

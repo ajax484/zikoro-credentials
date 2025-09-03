@@ -32,7 +32,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import AddRecipientForm from "../../../_components/CreateRecipient";
 import { useRouter } from "next/navigation";
 import { useRecipientsStore } from "@/store/globalRecipientsStore";
 import { useFetchCertificates } from "@/queries/certificates.queries";
@@ -42,10 +41,11 @@ import GradientBorderSelect from "@/components/GradientBorderSelect";
 import { Button } from "@/components/ui/button";
 import { Certificate } from "crypto";
 import { CertificateRecipient, TCertificate } from "@/types/certificates";
-import { DirectoryRecipient } from "@/types/directories";
+import { DirectoryRecipient as DirectoryRecipientType } from "@/types/directories";
+import { useGetData } from "@/hooks/services/request";
 
 interface Tabs {
-  recipient: DirectoryRecipient;
+  recipient: DirectoryRecipientType;
 }
 
 interface Tabs {
@@ -76,108 +76,14 @@ const DirectoryRecipient = ({
   recipientAlias: string;
 }) => {
   const { organization } = useOrganizationStore();
-  const { data: recipient, isFetching } = useFetchDirectoryRecipient(
-    organization?.organizationAlias!,
-    directoryAlias,
-    recipientAlias
-  );
 
-  const [isRecipientDialog, toggleRecipientDialog] = useState(false);
+  const { data: recipient, isLoading: isFetching } =
+    useGetData<DirectoryRecipientType>(
+      `/directories/${directoryAlias}/recipients/${recipientAlias}`,
+      null
+    );
 
   const router = useRouter();
-
-  const { setRecipients } = useRecipientsStore();
-
-  const { data: certificates, isFetching: certificatesIsLoading } =
-    useFetchCertificates(organization?.organizationAlias!);
-
-  const AssignToRecipient = () => {
-    const [certificateAlias, setCertificateAlias] = useState<string>("");
-
-    const updateCertificateAlias = (certificateAlias: string) => {
-      setCertificateAlias(certificateAlias);
-    };
-
-    const [openDialog, setOpenDialog] = useState(false);
-    return (
-      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <Hint
-          label={"Issue a certificate to this recipient"}
-          side="bottom"
-          sideOffset={10}
-        >
-          <DialogTrigger asChild>
-            <button
-              disabled={isFetching || certificatesIsLoading}
-              className={cn(
-                "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm"
-              )}
-            >
-              <PaperPlane
-                size={16}
-                className="text-zikoroBlack"
-                weight="bold"
-              />
-              <span>Assign</span>
-            </button>
-          </DialogTrigger>
-        </Hint>
-        <DialogContent className="px-4 py-6 z-[1000]">
-          <div className="space-y-4">
-            <div className="flex flex-col gap-4 items-center py-4">
-              <PaperPlane
-                size={16}
-                className="text-zikoroBlack"
-                weight="bold"
-              />
-              <h2 className="font-semibold text-center">Assign</h2>
-            </div>
-            <div className="relative w-full">
-              <div className="relative border mb-4">
-                <Label className="absolute top-0 -translate-y-1/2 right-4 bg-white text-gray-600 text-tiny px-1">
-                  Certificate
-                </Label>
-                <GradientBorderSelect
-                  placeholder="Select limit"
-                  value={certificateAlias}
-                  onChange={(value: string) => updateCertificateAlias(value)}
-                  options={certificates.map((certificate) => ({
-                    label: certificate.name,
-                    value: certificate.certificateAlias,
-                  }))}
-                />
-              </div>
-            </div>
-            <div className="flex w-full">
-              <Button
-                disabled={certificatesIsLoading || certificateAlias === ""}
-                onClick={() => {
-                  setRecipients([
-                    {
-                      recipientFirstName: recipient?.first_name,
-                      recipientLastName: recipient?.last_name,
-                      recipientEmail: recipient?.email,
-                      recipientAlias: recipient?.recipientAlias,
-                      profilePicture:
-                        recipient?.profile_picture ||
-                        "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
-                    },
-                  ]);
-                  setOpenDialog(false);
-                  router.push(
-                    `/designs/certificate/${certificateAlias}/assign/issue?from=directory`
-                  );
-                }}
-                className={cn("px-4 mx-auto", "bg-basePrimary")}
-              >
-                Assign
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  };
 
   const ShareDialog = ({
     onOpenChange,
@@ -189,6 +95,7 @@ const DirectoryRecipient = ({
     // copy to clipboard'
     const copyToClipboard = (text: string) => {
       navigator.clipboard.writeText(text);
+      console.log(text);
       setCopied(true);
       setTimeout(() => {
         setCopied(false);
@@ -247,6 +154,7 @@ const DirectoryRecipient = ({
   const [isShareDialog, toggleShareDialog] = useState(false);
 
   console.log(recipient?.assignedCertificates.map((c) => c.certificateGroupId));
+
   return (
     <section className="space-y-8">
       <section className="border-b py-4 flex items-center justify-between">
@@ -260,29 +168,6 @@ const DirectoryRecipient = ({
           </Link>
         </div>
         <div className="flex gap-2 items-center">
-          <Dialog open={isRecipientDialog} onOpenChange={toggleRecipientDialog}>
-            <DialogTrigger asChild>
-              <button
-                disabled={isFetching}
-                className={cn(
-                  "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm"
-                )}
-              >
-                <Pencil size={16} className="text-zikoroBlack" weight="bold" />
-                <span>Edit Recipient</span>
-              </button>
-            </DialogTrigger>
-            <DialogContent className="px-4 py-6 max-h-[90vh] overflow-auto">
-              <AddRecipientForm
-                directoryAlias={directoryAlias}
-                onClose={() => {
-                  toggleRecipientDialog(false);
-                }}
-                recipient={recipient}
-              />
-            </DialogContent>
-          </Dialog>
-          <AssignToRecipient />
           <Dialog open={isShareDialog} onOpenChange={toggleShareDialog}>
             <DialogTrigger asChild>
               <button

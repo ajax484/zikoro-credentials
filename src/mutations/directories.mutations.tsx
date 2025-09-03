@@ -51,11 +51,11 @@ export function useCreateDirectoryRecipient(
           console.log(oldData);
 
           if (Array.isArray(oldData)) {
-            return [DirectoryRecipient, ...oldData];
+            return [...oldData, DirectoryRecipient];
           } else if ("data" in oldData) {
             return {
               ...oldData,
-              data: [DirectoryRecipient, ...oldData.data],
+              data: [...oldData.data, DirectoryRecipient],
             };
           } else {
             return DirectoryRecipient;

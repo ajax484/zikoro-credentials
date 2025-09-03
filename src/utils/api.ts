@@ -10,7 +10,23 @@ const Api = axios.create({
 
 Api.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error)
+  (error) => {
+    if (axios.isAxiosError(error)) {
+      const apiError = error.response?.data?.error;
+      if (apiError) {
+        return Promise.reject(new Error(apiError));
+      }
+
+      // Handle HTTP status errors
+      if (error.response?.status) {
+        return Promise.reject(
+          new Error(`Request failed with status ${error.response.status}`)
+        );
+      }
+    }
+
+    return Promise.reject(error);
+  }
 );
 
 // Define a type for the API response structure

@@ -330,9 +330,7 @@ export const Navbar = ({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <CustomLink href={"/assign/" + alias}>
-            Assign
-          </CustomLink>
+          <CustomLink href={"/designs/" + alias + "/assign"}>Assign</CustomLink>
           {/* <UserButton /> */}
         </div>
       </div>

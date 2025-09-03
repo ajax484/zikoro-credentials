@@ -268,7 +268,7 @@ Event Team.`,
       workspaceId: organization?.id,
       organization,
     });
-    router.push("/assign/" + certificate.certificateAlias);
+    router.push("/designs/" + certificate.certificateAlias + "/assign");
   };
 
   const creditType =

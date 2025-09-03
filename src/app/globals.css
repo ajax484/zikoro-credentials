@@ -26,6 +26,7 @@
 
 @layer base {
   :root {
+    --toastify-color-success: #6d28d9 !important;
     --zikoro-primary: 277 100% 50% 1;
     --zikoro-secondary: 231 100% 40% 1;
     --zikoro-gradient: linear-gradient(to right, var(--zikoro-primary) 0%, var(--zikoro-secondary) 100%);
