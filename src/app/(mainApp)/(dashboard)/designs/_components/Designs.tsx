@@ -701,7 +701,7 @@ const Designs = () => {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-12">
+      <div className="flex md:justify-between md:items-center mb-12 flex-col md:flex-row gap-y-4">
         <div>
           <h1 className="text-xl text-zikoroBlack font-semibold">
             All Credentials
@@ -763,7 +763,7 @@ const Designs = () => {
           placeholder="Search"
           value={searchTerm}
           onInput={(event) => setSearchTerm(event.currentTarget.value)}
-          className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 w-1/3 border-b focus-visible:outline-none mx-auto"
+          className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 w-full md:w-1/3 border-b focus-visible:outline-none mx-auto"
         />
         <CreateCertificateDialog
           open={open}
@@ -783,7 +783,7 @@ const Designs = () => {
               disabled={certificateIsCreating}
             >
               <PlusCircle size={24} className="text-white" weight="bold" />
-              New Credential
+              <span className="hidden md:inline">New Credential</span>
             </Button>
           }
         />
@@ -830,7 +830,7 @@ const Designs = () => {
           </div>
         </>
       ) : (
-        <div className="grid grid-cols-4 gap-8 mb-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mb-4">
           {certificatesIsLoading ? (
             <div>Loading...</div>
           ) : (

@@ -347,8 +347,8 @@ const Directory = () => {
                   "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm"
                 )}
               >
-                <Pencil size={16} className="text-zikoroBlack" weight="bold" />
-                <span>Add Recipient</span>
+                <Pencil size={24} className="text-zikoroBlack" weight="bold" />
+                <span className="hidden md:inline">Add Recipient</span>
               </button>
             </DialogTrigger>
             <DialogContent className="px-4 py-6 max-h-[90vh] overflow-auto">
@@ -368,11 +368,11 @@ const Directory = () => {
                 )}
               >
                 <UploadSimple
-                  size={16}
+                  size={24}
                   className="text-zikoroBlack"
                   weight="bold"
                 />
-                <span>Export Data</span>
+                <span className="hidden md:inline">Export Data</span>
               </button>
             </DialogTrigger>
             <DialogContent className="px-4 py-6 max-h-[90vh] overflow-auto">
@@ -394,11 +394,11 @@ const Directory = () => {
                 )}
               >
                 <ShareNetwork
-                  size={16}
+                  size={24}
                   className="text-zikoroBlack"
                   weight="bold"
                 />
-                <span>Share</span>
+                <span className="hidden md:inline">Share</span>
               </button>
             </DialogTrigger>
             <DialogContent className="px-4 py-6 max-h-[90vh] overflow-auto">
@@ -415,7 +415,7 @@ const Directory = () => {
         </div>
       </section>
 
-      <section className="space-y-4 w-3/4">
+      <section className="space-y-4 w-full md:w-3/4">
         {/* <Image
           src={DirectoryLogo}
           alt="Directory Logo"
@@ -430,8 +430,8 @@ const Directory = () => {
           </h1>
         )}
 
-        <div className="border rounded-md flex">
-          <div className="flex flex-col gap-1 px-2 py-2 border-r flex-1">
+        <div className="border rounded-md flex flex-col md:flex-row">
+          <div className="flex flex-col gap-1 px-2 py-2 border-b md:border-b-0 md:border-r flex-1">
             <span className="font-semibold text-[40px]">
               {recipients.total || 0}
             </span>
@@ -439,7 +439,7 @@ const Directory = () => {
               Total members listed
             </span>
           </div>
-          <div className="flex flex-col gap-1 px-2 py-2 border-r flex-1">
+          <div className="flex flex-col gap-1 px-2 py-2 border-b md:border-b-0 md:border-r flex-1">
             <span className="font-semibold text-[40px]">
               {/* count of all recipients certificates */}
               {recipients.data?.reduce(

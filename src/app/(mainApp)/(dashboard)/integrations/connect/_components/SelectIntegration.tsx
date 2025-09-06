@@ -70,7 +70,7 @@ const SelectIntegration: React.FC<IntegrationComponentProps> = ({
           Select {selectedIntegration} to import recipients
         </h1>
       </div>
-      <div className="flex flex-col gap-2 w-1/2 mx-auto">
+      <div className="flex flex-col gap-2 md:w-1/2 mx-auto">
         <label className="font-medium text-gray-700 text-sm">
           Credential to be issued:
         </label>
@@ -96,7 +96,7 @@ const SelectIntegration: React.FC<IntegrationComponentProps> = ({
           </SelectContent>
         </Select>
       </div>
-      <div className="flex flex-col gap-2 w-1/2 mx-auto">
+      <div className="flex flex-col gap-2 md:w-1/2 mx-auto">
         <label className="font-medium text-gray-700 text-sm capitalize">
           {selectedIntegration}:
         </label>
@@ -128,7 +128,7 @@ const SelectIntegration: React.FC<IntegrationComponentProps> = ({
           </SelectContent>
         </Select>
       </div>
-      <div className="flex justify-center items-center w-full mt-4  ">
+      <div className="flex justify-center items-center w-full mt-4">
         <Button
           disabled={certificatesIsLoading || !certificate || !integratedId}
           onClick={() => setStep(selectedIntegration === "event" ? 2.5 : 2)}

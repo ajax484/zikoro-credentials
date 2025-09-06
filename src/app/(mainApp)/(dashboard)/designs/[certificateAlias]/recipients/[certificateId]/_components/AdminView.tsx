@@ -540,14 +540,16 @@ const CertificateView = ({
 
   return (
     <section className="space-y-4">
-      <section className="flex items-center justify-between">
-        <button onClick={() => router.back()} aria-label="Back">
-          <IoArrowBack className="size-4" />
-        </button>
-        <h1 className="text-lg font-medium capitalize">
-          {certificate.originalCertificate.name}
-        </h1>
-        <div className="flex gap-2 items-center">
+      <section className="flex items-center justify-between flex-col md:flex-row gap-y-4">
+        <div className="flex gap-2 items-center justify-between md:contents w-full flex-1">
+          <button onClick={() => router.back()} aria-label="Back">
+            <IoArrowBack className="size-4" />
+          </button>
+          <h1 className="text-lg font-medium capitalize">
+            {certificate.originalCertificate.name}
+          </h1>
+        </div>
+        <div className="flex gap-2 items-center flex-wrap">
           <ToggleStatus />
           <Resend />
           <Download />
@@ -563,8 +565,8 @@ const CertificateView = ({
           </button>
         </div>
       </section>
-      <section className="grid grid-cols-12 gap-4">
-        <div className="bg-white p-4 border rounded-lg w-full col-span-4">
+      <section className="grid md:grid-cols-12 gap-4">
+        <div className="bg-white p-2 md:p-4 border rounded-lg w-full md:col-span-4">
           <Tabs defaultValue="information" className="w-full !p-0">
             <TabsList className="bg-white border-b-2 !p-0 w-full !flex !h-fit !rounded-none !justify-start">
               {tabs.map(({ label }) => (
@@ -589,7 +591,7 @@ const CertificateView = ({
             ))}
           </Tabs>
         </div>
-        <div className="bg-white p-4 border rounded-lg w-full col-span-8 h-fit">
+        <div className="bg-white p-2 md:p-4 border rounded-lg w-full md:col-span-8 h-fit">
           <div
             className="relative h-[500px] md:h-[calc(100%-124px)] w-full hidden"
             ref={containerRef}
@@ -604,7 +606,7 @@ const CertificateView = ({
             className="border-basePrimary border-2 text-basePrimary bg-transparent hover:bg-basePrimary/20 flex gap-2 items-center justify-center rounded-lg py-2 px-4 ml-auto w-fit text-sm"
           >
             <Eye className="size-4" />
-            <span>User View</span>
+            <span className="hidden md:inline">User View</span>
           </Link>
           <div className="relative h-full w-full flex justify-center items-center flex-1">
             {imageIsLoading ? (

@@ -56,7 +56,7 @@ const Connect: React.FC<IntegrationComponentProps> = ({
 }) => {
   return (
     <section className="space-y-6">
-      <div className="flex flex-col gap-2 w-1/3 mx-auto">
+      <div className="flex flex-col gap-2 md:w-1/3 mx-auto">
         <label className="font-medium text-gray-700 text-sm">Workspace</label>
         <Select
           disabled={workspacesIsLoading}
@@ -80,7 +80,7 @@ const Connect: React.FC<IntegrationComponentProps> = ({
           </SelectContent>
         </Select>
       </div>
-      <div className="flex justify-between gap-4">
+      <div className="flex justify-between gap-4 flex-col md:flex-row">
         {options.map((option) => (
           <div
             className={cn(

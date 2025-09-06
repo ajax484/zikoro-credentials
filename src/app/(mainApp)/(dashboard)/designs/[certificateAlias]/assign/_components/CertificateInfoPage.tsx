@@ -63,7 +63,7 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
         defaultValue="issued"
         className="w-full !p-0"
       >
-        <TabsList className="flex mx-auto w-2/5 border my-6">
+        <TabsList className="flex mx-auto w-4/5 md:w-2/5 border my-6">
           <TabsTrigger
             key={"issued"}
             value={"issued"}

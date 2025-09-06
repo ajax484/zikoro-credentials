@@ -12,7 +12,7 @@ export const Timeline = ({
   setStep: (step: number) => void;
 }) => {
   return (
-    <div className="space-y-2 w-1/3 mx-auto">
+    <div className="space-y-2 md:w-1/3 mx-auto">
       <div className="flex justify-between items-center w-full">
         {steps.map((_, index) => (
           <>
@@ -44,7 +44,7 @@ export const Timeline = ({
           </>
         ))}
       </div>
-      <div className="flex justify-between items-center text-xs">
+      <div className="md:flex justify-between items-center text-xs hidden">
         {steps.map((label, index) => (
           <span key={index}>{label}</span>
         ))}

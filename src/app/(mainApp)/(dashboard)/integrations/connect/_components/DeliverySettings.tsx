@@ -18,7 +18,7 @@ const DeliverySettings: React.FC<IntegrationComponentProps> = ({
 }) => {
   return (
     <section className="flex flex-col gap-y-6">
-      <div className="flex gap-2 items-center justify-center w-1/3 mx-auto p-4 rounded-lg bg-basePrimary/10">
+      <div className="flex gap-2 items-center justify-center md:w-1/3 mx-auto p-4 rounded-lg bg-basePrimary/10">
         <Image alt="zikoro" src={Info} height={30} width={30} />
         <span className="font-medium text-gray-700 text-sm text-left">
           Ensure you have sufficient credit for this action. Triggers will be
@@ -51,7 +51,7 @@ const DeliverySettings: React.FC<IntegrationComponentProps> = ({
         </div>
       </RadioGroup>
       {schedule === "schedule" && (
-        <div className="flex flex-col gap-2 w-1/3 mx-auto">
+        <div className="flex flex-col gap-2 md:w-1/3 mx-auto">
           <label className="font-medium text-gray-700 text-sm">Workspace</label>
           <Input
             onInput={(e) => selectScheduleDate(e.currentTarget.value)}
@@ -62,7 +62,7 @@ const DeliverySettings: React.FC<IntegrationComponentProps> = ({
           />
         </div>
       )}
-      <div className="flex gap-4 w-1/2 mx-auto">
+      <div className="flex gap-4 md:w-1/2 mx-auto">
         <Button onClick={() => setStep(2)} className="bg-basePrimary w-full">
           Back
         </Button>

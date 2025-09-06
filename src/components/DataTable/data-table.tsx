@@ -70,9 +70,10 @@ export function DataTable<TData>({
   });
 
   return (
-    <div>
-      <div className="rounded-2xl border">
-        <Table>
+    <div className="space-y-4 max-w-[calc(100vw-64px)] overflow-hidden">
+      <div className="max-w-full overflow-auto">
+      <div className="rounded-md border min-w-max">
+        <Table className="min-w-max">
           <TableHeader className="bg-gray-200 !text-black !rounded-2xl">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -158,7 +159,9 @@ export function DataTable<TData>({
           </TableBody>
         </Table>
       </div>
+      </div>
       <Pagination
+        isLoading={isFetching}
         totalDocs={totalDocs}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}

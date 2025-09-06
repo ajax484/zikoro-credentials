@@ -229,7 +229,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
           </Button>
         </div>
       )} */}
-      <div className="flex items-center justify-between">
+      <div className="flex md:items-center justify-between flex-col md:flex-row gap-y-4">
         <div className="text-gray-700 font-medium">
           <p className="text-zikoroGrey">
             Hello{" "}
@@ -253,7 +253,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
         <div>Loading...</div>
       ) : (
         <section className="space-y-6">
-          <section className="grid grid-cols-3 gap-6 min-h-fit">
+          <section className="grid md:grid-cols-3 gap-x-6 gap-y-4 min-h-fit">
             <CreateCertificateDialog
               triggerButton={
                 <button className="rounded-lg flex flex-col items-center justify-center px-2 py-12 bg-white border">
@@ -347,8 +347,8 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
             </div>
           </section>
 
-          <section className="rounded-lg border border-gray-200 bg-white p-2 w-full grid grid-cols-9 gap-6 items-center">
-            <div className="col-span-6">
+          <section className="rounded-lg border border-gray-200 bg-white p-2 w-full grid md:grid-cols-9 gap-6 items-center">
+            <div className="md:col-span-6">
               <div className="bg-basePrimary/10 border-basePrimary border-2 text-basePrimary rounded-xl w-fit px-2 py-1 font-semibold text-xs mb-1">
                 NEW
               </div>
@@ -378,7 +378,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                 </motion.div>
               </Link>
             </div>
-            <div className="col-span-3 border rounded-lg bg-[#FAFBFF]">
+            <div className="md:col-span-3 border rounded-lg bg-[#FAFBFF] w-full">
               <div className="border-b p-2">
                 <div className="text-zikoroBlack font-semibold">
                   {directory?.recipientCount}
@@ -404,12 +404,12 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
             </div>
           </section>
 
-          <section className="grid grid-cols-9 gap-6">
-            <div className="rounded-lg border border-gray-200 bg-white col-span-6 p-4 space-y-4">
+          <section className="grid md:grid-cols-9 gap-6">
+            <div className="rounded-lg border border-gray-200 bg-white md:col-span-6 p-2 md:p-4 space-y-4">
               <h3 className="font-semibold text-zikoroBlack">
                 📍Pick up where you left off
               </h3>
-              <div className="flex gap-4 items-center">
+              <div className="flex flex-col md:flex-row gap-4 items-center">
                 <Link
                   className="size-[250px] justify-center items-center p-8 border-basePrimary/10 border relative group bg-[#f7f8f9] rounded-lg"
                   href={
@@ -634,7 +634,7 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
                 </div>
               </div>
             </div>
-            <div className="border rounded-lg bg-white p-4 col-span-3 w-full flex flex-col justify-between">
+            <div className="border rounded-lg bg-white p-2 md:p-4 md:col-span-3 w-full flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <h3 className="font-semibold text-zikoroBlack">

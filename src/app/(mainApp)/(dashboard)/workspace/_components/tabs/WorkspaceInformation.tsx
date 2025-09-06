@@ -436,7 +436,7 @@ const WorkspaceInformation = () => {
               </FormItem>
             )}
           />
-          <div className="grid grid-cols-2 gap-4 items-center flex-1">
+          <div className="grid md:grid-cols-2 gap-4 items-center flex-1">
             <FormField
               control={form.control}
               name="organizationName"

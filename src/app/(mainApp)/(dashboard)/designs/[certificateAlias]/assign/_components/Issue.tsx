@@ -668,16 +668,16 @@ const Issue = ({
 
   return (
     <section className="space-y-4">
-      <div className="flex items-end justify-between">
-        <div className="flex gap-2 items-center">
+      <div className="flex md:items-end md:justify-between flex-col md:flex-row gap-y-4">
+        <div className="flex gap-2">
           <ToggleStatus />
           <ExportRecipients />
           <Resend />
         </div>
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center md:justify-center gap-2">
           <Link
             href={"/credits/buy"}
-            className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit capitalize text-sm"
+            className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 md:mx-auto w-fit capitalize text-sm"
           >
             Buy more credits
           </Link>
@@ -838,7 +838,7 @@ const Issue = ({
         </div>
       ) : (
         <>
-          <div className="flex justify-center items-end">
+          <div className="flex justify-center md:items-end flex-col md:flex-row">
             <input
               type="text"
               placeholder="Search"
@@ -847,25 +847,27 @@ const Issue = ({
                 updateSearchTerm(event.currentTarget.value);
                 // updateSearchTerm(event.currentTarget.value);
               }}
-              className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 w-1/3 border-b focus-visible:outline-none"
+              className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 md:w-1/3 border-b focus-visible:outline-none"
             />
-            <Filter
-              className={`space-y-4 w-1/3 mx-auto hide-scrollbar`}
-              filters={filters.sort(
-                (a, b) => (a.order || Infinity) - (b.order || Infinity)
-              )}
-              applyFilter={applyFilter}
-              selectedFilters={selectedFilters}
-            />
-            <GradientBorderSelect
-              placeholder="Select limit"
-              value={pagination.limit.toString()}
-              onChange={(value: string) => updateLimit(parseInt(value))}
-              options={[10, 50, 100, 1000].map((limit) => ({
-                label: limit.toString(),
-                value: limit.toString(),
-              }))}
-            />
+            <div className="flex justify-center gap-4 md:contents">
+              <Filter
+                className={`space-y-4 w-1/3 mx-auto hide-scrollbar`}
+                filters={filters.sort(
+                  (a, b) => (a.order || Infinity) - (b.order || Infinity)
+                )}
+                applyFilter={applyFilter}
+                selectedFilters={selectedFilters}
+              />
+              <GradientBorderSelect
+                placeholder="Select limit"
+                value={pagination.limit.toString()}
+                onChange={(value: string) => updateLimit(parseInt(value))}
+                options={[10, 50, 100, 1000].map((limit) => ({
+                  label: limit.toString(),
+                  value: limit.toString(),
+                }))}
+              />
+            </div>
           </div>
           <DataTable<CertificateRecipient & { certificate: TCertificate }>
             columns={issueesColumns}

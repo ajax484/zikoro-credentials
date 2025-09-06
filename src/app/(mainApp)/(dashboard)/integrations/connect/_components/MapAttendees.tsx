@@ -164,7 +164,7 @@ const MapRecipients: React.FC<IntegrationComponentProps> = ({
             </div>
           ))}
         </div>
-        <div className="flex gap-4 w-1/2 mx-auto">
+        <div className="flex gap-4 md:w-1/2 mx-auto">
           <Button onClick={() => setStep(1)} className="bg-basePrimary w-full">
             Back
           </Button>

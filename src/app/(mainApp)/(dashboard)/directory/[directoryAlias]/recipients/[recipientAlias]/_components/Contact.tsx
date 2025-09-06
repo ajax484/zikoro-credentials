@@ -46,7 +46,7 @@ const Contact = ({ recipient }: { recipient: DirectoryRecipient }) => {
     );
   };
   return (
-    <div className="w-1/2 space-y-4">
+    <div className="md:w-1/2 space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ContactInfo
           value={recipient?.email}

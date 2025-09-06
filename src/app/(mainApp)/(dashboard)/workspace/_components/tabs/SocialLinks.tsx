@@ -68,7 +68,7 @@ const SocialLinks = () => {
       </h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="grid grid-cols-2 gap-4 items-center flex-1">
+          <div className="grid md:grid-cols-2 gap-4 items-center flex-1">
             <FormField
               control={form.control}
               name="linkedIn"

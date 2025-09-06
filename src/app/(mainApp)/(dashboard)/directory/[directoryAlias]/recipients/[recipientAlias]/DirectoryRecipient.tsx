@@ -114,11 +114,11 @@ const DirectoryRecipient = ({
               )}
             >
               <PaperPlane
-                size={16}
+                size={24}
                 className="text-zikoroBlack"
                 weight="bold"
               />
-              <span>Assign</span>
+              <span className="hidden md:inline">Assign</span>
             </button>
           </DialogTrigger>
         </Hint>
@@ -268,8 +268,8 @@ const DirectoryRecipient = ({
                   "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm"
                 )}
               >
-                <Pencil size={16} className="text-zikoroBlack" weight="bold" />
-                <span>Edit Recipient</span>
+                <Pencil size={24} className="text-zikoroBlack" weight="bold" />
+                <span className="hidden md:inline">Add Recipient</span>
               </button>
             </DialogTrigger>
             <DialogContent className="px-4 py-6 max-h-[90vh] overflow-auto">
@@ -291,11 +291,11 @@ const DirectoryRecipient = ({
                 )}
               >
                 <ShareNetwork
-                  size={16}
+                  size={24}
                   className="text-zikoroBlack"
                   weight="bold"
                 />
-                <span>Share</span>
+                <span className="hidden md:inline">Share</span>
               </button>
             </DialogTrigger>
             <DialogContent className="px-4 py-6 max-h-[90vh] overflow-auto">

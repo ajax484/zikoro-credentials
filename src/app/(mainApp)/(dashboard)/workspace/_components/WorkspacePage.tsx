@@ -49,7 +49,7 @@ const WorkspacePage = () => {
       </div>
       <div className="bg-white rounded-lg">
         <Tabs defaultValue="Workspace information" className="w-full !p-0">
-          <TabsList className="bg-white border-b-2 !p-0 !px-12 w-full !flex !h-fit !rounded-none !justify-start">
+          <TabsList className="bg-white border-b-2 !p-0 !px-12 !max-w-full !flex !h-fit !rounded-none !justify-center md:!justify-start">
             {tabs.map(({ name, Icon }) => (
               <TabsTrigger
                 key={name}
@@ -57,8 +57,8 @@ const WorkspacePage = () => {
                 className="w-fit px-6 py-2 data-[state=active]:bg-transparent group data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-gray-900 flex gap-2 !rounded-none !h-fit focus-visible:!ring-0 focus-visible:!outline-none data-[state=active]:shadow-none"
               >
                 <div className="flex items-center gap-2">
-                  <Image src={Icon} alt={name} width={20} height={20} />
-                  <span className="text-sm font-medium">{name}</span>
+                  <Image src={Icon} alt={name} width={24} height={24} />
+                  <span className="text-sm font-medium hidden sm:inline">{name}</span>
                 </div>
               </TabsTrigger>
             ))}
