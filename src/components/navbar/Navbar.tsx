@@ -36,6 +36,10 @@ const Navbar = () => {
 
   const { logOut } = useLogOut();
 
+  const close = () => {
+    setIsOpen(false);
+  };
+
   return (
     <>
       <button
