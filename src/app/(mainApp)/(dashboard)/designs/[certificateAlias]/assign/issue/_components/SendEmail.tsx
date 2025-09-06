@@ -371,7 +371,7 @@ Event Team.`,
             Back
           </Button>
         </div>
-        <section className="grid grid-cols-2 gap-4 bg-white py-6 px-8 ">
+        <section className="grid md:grid-cols-2 gap-4 bg-white py-6 px-2 md:px-8 ">
           <section className="space-y-6">
             <div className="space-y-6 rounded-lg">
               <FormField
