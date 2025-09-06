@@ -328,7 +328,7 @@ Event Team.`,
     <Form {...form}>
       <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-800">
+          <h1 className="text-xl font-semibold text-gray-800 hidden">
             Send {certificate?.name} to recipients
           </h1>
           <Select
@@ -714,7 +714,7 @@ Event Team.`,
             </section>
           </section>
         </section>
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex items-center justify-center gap-4 flex-col md:flex-row">
           <CreateTemplateDialog
             templateIsCreating={templateIsCreating}
             open={open}

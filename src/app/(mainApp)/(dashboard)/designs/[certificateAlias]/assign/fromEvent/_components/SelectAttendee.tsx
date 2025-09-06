@@ -58,12 +58,12 @@ const SelectAttendee = ({
       }))
     );
     router.push(
-      `/designs/certificate/${certificateAlias}/assign/issue?from=fromEvent`
+      `/designs/${certificateAlias}/assign/issue?from=fromEvent`
     );
   };
 
   return (
-    <div className="space-y-6 w-1/2 mx-auto">
+    <div className="space-y-4 md:space-y-6 w-4/5 md:w-1/2 mx-auto">
       <ViewAttendeesSection
         attendees={attendees || []}
         toggleValue={toggleValue}

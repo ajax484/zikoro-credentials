@@ -127,7 +127,7 @@ const Checkout = ({
   return (
     <section className="w-full space-y-6">
       <h1 className="text-center font-bold text-gray-800">Order Summary</h1>
-      <div className="flex flex-col gap-4 bg-blue-100 p-6 rounded-lg border w-1/2 mx-auto">
+      <div className="flex flex-col gap-4 bg-blue-100 p-6 rounded-lg border md:w-1/2 mx-auto">
         <div className="flex justify-between items-center">
           <span className="text-gray-700">Workspace</span>
           <span className="text-gray-700">{workspace?.organizationName}</span>

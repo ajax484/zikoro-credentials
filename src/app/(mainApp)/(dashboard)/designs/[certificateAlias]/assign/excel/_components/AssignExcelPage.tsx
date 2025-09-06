@@ -8,6 +8,7 @@ import MapRecipients from "./MapRecipients";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Preview from "./Preview";
+import { Timeline } from "@/components/Timeline/Timeline";
 
 export interface Header {
   label: string;
@@ -113,8 +114,12 @@ const AssignExcelPage = ({
           Back
         </Button> */}
       </div>
-      <section className="flex flex-col items-center pt-12 w-full py-8 mx-auto gap-6 space-y-12">
-        <Timeline step={step} setStep={(step) => setStep(step)} />
+      <section className="flex flex-col items-center pt-6 md:pt-12 w-full py-4 md:py-8 mx-auto gap-6 space-y-12">
+        <Timeline
+          steps={["upload", "map recipients", "preview"]}
+          step={step}
+          setStep={(step) => setStep(step)}
+        />
         {step === 1 && (
           <Upload
             setExcelResult={setExcelResult}
@@ -144,86 +149,6 @@ const AssignExcelPage = ({
         )}
       </section>
     </section>
-  );
-};
-
-const Timeline = ({
-  step,
-  setStep,
-}: {
-  step: number;
-  setStep: (step: number) => void;
-}) => {
-  return (
-    <div className="space-y-2 w-1/3 mx-auto">
-      <div className="flex justify-between items-center w-full">
-        <button
-          aria-label="First step"
-          disabled={step === 0}
-          onClick={() => setStep(1)}
-          className={cn(
-            "rounded-full size-5 border-2 flex items-center justify-center",
-            step > 0 ? "border-basePrimary" : "border-gray-300"
-          )}
-        >
-          <div
-            className={cn(
-              "size-1 bg-basePrimary rounded-full",
-              step > 0 ? "" : "opacity-0"
-            )}
-          />
-        </button>
-        <div
-          className={cn(
-            "h-[2px] flex-1",
-            step > 1 ? "bg-gray-500" : "bg-gray-300"
-          )}
-        />
-        <button
-          aria-label="Second step"
-          disabled={step < 2}
-          onClick={() => setStep(2)}
-          className={cn(
-            "rounded-full size-5 border-2 flex items-center justify-center",
-            step > 1 ? "border-basePrimary" : "border-gray-300"
-          )}
-        >
-          <div
-            className={cn(
-              "size-1 bg-basePrimary rounded-full",
-              step > 1 ? "" : "opacity-0"
-            )}
-          />
-        </button>
-        <div
-          className={cn(
-            "h-[2px] flex-1",
-            step > 2 ? "bg-gray-500" : "bg-gray-300"
-          )}
-        />
-        <button
-          aria-label="Third step"
-          disabled={step < 3}
-          onClick={() => setStep(3)}
-          className={cn(
-            "rounded-full size-5 border-2 flex items-center justify-center",
-            step > 2 ? "border-basePrimary" : "border-gray-300"
-          )}
-        >
-          <div
-            className={cn(
-              "size-1 bg-basePrimary rounded-full",
-              step > 2 ? "" : "opacity-0"
-            )}
-          />
-        </button>
-      </div>
-      <div className="flex justify-between items-center text-xs">
-        <span>Upload</span>
-        <span>Map Recipients</span>
-        <span>Preview</span>
-      </div>
-    </div>
   );
 };
 

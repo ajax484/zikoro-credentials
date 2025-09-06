@@ -147,7 +147,7 @@ const AddPoints = ({
           </SelectContent>
         </Select>
       </div>
-      <div className="grid grid-cols-3 gap-4 w-full">
+      <div className="grid md:grid-cols-3 gap-4 w-full">
         <div
           className={cn(
             "border-2 rounded-xl flex flex-col items-center gap-8 bg-white px-4 py-2 text-sm text-basePrimary",

@@ -162,8 +162,8 @@ const RecipientsPage = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-semibold text-gray-800">
+        <div className="flex items-center justify-end">
+          <h1 className="text-3xl font-semibold text-gray-800 hidden">
             {certificate?.name}
           </h1>
           <Button
@@ -198,7 +198,7 @@ const RecipientsPage = ({
               key={index}
               name={`recipients.${index}` as const}
               render={() => (
-                <FormItem className="flex gap-4 w-full">
+                <FormItem className="flex gap-4 w-full flex-col items-center md:flex-row">
                   <FormControl className="relative w-fit">
                     <div className="relative h-fit">
                       <Avatar className="w-24 h-24">
@@ -251,6 +251,7 @@ const RecipientsPage = ({
                       </label>
                     </div>
                   </FormControl>
+                  <div className="flex gap-1 md:contents">
                   <div className="grid grid-cols-2 gap-4 items-center flex-1">
                     <FormControl>
                       <Input
@@ -318,6 +319,7 @@ const RecipientsPage = ({
                   >
                     <Trash className="w-4 h-4" />
                   </button>
+                  </div>
                 </FormItem>
               )}
             />

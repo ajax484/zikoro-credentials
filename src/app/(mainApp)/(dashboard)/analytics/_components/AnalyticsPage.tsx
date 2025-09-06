@@ -477,7 +477,7 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
 
   return (
     <section className="space-y-6">
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-between md:justify-end gap-2">
         <GradientBorderSelect
           placeholder={"Select time period"}
           value={certificate ? String(certificate?.certificateAlias) : "all"}
@@ -517,7 +517,7 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
       </div>
       <div className="bg-white p-4 rounded-lg border border-gray-200 space-y-4">
         <h2 className="text-lg font-semibold">Overview</h2>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {!certificate ? (
             <OverviewCard
               title="Total Created"
@@ -653,10 +653,10 @@ const AnalyticsPage = ({ certificateAlias }: { certificateAlias: string }) => {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2 bg-white rounded-lg border border-gray-200 space-y-4 p-4">
+      <div className="grid md:grid-cols-3 gap-4">
+        <div className="md:col-span-2 bg-white rounded-lg border border-gray-200 space-y-4 p-4">
           <h2 className="text-lg font-semibold">Engagements</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-4">
             <div className="rounded-lg border flex flex-col items-center justify-center p-4 gap-2">
               <div className="w-full h-full max-w-[200px] max-h-[200px]">
                 <CircularProgressbarWithChildren

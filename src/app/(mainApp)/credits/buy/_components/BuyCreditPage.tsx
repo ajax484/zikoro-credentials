@@ -86,8 +86,8 @@ const BuyCreditPage = () => {
   }
 
   return (
-    <section className="bg-[#f7f8ff] w-full min-h-screen pb-4">
-      <section className="flex flex-col items-center pt-12 w-1/2 mx-auto gap-6 space-y-12">
+    <section className="bg-[#f7f8ff] w-full min-h-screen pb-4 px-4 md:px-0">
+      <section className="flex flex-col items-center pt-12 md:w-1/2 mx-auto gap-6 space-y-6 md:space-y-12">
         <Timeline step={step} setStep={(step) => setStep(step)} />
         {step === 1 && (
           <AddPoints
@@ -133,7 +133,7 @@ const Timeline = ({
   setStep: (step: number) => void;
 }) => {
   return (
-    <div className="space-y-2 w-1/3 mx-auto">
+    <div className="space-y-2 w-1/2 md:w-1/3 mx-auto">
       <div className="flex justify-between items-center w-full">
         <button
           aria-label="First step"
@@ -196,7 +196,7 @@ const Timeline = ({
           />
         </button>
       </div>
-      <div className="flex justify-between items-center text-xs">
+      <div className="hidden md:flex justify-between items-center text-xs">
         <span>Buy Credits</span>
         <span>Details</span>
         <span>checkout</span>

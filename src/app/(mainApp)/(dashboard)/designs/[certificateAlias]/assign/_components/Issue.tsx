@@ -695,15 +695,15 @@ const Issue = ({
                 Assign Credential
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-[50%]">
+            <DialogContent className="max-w-[90vw] md:max-w-[50%]">
               <DialogHeader>
                 <DialogTitle>How would you like to add recipients?</DialogTitle>
               </DialogHeader>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
                 <label
                   htmlFor="manual"
                   className={cn(
-                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-lg cursor-pointer",
+                    "border-2 hover:border-basePrimary h-[150px] md:h-[250px] py-4 flex flex-col rounded-lg cursor-pointer",
                     selectedOption === "manual" && "border-basePrimary"
                   )}
                 >
@@ -723,13 +723,13 @@ const Issue = ({
                       alt="excel"
                       className="cursor-pointer"
                     />
-                    <span>Add Manually</span>
+                    <span className="hidden md:inline">Add Manually</span>
                   </div>
                 </label>
                 <label
                   htmlFor="spreadsheet"
                   className={cn(
-                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-lg cursor-pointer",
+                    "border-2 hover:border-basePrimary h-[150px] md:h-[250px] py-4 flex flex-col rounded-lg cursor-pointer",
                     selectedOption === "spreadsheet" && "border-basePrimary"
                   )}
                 >
@@ -749,14 +749,14 @@ const Issue = ({
                       alt="excel"
                       className="cursor-pointer"
                     />
-                    <span className="text-center">
+                    <span className="text-center hidden md:inline">
                       Upload using a spreadsheet
                     </span>
                   </div>
                 </label>
                 <label
                   className={cn(
-                    "border-2 hover:border-basePrimary h-[250px] py-4 flex flex-col rounded-lg cursor-pointer",
+                    "border-2 hover:border-basePrimary h-[150px] md:h-[250px] py-4 flex flex-col rounded-lg cursor-pointer",
                     selectedOption === "event" && "border-basePrimary"
                   )}
                   htmlFor="event"
@@ -777,7 +777,9 @@ const Issue = ({
                       alt="logo"
                       className="cursor-pointer"
                     />
-                    <span>Add from Zikoro event</span>
+                    <span className="hidden md:inline">
+                      Add from Zikoro event
+                    </span>
                   </div>
                 </label>
               </div>
@@ -818,7 +820,7 @@ const Issue = ({
         </div>
       </div>
       {!isLoading && certificateIssuees.length === 0 && searchTerm === "" ? (
-        <div className="flex flex-col items-center justify-center gap-4 text-gray-600 h-[250px]">
+        <div className="flex flex-col items-center justify-center gap-4 text-gray-600 h-[150px] md:h-[250px]">
           <div className="bg-basePrimary rounded-full p-6">
             <Image src={AccountCancel} width={40} height={40} alt="logo" />
           </div>

@@ -84,7 +84,7 @@ type Navlinks = {
   restricted?: string[];
 };
 
-const navlinks: Navlinks[] = [
+export const NAVLINKS: Navlinks[] = [
   {
     name: "Home",
     href: "/home",
@@ -133,7 +133,7 @@ const navlinks: Navlinks[] = [
   },
 ];
 
-const navlinks2: Navlinks[] = [
+export const NAVLINKS2: Navlinks[] = [
   {
     name: "Refer & Earn",
     href: "/refer",
@@ -230,7 +230,7 @@ const Sidebar = () => {
 
         <nav className="my-4">
           <motion.ul className="flex flex-col gap-y-2.5">
-            {navlinks
+            {NAVLINKS
               .filter(
                 (navlink) =>
                   !navlink.restricted?.includes(
@@ -372,7 +372,7 @@ const Sidebar = () => {
             </PopoverContent>
           </Popover>
           <ul className="flex flex-col gap-y-2.5">
-            {navlinks2.map(({ name, href, Icon, disabled }) => (
+            {NAVLINKS2.map(({ name, href, Icon, disabled }) => (
               <li key={name} className="w-full">
                 <Link
                   id={name + "-link"}

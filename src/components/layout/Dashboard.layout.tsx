@@ -33,6 +33,7 @@ import FirstImage from "@/public/images/dashboard_tour_first.svg";
 import Image from "next/image";
 import { ArrowRight } from "@phosphor-icons/react";
 import { useUpdateUser } from "@/mutations/user.mutations";
+import Navbar from "../navbar/Navbar";
 
 const steps: Tour[] = [dashboardTourSteps];
 
@@ -209,6 +210,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           <section className="py-8 lg:py-16 flex-1 max-w-[1128px] mx-auto px-4 lg:px-0">
             {children}
           </section>
+
+          <Navbar />
         </main>
       </NextStep>
     </NextStepProvider>
