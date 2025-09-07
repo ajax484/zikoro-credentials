@@ -46,7 +46,7 @@ const Navbar = () => {
         aria-label="Menu"
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="absolute top-4 right-2 p-2 rounded-xl bg-white border-2 border-basePrimary z-[49]"
+        className="block md:hidden absolute top-4 right-2 p-2 rounded-xl bg-white border-2 border-basePrimary z-[49]"
       >
         {!isOpen ? (
           <List color="#001fcc" size={24} weight="bold" />
