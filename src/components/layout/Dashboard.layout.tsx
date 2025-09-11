@@ -207,7 +207,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           <aside className="hidden md:block min-h-full border-r group bg-white fixed z-[50]">
             <Sidebar />
           </aside>
-          <section className="py-8 lg:py-16 flex-1 max-w-[1128px] mx-auto px-4 lg:px-0">
+          <section className="py-8 lg:py-16 flex-1 max-w-[1128px] mx-auto pl-4 lg:pl-[76px] pr-4 lg:pr-0">
             {children}
           </section>
 
