@@ -304,7 +304,7 @@ const Directory = ({ directoryAlias }: { directoryAlias: string }) => {
         </div>
       </section>
 
-      <section className="space-y-4 w-3/4">
+      <section className="space-y-4 w-full md:w-3/4">
         {/* <Image
           src={DirectoryLogo}
           alt="Directory Logo"
@@ -319,8 +319,8 @@ const Directory = ({ directoryAlias }: { directoryAlias: string }) => {
           </h1>
         )}
 
-        <div className="border rounded-md flex">
-          <div className="flex flex-col gap-1 px-2 py-2 border-r flex-1">
+        <div className="border rounded-md flex flex-col md:flex-row">
+          <div className="flex flex-col gap-1 px-2 py-2 border-b md:border-b-0 md:border-r flex-1">
             <span className="font-semibold text-[40px]">
               {recipients.total || 0}
             </span>
@@ -328,7 +328,7 @@ const Directory = ({ directoryAlias }: { directoryAlias: string }) => {
               Total members listed
             </span>
           </div>
-          <div className="flex flex-col gap-1 px-2 py-2 border-r flex-1">
+          <div className="flex flex-col gap-1 px-2 py-2 border-b md:border-b-0 md:border-r flex-1">
             <span className="font-semibold text-[40px]">
               {/* count of all recipients certificates */}
               {recipients.data?.reduce(

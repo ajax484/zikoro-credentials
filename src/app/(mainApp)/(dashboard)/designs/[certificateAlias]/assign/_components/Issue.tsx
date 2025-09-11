@@ -55,6 +55,7 @@ import { useFetchWorkspaceCredits } from "@/queries/credits.queries";
 import { useEditor } from "@/components/editor/hooks/use-editor";
 import { Label } from "@/components/ui/label";
 import { Hint } from "@/components/hint";
+import { AddressBook } from "@phosphor-icons/react";
 
 const issueesFilter: TFilter<
   CertificateRecipient & { certificate: TCertificate }
@@ -183,6 +184,9 @@ const Issue = ({
       router.push(`/designs/${selectedCertificate}/assign/excel/`);
     } else if (selectedOption === "event") {
       router.push(`/designs/${selectedCertificate}/assign/fromEvent/`);
+    } else if (selectedOption === "directory") {
+      router.push(`/designs/${selectedCertificate}/assign/fromDirectory/`);
+      // router.push(`/designs/${selectedCertificate}/assign/fromDirectory/`);
     }
   };
 
@@ -695,11 +699,11 @@ const Issue = ({
                 Assign Credential
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-[90vw] md:max-w-[50%]">
+            <DialogContent className="max-w-[90vw] md:max-w-[75%]">
               <DialogHeader>
                 <DialogTitle>How would you like to add recipients?</DialogTitle>
               </DialogHeader>
-              <div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
+              <div className="grid grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto">
                 <label
                   htmlFor="manual"
                   className={cn(
@@ -780,6 +784,26 @@ const Issue = ({
                     <span className="hidden md:inline">
                       Add from Zikoro event
                     </span>
+                  </div>
+                </label>
+                <label
+                  className={cn(
+                    "border-2 hover:border-basePrimary h-[150px] md:h-[250px] py-4 flex flex-col rounded-lg cursor-pointer",
+                    selectedOption === "directory" && "border-basePrimary"
+                  )}
+                  htmlFor="directory"
+                >
+                  <input
+                    type="radio"
+                    id="directory"
+                    name="recipientType"
+                    value="directory"
+                    checked={selectedOption === "directory"}
+                    onChange={handleChange}
+                  />
+                  <div className="my-auto flex gap-2 flex-col items-center w-full">
+                    <AddressBook size={40} weight="bold" />
+                    <span className="hidden md:inline">Add from Directory</span>
                   </div>
                 </label>
               </div>

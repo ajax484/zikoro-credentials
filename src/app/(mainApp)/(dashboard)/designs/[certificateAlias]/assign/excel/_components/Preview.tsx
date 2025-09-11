@@ -54,7 +54,7 @@ const Preview = ({
       }))
     );
     router.push(
-      `/designs/certificate/${certificateAlias}/assign/issue?from=excel`
+      `/designs/${certificateAlias}/assign/issue?from=excel`
     );
   };
 

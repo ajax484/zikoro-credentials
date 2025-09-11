@@ -41,6 +41,7 @@ const recipientSchema = z.object({
           .email("Enter a valid Email address")
           .optional(),
         profilePicture: z.string().url("Enter a valid URL"),
+        recipientAlias: z.string().optional(),
       })
       .catchall(z.string().optional())
   ),
@@ -252,73 +253,73 @@ const RecipientsPage = ({
                     </div>
                   </FormControl>
                   <div className="flex gap-1 md:contents">
-                  <div className="grid grid-cols-2 gap-4 items-center flex-1">
-                    <FormControl>
-                      <Input
-                        required
-                        placeholder="First Name"
-                        value={recipient.recipientFirstName}
-                        onChange={(e) =>
-                          updateRecipient(index, {
-                            ...recipient,
-                            recipientFirstName: e.target.value,
-                          })
-                        }
-                      />
-                    </FormControl>
-                    <FormControl>
-                      <Input
-                        required
-                        placeholder="Last Name"
-                        value={recipient.recipientLastName}
-                        onChange={(e) =>
-                          updateRecipient(index, {
-                            ...recipient,
-                            recipientLastName: e.target.value,
-                          })
-                        }
-                      />
-                    </FormControl>
-                    <FormControl>
-                      <Input
-                        required
-                        type="recipientEmail"
-                        placeholder="recipientEmail"
-                        value={recipient.recipientEmail}
-                        onChange={(e) =>
-                          updateRecipient(index, {
-                            ...recipient,
-                            recipientEmail: e.target.value,
-                          })
-                        }
-                      />
-                    </FormControl>
-                    {certificate?.attributes &&
-                      certificate?.attributes.length > 0 &&
-                      certificate?.attributes.map((attribute) => (
-                        <FormControl>
-                          <Input
-                            placeholder={`enter ${attribute}`}
-                            value={recipient[attribute] ?? ""}
-                            onChange={(e) =>
-                              updateRecipient(index, {
-                                ...recipient,
-                                [attribute]: e.target.value,
-                              })
-                            }
-                          />
-                        </FormControl>
-                      ))}
-                  </div>
-                  <button
-                    aria-label="Delete recipient"
-                    className="text-red-600"
-                    disabled={index === 0}
-                    onClick={() => deleteRecipient(index)}
-                    type="button"
-                  >
-                    <Trash className="w-4 h-4" />
-                  </button>
+                    <div className="grid grid-cols-2 gap-4 items-center flex-1">
+                      <FormControl>
+                        <Input
+                          required
+                          placeholder="First Name"
+                          value={recipient.recipientFirstName}
+                          onChange={(e) =>
+                            updateRecipient(index, {
+                              ...recipient,
+                              recipientFirstName: e.target.value,
+                            })
+                          }
+                        />
+                      </FormControl>
+                      <FormControl>
+                        <Input
+                          required
+                          placeholder="Last Name"
+                          value={recipient.recipientLastName}
+                          onChange={(e) =>
+                            updateRecipient(index, {
+                              ...recipient,
+                              recipientLastName: e.target.value,
+                            })
+                          }
+                        />
+                      </FormControl>
+                      <FormControl>
+                        <Input
+                          required
+                          type="recipientEmail"
+                          placeholder="recipientEmail"
+                          value={recipient.recipientEmail}
+                          onChange={(e) =>
+                            updateRecipient(index, {
+                              ...recipient,
+                              recipientEmail: e.target.value,
+                            })
+                          }
+                        />
+                      </FormControl>
+                      {certificate?.attributes &&
+                        certificate?.attributes.length > 0 &&
+                        certificate?.attributes.map((attribute) => (
+                          <FormControl>
+                            <Input
+                              placeholder={`enter ${attribute}`}
+                              value={recipient[attribute] ?? ""}
+                              onChange={(e) =>
+                                updateRecipient(index, {
+                                  ...recipient,
+                                  [attribute]: e.target.value,
+                                })
+                              }
+                            />
+                          </FormControl>
+                        ))}
+                    </div>
+                    <button
+                      aria-label="Delete recipient"
+                      className="text-red-600"
+                      disabled={index === 0}
+                      onClick={() => deleteRecipient(index)}
+                      type="button"
+                    >
+                      <Trash className="w-4 h-4" />
+                    </button>
                   </div>
                 </FormItem>
               )}
