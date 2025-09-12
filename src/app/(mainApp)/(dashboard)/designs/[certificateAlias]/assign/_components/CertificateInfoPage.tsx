@@ -86,7 +86,7 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent key={"issued"} value={"issued"} className="p-4">
+        <TabsContent key={"issued"} value={"issued"} className="p-2 md:p-4">
           <Issue
             certificateAlias={certificateAlias}
             certificates={certificates}
@@ -105,7 +105,7 @@ const RecipientsPage = ({ certificateAlias }: { certificateAlias: string }) => {
             }}
           />
         </TabsContent>
-        <TabsContent key={"failed"} value={"failed"} className="p-4">
+        <TabsContent key={"failed"} value={"failed"} className="p-2 md:p-4">
           <Failed
             certificateAlias={certificateAlias}
             certificates={certificates}

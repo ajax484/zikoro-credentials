@@ -240,7 +240,7 @@ const Issue = ({
               }
             >
               <Trash className="size-4" />
-              <span>
+              <span className="hidden md:inline">
                 {filteredIssuees
                   .filter(({ id }) => rowSelection[id])
                   .every(({ isValid }) => isValid)
@@ -355,7 +355,7 @@ const Issue = ({
               }
             >
               <Send className="size-4" />
-              <span>Resend</span>
+              <span className="hidden md:inline">Resend</span>
             </button>
           </DialogTrigger>
         </Hint>
@@ -425,7 +425,9 @@ const Issue = ({
               // onClick={exportRecipients}
             >
               <PrinterIcon className="size-4" />
-              <span>{isPrintLoading ? "Preparing..." : "Print"}</span>
+              <span className="hidden md:inline">
+                {isPrintLoading ? "Preparing..." : "Print"}
+              </span>
             </button>
           </DialogTrigger>
         </Hint>
@@ -673,17 +675,17 @@ const Issue = ({
   return (
     <section className="space-y-4">
       <div className="flex md:items-end md:justify-between flex-col md:flex-row gap-y-4">
-        <div className="flex gap-2">
+        <div className="flex gap-2 justify-center md:justify-start">
           <ToggleStatus />
           <ExportRecipients />
           <Resend />
         </div>
-        <div className="flex items-center md:justify-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <Link
             href={"/credits/buy"}
             className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 md:mx-auto w-fit capitalize text-sm"
           >
-            Buy more credits
+            Buy credits
           </Link>
           <Dialog
             defaultOpen={!!certificateAlias}
@@ -864,7 +866,7 @@ const Issue = ({
         </div>
       ) : (
         <>
-          <div className="flex justify-center md:items-end flex-col md:flex-row">
+          <div className="flex justify-center md:items-end flex-col md:flex-row gap-y-2">
             <input
               type="text"
               placeholder="Search"
@@ -875,7 +877,7 @@ const Issue = ({
               }}
               className="placeholder:text-sm placeholder:text-gray-400 text-gray-700 bg-transparent px-4 py-2 md:w-1/3 border-b focus-visible:outline-none"
             />
-            <div className="flex justify-center gap-4 md:contents">
+            <div className="flex items-center justify-center gap-4 md:contents">
               <Filter
                 className={`space-y-4 w-1/3 mx-auto hide-scrollbar`}
                 filters={filters.sort(
