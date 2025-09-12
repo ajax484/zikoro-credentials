@@ -212,7 +212,7 @@ function VideoHelper() {
 
     return cn(
       baseClasses,
-      "left-1/2 -translate-x-1/2 md:translate-x-0 bottom-4 md:right-4 w-[350px] aspect-video",
+      "right-1/2 translate-x-1/2 md:translate-x-0 bottom-4 md:right-4 w-[350px] aspect-video",
       "animate-in slide-in-from-bottom-4 slide-in-from-right-4 duration-200"
     );
   };
@@ -239,7 +239,7 @@ function VideoHelper() {
         )}
       >
         <Info size={20} />
-        <span className="text-sm font-medium">Watch Help Video</span>
+        <span className="text-sm font-medium hidden md:inline">Watch Help Video</span>
       </button>
 
       {/* Video Player */}
