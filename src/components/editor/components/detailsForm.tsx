@@ -284,14 +284,14 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
           </button>
         </div>
 
-        <CustomInput label="Width">
+        {/* <CustomInput label="Width">
           <Input
             value={convertFromPixels(width, unit)}
             onChange={(e) => handleDimensionChange("width", e.target.value)}
             type="number"
             className="!border-none !shadow-none placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
           />
-        </CustomInput> */}
+        </CustomInput>  */}
       </div>
       <div className="flex flex-col gap-2 w-full">
         <label className="font-medium text-gray-700">Skills:</label>
