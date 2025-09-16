@@ -123,7 +123,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
         />
       </div>
       <div className="space-y-4 p-4">
-        <div className="flex flex-col gap-2 w-full">
+        {/* <div className="flex flex-col gap-2 w-full">
           <label className="font-medium text-gray-700">Paper Sizes</label>
           <Select
             value={sizing}
@@ -180,7 +180,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
               })}
             </SelectContent>
           </Select>
-        </div>
+        </div> */}
 
         {/* issue date */}
         <div>
@@ -256,7 +256,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
           </CustomInput>
         </div>
 
-        <UnitSwitcher />
+        {/* <UnitSwitcher />
 
         {/* Height Input */}
         <CustomInput label="Height">
@@ -291,7 +291,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
             type="number"
             className="!border-none !shadow-none placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
           />
-        </CustomInput>
+        </CustomInput> */}
       </div>
       <div className="flex flex-col gap-2 w-full">
         <label className="font-medium text-gray-700">Skills:</label>
