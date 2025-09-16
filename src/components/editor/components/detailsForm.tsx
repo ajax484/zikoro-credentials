@@ -259,17 +259,17 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
         {/* <UnitSwitcher />
 
         {/* Height Input */}
-        <CustomInput label="Height">
+        {/* <CustomInput label="Height">
           <Input
             value={convertFromPixels(height, unit)}
             onChange={(e) => handleDimensionChange("height", e.target.value)}
             type="number"
             className="!border-none !shadow-none placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
           />
-        </CustomInput>
+        </CustomInput> */}
 
         {/* Swap Button */}
-        <div className="flex items-center justify-center">
+        {/* <div className="flex items-center justify-center">
           <button
             aria-label="Swap width and height"
             onClick={() => {
@@ -282,7 +282,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
           >
             <ArrowUpDownIcon className="w-6 h-6" />
           </button>
-        </div>
+        </div> */}
 
         {/* <CustomInput label="Width">
           <Input
