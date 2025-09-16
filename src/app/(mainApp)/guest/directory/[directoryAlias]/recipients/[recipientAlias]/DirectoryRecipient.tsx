@@ -161,7 +161,7 @@ const DirectoryRecipient = ({
         {/* back */}
         <div className="flex gap-2 items-center">
           <Link
-            href={`/guest/directory?directoryAlias=${directoryAlias}`}
+            href={`/guest/directory/${directoryAlias}`}
             className="rounded-full border bg-white p-2"
           >
             <ArrowLeft size={24} className="text-zikoroBlack" weight="bold" />
