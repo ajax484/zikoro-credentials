@@ -24,6 +24,21 @@
   }
 }
 
+/* Google Fonts imports */
+@import url('https://fonts.googleapis.com/css2?family=Roboto&family=Arial+Black&family=Verdana&family=Helvetica+Neue&family=Tahoma&family=Trebuchet+MS&family=Times+New+Roman&family=EB+Garamond&family=Georgia&family=Courier+Prime&family=Dancing+Script&family=Comic+Neue&family=Palatino&family=Bookman+Old+Style&family=Impact&family=Lucida+Sans&family=Lucida+Console&display=swap');
+
+/* Self-host system fonts (place .woff2/.ttf in /public/fonts/) */
+@font-face {
+  font-family: "Arial";
+  src: url("/fonts/Arial.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geneva";
+  src: url("/fonts/Geneva.woff2") format("woff2");
+}
+
+
 @layer base {
   :root {
     --toastify-color-success: #6d28d9 !important;

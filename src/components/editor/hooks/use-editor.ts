@@ -18,6 +18,8 @@ import {
   FONT_SIZE,
   JSON_KEYS,
   BORDER_RADIUS,
+  fonts,
+  fontFallbackMap,
 } from "@/components/editor/types";
 import { useHistory } from "@/components/editor/hooks/use-history";
 import {
@@ -44,6 +46,7 @@ import { barCodeTypeEnum } from "../components/qrcode-sidebar";
 import { nanoid } from "nanoid";
 import JsBarcode from "jsbarcode";
 import QRCode from "qrcode";
+import FontFaceObserver from "fontfaceobserver";
 
 const generateBarcodeImage = async (
   value: string,
@@ -116,6 +119,24 @@ const generateQRCodeImage = async (
     throw error;
   }
 };
+
+export function getSafeFont(font: string) {
+  return fontFallbackMap[font] || font;
+}
+
+export async function loadFonts() {
+  const uniqueFonts = Object.values(fontFallbackMap)
+    .map((f) => f.split(",")[0].trim()) // take first font in stack
+    .filter((v, i, a) => a.indexOf(v) === i); // dedupe
+
+  await Promise.all(
+    uniqueFonts.map((f) =>
+      new FontFaceObserver(f).load(null, 8000).catch(() => {
+        console.log(`Font "${f}" failed to load, falling back.`);
+      })
+    )
+  );
+}
 
 const buildEditor = ({
   save,
@@ -1768,7 +1789,7 @@ export const useEditor = ({
 
       initialCanvas.setWidth(initialContainer?.offsetWidth);
       initialCanvas.setHeight(initialContainer?.offsetHeight);
-
+      
       initialCanvas.add(initialWorkspace);
       initialCanvas.centerObject(initialWorkspace);
       initialCanvas.clipPath = initialWorkspace;

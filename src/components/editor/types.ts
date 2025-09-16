@@ -69,6 +69,28 @@ export const fonts = [
   "Lucida Console",
 ];
 
+// fallback.ts
+export const fontFallbackMap: Record<string, string> = {
+  Arial: "Roboto, Arial, sans-serif",
+  "Arial Black": "Arial Black, sans-serif",
+  Verdana: "Verdana, sans-serif",
+  Helvetica: "Helvetica Neue, Helvetica, sans-serif",
+  Tahoma: "Tahoma, sans-serif",
+  "Trebuchet MS": "Trebuchet MS, sans-serif",
+  "Times New Roman": "Times New Roman, serif",
+  Georgia: "Georgia, serif",
+  Garamond: "EB Garamond, Garamond, serif",
+  "Courier New": "Courier Prime, Courier New, monospace",
+  "Brush Script MT": "Dancing Script, cursive",
+  Palatino: "Palatino, serif",
+  Bookman: "Bookman Old Style, serif",
+  "Comic Sans MS": "Comic Neue, Comic Sans MS, cursive",
+  Impact: "Impact, sans-serif",
+  "Lucida Sans Unicode": "Lucida Sans, sans-serif",
+  Geneva: "Geneva, sans-serif",
+  "Lucida Console": "Lucida Console, monospace",
+};
+
 export const selectionDependentTools = [
   "fill",
   "font",
