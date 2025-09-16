@@ -1,18 +1,20 @@
 "use client";
-import {
-  LayoutTemplate,
-  ImageIcon,
-  Settings,
-  Shapes,
-  Type,
-  Lock,
-  Barcode,
-  Signature,
-  Layers,
-} from "lucide-react";
 import { ActiveTool } from "@/components/editor/types";
 import { SidebarItem } from "@/components/editor/components/sidebar-item";
 import { PiSelectionBackground } from "react-icons/pi";
+import {
+  Barcode,
+  Image,
+  Layout,
+  Lock,
+  QrCode,
+  SelectionBackground,
+  Shapes,
+  Signature,
+  SlidersHorizontal,
+  Stack,
+  TextT,
+} from "@phosphor-icons/react";
 
 interface SidebarProps {
   activeTool: ActiveTool;
@@ -21,38 +23,38 @@ interface SidebarProps {
 
 export const Sidebar = ({ activeTool, onChangeActiveTool }: SidebarProps) => {
   return (
-    <aside className="flex h-full w-[100px] flex-col overflow-y-auto border-r bg-white">
+    <aside className="flex h-full w-[100px] flex-col overflow-y-auto border-r bg-white hide-scrollbar">
       <ul className="flex flex-col">
         <SidebarItem
-          icon={LayoutTemplate}
+          icon={Layout}
           label="Templates"
           isActive={activeTool === "templates"}
           onClick={() => onChangeActiveTool("templates")}
           numKey={"1"}
         />
         <SidebarItem
-          icon={PiSelectionBackground}
+          icon={SelectionBackground}
           label="Background"
           isActive={activeTool === "background"}
           onClick={() => onChangeActiveTool("background")}
           numKey={"2"}
         />
         <SidebarItem
-          icon={ImageIcon}
+          icon={Image}
           label="Image"
           isActive={activeTool === "images"}
           onClick={() => onChangeActiveTool("images")}
           numKey={"3"}
         />
         <SidebarItem
-          icon={Type}
+          icon={TextT}
           label="Text"
           isActive={activeTool === "text"}
           onClick={() => onChangeActiveTool("text")}
           numKey={"4"}
         />
         <SidebarItem
-          icon={Barcode}
+          icon={QrCode}
           label="Bar Code"
           isActive={activeTool === "qrCode"}
           onClick={() => onChangeActiveTool("qrCode")}
@@ -86,11 +88,18 @@ export const Sidebar = ({ activeTool, onChangeActiveTool }: SidebarProps) => {
           onClick={() => onChangeActiveTool("ai")}
         /> */}
         <SidebarItem
-          icon={Layers}
+          icon={Stack}
           label="Layers"
           isActive={activeTool === "layers"}
           onClick={() => onChangeActiveTool("layers")}
           numKey={"9"}
+        />
+        <SidebarItem
+          icon={SlidersHorizontal}
+          label="Canvas"
+          isActive={activeTool === "canvas"}
+          onClick={() => onChangeActiveTool("canvas")}
+          numKey={"0"}
         />
       </ul>
     </aside>

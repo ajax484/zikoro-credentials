@@ -1,12 +1,11 @@
-import type { LucideIcon } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { Hint } from "@/components/hint";
+import { Icon } from "@phosphor-icons/react";
 
 interface SidebarItemProps {
-  icon: LucideIcon;
+  icon: Icon;
   label: string;
   isActive?: boolean;
   onClick: () => void;
@@ -51,15 +50,17 @@ export const SidebarItem = ({
         variant="ghost"
         onClick={onClick}
         className={cn(
-          "flex aspect-video h-full w-full flex-col rounded-none p-3 py-4 group group-hover:bg-basePrimary/10 group-hover:text-basePrimary transition-all duration-300 ease-in-out",
+          "flex aspect-video h-full w-full flex-col rounded-none px-3 py-4 group group-hover:bg-basePrimary/10 group-hover:text-basePrimary transition-all duration-300 ease-in-out",
           isActive && "bg-basePrimary/10 text-basePrimary"
         )}
       >
         <Icon
+          size={24}
+          weight={"duotone"}
           className={cn(
-            "size-4 shrink-0 stroke-2 group-hover:stroke-basePrimary group-hover:fill-basePrimary/10",
+            "shrink-0 stroke-2 group-hover:stroke-basePrimary group-hover:fill-basePrimary",
             isActive &&
-              "text-basePrimary stroke-basePrimary fill-basePrimary/10"
+              "text-basePrimary stroke-basePrimary fill-basePrimary"
           )}
         />
         <span className="mt-2 text-xs">{label}</span>

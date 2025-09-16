@@ -125,7 +125,8 @@ export type ActiveTool =
   | "qrCode"
   | "layers"
   | "border-radius"
-  | "alignment";
+  | "alignment"
+  | "canvas";
 
 export const FILL_COLOR = "rgba(0,0,0,1)";
 export const STROKE_COLOR = "rgba(0,0,0,1)";

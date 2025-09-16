@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { ActiveTool, Editor } from "@/components/editor/types";
 import { ToolSidebarClose } from "@/components/editor/components/tool-sidebar-close";
@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { convertFromPixels, convertToPixels } from "@/utils/helpers";
 import { se } from "date-fns/locale";
+import CustomInput from "@/components/CustomInput";
 
 export const paperSeries: string[] = [
   "iso b series",
@@ -302,7 +303,7 @@ interface SettingsSidebarProps {
   isSaving: boolean;
 }
 
-export const SettingsSidebar = ({
+export const CanvasSidebar = ({
   editor,
   activeTool,
   onChangeActiveTool,
@@ -321,14 +322,15 @@ export const SettingsSidebar = ({
   const [sizing, setSizing] = useState(settings?.sizing ?? "custom");
   const [width, setWidth] = useState(initialWidth);
   const [height, setHeight] = useState(initialHeight);
-  const [background, setBackground] = useState(workspace?.fill ?? "#ffffff");
+
+  useEffect(() => {
+    setWidth(initialWidth);
+    setHeight(initialHeight);
+  }, [workspace]);
 
   // Unit switcher UI
   const UnitSwitcher = () => (
-    <div className="relative border mb-4">
-      <Label className="absolute top-0 -translate-y-1/2 right-4 bg-white text-gray-600 text-tiny px-1">
-        Unit
-      </Label>
+    <CustomInput label="Unit">
       <select
         aria-label="Unit"
         value={unit}
@@ -344,7 +346,7 @@ export const SettingsSidebar = ({
         <option value="in">Inches (in)</option>
         <option value="cm">Centimeters (cm)</option>
       </select>
-    </div>
+    </CustomInput>
   );
 
   // Modified input handlers
@@ -365,41 +367,35 @@ export const SettingsSidebar = ({
     }
   };
 
-  const changeBackground = (value: string) => {
-    setBackground(value);
-    editor?.changeBackground(value);
-  };
-
   const onClose = () => {
     onChangeActiveTool("select");
   };
 
-  console.log(width, height);
+  console.log(initialHeight, initialWidth);
 
   return (
     <aside
       className={cn(
         "relative z-[40] flex h-full w-[360px] flex-col border-r bg-white",
-        activeTool === "settings" ? "visible" : "hidden"
+        activeTool === "canvas" ? "visible" : "hidden"
       )}
     >
       <ToolSidebarHeader
-        title="Settings"
-        description="Change the look of your workspace"
+        title="Canvas"
+        description="set the dimensions of your canvas"
       />
       <ScrollArea>
         <div className="space-y-4 p-4">
-          <div className="relative border">
-            <Label className="absolute top-0 -translate-y-1/2 right-4 bg-white text-gray-600 text-tiny px-1">
-              Paper Sizes
-            </Label>
+          <div className="flex flex-col gap-2 w-full">
+            <label className="font-medium text-gray-700">Paper Sizes</label>
             <Select
-              value={`${convertFromPixels(height, "cm")},${convertFromPixels(
-                width,
-                "cm"
-              )},${sizing}`}
+              value={sizing}
               onValueChange={(value) => {
-                const [height, width, sizing] = value.split(",");
+                const paperSize = paperSizes.find(
+                  (size) => size.sizing === value
+                );
+                if (!paperSize) return;
+                const { height, width, sizing } = paperSize;
                 const heightInPixels = convertToPixels(Number(height), "cm");
                 const widthInPixels = convertToPixels(Number(width), "cm");
                 setHeight(heightInPixels);
@@ -434,7 +430,7 @@ export const SettingsSidebar = ({
                         return (
                           <SelectItem
                             key={sizing}
-                            value={`${height},${width},${sizing}`}
+                            value={sizing}
                             data-height={height}
                             data-width={width}
                           >
@@ -448,21 +444,16 @@ export const SettingsSidebar = ({
               </SelectContent>
             </Select>
           </div>
-
           <UnitSwitcher />
-
           {/* Height Input */}
-          <div className="relative border">
-            <Label className="absolute top-0 -translate-y-1/2 right-4 bg-white text-gray-600 text-tiny px-1">
-              Height
-            </Label>
+          <CustomInput label="Height">
             <Input
               value={convertFromPixels(height, unit)}
               onChange={(e) => handleDimensionChange("height", e.target.value)}
               type="number"
+              className="!border-none !shadow-none placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
             />
-          </div>
-
+          </CustomInput>
           {/* Swap Button */}
           <button
             aria-label="Swap width and height"
@@ -476,23 +467,14 @@ export const SettingsSidebar = ({
           >
             <ArrowUpDownIcon className="w-6 h-6" />
           </button>
-
-          <div className="relative border">
-            <Label className="absolute top-0 -translate-y-1/2 right-4 bg-white text-gray-600 text-tiny px-1">
-              Width
-            </Label>
+          <CustomInput label="Width">
             <Input
               value={convertFromPixels(width, unit)}
               onChange={(e) => handleDimensionChange("width", e.target.value)}
               type="number"
+              className="!border-none !shadow-none placeholder:text-sm h-12 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
             />
-          </div>
-        </div>
-        <div className="p-4">
-          <ColorPicker
-            value={background as string}
-            onChange={changeBackground}
-          />
+          </CustomInput>
         </div>
       </ScrollArea>
       <ToolSidebarClose onClick={onClose} />
