@@ -46,7 +46,7 @@ export async function POST(request: Request) {
       .select("*")
       .maybeSingle();
 
-    if (error) throw error;
+  if (error) throw error;
 
     return NextResponse.json(
       { data },

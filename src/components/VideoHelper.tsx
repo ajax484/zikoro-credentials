@@ -73,7 +73,7 @@ function VideoHelper() {
       <ReactPlayer
         ref={mediaRef}
         slot="media"
-        src="https://stream.mux.com/maVbJv2GSYNRgS02kPXOOGdJMWGU1mkA019ZUjYE7VU7k"
+        src="https://res.cloudinary.com/zikoro/video/upload/v1759474943/ZIKORO/videos/zikoro_Video_Home_editted_o4tg4v.mp4"
         controls={false}
         style={{
           width: "100%",
@@ -239,7 +239,9 @@ function VideoHelper() {
         )}
       >
         <Info size={20} />
-        <span className="text-sm font-medium hidden md:inline">Watch Help Video</span>
+        <span className="text-sm font-medium hidden md:inline">
+          Watch Help Video
+        </span>
       </button>
 
       {/* Video Player */}
