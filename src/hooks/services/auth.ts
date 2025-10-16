@@ -25,22 +25,13 @@ export function useRegistration() {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback/${
-            values?.email
-          }/${new Date().toISOString()}`,
-          data: {
-            platform: "credentials",
-            verification_token: nanoid(),
-          },
-        },
+      const { data } = await postRequest<z.infer<typeof loginSchema>>({
+        endpoint: `https://ddlepujpbqjoogkmiwfu.supabase.co/functions/v1/register`,
+        payload: values,
       });
 
-      if (error) {
-        toast.error(error.message);
+      if (data.error) {
+        toast.error(data.error ?? "Unknown error");
         setLoading(false);
         return;
       }
