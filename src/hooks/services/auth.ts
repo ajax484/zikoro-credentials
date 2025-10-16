@@ -49,6 +49,7 @@ export function useRegistration() {
       setLoading(false);
     }
   }
+  
   return {
     register,
     loading,
