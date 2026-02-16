@@ -28,22 +28,13 @@ const recipientSchema = z.object({
   recipients: z.array(
     z
       .object({
-        recipientFirstName: z
-          .string()
-          .nonempty("First name is required")
-          .optional(),
-        recipientLastName: z
-          .string()
-          .nonempty("Last name is required")
-          .optional(),
-        recipientEmail: z
-          .string()
-          .email("Enter a valid Email address")
-          .optional(),
+        recipientFirstName: z.string().min(1, "First name is required"),
+        recipientLastName: z.string().min(1, "Last name is required"),
+        recipientEmail: z.string().email("Enter a valid Email address"),
         profilePicture: z.string().url("Enter a valid URL"),
         recipientAlias: z.string().optional(),
       })
-      .catchall(z.string().optional())
+      .catchall(z.string().optional()),
   ),
 });
 
@@ -113,20 +104,6 @@ const RecipientsPage = ({
     ]);
   };
 
-  const updateRecipient = (
-    index: number,
-    data: {
-      recipientFirstName: string;
-      recipientLastName: string;
-      recipientEmail: string;
-      profilePicture: string;
-    }
-  ) => {
-    const newRecipients = [...recipients];
-    newRecipients[index] = data;
-    form.setValue("recipients", newRecipients);
-  };
-
   const deleteRecipient = (index: number) => {
     const newRecipients = [...recipients];
     newRecipients.splice(index, 1);
@@ -142,7 +119,7 @@ const RecipientsPage = ({
       data.recipients.map((recipient) => ({
         recipientAlias: null,
         ...recipient,
-      }))
+      })),
     );
     updatePage(1);
   };
@@ -153,8 +130,8 @@ const RecipientsPage = ({
     certificate?.attributes && certificate?.attributes.length > 0
       ? "gold"
       : certificate?.hasQRCode
-      ? "silver"
-      : "bronze";
+        ? "silver"
+        : "bronze";
 
   console.log(recipients);
 
@@ -195,135 +172,148 @@ const RecipientsPage = ({
 
         <div className="space-y-8 p-6 rounded-lg">
           {recipients.map((recipient, index) => (
-            <FormField
+            <div
               key={index}
-              name={`recipients.${index}` as const}
-              render={() => (
-                <FormItem className="flex gap-4 w-full flex-col items-center md:flex-row">
-                  <FormControl className="relative w-fit">
-                    <div className="relative h-fit">
-                      <Avatar className="w-24 h-24">
-                        <AvatarImage src={recipient.profilePicture} />
-                        <AvatarFallback>
-                          {(recipient.recipientFirstName?.[0] || "#") +
-                            (recipient.recipientLastName?.[0] || "#")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <label className="absolute bottom-0 right-0 p-1 transition-colors bg-white rounded-full shadow-lg cursor-pointer hover:bg-gray-50">
-                        <input
-                          type="file"
-                          className="hidden"
-                          accept="image/*"
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
-                            if (!file.type.startsWith("image/")) {
-                              toast.error("Please upload an image file");
-                              return;
-                            }
-                            if (file.size > 5 * 1024 * 1024) {
-                              toast.error("Image size should be less than 5MB");
-                              return;
-                            }
-                            setProfilePictureUploading(true);
-                            const { url, error } = await uploadFile(
-                              file,
-                              "image"
-                            );
-
-                            if (error) return toast.error(error);
-                            // alert("File uploaded successfully");
-
-                            url &&
-                              updateRecipient(index, {
-                                ...recipient,
-                                profilePicture: url,
-                              });
-
-                            setProfilePictureUploading(false);
-                          }}
-                          disabled={profilePictureUploading}
-                        />
-                        {profilePictureUploading ? (
-                          <div className="w-4 h-4 border-2 border-gray-300 rounded-full animate-spin border-t-black" />
-                        ) : (
-                          <Pen className="w-4 h-4" />
-                        )}
-                      </label>
-                    </div>
-                  </FormControl>
-                  <div className="flex gap-1 md:contents">
-                    <div className="grid grid-cols-2 gap-4 items-center flex-1">
-                      <FormControl>
-                        <Input
-                          required
-                          placeholder="First Name"
-                          value={recipient.recipientFirstName}
-                          onChange={(e) =>
-                            updateRecipient(index, {
-                              ...recipient,
-                              recipientFirstName: e.target.value,
-                            })
-                          }
-                        />
-                      </FormControl>
-                      <FormControl>
-                        <Input
-                          required
-                          placeholder="Last Name"
-                          value={recipient.recipientLastName}
-                          onChange={(e) =>
-                            updateRecipient(index, {
-                              ...recipient,
-                              recipientLastName: e.target.value,
-                            })
-                          }
-                        />
-                      </FormControl>
-                      <FormControl>
-                        <Input
-                          required
-                          type="recipientEmail"
-                          placeholder="recipientEmail"
-                          value={recipient.recipientEmail}
-                          onChange={(e) =>
-                            updateRecipient(index, {
-                              ...recipient,
-                              recipientEmail: e.target.value,
-                            })
-                          }
-                        />
-                      </FormControl>
-                      {certificate?.attributes &&
-                        certificate?.attributes.length > 0 &&
-                        certificate?.attributes.map((attribute) => (
-                          <FormControl>
-                            <Input
-                              placeholder={`enter ${attribute}`}
-                              value={recipient[attribute] ?? ""}
-                              onChange={(e) =>
-                                updateRecipient(index, {
-                                  ...recipient,
-                                  [attribute]: e.target.value,
-                                })
+              className="flex gap-4 w-full flex-col items-center md:flex-row"
+            >
+              <FormField
+                control={form.control}
+                name={`recipients.${index}.profilePicture`}
+                render={({ field }) => (
+                  <FormItem className="relative w-fit">
+                    <FormControl>
+                      <div className="relative h-fit">
+                        <Avatar className="w-24 h-24">
+                          <AvatarImage src={field.value} />
+                          <AvatarFallback>
+                            {(recipient.recipientFirstName?.[0] || "#") +
+                              (recipient.recipientLastName?.[0] || "#")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <label className="absolute bottom-0 right-0 p-1 transition-colors bg-white rounded-full shadow-lg cursor-pointer hover:bg-gray-50">
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              if (!file.type.startsWith("image/")) {
+                                toast.error("Please upload an image file");
+                                return;
                               }
-                            />
-                          </FormControl>
-                        ))}
-                    </div>
-                    <button
-                      aria-label="Delete recipient"
-                      className="text-red-600"
-                      disabled={index === 0}
-                      onClick={() => deleteRecipient(index)}
-                      type="button"
-                    >
-                      <Trash className="w-4 h-4" />
-                    </button>
-                  </div>
-                </FormItem>
-              )}
-            />
+                              if (file.size > 5 * 1024 * 1024) {
+                                toast.error(
+                                  "Image size should be less than 5MB",
+                                );
+                                return;
+                              }
+                              setProfilePictureUploading(true);
+                              const { url, error } = await uploadFile(
+                                file,
+                                "image",
+                              );
+
+                              if (error) return toast.error(error);
+
+                              url && field.onChange(url);
+
+                              setProfilePictureUploading(false);
+                            }}
+                            disabled={profilePictureUploading}
+                          />
+                          {profilePictureUploading ? (
+                            <div className="w-4 h-4 border-2 border-gray-300 rounded-full animate-spin border-t-black" />
+                          ) : (
+                            <Pen className="w-4 h-4" />
+                          )}
+                        </label>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex gap-1 md:contents">
+                <div className="grid grid-cols-2 gap-4 items-center flex-1">
+                  <FormField
+                    control={form.control}
+                    name={`recipients.${index}.recipientFirstName`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input {...field} required placeholder="First Name" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name={`recipients.${index}.recipientLastName`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input {...field} required placeholder="Last Name" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name={`recipients.${index}.recipientEmail`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            required
+                            type="email"
+                            placeholder="email"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {certificate?.attributes &&
+                    certificate?.attributes.length > 0 &&
+                    certificate?.attributes.map((attribute) => (
+                      <FormField
+                        key={attribute}
+                        control={form.control}
+                        name={`recipients.${index}.${attribute}`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder={`enter ${attribute}`}
+                                value={(field.value as string) || ""}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    ))}
+                </div>
+                <button
+                  aria-label="Delete recipient"
+                  className="text-red-600"
+                  disabled={index === 0}
+                  onClick={() => deleteRecipient(index)}
+                  type="button"
+                >
+                  <Trash className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           ))}
 
           <button
