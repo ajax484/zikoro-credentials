@@ -28,11 +28,15 @@ const recipientSchema = z.object({
   recipients: z.array(
     z
       .object({
-        recipientFirstName: z.string().min(1, "First name is required"),
-        recipientLastName: z.string().min(1, "Last name is required"),
-        recipientEmail: z.string().email("Enter a valid Email address"),
+        recipientFirstName: z.string().trim().min(1, "First name is required"),
+        recipientLastName: z.string().trim().min(1, "Last name is required"),
+        recipientEmail: z
+          .string()
+          .trim()
+          .toLowerCase()
+          .email("Enter a valid Email address"),
         profilePicture: z.string().url("Enter a valid URL"),
-        recipientAlias: z.string().optional(),
+        recipientAlias: z.string().trim().optional(),
       })
       .catchall(z.string().optional()),
   ),
@@ -139,7 +143,11 @@ const RecipientsPage = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6"
+        noValidate
+      >
         <div className="flex items-center justify-end">
           <h1 className="text-3xl font-semibold text-gray-800 hidden">
             {certificate?.name}
