@@ -11,13 +11,15 @@ import {
   replaceSpecialText,
   replaceURIVariable,
 } from "@/utils/helpers";
-import { PrinterIcon, Send, Trash } from "lucide-react";
+import { Download, PrinterIcon, Send, Trash } from "lucide-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { PiExport } from "react-icons/pi";
 import { issueesColumns } from "./columns";
 import logo from "@/public/icons/logo.svg";
 import excel from "@/public/icons/vscode-icons_file-type-excel.svg";
 import penPaper from "@/public/icons/clarity_form-line.svg";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 import Image from "next/image";
 import {
   Dialog,
@@ -477,6 +479,69 @@ const Issue = ({
     );
   };
 
+  const [isZipLoading, setIsZipLoading] = useState(false);
+
+  const downloadZipFn = async () => {
+    try {
+      setIsZipLoading(true);
+      const exportedCertificates = filteredIssuees.filter(
+        ({ id }) => rowSelection[id]
+      );
+
+      if (exportedCertificates.length === 0) return;
+
+      const jsonData = exportedCertificates.map((recipient) => ({
+        json: (() => {
+          let newState = JSON.parse(
+            replaceURIVariable(
+              replaceSpecialText(
+                JSON.stringify(recipient?.certificate?.JSON?.json || {}),
+                {
+                  asset: recipient.certificate,
+                  recipient: recipient,
+                  organization: organization!,
+                }
+              ),
+              recipient.certificateId || ""
+            )
+          );
+
+          // Handle image replacement
+          newState = String(newState).replaceAll(
+            "https://res.cloudinary.com/zikoro/image/upload/v1734007655/ZIKORO/image_placeholder_j25mn4.jpg",
+            recipient?.profilePicture?.trim()!
+          );
+
+          return newState;
+        })(),
+        width: recipient?.certificate?.JSON.width || 1200,
+        height: recipient.certificate.JSON?.height || 900,
+      }));
+
+      const dataUrls = await editor?.loadMultipleJsonAsync(jsonData);
+
+      if (!dataUrls || dataUrls.length === 0) return;
+
+      const zip = new JSZip();
+      
+      dataUrls.forEach((url, index) => {
+        const recipient = exportedCertificates[index];
+        const fileName = `${recipient.recipientFirstName}_${recipient.recipientLastName || ""}_${recipient.id}.png`.replace(/\s+/g, "_");
+        // Remove data:image/png;base64, from the URL
+        const base64Data = url.split(",")[1];
+        zip.file(fileName, base64Data, { base64: true });
+      });
+
+      const content = await zip.generateAsync({ type: "blob" });
+      saveAs(content, `certificates_${format(new Date(), "yyyyMMdd_HHmmss")}.zip`);
+    } catch (error) {
+      console.error("ZIP download failed:", error);
+      alert("Error generating ZIP file. Check console for details.");
+    } finally {
+      setIsZipLoading(false);
+    }
+  };
+
   const toggleCertificatesFn = async () => {
     const toggleFn = filteredIssuees
       .filter(({ id }) => rowSelection[id])
@@ -542,8 +607,6 @@ const Issue = ({
   //   })();
   // }, [editor]);
 
-  const [firstGenerate, setFirstGenerate] = useState(true);
-
   const [isPrintLoading, setIsPrintLoading] = useState(false);
 
   async function exportRecipientsFn(options?: { imagesPerRow?: number }) {
@@ -582,12 +645,6 @@ const Issue = ({
         width: recipient?.certificate?.JSON.width || 1200,
         height: recipient.certificate.JSON?.height || 900,
       }));
-
-      if (firstGenerate) {
-        setFirstGenerate(false);
-        await editor?.loadMultipleJsonAsync(jsonData);
-        await editor?.loadMultipleJsonAsync(jsonData);
-      }
 
       dataUrls = await editor?.loadMultipleJsonAsync(jsonData);
 
@@ -678,6 +735,31 @@ const Issue = ({
         <div className="flex gap-2 justify-center md:justify-start">
           <ToggleStatus />
           <ExportRecipients />
+          <Hint
+            label={"Select a issuees to enable"}
+            side="bottom"
+            sideOffset={10}
+          >
+            <button
+              className={cn(
+                "border rounded-xl flex items-center gap-2 bg-white px-4 py-2 text-sm disabled:border-gray-600 disabled:text-gray-600 border-basePrimary text-basePrimary"
+              )}
+              disabled={
+                filteredIssuees.filter(({ id }) => rowSelection[id]).length ===
+                  0 ||
+                isLoadingRecall ||
+                isLoadingReissue ||
+                isLoadingResend ||
+                isZipLoading
+              }
+              onClick={downloadZipFn}
+            >
+              <Download className="size-4" />
+              <span className="hidden md:inline">
+                {isZipLoading ? "Preparing ZIP..." : "Download PNGs (ZIP)"}
+              </span>
+            </button>
+          </Hint>
           <Resend />
         </div>
         <div className="flex items-center justify-center gap-2">

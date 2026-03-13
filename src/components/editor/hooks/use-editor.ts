@@ -391,7 +391,6 @@ const buildEditor = ({
   const loadJsonAsync = async (json: string): Promise<string> => {
     try {
       const data = JSON.parse(json);
-      const options = generateSaveOptions();
 
       return await new Promise<string>((resolve, reject) => {
         // Set a timeout to prevent hanging
@@ -409,10 +408,11 @@ const buildEditor = ({
             // Process barcode objects if they exist
             await processBarcodeObjects();
 
-            // Wait for images to load with shorter delay
-            await new Promise((resolve) => setTimeout(resolve, 50));
+            // Wait for images to load
+            await new Promise((resolve) => setTimeout(resolve, 100));
 
-            // Generate the final data URL
+            // Generate the final data URL with fresh options
+            const options = generateSaveOptions();
             const dataUrl = canvas.toDataURL(options);
             resolve(dataUrl);
           } catch (canvasError) {
@@ -443,6 +443,10 @@ const buildEditor = ({
 
         if (currentWidth !== width || currentHeight !== height) {
           workspace?.set({ width, height });
+          if (workspace) {
+            canvas.centerObject(workspace);
+            canvas.clipPath = workspace;
+          }
         }
 
         const dataUrl = await loadJsonAsync(json);
