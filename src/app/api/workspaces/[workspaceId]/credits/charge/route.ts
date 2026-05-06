@@ -34,7 +34,6 @@ export async function POST(
       .select("*")
       .eq("workspaceId", workspaceId)
       .eq("tokenId", tokenId)
-      .gte("expiryDate", new Date().toISOString())
       .order("expiryDate", { ascending: true });
 
     if (creditsError) {
