@@ -18,7 +18,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { useUpdateData } from "@/hooks/services/request";
+import { useUpdateData, useMutateData, useDeleteRequest } from "@/hooks/services/request";
+import { Send, Trash2 } from "lucide-react";
 
 export const teamMembersColumns = (
   getTeamMembers: () => Promise<void>,
@@ -347,7 +348,59 @@ export const inviteTeamMemberColumns: ColumnDef<CredentialsWorkspaceInvite>[] =
       cell: ({ row }) => {
         const member = row.original;
 
-        return <div className="flex flex-row gap-2"></div>;
+        const InviteActions = () => {
+          const { organization } = useOrganizationStore();
+          const { mutateData: renotifyMember, isLoading: isRenotifying } =
+            useMutateData<any>(
+              `/workspaces/${organization?.organizationAlias}/team/invites/renotify`
+            );
+
+          const { deleteData: deleteInvite, isLoading: isDeleting } =
+            useDeleteRequest(
+              `/workspaces/${organization?.organizationAlias}/team/invites`
+            );
+
+          const handleRenotify = async () => {
+            await renotifyMember({
+              payload: {
+                userEmail: member.email,
+                workspaceAlias: member.workspaceAlias,
+                workspaceName: organization?.organizationName,
+              },
+            });
+          };
+
+          const handleDelete = async () => {
+            await deleteInvite(String(member.id));
+          };
+
+          return (
+            <div className="flex flex-row gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleRenotify}
+                disabled={isRenotifying || isDeleting}
+                className="bg-basePrimary text-gray-50 hover:bg-basePrimary/90 hover:text-white h-8 w-8"
+                title="Renotify"
+              >
+                <Send className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleDelete}
+                disabled={isRenotifying || isDeleting}
+                className="bg-red-500 text-white hover:bg-red-600 hover:text-white h-8 w-8"
+                title="Delete Invite"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+          );
+        };
+
+        return <InviteActions />;
       },
     },
   ];
