@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params: { workspaceId } }: { params: { workspaceId: number } }
+  { params: { workspaceId } }: { params: { workspaceId: number } },
 ) {
   const supabase = createRouteHandlerClient({ cookies });
 
@@ -22,7 +22,7 @@ export async function GET(
         console.log("invalid pagination parameters");
         return NextResponse.json(
           { error: "Invalid pagination parameters" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -51,7 +51,7 @@ export async function GET(
         },
         {
           status: 200,
-        }
+        },
       );
     } catch (error) {
       console.error(error);
@@ -61,7 +61,7 @@ export async function GET(
         },
         {
           status: 500,
-        }
+        },
       );
     }
   } else {
@@ -71,7 +71,7 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params: { workspaceId } }: { params: { workspaceId: number } }
+  { params: { workspaceId } }: { params: { workspaceId: number } },
 ) {
   const supabase = createRouteHandlerClient({ cookies });
 
@@ -94,13 +94,13 @@ export async function POST(
           },
           {
             status: 400,
-          }
+          },
         );
       }
 
       // check if user is already a team member
       const isTeamMember = teamMembers?.some(
-        (teamMember) => teamMember.userEmail === payload.userEmail
+        (teamMember) => teamMember.userEmail === payload.userEmail,
       );
 
       if (isTeamMember) {
@@ -110,7 +110,26 @@ export async function POST(
           },
           {
             status: 400,
-          }
+          },
+        );
+      }
+
+      //check if email already exists in invites table
+      const { data: existingInvite } = await supabase
+        .from("credentialsWorkspaceInvites")
+        .select("*")
+        .eq("email", payload.userEmail)
+        .eq("workspaceAlias", payload.workspaceAlias)
+        .single();
+
+      if (existingInvite) {
+        return NextResponse.json(
+          {
+            error: "An invite has already been sent to this email",
+          },
+          {
+            status: 400,
+          },
         );
       }
 
@@ -161,7 +180,7 @@ export async function POST(
         },
         {
           status: 201,
-        }
+        },
       );
     } catch (error) {
       console.error(error);
@@ -171,7 +190,7 @@ export async function POST(
         },
         {
           status: 500,
-        }
+        },
       );
     }
   } else {
