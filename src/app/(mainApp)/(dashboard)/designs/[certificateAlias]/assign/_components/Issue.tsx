@@ -769,6 +769,12 @@ const Issue = ({
           >
             Buy credits
           </Link>
+          <Link
+            href={"/credits/convert"}
+            className="bg-basePrimary gap-x-2 text-gray-50 font-medium flex items-center justify-center rounded-lg py-2 px-4 md:mx-auto w-fit capitalize text-sm"
+          >
+            Convert credits
+          </Link>
           <Dialog
             defaultOpen={!!certificateAlias}
             open={open}

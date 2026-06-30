@@ -338,12 +338,20 @@ const Home = ({ workspaceAlias }: { workspaceAlias: string }) => {
               <p className="text-center font-medium text-zikoroGrey text-sm">
                 You need credits to issue credentials.
               </p>
-              <Link
-                href={"/credits/buy"}
-                className="bg-basePrimary gap-x-2 font-semibold flex items-center justify-center rounded-lg py-2 px-4 mx-auto w-fit text-white"
-              >
-                Buy more credits
-              </Link>
+              <div className="flex flex-col md:flex-row gap-2 mx-auto justify-center">
+                <Link
+                  href={"/credits/buy"}
+                  className="bg-basePrimary gap-x-2 font-semibold flex items-center justify-center rounded-lg py-2 px-4 w-fit text-white text-sm"
+                >
+                  Buy credits
+                </Link>
+                <Link
+                  href={"/credits/convert"}
+                  className="bg-basePrimary gap-x-2 font-semibold flex items-center justify-center rounded-lg py-2 px-4 w-fit text-white text-sm"
+                >
+                  Convert credits
+                </Link>
+              </div>
             </div>
           </section>
 
