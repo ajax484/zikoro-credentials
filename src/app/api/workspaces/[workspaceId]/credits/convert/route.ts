@@ -28,6 +28,20 @@ export async function POST(
       );
     }
 
+    if (fromTokenId <= toTokenId) {
+      return NextResponse.json(
+        { error: "Invalid conversion direction. You can only convert to a lower tier." },
+        { status: 400 }
+      );
+    }
+
+    if (fromAmount !== toAmount) {
+      return NextResponse.json(
+        { error: "Conversion must be at a 1:1 rate." },
+        { status: 400 }
+      );
+    }
+
     const { data: tokens, error: creditsError } = await supabase
       .from("credentialsWorkspaceToken")
       .select("*")

@@ -46,13 +46,11 @@ const ConvertForm = ({
   };
 
   const getToAmount = () => {
-    const baseVal = fromType === 1 ? 1 : fromType === 2 ? 2 : 4;
-    const toBaseVal = toType === 1 ? 1 : toType === 2 ? 2 : 4;
-    return (amount * baseVal) / toBaseVal;
+    return amount; // 1:1 rate
   };
 
   const toAmount = getToAmount();
-  const isValidAmount = amount > 0 && amount <= creditBalance[fromType as 1|2|3] && Number.isInteger(toAmount);
+  const isValidAmount = amount > 0 && amount <= creditBalance[fromType as 1|2|3] && Number.isInteger(toAmount) && fromType > toType;
 
   return (
     <section className="space-y-6 w-full">
@@ -87,7 +85,7 @@ const ConvertForm = ({
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">Bronze</SelectItem>
+                <SelectItem value="1" disabled>Bronze</SelectItem>
                 <SelectItem value="2">Silver</SelectItem>
                 <SelectItem value="3">Gold</SelectItem>
               </SelectContent>
@@ -100,9 +98,9 @@ const ConvertForm = ({
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1" disabled={fromType === 1}>Bronze</SelectItem>
-                <SelectItem value="2" disabled={fromType === 2}>Silver</SelectItem>
-                <SelectItem value="3" disabled={fromType === 3}>Gold</SelectItem>
+                <SelectItem value="1" disabled={fromType <= 1}>Bronze</SelectItem>
+                <SelectItem value="2" disabled={fromType <= 2}>Silver</SelectItem>
+                <SelectItem value="3" disabled={fromType <= 3}>Gold</SelectItem>
               </SelectContent>
             </Select>
           </div>

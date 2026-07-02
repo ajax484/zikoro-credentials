@@ -12,7 +12,7 @@ import ConvertConfirm from "./ConvertConfirm";
 const ConvertCreditPage = () => {
   const { user } = useUserStore();
   const [step, setStep] = useState<number>(1);
-  const [fromType, setFromType] = useState<number>(1); // 1: bronze, 2: silver, 3: gold
+  const [fromType, setFromType] = useState<number>(3); // 1: bronze, 2: silver, 3: gold
   const [toType, setToType] = useState<number>(2);
   const [amount, setAmount] = useState<number>(0);
 
