@@ -390,7 +390,7 @@ export default function OnboardingForm({
     if (currentIndex < stages.length - 1) {
       setCurrentIndex(
         currentIndex +
-          (searchParams.workspaceAlias && currentIndex === 0 ? 2 : 1)
+          (searchParams.workspaceAlias && currentIndex === 0 ? 2 : 1),
       );
     }
   };
@@ -399,7 +399,7 @@ export default function OnboardingForm({
     if (currentIndex > 0) {
       setCurrentIndex(
         currentIndex -
-          (searchParams.workspaceAlias && currentIndex === 2 ? 2 : 1)
+          (searchParams.workspaceAlias && currentIndex === 2 ? 2 : 1),
       );
     }
   };
@@ -801,7 +801,9 @@ export default function OnboardingForm({
               <button
                 onClick={() =>
                   searchParams?.workspaceAlias
-                    ? router.push("/home?" + searchParams?.workspaceAlias)
+                    ? router.push(
+                        "/home?workspaceAlias=" + searchParams?.workspaceAlias,
+                      )
                     : updateWorkspaceId()
                 }
                 className="text-white font-semibold text-base bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end py-3 px-4 rounded-[8px]"

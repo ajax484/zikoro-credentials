@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
         userEmail,
         userRole: inviteData.role,
         workspaceAlias,
-        userId: user.id,
+        userId: user?.id || null,
       });
 
     if (insertCredentialsError) {

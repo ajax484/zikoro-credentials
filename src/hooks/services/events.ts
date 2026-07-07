@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import * as z from "zod";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import {  organizationSchema } from "@/schemas";
+import { organizationSchema } from "@/schemas";
 import {
   Event,
   Organization,
@@ -213,7 +213,7 @@ export function useCreateOrganisation() {
 
   async function organisation(
     values: Partial<z.infer<typeof organizationSchema>> & { userId: number },
-    exp?: string
+    exp?: string,
   ) {
     setLoading(true);
     const { firstName, lastName, userEmail, userId, ...restData } = values;
@@ -325,7 +325,7 @@ export function useGetUserHomePageEvents() {
   const { user: userData } = useUserStore();
   const [userEvents, setUserEvents] = useState<TOrgEvent[]>([] as TOrgEvent[]);
   const [firstSetEvents, setFirstSetEvents] = useState<TOrgEvent[]>(
-    [] as TOrgEvent[]
+    [] as TOrgEvent[],
   );
   const [loading, setLoading] = useState(true);
   const {
@@ -346,7 +346,7 @@ export function useGetUserHomePageEvents() {
       // getting the organization id
       const filteredOrganizations = organizations?.filter((organization) => {
         return organization.teamMembers?.some(
-          ({ userEmail }) => userEmail === userData?.userEmail
+          ({ userEmail }) => userEmail === userData?.userEmail,
         );
       });
 
@@ -362,7 +362,7 @@ export function useGetUserHomePageEvents() {
       });
 
       const chosenOrganization = organizations?.find(
-        (v) => v?.id === Number(organizationIds[0])
+        (v) => v?.id === Number(organizationIds[0]),
       );
       setOrganization(chosenOrganization || null);
 
@@ -425,7 +425,7 @@ export function useUpdateEvent() {
   async function update(
     values: Partial<Event>,
     eventId: string,
-    message?: any
+    message?: any,
   ) {
     setLoading(true);
 
@@ -512,7 +512,7 @@ export function usePublishEvent() {
       toast("Event Published");
       return data;
     } catch (error: any) {
-      toast(error?.response?.data?.error);
+      toast("something went wrong. Please try again later");
     } finally {
       setLoading(false);
     }
@@ -595,13 +595,13 @@ export function useFetchOrganizationEvents(id?: string | string[]) {
 
             if (errorFetchingAttendee) {
               console.error(
-                `Failed to fetch attendees for event ${event.eventAlias}: ${errorFetchingAttendee.message}`
+                `Failed to fetch attendees for event ${event.eventAlias}: ${errorFetchingAttendee.message}`,
               );
               return { ...event, attendees: [] };
             }
 
             return { ...event, attendees: fetchedAttendees };
-          })
+          }),
         );
 
         setData(eventsWithAttendees);
@@ -716,7 +716,7 @@ export function useDeleteEvent() {
 export function useGetPublishedEvents(
   id: string,
   startIndex: number,
-  endIndex: number
+  endIndex: number,
 ) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
@@ -822,7 +822,7 @@ export function useTransactionDetail() {
   const { user: userData } = useUserStore();
   async function sendTransactionDetail(
     allowPayment: (bool: boolean) => void,
-    values: any
+    values: any,
   ) {
     setLoading(true);
     try {
@@ -863,7 +863,7 @@ export function useTransactionDetail() {
 export function useGetEventTransactionDetail(eventRegistrationRef: string) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<TEventTransactionDetail>(
-    {} as TEventTransactionDetail
+    {} as TEventTransactionDetail,
   );
 
   useEffect(() => {
@@ -907,7 +907,7 @@ export function useUpdateTransactionDetail() {
 
   async function sendTransactionDetail(
     toggleSuccessModal: (bool: boolean) => void,
-    payload: any
+    payload: any,
   ) {
     setLoading(true);
     // eventId  eventRegistrationRef
@@ -945,8 +945,8 @@ export function useUpdateTransactionDetail() {
     } catch (error: any) {
       /// console.log(error)
       toast.error(
-        error?.response?.data?.error ||
-          "An error occurred while making the request."
+        "something went wrong. Please try again later" ||
+          "An error occurred while making the request.",
       );
       setLoading(false);
     }
@@ -1130,7 +1130,7 @@ export function useCreateReward() {
       return data;
     } catch (error: any) {
       //
-      toast.error(error?.response?.data?.error);
+      toast.error("something went wrong. Please try again later");
     } finally {
       setLoading(false);
     }
@@ -1157,7 +1157,7 @@ export function useUpdateReward() {
       return data;
     } catch (error: any) {
       //
-      toast.error(error?.response?.data?.error);
+      toast.error("something went wrong. Please try again later");
     } finally {
       setLoading(false);
     }
@@ -1172,20 +1172,20 @@ export function useUpdateReward() {
 export function useFormatEventData(event?: Event | null) {
   const startDate = useMemo(
     () => formatDate(event?.startDateTime ?? "0"),
-    [event?.startDateTime ?? "0"]
+    [event?.startDateTime ?? "0"],
   );
   const endDate = useMemo(
     () => formatDate(event?.endDateTime ?? "0"),
-    [event?.endDateTime ?? "0"]
+    [event?.endDateTime ?? "0"],
   );
 
   const startTime = useMemo(
     () => formatTime(event?.startDateTime ?? "0"),
-    [event?.startDateTime ?? "0"]
+    [event?.startDateTime ?? "0"],
   );
   const endTime = useMemo(
     () => formatTime(event?.endDateTime ?? "0"),
-    [event?.endDateTime ?? "0"]
+    [event?.endDateTime ?? "0"],
   );
 
   const removeComma = useMemo(() => {
@@ -1196,7 +1196,7 @@ export function useFormatEventData(event?: Event | null) {
     if (event?.pricingCurrency) {
       const symbol =
         COUNTRIES_CURRENCY.find(
-          (v) => String(v.code) === String(event?.pricingCurrency)
+          (v) => String(v.code) === String(event?.pricingCurrency),
         )?.symbol || "₦";
       return symbol;
     }
@@ -1204,7 +1204,7 @@ export function useFormatEventData(event?: Event | null) {
 
   const createdAt = useMemo(
     () => dateFormatting(event?.createdAt ?? "0"),
-    [event?.createdAt ?? "0"]
+    [event?.createdAt ?? "0"],
   );
 
   const price = useMemo(() => {
@@ -1240,7 +1240,7 @@ export function useAttenedeeEvents() {
   const { user } = useUserStore();
   const [attendees, setAttendees] = useState<TAttendee[]>([]);
   const [registeredEvents, setRegisteredEvents] = useState<Event[] | undefined>(
-    []
+    [],
   );
   // events/attendee/${email}
   const getAttendeeRecord = async () => {
@@ -1266,10 +1266,9 @@ export function useAttenedeeEvents() {
     if (!loading && !isLoading) {
       //   console.log({filteredAttendees})
       const mappedEventId = attendees?.map((attendee) =>
-        String(attendee?.eventAlias)
+        String(attendee?.eventAlias),
       );
       const filtered = events?.filter((event) => {
-        
         // check if event ID in the attendees data and event ID in the events data correlate
         const isRegistered = mappedEventId?.includes(event?.eventAlias);
 
@@ -1314,7 +1313,7 @@ export function useCheckTeamMember({ eventId }: { eventId?: string }) {
       const eventOrganization = data?.data?.organization;
 
       const isMember = eventOrganization.teamMembers.some(
-        (v) => v.userEmail === user?.userEmail
+        (v) => v.userEmail === user?.userEmail,
       );
       setIsIdPresent(isMember);
     } catch (error) {
@@ -1347,11 +1346,11 @@ export function useVerifyUserAccess(eventId: string) {
     if (!loading) {
       const atId = eventAttendees?.find(
         ({ email, eventAlias }) =>
-          eventAlias === eventId && email === user?.userEmail
+          eventAlias === eventId && email === user?.userEmail,
       )?.id;
       const attendee = eventAttendees?.find(
         ({ email, eventAlias, archive }) =>
-          eventAlias === eventId && email === user?.userEmail && !archive
+          eventAlias === eventId && email === user?.userEmail && !archive,
       );
 
       setAttendeeId(atId);
@@ -1359,7 +1358,7 @@ export function useVerifyUserAccess(eventId: string) {
 
       const isPresent = eventAttendees?.some(
         ({ attendeeType, id }) =>
-          id === atId && attendeeType.includes("organizer")
+          id === atId && attendeeType.includes("organizer"),
       );
       setIsOrganizer(isPresent);
       // setUserAccess({
@@ -1389,7 +1388,7 @@ export function useGetUserPoint(eventId: string) {
   const { attendeeId } = useVerifyUserAccess(eventId);
   const [totalPoints, setTotalPoints] = useState(0);
   const { data, isLoading } = useGetData<TBoardData>(
-    `/engagements/${eventId}/leaderboard`
+    `/engagements/${eventId}/leaderboard`,
   );
 
   useEffect(() => {
@@ -1435,7 +1434,7 @@ export function useRedeemReward() {
       return data;
     } catch (error: any) {
       //
-      toast.error(error?.response?.data?.error);
+      toast.error("something went wrong. Please try again later");
     } finally {
       setLoading(false);
     }
@@ -1667,7 +1666,7 @@ export function useRequestAccess() {
         payload: { email, paymentLink, eventTitle, attendeeName },
       });
     } catch (error: any) {
-      toast(error?.response?.data?.error);
+      toast("something went wrong. Please try again later");
     } finally {
       setLoading(false);
     }
