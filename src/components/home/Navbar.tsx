@@ -88,6 +88,13 @@ const Navbar = () => {
           </p>
 
           <p
+            className="text-base font-medium cursor-pointer hover:text-purple-600 transition"
+            onClick={() => router.push("/certificate-generator")}
+          >
+            Certificate Maker
+          </p>
+
+          <p
             className="text-base font-medium cursor-pointer"
             onClick={() => router.push("credentials/verify/certificate")}
           >
@@ -289,6 +296,12 @@ const Navbar = () => {
                   </div>
                 </div>
               )}
+            </li>
+            <li
+              className="mt-5 font-medium cursor-pointer text-purple-600 font-semibold"
+              onClick={() => router.push("/certificate-generator")}
+            >
+              Certificate Maker
             </li>
             <li
               className="mt-5 font-medium "

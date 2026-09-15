@@ -1,6 +1,7 @@
 import Footer from "@/components/home/Footer";
 import Navbar from "@/components/home/Navbar";
 import Section1 from "@/components/home/Section1";
+import CertificateGeneratorSection from "@/components/home/CertificateGeneratorSection";
 import Section2 from "@/components/home/Section2";
 import Section3 from "@/components/home/Section3";
 import Section4 from "@/components/home/Section4";
@@ -60,6 +61,7 @@ export default function Home() {
           <Navbar />
         </div>
         <Section1 />
+        <CertificateGeneratorSection />
         <Section2 />
         <Section3 />
         <Section4 />
