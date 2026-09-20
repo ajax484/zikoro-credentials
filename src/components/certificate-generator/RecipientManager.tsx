@@ -169,24 +169,24 @@ export const RecipientManager: React.FC<RecipientManagerProps> = ({
   const isLimitReached = recipients.length >= maxFreeLimit;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10">
       {/* Header */}
-      <div className="text-center max-w-2xl mx-auto mb-8">
+      <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
           Add Certificate Recipients
         </h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-xs sm:text-sm text-gray-600">
           Enter recipient names individually or import from a spreadsheet. The free generator supports up to{" "}
           <strong className="text-purple-700 font-bold">{maxFreeLimit} recipients</strong> per batch.
         </p>
       </div>
 
       {/* Main Card */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+      <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-8 shadow-sm space-y-5 sm:space-y-6">
         {/* Progress & Quota Tracker */}
-        <div className="bg-purple-50/70 border border-purple-100 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="bg-purple-50/70 border border-purple-100 rounded-xl p-3.5 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-sm">
+            <div className="size-9 sm:size-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
               {recipients.length}/{maxFreeLimit}
             </div>
             <div>
@@ -212,7 +212,7 @@ export const RecipientManager: React.FC<RecipientManagerProps> = ({
         {/* Input Form */}
         <form onSubmit={handleAddRecipient} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-            <div className="sm:col-span-7">
+            <div className="sm:col-span-6 lg:col-span-7">
               <label className="block text-xs font-semibold text-gray-700 mb-1">
                 Recipient Name <span className="text-red-500">*</span>
               </label>
@@ -222,11 +222,11 @@ export const RecipientManager: React.FC<RecipientManagerProps> = ({
                 onChange={(e) => setNameInput(e.target.value)}
                 disabled={isLimitReached}
                 placeholder="e.g. Sarah Connor or Dr. Alan Grant"
-                className="w-full text-sm px-3.5 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                className="w-full text-xs sm:text-sm px-3.5 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
 
-            <div className="sm:col-span-5">
+            <div className="sm:col-span-6 lg:col-span-5">
               <label className="block text-xs font-semibold text-gray-700 mb-1">
                 Email Address <span className="text-gray-400 font-normal">(optional)</span>
               </label>
@@ -237,12 +237,12 @@ export const RecipientManager: React.FC<RecipientManagerProps> = ({
                   onChange={(e) => setEmailInput(e.target.value)}
                   disabled={isLimitReached}
                   placeholder="recipient@example.com"
-                  className="flex-1 text-sm px-3.5 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="flex-1 min-w-0 text-xs sm:text-sm px-3.5 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                 />
                 <button
                   type="submit"
                   disabled={isLimitReached || !nameInput.trim()}
-                  className="flex items-center gap-1.5 px-4 py-2.5 bg-purple-600 text-white rounded-xl text-xs font-semibold hover:bg-purple-700 disabled:opacity-50 transition shrink-0"
+                  className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2.5 bg-purple-600 text-white rounded-xl text-xs font-semibold hover:bg-purple-700 disabled:opacity-50 transition shrink-0"
                 >
                   <UserPlus className="size-3.5" />
                   <span>Add</span>
@@ -253,13 +253,13 @@ export const RecipientManager: React.FC<RecipientManagerProps> = ({
         </form>
 
         {/* CSV Import divider & button */}
-        <div className="flex items-center justify-between border-t border-gray-100 pt-4 flex-wrap gap-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-t border-gray-100 pt-4 gap-3">
           <div className="text-xs text-gray-500">
             Have a list? Import recipients directly from an Excel or CSV file.
           </div>
 
           <label
-            className={`flex items-center gap-2 px-3.5 py-2 border border-gray-200 rounded-xl text-xs font-medium text-gray-700 hover:bg-gray-50 hover:border-purple-300 transition cursor-pointer shadow-sm ${
+            className={`flex items-center gap-2 px-3.5 py-2 border border-gray-200 rounded-xl text-xs font-medium text-gray-700 hover:bg-gray-50 hover:border-purple-300 transition cursor-pointer shadow-sm shrink-0 w-full sm:w-auto justify-center sm:justify-start ${
               isLimitReached ? "opacity-50 pointer-events-none" : ""
             }`}
           >
@@ -284,7 +284,7 @@ export const RecipientManager: React.FC<RecipientManagerProps> = ({
         )}
 
         {/* Recipient Chips / List */}
-        <div className="border border-gray-200 rounded-xl p-4 bg-gray-50/50 min-h-[140px]">
+        <div className="border border-gray-200 rounded-xl p-3 sm:p-4 bg-gray-50/50 min-h-[120px]">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
               Recipients to Generate ({recipients.length})
@@ -300,7 +300,7 @@ export const RecipientManager: React.FC<RecipientManagerProps> = ({
           </div>
 
           {recipients.length === 0 ? (
-            <div className="py-8 text-center text-gray-400 text-xs">
+            <div className="py-6 sm:py-8 text-center text-gray-400 text-xs">
               No recipients added yet. Type a name above or upload a CSV file to populate the list.
             </div>
           ) : (
@@ -308,17 +308,17 @@ export const RecipientManager: React.FC<RecipientManagerProps> = ({
               {recipients.map((recipient) => (
                 <div
                   key={recipient.id}
-                  className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-1.5 shadow-sm text-xs"
+                  className="flex items-center gap-1.5 sm:gap-2 bg-white border border-gray-200 rounded-lg px-2.5 sm:px-3 py-1.5 shadow-sm text-xs"
                 >
                   <span className="font-semibold text-gray-800">
                     {recipient.firstName} {recipient.lastName}
                   </span>
                   {recipient.email && (
-                    <span className="text-gray-400 text-[11px]">({recipient.email})</span>
+                    <span className="text-gray-400 text-[11px] hidden sm:inline">({recipient.email})</span>
                   )}
                   <button
                     onClick={() => handleRemove(recipient.id)}
-                    className="text-gray-400 hover:text-red-500 ml-1 transition"
+                    className="text-gray-400 hover:text-red-500 ml-1 transition p-0.5"
                     title="Remove"
                   >
                     <X className="size-3.5" />
@@ -330,10 +330,10 @@ export const RecipientManager: React.FC<RecipientManagerProps> = ({
         </div>
 
         {/* Navigation CTAs */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-gray-100">
           <button
             onClick={onBack}
-            className="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-xl transition"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-xl transition"
           >
             <ArrowLeft className="size-4" />
             <span>Back to Editor</span>
@@ -342,7 +342,7 @@ export const RecipientManager: React.FC<RecipientManagerProps> = ({
           <button
             onClick={onContinue}
             disabled={recipients.length === 0}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-custom-gradient-start to-custom-gradient-end hover:opacity-95 shadow-md transition disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-custom-gradient-start to-custom-gradient-end hover:opacity-95 shadow-md transition disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <span>Continue to Download ({recipients.length})</span>
             <ArrowRight className="size-4" />

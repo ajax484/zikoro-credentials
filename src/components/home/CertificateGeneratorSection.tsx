@@ -68,12 +68,12 @@ export default function CertificateGeneratorSection() {
         </div>
 
         {/* Category Pills */}
-        <div className="flex items-center justify-center gap-2 overflow-x-auto pb-2 mb-8">
+        <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-2 mb-8 scrollbar-none px-1">
           {SHOWCASE_CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${
+              className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition shrink-0 ${
                 activeCategory === cat
                   ? "bg-gradient-to-r from-custom-gradient-start to-custom-gradient-end text-white shadow-sm"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -91,23 +91,23 @@ export default function CertificateGeneratorSection() {
             <p className="text-xs mt-2 text-gray-500">Loading certificate templates...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
             {featuredTemplates.map((template) => {
               const isLandscape = (template.JSON?.width ?? 900) >= (template.JSON?.height ?? 1200);
 
               return (
                 <div
                   key={template.id}
-                  className="group relative rounded-xl border border-gray-200 overflow-hidden bg-gray-50 hover:shadow-lg transition-all duration-300"
+                  className="group relative rounded-xl border border-gray-200 overflow-hidden bg-white hover:border-purple-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between"
                 >
-                  <div className={`relative w-full ${isLandscape ? "aspect-[4/3]" : "aspect-[3/4]"} bg-white`}>
+                  <div className="relative w-full aspect-[4/3] bg-gray-50 flex items-center justify-center p-1.5 sm:p-2 overflow-hidden">
                     {template.previewUrl ? (
                       <Image
                         src={template.previewUrl}
                         alt={template.name || "Certificate Template"}
                         fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 33vw"
+                        className="object-contain p-1 drop-shadow-xs group-hover:scale-[1.03] transition-transform duration-200"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">
@@ -116,21 +116,21 @@ export default function CertificateGeneratorSection() {
                     )}
 
                     {/* Hover Overlay with Action Button */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center p-3">
                       <button
                         onClick={() => router.push(`/certificate-generator?templateId=${template.id}`)}
-                        className="px-4 py-2 bg-white text-purple-700 text-xs font-bold rounded-lg shadow-lg hover:bg-purple-50 transition transform scale-95 group-hover:scale-100"
+                        className="px-3.5 py-1.5 bg-white text-purple-700 text-xs font-bold rounded-lg shadow-lg hover:bg-purple-50 transition transform scale-95 group-hover:scale-100 cursor-pointer"
                       >
-                        Customize This Template
+                        Customize Template
                       </button>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white border-t border-gray-100 flex items-center justify-between">
-                    <p className="text-xs font-bold text-gray-800 truncate max-w-[170px]">
+                  <div className="p-2 sm:p-2.5 bg-white border-t border-gray-100 flex items-center justify-between gap-1 shrink-0">
+                    <p className="text-xs font-bold text-gray-800 truncate">
                       {template.name || "Certificate"}
                     </p>
-                    <span className="text-[10px] font-semibold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
+                    <span className="text-[9px] font-semibold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded shrink-0">
                       Free
                     </span>
                   </div>

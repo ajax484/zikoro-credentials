@@ -118,7 +118,7 @@ function CertificateGeneratorContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col w-full max-w-full overflow-x-hidden">
       {/* Header with 4-step indicator */}
       <GeneratorHeader
         currentStep={currentStep}
@@ -127,7 +127,7 @@ function CertificateGeneratorContent() {
       />
 
       {/* Wizard Steps */}
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col w-full max-w-full min-w-0">
         {currentStep === 1 && (
           <TemplateSelector
             selectedTemplate={selectedTemplate}
