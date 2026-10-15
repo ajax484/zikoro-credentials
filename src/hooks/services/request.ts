@@ -187,12 +187,15 @@ export const useMutateData = <TData, TReturnData = any>(
           description: data.message ?? "action performed successfully",
         });
 
-      return data.data;
-    } catch (error) {
+      return data?.data !== undefined ? data.data : data;
+    } catch (error: any) {
       setError(true);
       // console.log(error.response, "here");
       toast({
-        description: error.response.data.error,
+        description:
+          error?.response?.data?.error ||
+          error?.message ||
+          "An error occurred",
         variant: "destructive",
       });
     } finally {

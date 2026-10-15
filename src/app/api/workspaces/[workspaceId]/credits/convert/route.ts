@@ -42,13 +42,20 @@ export async function POST(
       );
     }
 
+    const numericWorkspaceId = Number(workspaceId);
+    if (!numericWorkspaceId || isNaN(numericWorkspaceId)) {
+      return NextResponse.json(
+        { error: "Invalid workspace ID." },
+        { status: 400 }
+      );
+    }
+
     const { data: tokens, error: creditsError } = await supabase
       .from("credentialsWorkspaceToken")
       .select("*")
-      .eq("workspaceId", workspaceId)
+      .eq("workspaceId", numericWorkspaceId)
       .eq("tokenId", fromTokenId)
       .gt("creditRemaining", 0)
-      .gte("expiryDate", new Date().toISOString())
       .order("expiryDate", { ascending: true });
 
     if (creditsError) {
@@ -90,7 +97,7 @@ export async function POST(
     const { error: insertError } = await supabase
       .from("credentialsWorkspaceToken")
       .insert({
-        workspaceId: parseInt(workspaceId),
+        workspaceId: numericWorkspaceId,
         tokenId: toTokenId,
         amountPaid: 0,
         CreditPurchased: toAmount,
@@ -106,7 +113,7 @@ export async function POST(
     const { data: updatedFromTokens } = await supabase
       .from("credentialsWorkspaceToken")
       .select("creditRemaining")
-      .eq("workspaceId", workspaceId)
+      .eq("workspaceId", numericWorkspaceId)
       .eq("tokenId", fromTokenId);
       
     const fromBalance = updatedFromTokens?.reduce((acc, curr) => acc + curr.creditRemaining, 0) || 0;
@@ -114,7 +121,7 @@ export async function POST(
     const { data: updatedToTokens } = await supabase
       .from("credentialsWorkspaceToken")
       .select("creditRemaining")
-      .eq("workspaceId", workspaceId)
+      .eq("workspaceId", numericWorkspaceId)
       .eq("tokenId", toTokenId);
       
     const toBalance = updatedToTokens?.reduce((acc, curr) => acc + curr.creditRemaining, 0) || 0;

@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TOrganization } from "@/types/organization";
 import useUserStore from "@/store/globalUserStore";
 import useOrganizationStore from "@/store/globalOrganizationStore";
@@ -22,10 +22,20 @@ const ConvertCreditPage = () => {
     currentWorkspace
   );
 
+  const { data: workspaces, isFetching: workspacesIsLoading } = useFetchWorkspaces(user?.userEmail!);
+
+  useEffect(() => {
+    if (!workspace) {
+      if (currentWorkspace) {
+        setWorkspace(currentWorkspace);
+      } else if (workspaces && workspaces.length > 0) {
+        setWorkspace(workspaces[0]);
+      }
+    }
+  }, [currentWorkspace, workspaces, workspace]);
+
   const handleNext = () => setStep(step + 1);
   const handleWorkspaceChange = (organization: TOrganization | null) => setWorkspace(organization);
-
-  const { data: workspaces, isFetching: workspacesIsLoading } = useFetchWorkspaces(user?.userEmail!);
 
   if (workspacesIsLoading) {
     return <div>Loading...</div>;

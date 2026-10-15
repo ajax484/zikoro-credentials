@@ -26,22 +26,21 @@ const ConvertConfirm = ({
 }) => {
   const { user } = useUserStore();
   const { mutateData, isLoading } = useMutateData(
-    `/workspaces/${workspace?.id}/credits/convert`
+    `/workspaces/${workspace?.id}/credits/convert`,
+    true
   );
 
   const router = useRouter();
 
   const getToAmount = () => {
-    const baseVal = fromType === 1 ? 1 : fromType === 2 ? 2 : 4;
-    const toBaseVal = toType === 1 ? 1 : toType === 2 ? 2 : 4;
-    return (amount * baseVal) / toBaseVal;
+    return amount; // 1:1 rate
   };
   
   const toAmount = getToAmount();
 
   const handleConvert = async () => {
     try {
-      await mutateData({
+      const res = await mutateData({
         payload: {
           workspaceAlias: workspace?.organizationAlias,
           activityBy: user?.id,
@@ -51,8 +50,10 @@ const ConvertConfirm = ({
           toAmount: toAmount,
         },
       });
-      toast.success("Credits converted successfully!");
-      router.push("/designs");
+      if (res) {
+        toast.success("Credits converted successfully!");
+        router.push("/designs");
+      }
     } catch (error) {
       console.error(error);
     }

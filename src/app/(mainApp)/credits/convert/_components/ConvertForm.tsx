@@ -80,7 +80,16 @@ const ConvertForm = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-2">
             <label className="font-medium text-gray-700">Convert From</label>
-            <Select value={String(fromType)} onValueChange={(val) => setFromType(Number(val))}>
+            <Select 
+              value={String(fromType)} 
+              onValueChange={(val) => {
+                const newFrom = Number(val);
+                setFromType(newFrom);
+                if (toType >= newFrom) {
+                  setToType(newFrom - 1);
+                }
+              }}
+            >
               <SelectTrigger className="w-full bg-white">
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
